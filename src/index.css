@@ -1,0 +1,488 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ANTI-GRAVITY GLOBAL BASE — PREMIUM EDITION
+   A pristine canvas. Nothing competes with the floating components.
+───────────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    /* Canvas */
+    --color-canvas-50: 252 251 249;
+    --color-canvas-100: 245 244 234;
+    --color-canvas-200: 234 232 220;
+    --color-canvas-300: 222 219 205;
+
+    /* Surface */
+    --color-surface: 255 255 255;
+    --color-surface-muted: 252 251 249;
+    --color-surface-raised: 255 255 255;
+
+    /* Brand */
+    --color-brand-50: 240 246 244;
+    --color-brand-100: 217 230 226;
+    --color-brand-200: 179 204 197;
+    --color-brand-300: 140 175 164;
+    --color-brand-400: 93 141 128;
+    --color-brand-500: 31 82 71;
+    --color-brand-600: 26 69 60;
+    --color-brand-700: 20 54 47;
+    --color-brand-800: 15 41 36;
+    --color-brand-900: 10 28 24;
+
+    /* Copper */
+    --color-copper-50: 253 245 241;
+    --color-copper-100: 251 236 227;
+    --color-copper-200: 246 210 190;
+    --color-copper-300: 240 184 153;
+    --color-copper-400: 230 144 98;
+    --color-copper-500: 184 92 42;
+    --color-copper-600: 164 82 37;
+    --color-copper-700: 131 65 30;
+    --color-copper-800: 98 49 22;
+    --color-copper-900: 78 39 18;
+
+    /* Steel */
+    --color-steel-50: 241 245 247;
+    --color-steel-100: 227 235 240;
+    --color-steel-200: 199 215 224;
+    --color-steel-300: 168 191 205;
+    --color-steel-400: 128 159 188;
+    --color-steel-500: 69 97 113;
+    --color-steel-600: 61 86 101;
+    --color-steel-700: 49 69 81;
+    --color-steel-800: 37 52 61;
+    --color-steel-900: 29 42 49;
+
+    /* Sage */
+    --color-sage-50: 246 248 247;
+    --color-sage-100: 236 239 239;
+    --color-sage-200: 213 220 219;
+    --color-sage-300: 189 201 199;
+    --color-sage-400: 159 177 174;
+    --color-sage-500: 104 123 111;
+    --color-sage-600: 92 109 98;
+    --color-sage-700: 74 87 78;
+    --color-sage-800: 56 65 58;
+    --color-sage-900: 44 52 47;
+
+    /* Semantic */
+    --color-profit: 18 154 109;
+    --color-loss: 217 69 86;
+    --color-neutral: 120 133 128;
+    --color-caution: 217 147 30;
+
+    /* Ink */
+    --color-ink-primary: 26 36 32;
+    --color-ink-secondary: 65 77 72;
+    --color-ink-tertiary: 120 133 128;
+    --color-ink-disabled: 170 181 176;
+
+    /* Layout */
+    --sidebar-width: 272px;
+    --sidebar-collapsed-width: 72px;
+    --topnav-height: 64px;
+  }
+
+  .dark {
+    /* Canvas (dark mode) — deep forest slate with depth */
+    --color-canvas-50: 12 16 14;
+    --color-canvas-100: 8 11 10;
+    --color-canvas-200: 16 22 20;
+    --color-canvas-300: 24 34 30;
+
+    /* Surface — dark elevated with glass tint */
+    --color-surface: 16 22 20;
+    --color-surface-muted: 12 16 14;
+    --color-surface-raised: 24 34 30;
+
+    /* Brand — inverted for readability on dark */
+    --color-brand-50: 10 28 24;
+    --color-brand-100: 15 41 36;
+    --color-brand-200: 20 54 47;
+    --color-brand-300: 26 69 60;
+    --color-brand-400: 31 82 71;
+    --color-brand-500: 93 160 140;
+    --color-brand-600: 140 195 178;
+    --color-brand-700: 179 215 204;
+    --color-brand-800: 217 235 228;
+    --color-brand-900: 240 248 245;
+
+    /* Copper */
+    --color-copper-50: 78 39 18;
+    --color-copper-100: 98 49 22;
+    --color-copper-200: 131 65 30;
+    --color-copper-300: 164 82 37;
+    --color-copper-400: 184 92 42;
+    --color-copper-500: 235 160 110;
+    --color-copper-600: 242 192 158;
+    --color-copper-700: 248 214 194;
+    --color-copper-800: 251 236 227;
+    --color-copper-900: 253 245 241;
+
+    /* Steel */
+    --color-steel-50: 29 42 49;
+    --color-steel-100: 37 52 61;
+    --color-steel-200: 49 69 81;
+    --color-steel-300: 61 86 101;
+    --color-steel-400: 69 97 113;
+    --color-steel-500: 140 172 198;
+    --color-steel-600: 175 200 218;
+    --color-steel-700: 204 220 230;
+    --color-steel-800: 227 235 240;
+    --color-steel-900: 241 245 247;
+
+    /* Sage */
+    --color-sage-50: 44 52 47;
+    --color-sage-100: 56 65 58;
+    --color-sage-200: 74 87 78;
+    --color-sage-300: 92 109 98;
+    --color-sage-400: 104 123 111;
+    --color-sage-500: 165 185 175;
+    --color-sage-600: 192 206 200;
+    --color-sage-700: 216 224 220;
+    --color-sage-800: 236 239 239;
+    --color-sage-900: 246 248 247;
+
+    /* Semantic — vibrant on dark */
+    --color-profit: 52 211 153;
+    --color-loss: 248 113 113;
+    --color-neutral: 163 173 168;
+    --color-caution: 251 191 36;
+
+    /* Ink */
+    --color-ink-primary: 245 247 246;
+    --color-ink-secondary: 212 218 215;
+    --color-ink-tertiary: 148 163 155;
+    --color-ink-disabled: 68 80 74;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    /* Smooth theme transitions */
+    transition: background-color 0.4s ease, color 0.3s ease;
+  }
+
+  body {
+    margin: 0;
+    background-color: rgb(var(--color-canvas-100));
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    color: rgb(var(--color-ink-primary));
+    min-height: 100svh;
+  }
+
+  #root {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Premium Selection Colors ── */
+  ::selection {
+    background-color: rgb(var(--color-brand-500) / 0.25);
+    color: rgb(var(--color-ink-primary));
+  }
+
+  /* ── Custom Focus Ring ── */
+  *:focus-visible {
+    outline: 2px solid rgb(var(--color-brand-500) / 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ── Custom Scrollbar (Anti-Gravity Theme) ── */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--color-ink-disabled) / 0.3);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--color-ink-tertiary) / 0.5);
+  }
+
+  /* Remove all default margin from headings */
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, sans-serif;
+  }
+
+  p { margin: 0; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   COMPONENT STYLES
+───────────────────────────────────────────────────────────────────────────── */
+
+@layer components {
+  /* ── Glassmorphic Surface ── */
+  .glass-surface {
+    background: rgb(var(--color-surface) / 0.7);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgb(var(--color-ink-primary) / 0.04);
+  }
+
+  .dark .glass-surface {
+    background: rgb(var(--color-surface) / 0.5);
+    border-color: rgb(255 255 255 / 0.06);
+  }
+
+  /* ── Sidebar Glass ── */
+  .sidebar-glass {
+    background: rgb(var(--color-surface) / 0.85);
+    backdrop-filter: blur(24px) saturate(1.5);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    border-right: 1px solid rgb(var(--color-ink-primary) / 0.06);
+  }
+
+  .dark .sidebar-glass {
+    background: rgb(var(--color-canvas-50) / 0.9);
+    border-right-color: rgb(255 255 255 / 0.05);
+  }
+
+  /* ── Top Nav Glass ── */
+  .topnav-glass {
+    background: rgb(var(--color-canvas-100) / 0.8);
+    backdrop-filter: blur(16px) saturate(1.3);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    border-bottom: 1px solid rgb(var(--color-ink-primary) / 0.04);
+  }
+
+  .dark .topnav-glass {
+    background: rgb(var(--color-canvas-100) / 0.6);
+    border-bottom-color: rgb(255 255 255 / 0.04);
+  }
+
+  /* ── Card glass surface for panels ── */
+  .panel-glass {
+    background: rgb(var(--color-surface) / 0.8);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border: 1px solid rgb(var(--color-ink-primary) / 0.03);
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .dark .panel-glass {
+    background: rgb(var(--color-surface) / 0.4);
+    border-color: rgb(255 255 255 / 0.05);
+  }
+
+  .panel-glass:hover {
+    border-color: rgb(var(--color-brand-500) / 0.1);
+  }
+
+  /* ── Premium Input ── */
+  .input-premium {
+    background: rgb(var(--color-canvas-200) / 0.6);
+    border: 1px solid rgb(var(--color-ink-primary) / 0.06);
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(var(--color-ink-primary));
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .input-premium::placeholder {
+    color: rgb(var(--color-ink-disabled));
+  }
+
+  .input-premium:focus {
+    background: rgb(var(--color-surface));
+    border-color: rgb(var(--color-brand-500) / 0.3);
+    box-shadow: 0 0 0 3px rgb(var(--color-brand-500) / 0.08);
+  }
+
+  .dark .input-premium {
+    background: rgb(var(--color-canvas-300) / 0.4);
+    border-color: rgb(255 255 255 / 0.06);
+  }
+
+  .dark .input-premium:focus {
+    background: rgb(var(--color-surface-raised) / 0.6);
+    border-color: rgb(var(--color-brand-500) / 0.4);
+    box-shadow: 0 0 0 3px rgb(var(--color-brand-500) / 0.12);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CUSTOM UTILITIES
+───────────────────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* GPU-accelerated transform layer for Framer Motion cards */
+  .transform-gpu {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* ── Mesh gradient background — light mode ── */
+  .bg-mesh {
+    background-color: rgb(var(--color-canvas-100));
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% 40%, rgb(var(--color-brand-500) / 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 70%, rgb(var(--color-copper-500) / 0.05) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 60% at 50% 10%, rgb(var(--color-sage-500) / 0.04) 0%, transparent 50%);
+  }
+
+  /* ── Mesh gradient — dark mode (richer, deeper) ── */
+  .dark .bg-mesh {
+    background-color: rgb(var(--color-canvas-100));
+    background-image:
+      radial-gradient(ellipse 90% 60% at 15% 30%, rgb(var(--color-brand-400) / 0.08) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 85% 65%, rgb(var(--color-copper-400) / 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 70% at 50% 5%, rgb(var(--color-steel-400) / 0.05) 0%, transparent 45%),
+      radial-gradient(ellipse 40% 40% at 70% 90%, rgb(var(--color-sage-400) / 0.04) 0%, transparent 40%);
+  }
+
+  /* ── Card glow halo ── */
+  .card-glow {
+    filter: drop-shadow(0 20px 60px rgb(var(--color-brand-500) / 0.15))
+            drop-shadow(0 8px 24px rgb(var(--color-brand-500) / 0.08));
+  }
+
+  /* ── Card rim light (inner border glow) ── */
+  .card-rim-light {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  }
+
+  /* ── Number masking — for partially hidden card numbers ── */
+  .font-card-number {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.2em;
+  }
+
+  /* ── Scroll shadow (bottom fade) ── */
+  .scroll-shadow-bottom {
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  }
+
+  /* ── Gradient text ── */
+  .text-gradient-brand {
+    background: linear-gradient(135deg,
+      rgb(var(--color-brand-500)) 0%,
+      rgb(var(--color-brand-300)) 50%,
+      rgb(var(--color-copper-500)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark .text-gradient-brand {
+    background: linear-gradient(135deg,
+      rgb(var(--color-brand-600)) 0%,
+      rgb(var(--color-brand-500)) 40%,
+      rgb(var(--color-copper-500)) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Animated gradient border ── */
+  .border-gradient-animated {
+    position: relative;
+    overflow: hidden;
+  }
+  .border-gradient-animated::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--gradient-angle, 0deg),
+      rgb(var(--color-brand-500) / 0.3),
+      rgb(var(--color-copper-500) / 0.2),
+      rgb(var(--color-steel-500) / 0.1),
+      rgb(var(--color-brand-500) / 0.3)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: gradient-rotate 4s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes gradient-rotate {
+    to { --gradient-angle: 360deg; }
+  }
+
+  @property --gradient-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  /* ── Nav indicator pill ── */
+  .nav-indicator {
+    background: linear-gradient(135deg,
+      rgb(var(--color-brand-500)),
+      rgb(var(--color-brand-400))
+    );
+    box-shadow: 0 2px 8px rgb(var(--color-brand-500) / 0.3),
+                0 0 20px rgb(var(--color-brand-500) / 0.1);
+  }
+
+  /* ── Subtle pulse animation ── */
+  .pulse-subtle {
+    animation: pulse-subtle 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* ── Floating particle effect (CSS only) ── */
+  .card-particles::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 85%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 10% 60%, rgba(255,255,255,0.06) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.1) 0%, transparent 100%);
+    animation: particle-drift 8s ease-in-out infinite alternate;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .card-particles:hover::after {
+    opacity: 1;
+  }
+
+  @keyframes particle-drift {
+    0% { transform: translate(0, 0); }
+    33% { transform: translate(2px, -1px); }
+    66% { transform: translate(-1px, 2px); }
+    100% { transform: translate(1px, -2px); }
+  }
+}

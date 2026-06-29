@@ -14,6 +14,7 @@ import {
   X,
   Search,
   Trash2,
+  Info,
 } from 'lucide-react';
 
 import { DashboardLayout } from './components/layout/DashboardLayout';
@@ -262,7 +263,7 @@ function HomeTab() {
                         title="Card Benefits Info"
                         style={{ width: '22px', height: '22px' }}
                       >
-                        ℹ️
+                        <Info size={13} />
                       </button>
                       <button
                         onClick={(e) => {

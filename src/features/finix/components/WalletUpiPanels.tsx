@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Zap, Search, X, Plus } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { CARD_DATASET, type SpendCategory } from '../data/cardDataset';
+import { BankLogo } from '../../cards/components/BankLogo';
 import { POPULAR_MERCHANTS, detectCategory } from '../data/merchantMap';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import type { CardData } from '../../cards/types/card.types';
@@ -230,10 +231,7 @@ function WalletOptimizerTab() {
                           }}
                           className="w-full text-left p-3.5 rounded-2xl border border-canvas-200/40 dark:border-white/[0.03] hover:border-brand-500/20 bg-surface dark:bg-surface-muted/20 flex items-center gap-3 transition-all hover:scale-[1.01]"
                         >
-                          <div
-                            className="w-10 h-7 rounded-lg shadow-sm flex-shrink-0"
-                            style={{ background: `linear-gradient(135deg, ${c.gradientFrom}, ${c.gradientTo})` }}
-                          />
+                          <BankLogo bank={c.bank} />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-ink-primary truncate">{c.name}</p>
                             <p className="text-xs text-ink-tertiary">{c.bank} · Fee: ₹{c.annualFee}</p>

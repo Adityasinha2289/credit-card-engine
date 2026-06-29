@@ -32,6 +32,7 @@ import { CibilPanel, BillTrackerPanel, InsightsPanel } from './features/finix/co
 import { LoginScreen } from './features/dashboard/components/LoginScreen';
 import { ProfileTab } from './features/dashboard/components/ProfileTab';
 import { CARD_DATASET } from './features/finix/data/cardDataset';
+import { BankLogo } from './features/cards/components/BankLogo';
 
 
 
@@ -409,10 +410,7 @@ function HomeTab() {
                           }}
                           className="w-full p-3 rounded-2xl flex items-center gap-3 border border-canvas-200/40 dark:border-white/[0.03] hover:bg-canvas-200/50 dark:hover:bg-white/[0.02] text-left transition-all"
                         >
-                          <div
-                            className="h-8 w-12 rounded-lg shadow-sm flex-shrink-0"
-                            style={{ background: `linear-gradient(135deg, ${c.gradientFrom}, ${c.gradientTo})` }}
-                          />
+                          <BankLogo bank={c.bank} />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-ink-primary truncate">{c.name}</p>
                             <p className="text-xs text-ink-tertiary">{c.bank} · {c.network}</p>

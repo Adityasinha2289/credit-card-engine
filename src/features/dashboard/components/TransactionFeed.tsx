@@ -1,6 +1,6 @@
 import { useState, useRef, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, ChevronRight, Minus } from 'lucide-react';
+import { Plus, ChevronRight, Minus } from 'lucide-react';
 
 import { cn } from '../../../lib/utils';
 import { useShallow } from 'zustand/shallow';

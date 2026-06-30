@@ -74,6 +74,7 @@ export function LoginScreen() {
       salary: randomSalary,
       creditScore: randomScore,
     };
+    useDashboardStore.getState()._reset();
     login(demoProfile);
   };
 

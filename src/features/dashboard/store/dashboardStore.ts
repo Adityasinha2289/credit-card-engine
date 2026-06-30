@@ -304,7 +304,7 @@ const INITIAL_STATE: DashboardState = {
   transactions:   MOCK_TRANSACTIONS,
   creditAccounts: [],
   rewards:        EMPTY_REWARDS,
-  activeCardId:   '',
+  activeCardId:   'card-001',
   isPaymentProcessing: false,
   profile:        null,
   userCards:      INITIAL_CARDS, // fallback if empty

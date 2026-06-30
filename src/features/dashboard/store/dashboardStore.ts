@@ -501,9 +501,9 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
       })),
 
       {
-        name: 'renocred-dashboard-v4',               // localStorage key
+        name: 'renocred-dashboard-v5',               // localStorage key
         storage: createJSONStorage(() => localStorage),
-        version: 4,
+        version: 5,
 
         /**
          * Only persist the data state — not the UI/loading flags.

@@ -472,7 +472,7 @@ function HomeTab() {
                     </div>
                     <div>
                       <p className="font-mono text-xs tracking-widest">
-                        {cardNumber ? cardNumber.replace(/(\d{4})/g, '$1 ').trim() : '•••• •••• •••• ••••'}
+                        {selectedTemplate.first4Digits || '••••'} •••• •••• {cardNumber ? cardNumber : '••••'}
                       </p>
                       <div className="flex justify-between items-end mt-1 text-[9px] opacity-75">
                         <span className="uppercase truncate max-w-[180px]">{cardNameInput || 'CARDHOLDER NAME'}</span>
@@ -484,13 +484,13 @@ function HomeTab() {
                   {/* Form fields */}
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-1 text-left">
-                      <label className="text-[11px] font-bold text-ink-secondary">Card Number (16 Digits)</label>
+                      <label className="text-[11px] font-bold text-ink-secondary">Card Number (Last 4 Digits)</label>
                       <input
                         type="text"
-                        maxLength={16}
-                        placeholder="4111 1111 1111 4242"
+                        maxLength={4}
+                        placeholder="e.g. 4242"
                         value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 16))}
+                        onChange={(e) => setCardNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
                         className="input-premium py-2 px-3 text-xs"
                       />
                     </div>

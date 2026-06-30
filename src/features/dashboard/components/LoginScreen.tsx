@@ -69,7 +69,7 @@ export function LoginScreen() {
     const demoProfile: AppProfile = {
       name: randomName,
       email: `${randomFirstName.toLowerCase()}.${randomLastName.toLowerCase()}@example.com`,
-      phone: `9${Math.floor(100000000 + Math.random() * 900000000)}`,
+      phone: 'XXXXXXXXXX',
       avatar: `https://api.dicebear.com/7.x/notionists/svg?seed=${randomFirstName}&backgroundColor=f8f9fa`,
       salary: randomSalary,
       creditScore: randomScore,

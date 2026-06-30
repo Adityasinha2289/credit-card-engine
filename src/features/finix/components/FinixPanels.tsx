@@ -603,7 +603,7 @@ export function BillTrackerPanel() {
 
 function SpendTrendChart({ debits }: { debits: any[] }) {
   // Compute real data for the last 7 days
-  const data = Array(7).fill(0);
+  const data = Array(7).fill(null).map(() => ({ total: 0, topSpendName: '', topSpendAmount: 0 }));
   const now = new Date();
   // Strip time for accurate day difference
   now.setHours(0, 0, 0, 0);
@@ -618,20 +618,25 @@ function SpendTrendChart({ debits }: { debits: any[] }) {
     if (diffDays >= 0 && diffDays < 7) {
       // index 6 is today, index 0 is 7 days ago
       const index = 6 - diffDays;
-      data[index] += t.amount / 100;
+      data[index].total += t.amount / 100;
+      
+      if (t.amount > data[index].topSpendAmount) {
+        data[index].topSpendAmount = t.amount;
+        data[index].topSpendName = t.merchant;
+      }
     }
   });
   
   // If max is 0, give it a tiny value so chart still renders a flat line
-  const max = Math.max(...data, 100);
+  const max = Math.max(...data.map(d => d.total), 100);
   const min = 0;
   
   const width = 300;
   const height = 100;
   
-  const points = data.map((val, i) => {
+  const points = data.map((d, i) => {
     const x = (i / (data.length - 1)) * width;
-    const y = height - ((val - min) / (max - min)) * (height - 20) - 10;
+    const y = height - ((d.total - min) / (max - min)) * (height - 20) - 10;
     return `${x},${y}`;
   });
   
@@ -681,22 +686,24 @@ function SpendTrendChart({ debits }: { debits: any[] }) {
             transition={{ duration: 1.5, ease: 'easeOut' }}
           />
           
-          {data.map((val, i) => {
+          {data.map((d, i) => {
             const x = (i / (data.length - 1)) * width;
-            const y = height - ((val - min) / (max - min)) * (height - 20) - 10;
+            const y = height - ((d.total - min) / (max - min)) * (height - 20) - 10;
             return (
               <motion.circle
                 key={i}
                 cx={x}
                 cy={y}
                 r="4"
-                className="fill-white dark:fill-canvas-50 stroke-brand-500 cursor-pointer"
+                className="fill-white dark:fill-canvas-50 stroke-brand-500 cursor-pointer outline-none"
                 strokeWidth="2"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 1 + i * 0.1 }}
                 whileHover={{ scale: 1.8 }}
-              />
+              >
+                <title>Total Spend: ₹{d.total.toFixed(0)}&#10;{d.topSpendName ? `Top Spend: ${d.topSpendName} (₹${(d.topSpendAmount / 100).toFixed(0)})` : 'No spend'}</title>
+              </motion.circle>
             );
           })}
         </svg>

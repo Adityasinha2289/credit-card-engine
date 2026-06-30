@@ -33,6 +33,8 @@ export interface FinixCard {
   name: string;
   bank: string;
   network: 'Visa' | 'Mastercard' | 'Amex' | 'RuPay';
+  /** First 4 digits of the card (BIN) */
+  first4Digits?: string;
   /** Annual fee in INR */
   annualFee: number;
   /** Fee waiver spend threshold in INR */

@@ -195,7 +195,7 @@ export function LoginScreen() {
                   <label className="text-xs font-bold text-ink-secondary">Full Name</label>
                   <input
                     type="text"
-                    placeholder="e.g., Atharva Mishra"
+                    placeholder="e.g., Aditya Sinha"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="input-premium w-full text-sm"

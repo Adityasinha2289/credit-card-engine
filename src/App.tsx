@@ -498,7 +498,7 @@ function HomeTab() {
                       <label className="text-[11px] font-bold text-ink-secondary">Cardholder Name</label>
                       <input
                         type="text"
-                        placeholder="e.g. Atharva Mishra"
+                        placeholder="e.g. Aditya Sinha"
                         value={cardNameInput}
                         onChange={(e) => setCardNameInput(e.target.value)}
                         className="input-premium py-2 px-3 text-xs"

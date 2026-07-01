@@ -309,7 +309,7 @@ function WalletOptimizerTab() {
                       <label className="text-[11px] font-bold text-ink-secondary">Cardholder Name</label>
                       <input
                         type="text"
-                        placeholder="e.g. Atharva Mishra"
+                        placeholder="e.g. Aditya Sinha"
                         value={form.cardName}
                         onChange={(e) => setForm(prev => ({ ...prev, cardName: e.target.value }))}
                         className="input-premium py-2 px-3 text-xs"

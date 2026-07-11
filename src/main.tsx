@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { dark, ClerkProvider } from './lib/clerk-mock'
 import './index.css'
 import App from './App.tsx'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { TemporaryHomepage } from './TemporaryHomepage';
 import * as Sentry from "@sentry/react";
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
@@ -65,7 +67,13 @@ const appContent = (
         }
       }}
     >
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<TemporaryHomepage />} />
+          <Route path="/app/*" element={<App />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
       <Toaster theme="dark" position="top-center" />
     </ClerkProvider>
 );

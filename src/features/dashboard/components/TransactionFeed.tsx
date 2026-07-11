@@ -17,8 +17,8 @@ import { CATEGORY_STYLES } from '../../cards/components/CategoryIcon';
 import { parseSmsText, SMS_SAMPLES } from '../lib/smsParser';
 
 interface QuickAddFormProps {
-  onClose:   () => void;
-  activeCardId: string;
+  onClose: () => void;
+  activeCardId: string | null;
 }
 
 const CATEGORIES = Object.entries(CATEGORY_STYLES).map(([key, val]) => ({
@@ -30,6 +30,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
   const addTransaction = useDashboardStore((s) => s.addTransaction);
   const userCards = useDashboardStore((s) => s.userCards);
   const formId = useId();
+  const selectedCardId = activeCardId ?? '';
 
   // Tab State
   const [tab, setTab] = useState<'manual' | 'sms'>('manual');
@@ -58,7 +59,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
       date:      new Date().toISOString(),
       category,
       type:      'debit',
-      cardId:    activeCardId,
+      cardId:    selectedCardId,
       pending:   false,
     };
     addTransaction(input);
@@ -81,7 +82,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
       merchant: result.merchant,
       amount: String(result.amount / 100),
       category: result.category,
-      cardId: result.cardId || activeCardId,
+      cardId: result.cardId || selectedCardId,
       date: result.date,
     });
   }
@@ -99,7 +100,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
       date: parsedData.date || new Date().toISOString(),
       category: parsedData.category,
       type: 'debit',
-      cardId: parsedData.cardId || activeCardId,
+      cardId: parsedData.cardId || selectedCardId,
       pending: false,
     };
     addTransaction(input);

@@ -129,6 +129,7 @@ export interface Subscription {
   previousAmount?: number;
   isFreeTrial: boolean;
   logo?: string;
+  icon?: string;
 }
 
 export interface Milestone {
@@ -157,8 +158,11 @@ export interface MerchantOffer {
 export interface CategoryBudget {
   id: string;
   category: TransactionCategory;
+  categoryId?: TransactionCategory;
   limitAmount: number;
   currentSpend: number;
   period: 'monthly' | 'weekly';
+  icon?: string;
+  color?: string;
 }
 

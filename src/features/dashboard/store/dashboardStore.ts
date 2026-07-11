@@ -334,6 +334,7 @@ const INITIAL_STATE: DashboardState = {
   transactions:   MOCK_TRANSACTIONS,
   creditAccounts: [],
   rewards:        {
+    ...EMPTY_REWARDS,
     tier: 'gold',
     totalPoints: 12500,
     redeemedPoints: 2000,
@@ -462,8 +463,8 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
           const { supabaseClient, profile, creditAccounts } = get();
           if (supabaseClient && profile) {
-            const effectivePayment = Math.min(amount, creditAccounts.find(a => a.cardId === cardId)?.currentBalance || 0 + amount); // we already subtracted it, so recalculate or just use updated balance
             const updatedAccount = creditAccounts.find(a => a.cardId === cardId);
+            const effectivePayment = Math.min(amount, (updatedAccount?.currentBalance ?? 0) + amount);
             
             // Insert credit transaction
             (supabaseClient as any).from('transactions').insert({
@@ -471,7 +472,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               user_id: profile.id,
               card_id: cardId,
               merchant: 'Bill Payment',
-              amount: -amount, // Actually should be effectivePayment but we don't have it here easily if we don't recompute. Actually, let's just use what's in the state... wait, state.transactions[0] has it.
+              amount: -effectivePayment,
               category: 'other',
               type: 'credit',
               is_pending: false,
@@ -669,7 +670,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             (supabaseClient as any).from('budgets').insert({
               id: budget.id,
               user_id: profile.id,
-              category: budget.categoryId,
+              category: budget.category,
               limit_amount: budget.limitAmount,
               icon: budget.icon,
               color: budget.color,
@@ -819,6 +820,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                 state.profile = profile;
                 
                 state.rewards = {
+                  ...EMPTY_REWARDS,
                   tier: 'gold',
                   totalPoints: userRow.total_reward_points || 0,
                   redeemedPoints: userRow.redeemed_reward_points || 0,
@@ -863,7 +865,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                 if (budgetsRow) {
                   state.budgets = budgetsRow.map((row: any) => ({
                     id: row.id,
-                    categoryId: row.category,
+                    category: row.category,
                     limitAmount: row.limit_amount,
                     icon: row.icon,
                     color: row.color,

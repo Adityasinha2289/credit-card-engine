@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { dark, ClerkProvider } from './lib/clerk-mock'
+import { ClerkProvider } from '@clerk/clerk-react'
+import { dark } from '@clerk/themes'
 import './index.css'
 import App from './App.tsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';

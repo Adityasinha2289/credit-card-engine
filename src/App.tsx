@@ -1,5 +1,6 @@
 import './index.css';
 import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   TrendingUp,
@@ -1055,6 +1056,7 @@ function DashboardSkeleton() {
 }
 
 export default function App() {
+  const { isLoaded, isSignedIn } = useUser();
   const [activeTab, setActiveTab] = useState<TabId>('home');
   const profile = useDashboardStore((s) => s.profile);
   const isHydrated = useHydration();
@@ -1073,7 +1075,7 @@ export default function App() {
     return () => window.removeEventListener('NAVIGATE_TAB', handleNavigate);
   }, []);
 
-  if (!isHydrated) {
+  if (!isHydrated || !isLoaded) {
     return (
       <DashboardLayout
         activeTab={activeTab}
@@ -1086,7 +1088,7 @@ export default function App() {
     );
   }
 
-  if (!profile) {
+  if (!isSignedIn || !profile) {
     return <LoginScreen />;
   }
 

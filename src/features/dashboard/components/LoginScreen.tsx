@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreditCard, BookOpen, X, ChevronRight, Info } from 'lucide-react';
-import { SignIn, SignUp, useUser } from '../../../lib/clerk-mock';
+import { SignIn, SignUp, useUser } from '@clerk/clerk-react';
 import { useDashboardStore } from '../store/dashboardStore';
 import type { AppProfile } from '../types/dashboard.types';
 import { CreditScoreDial } from '../../../components/ui/CreditScoreDial';
@@ -396,9 +396,9 @@ export function LoginScreen() {
             {/* ── Clerk Auth Form ── */}
             <div className="w-full">
               {mode === 'signin' ? (
-                <SignIn routing="path" path="/" signUpUrl="/" />
+                <SignIn routing="virtual" />
               ) : (
-                <SignUp routing="path" path="/" signInUrl="/" />
+                <SignUp routing="virtual" />
               )}
             </div>
           </motion.div>

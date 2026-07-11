@@ -42,7 +42,7 @@ interface SidebarProps {
   onToggleCollapse: () => void;
 }
 
-import { useClerk } from '../../lib/clerk-mock';
+import { useClerk } from '@clerk/clerk-react';
 
 export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }: SidebarProps) {
   const profile = useDashboardStore((s) => s.profile);

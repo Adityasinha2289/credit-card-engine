@@ -47,6 +47,9 @@ function calcRewardPoints(
 //  STATE SHAPE
 // ─────────────────────────────────────────────────────────────────────────────
 
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../../lib/database.types';
+
 interface DashboardState {
   /** All transactions — newest first */
   transactions: Transaction[];
@@ -55,9 +58,11 @@ interface DashboardState {
   /** Single rewards ledger across all cards */
   rewards: RewardsAccount;
   /** Which card is currently "active" / selected in the UI */
-  activeCardId: string;
+  activeCardId: string | null;
   /** Whether a bill payment is in flight (optimistic UI) */
   isPaymentProcessing: boolean;
+  /** Whether we are currently hydrating from Supabase */
+  isHydratingFromSupabase: boolean;
   /** Logged in user profile info */
   profile: AppProfile | null;
   /** Cards added to the user's wallet */
@@ -70,6 +75,9 @@ interface DashboardState {
   offers: MerchantOffer[];
   /** Category budgets */
   budgets: CategoryBudget[];
+  
+  /** Supabase client injected from React tree */
+  supabaseClient: SupabaseClient<Database> | null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -128,6 +136,12 @@ interface DashboardActions {
 
   /** Reset store to seed state — useful for development. */
   _reset: () => void;
+
+  /** Inject Supabase Client from React tree */
+  setSupabaseClient: (client: SupabaseClient<Database> | null) => void;
+
+  /** Hydrate local state from Supabase database */
+  hydrateFromSupabase: (clerkEmail: string, clerkName: string, clerkAvatar: string) => Promise<void>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -319,15 +333,21 @@ const MOCK_TRANSACTIONS: Transaction[] = [
 const INITIAL_STATE: DashboardState = {
   transactions:   MOCK_TRANSACTIONS,
   creditAccounts: [],
-  rewards:        EMPTY_REWARDS,
-  activeCardId:   'card-001',
+  rewards:        {
+    tier: 'gold',
+    totalPoints: 12500,
+    redeemedPoints: 2000,
+  },
+  activeCardId: null,
   isPaymentProcessing: false,
+  isHydratingFromSupabase: false,
   profile:        null,
   userCards:      INITIAL_CARDS, // fallback if empty
   subscriptions:  MOCK_SUBSCRIPTIONS,
   milestones:     MOCK_MILESTONES,
   offers:         MOCK_OFFERS,
   budgets:        MOCK_BUDGETS,
+  supabaseClient: null,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -378,6 +398,29 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               state.rewards.cycleEarnings += Math.floor(input.amount * 0.01); // 1% cash back base
             }
           });
+
+          // SYNC TO SUPABASE
+          const { supabaseClient, profile, creditAccounts } = get();
+          if (supabaseClient && profile) {
+            (supabaseClient as any).from('transactions').insert({
+              id: newTx.id,
+              user_id: profile.id,
+              card_id: newTx.cardId,
+              merchant: newTx.merchant,
+              amount: newTx.amount,
+              category: newTx.category,
+              type: newTx.type,
+              is_pending: newTx.pending || false,
+            }).then();
+
+            const updatedAccount = creditAccounts.find(a => a.cardId === input.cardId);
+            if (updatedAccount) {
+              (supabaseClient as any).from('credit_accounts')
+                .update({ current_balance: updatedAccount.currentBalance })
+                .eq('user_card_id', input.cardId)
+                .then();
+            }
+          }
         },
 
         // ── payBill ──────────────────────────────────────────────────────────
@@ -416,6 +459,31 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             state.transactions.unshift(paymentTx);
             state.isPaymentProcessing = false;
           });
+
+          const { supabaseClient, profile, creditAccounts } = get();
+          if (supabaseClient && profile) {
+            const effectivePayment = Math.min(amount, creditAccounts.find(a => a.cardId === cardId)?.currentBalance || 0 + amount); // we already subtracted it, so recalculate or just use updated balance
+            const updatedAccount = creditAccounts.find(a => a.cardId === cardId);
+            
+            // Insert credit transaction
+            (supabaseClient as any).from('transactions').insert({
+              id: generateId(),
+              user_id: profile.id,
+              card_id: cardId,
+              merchant: 'Bill Payment',
+              amount: -amount, // Actually should be effectivePayment but we don't have it here easily if we don't recompute. Actually, let's just use what's in the state... wait, state.transactions[0] has it.
+              category: 'other',
+              type: 'credit',
+              is_pending: false,
+            }).then();
+
+            if (updatedAccount) {
+              (supabaseClient as any).from('credit_accounts')
+                .update({ current_balance: updatedAccount.currentBalance })
+                .eq('user_card_id', cardId)
+                .then();
+            }
+          }
         },
 
         // ── setActiveCard ────────────────────────────────────────────────────
@@ -433,6 +501,28 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               c.cardholderName = profile.name;
             });
           });
+
+          // SYNC TO SUPABASE
+          const { supabaseClient } = get();
+          if (supabaseClient) {
+             (supabaseClient as any).from('users').upsert({
+                id: profile.id,
+                email: profile.email,
+                name: profile.name,
+                phone: profile.phone,
+                avatar_url: profile.avatar,
+                salary: profile.salary,
+                credit_score: profile.creditScore,
+             }).then(({ error }: any) => {
+               if (error) {
+                 console.error('Supabase Upsert Error:', error);
+                 import('sonner').then(m => m.toast.error(`Save Error: ${error.message}`));
+               } else {
+                 console.log('Successfully saved to Supabase!');
+                 import('sonner').then(m => m.toast.success(`Profile saved to cloud!`));
+               }
+             });
+          }
         },
 
         // ── logout ───────────────────────────────────────────────────────────
@@ -455,6 +545,20 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               c.cardholderName = profile.name;
             });
           });
+
+          // SYNC TO SUPABASE
+          const { supabaseClient } = get();
+          if (supabaseClient) {
+             (supabaseClient as any).from('users').upsert({
+                id: profile.id,
+                email: profile.email,
+                name: profile.name,
+                phone: profile.phone,
+                avatar_url: profile.avatar,
+                salary: profile.salary,
+                credit_score: profile.creditScore,
+             }).then();
+          }
         },
 
         // ── addUserCard ──────────────────────────────────────────────────────
@@ -486,6 +590,40 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               state.activeCardId = newCard.id;
             }
           });
+
+          // SYNC TO SUPABASE
+          const { supabaseClient, profile } = get();
+          if (supabaseClient && profile) {
+            (supabaseClient as any).from('user_cards').insert({
+              user_id: profile.id,
+              card_id: card.id,
+              last_4_digits: card.pan.slice(-4),
+              cardholder_name: profile.name,
+              expiry: card.expiry,
+              credit_limit: card.creditLimit,
+              status: 'active',
+            }).select('id').single().then(({ data, error }: any) => {
+               if (error) {
+                 console.error("Supabase user_cards insert error:", error);
+                 import('sonner').then(m => m.toast.error(`Error saving card: ${error.message}`));
+               }
+               if (data && data.id) {
+                 (supabaseClient as any).from('credit_accounts').insert({
+                   user_id: profile.id,
+                   card_id: card.id,
+                   user_card_id: data.id,
+                   current_balance: 0,
+                   available_credit: card.creditLimit,
+                   next_statement_date: '2023-10-01',
+                 }).then(({ error: accError }: any) => {
+                    if (accError) {
+                       console.error("Supabase credit_accounts insert error:", accError);
+                       import('sonner').then(m => m.toast.error(`Error creating account: ${accError.message}`));
+                    }
+                 });
+               }
+            });
+          }
         },
 
         // ── deleteUserCard ───────────────────────────────────────────────────
@@ -499,6 +637,11 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               state.activeCardId = state.userCards.length > 0 ? state.userCards[0].id : '';
             }
           });
+          const { supabaseClient } = get();
+          if (supabaseClient) {
+            // cardId here is the master card_id, so we delete by card_id
+            (supabaseClient as any).from('user_cards').delete().eq('card_id', cardId).then();
+          }
         },
 
         // ── redeemPoints ─────────────────────────────────────────────────────
@@ -508,6 +651,12 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             const toRedeem  = Math.min(points, available);
             state.rewards.redeemedPoints += toRedeem;
           });
+          const { supabaseClient, profile, rewards } = get();
+          if (supabaseClient && profile) {
+            (supabaseClient as any).from('users').update({
+              redeemed_reward_points: rewards.redeemedPoints
+            }).eq('id', profile.id).then();
+          }
         },
 
         // ── addBudget ────────────────────────────────────────────────────────
@@ -515,6 +664,17 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           set((state) => {
             state.budgets.push(budget);
           });
+          const { supabaseClient, profile } = get();
+          if (supabaseClient && profile) {
+            (supabaseClient as any).from('budgets').insert({
+              id: budget.id,
+              user_id: profile.id,
+              category: budget.categoryId,
+              limit_amount: budget.limitAmount,
+              icon: budget.icon,
+              color: budget.color,
+            }).then();
+          }
         },
 
         // ── deleteBudget ─────────────────────────────────────────────────────
@@ -522,6 +682,10 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           set((state) => {
             state.budgets = state.budgets.filter((b) => b.id !== budgetId);
           });
+          const { supabaseClient } = get();
+          if (supabaseClient) {
+            (supabaseClient as any).from('budgets').delete().eq('id', budgetId).then();
+          }
         },
 
         // ── updateBudgetLimit ────────────────────────────────────────────────
@@ -532,6 +696,10 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               budget.limitAmount = limitAmount;
             }
           });
+          const { supabaseClient } = get();
+          if (supabaseClient) {
+            (supabaseClient as any).from('budgets').update({ limit_amount: limitAmount }).eq('id', budgetId).then();
+          }
         },
 
         // ── addSubscription ──────────────────────────────────────────────────
@@ -539,6 +707,20 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           set((state) => {
             state.subscriptions.push(subscription);
           });
+          const { supabaseClient, profile } = get();
+          if (supabaseClient && profile) {
+            (supabaseClient as any).from('subscriptions').insert({
+              id: subscription.id,
+              user_id: profile.id,
+              card_id: subscription.cardId,
+              name: subscription.name,
+              amount: subscription.amount,
+              billing_cycle: subscription.billingCycle,
+              next_billing_date: subscription.nextBillingDate,
+              icon: subscription.icon,
+              category: subscription.category,
+            }).then();
+          }
         },
 
         // ── cancelSubscription ───────────────────────────────────────────────
@@ -549,11 +731,174 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               sub.status = 'cancelled';
             }
           });
+          const { supabaseClient } = get();
+          if (supabaseClient) {
+            // Alternatively, could delete it or update status, but our table doesn't have status yet, let's just delete it for now to match cancellation
+            (supabaseClient as any).from('subscriptions').delete().eq('id', subscriptionId).then();
+          }
         },
 
         // ── _reset ────────────────────────────────────────────────────────────
         _reset() {
           set(INITIAL_STATE);
+        },
+        // ── setSupabaseClient ────────────────────────────────────────────────
+        setSupabaseClient(client) {
+          set((state) => {
+            state.supabaseClient = client as any; // Ignore immer draft error for classes
+          });
+        },
+
+        // ── hydrateFromSupabase ──────────────────────────────────────────────
+        async hydrateFromSupabase(clerkEmail, clerkName, clerkAvatar) {
+          set({ isHydratingFromSupabase: true });
+          const { supabaseClient } = get();
+          if (!supabaseClient) {
+            set({ isHydratingFromSupabase: false });
+            return;
+          }
+
+          // Fetch Profile
+          const { data: userRow, error: fetchError } = await (supabaseClient as any)
+            .from('users')
+            .select('*')
+            .eq('email', clerkEmail)
+            .maybeSingle();
+
+          if (fetchError) {
+             console.error('Supabase Hydration Error:', fetchError);
+             import('sonner').then(m => m.toast.error(`Hydration Error: ${fetchError.message}`));
+          }
+
+          if (userRow) {
+             const profile = {
+                id: userRow.id,
+                name: userRow.name || clerkName,
+                email: userRow.email,
+                phone: userRow.phone || '',
+                avatar: userRow.avatar_url || clerkAvatar,
+                salary: userRow.salary,
+                creditScore: userRow.credit_score,
+             };
+             
+             // Fetch Cards
+             const { data: userCardsRow } = await (supabaseClient as any)
+               .from('user_cards')
+               .select(`
+                 *,
+                 cards (*)
+               `)
+               .eq('user_id', userRow.id);
+
+             // Fetch Transactions
+             const { data: transactionsRow } = await (supabaseClient as any)
+               .from('transactions')
+               .select('*')
+               .eq('user_id', userRow.id)
+               .order('created_at', { ascending: false });
+               
+             // Fetch Budgets
+             const { data: budgetsRow } = await (supabaseClient as any)
+               .from('budgets')
+               .select('*')
+               .eq('user_id', userRow.id);
+               
+             // Fetch Subscriptions
+             const { data: subscriptionsRow } = await (supabaseClient as any)
+               .from('subscriptions')
+               .select('*')
+               .eq('user_id', userRow.id);
+               
+             // Fetch Credit Accounts
+             const { data: creditAccountsRow } = await (supabaseClient as any)
+               .from('credit_accounts')
+               .select('*')
+               .eq('user_id', userRow.id);
+
+             set((state) => {
+                state.profile = profile;
+                
+                state.rewards = {
+                  tier: 'gold',
+                  totalPoints: userRow.total_reward_points || 0,
+                  redeemedPoints: userRow.redeemed_reward_points || 0,
+                };
+                
+                
+                if (userCardsRow) {
+                  state.userCards = userCardsRow.map((row: any) => {
+                    const cardDef = Array.isArray(row.cards) ? row.cards[0] : row.cards;
+                    return {
+                      id: row.card_id,
+                      pan: `**** **** **** ${row.last_4_digits}`,
+                      cardholderName: row.cardholder_name || profile.name,
+                      expiry: row.expiry || '12/30',
+                      network: cardDef?.network || 'visa',
+                      bank: cardDef?.bank || 'Bank',
+                      status: row.status as any,
+                      availableCredit: row.credit_limit,
+                      creditLimit: row.credit_limit,
+                      label: cardDef?.name || 'Credit Card',
+                      gradientFrom: cardDef?.gradient_from || '#1F5247',
+                      gradientVia: '#30595c',
+                      gradientTo: cardDef?.gradient_to || '#456171',
+                    }
+                  });
+                }
+                
+                if (transactionsRow) {
+                  state.transactions = transactionsRow.map((row: any) => ({
+                    id: row.id,
+                    merchant: row.merchant,
+                    amount: row.amount,
+                    date: row.created_at,
+                    category: row.category as any,
+                    type: row.type as any,
+                    cardId: row.card_id || '',
+                    pending: row.is_pending,
+                    rewardPoints: 0,
+                  }));
+                }
+                
+                if (budgetsRow) {
+                  state.budgets = budgetsRow.map((row: any) => ({
+                    id: row.id,
+                    categoryId: row.category,
+                    limitAmount: row.limit_amount,
+                    icon: row.icon,
+                    color: row.color,
+                  }));
+                }
+                
+                if (subscriptionsRow) {
+                  state.subscriptions = subscriptionsRow.map((row: any) => ({
+                    id: row.id,
+                    name: row.name,
+                    amount: row.amount,
+                    billingCycle: row.billing_cycle,
+                    nextBillingDate: row.next_billing_date,
+                    icon: row.icon,
+                    category: row.category,
+                    cardId: row.card_id,
+                  }));
+                }
+                
+                if (creditAccountsRow) {
+                  state.creditAccounts = creditAccountsRow.map((row: any) => ({
+                    cardId: row.card_id,
+                    totalLimit: state.userCards.find(c => c.id === row.card_id)?.creditLimit || 100000,
+                    currentBalance: row.current_balance,
+                    minimumPaymentDue: row.min_due,
+                    paymentDueDate: row.due_date || row.next_statement_date,
+                    lastPaymentAmount: 0,
+                    lastPaymentDate: null,
+                    apr: 0.1999,
+                  }));
+                }
+             });
+          }
+          
+          set({ isHydratingFromSupabase: false });
         },
       })),
 

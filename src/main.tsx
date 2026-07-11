@@ -45,6 +45,8 @@ const appContent = (
     <ClerkProvider 
       publishableKey={PUBLISHABLE_KEY} 
       afterSignOutUrl="/"
+      signInFallbackRedirectUrl="/app"
+      signUpFallbackRedirectUrl="/app"
       appearance={{
         baseTheme: dark,
         variables: {

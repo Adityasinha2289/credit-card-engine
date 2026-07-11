@@ -3,7 +3,16 @@
 --  Run this in: Supabase Dashboard → SQL Editor
 -- ─────────────────────────────────────────────────────────────────────────────
 
--- 1. Users (synced from Clerk via webhook or client-side upsert)
+-- 1. DROP EXISTING TABLES (Clean Slate)
+DROP TABLE IF EXISTS apply_clicks CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS score_history CASCADE;
+DROP TABLE IF EXISTS transactions CASCADE;
+DROP TABLE IF EXISTS user_cards CASCADE;
+DROP TABLE IF EXISTS cards CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- 2. Users (synced from Clerk via webhook or client-side upsert)
 CREATE TABLE IF NOT EXISTS users (
   id            TEXT PRIMARY KEY,           -- Clerk user ID
   email         TEXT UNIQUE NOT NULL,
@@ -125,25 +134,25 @@ ALTER TABLE cards ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Cards are publicly readable" ON cards FOR SELECT USING (true);
 
 -- Users can read/update only their own profile
-CREATE POLICY "Users can view own profile"  ON users FOR SELECT USING (auth.uid()::text = id);
-CREATE POLICY "Users can update own profile" ON users FOR UPDATE USING (auth.uid()::text = id);
-CREATE POLICY "Users can insert own profile" ON users FOR INSERT WITH CHECK (auth.uid()::text = id);
+CREATE POLICY "Users can view own profile"  ON users FOR SELECT USING ((auth.jwt()->>'sub') = id);
+CREATE POLICY "Users can update own profile" ON users FOR UPDATE USING ((auth.jwt()->>'sub') = id);
+CREATE POLICY "Users can insert own profile" ON users FOR INSERT WITH CHECK ((auth.jwt()->>'sub') = id);
 
 -- User cards: own data only
-CREATE POLICY "Own cards only" ON user_cards FOR ALL USING (auth.uid()::text = user_id);
+CREATE POLICY "Own cards only" ON user_cards FOR ALL USING ((auth.jwt()->>'sub') = user_id);
 
 -- Transactions: own data only
-CREATE POLICY "Own transactions only" ON transactions FOR ALL USING (auth.uid()::text = user_id);
+CREATE POLICY "Own transactions only" ON transactions FOR ALL USING ((auth.jwt()->>'sub') = user_id);
 
 -- Score history: own data only
-CREATE POLICY "Own score history only" ON score_history FOR ALL USING (auth.uid()::text = user_id);
+CREATE POLICY "Own score history only" ON score_history FOR ALL USING ((auth.jwt()->>'sub') = user_id);
 
 -- Notifications: own data only
-CREATE POLICY "Own notifications only" ON notifications FOR ALL USING (auth.uid()::text = user_id);
+CREATE POLICY "Own notifications only" ON notifications FOR ALL USING ((auth.jwt()->>'sub') = user_id);
 
 -- Apply clicks: users can insert their own, admins can read all
-CREATE POLICY "Users can log own clicks" ON apply_clicks FOR INSERT WITH CHECK (auth.uid()::text = user_id);
-CREATE POLICY "Users can view own clicks" ON apply_clicks FOR SELECT USING (auth.uid()::text = user_id);
+CREATE POLICY "Users can log own clicks" ON apply_clicks FOR INSERT WITH CHECK ((auth.jwt()->>'sub') = user_id);
+CREATE POLICY "Users can view own clicks" ON apply_clicks FOR SELECT USING ((auth.jwt()->>'sub') = user_id);
 
 -- ─────────────────────────────────────────────────────────────────────────────
 --  AUTO-UPDATE updated_at TRIGGER

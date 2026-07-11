@@ -26,6 +26,7 @@ import type { TabId } from './components/layout/Sidebar';
 import { ActiveCard } from './features/cards/components/ActiveCard';
 import { TransactionFeed } from './features/dashboard/components/TransactionFeed';
 import { useDashboardStore, useHydration } from './features/dashboard/store/dashboardStore';
+import { useSupabase } from './hooks/useSupabase';
 import { cn, formatCents } from './lib/utils';
 
 // Finix features
@@ -1056,10 +1057,40 @@ function DashboardSkeleton() {
 }
 
 export default function App() {
-  const { isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const supabase = useSupabase();
   const [activeTab, setActiveTab] = useState<TabId>('home');
+  const [hasAttemptedHydration, setHasAttemptedHydration] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
+  const resetStore = useDashboardStore((s) => s._reset);
+  const setSupabaseClient = useDashboardStore((s) => s.setSupabaseClient);
+  const hydrateFromSupabase = useDashboardStore((s) => s.hydrateFromSupabase);
   const isHydrated = useHydration();
+  const isHydratingFromSupabase = useDashboardStore((s) => s.isHydratingFromSupabase);
+
+  const isDemo = profile?.email === 'demo@renocred.com';
+
+  // Inject Supabase Client into Zustand for background syncing
+  useEffect(() => {
+    setSupabaseClient(supabase);
+  }, [supabase, setSupabaseClient]);
+
+  // Auth Sync & Hydration
+  useEffect(() => {
+    if (isSignedIn && user) {
+      const clerkEmail = user.primaryEmailAddress?.emailAddress || '';
+      
+      // Prevent cross-account leaks
+      if (profile && profile.email !== clerkEmail) {
+        resetStore();
+      } 
+      // Hydrate from Supabase if we don't have a profile yet
+      else if (!profile && !hasAttemptedHydration) {
+        setHasAttemptedHydration(true);
+        hydrateFromSupabase(clerkEmail, user.fullName || '', user.imageUrl || '');
+      }
+    }
+  }, [isSignedIn, user, profile?.email, resetStore, hydrateFromSupabase, hasAttemptedHydration]);
 
   // Always force dark mode as per user request and listen for navigation events
   useEffect(() => {
@@ -1075,7 +1106,7 @@ export default function App() {
     return () => window.removeEventListener('NAVIGATE_TAB', handleNavigate);
   }, []);
 
-  if (!isHydrated || !isLoaded) {
+  if (!isHydrated || !isLoaded || isHydratingFromSupabase) {
     return (
       <DashboardLayout
         activeTab={activeTab}
@@ -1088,7 +1119,13 @@ export default function App() {
     );
   }
 
-  if (!isSignedIn || !profile) {
+  // 1. If not signed in AND not using the demo, show LoginScreen (Clerk Auth View)
+  if (!isSignedIn && !isDemo) {
+    return <LoginScreen />;
+  }
+
+  // 2. If signed in, but no profile generated yet, show LoginScreen (Questionnaire View)
+  if (isSignedIn && !profile) {
     return <LoginScreen />;
   }
 

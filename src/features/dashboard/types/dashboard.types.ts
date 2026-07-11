@@ -103,6 +103,7 @@ export interface PayBillInput {
 export type AddTransactionInput = Omit<Transaction, 'id' | 'rewardPoints'>;
 
 export interface AppProfile {
+  id: string;
   name: string;
   email: string;
   phone: string;

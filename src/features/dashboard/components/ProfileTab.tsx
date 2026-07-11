@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, ShieldCheck, Coins, Mail, Phone, CheckCircle2, UserCheck } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
-import type { AppProfile } from '../types/dashboard.types';
 import { ShareableScorecard } from './ShareableScorecard';
 
 const AVATAR_SEEDS = ['Atharva', 'Aria', 'Kabir', 'Zoe', 'Rohan', 'Elena'];
@@ -81,16 +80,15 @@ export function ProfileTab() {
     if (!email.trim() || !email.includes('@')) return setError('Please enter a valid email.');
     if (phone.length < 10) return setError('Please enter a valid 10-digit phone number.');
 
-    const updatedProfile: AppProfile = {
+    updateProfile({
+      id: profile?.id || '',
       name: name.trim(),
       email: email.trim(),
       phone: phone.trim(),
       avatar: avatarUrl,
       salary,
       creditScore,
-    };
-
-    updateProfile(updatedProfile);
+    });
     setSuccess(true);
     setError('');
 

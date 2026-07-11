@@ -36,6 +36,7 @@ export function LoginScreen() {
   const handleDemoLogin = () => {
     resetStore();
     login({
+      id: 'demo-user-id',
       name: 'Demo User',
       email: 'demo@renocred.com',
       phone: '+91 98765 43210',
@@ -99,6 +100,7 @@ export function LoginScreen() {
     }
 
     const profile: AppProfile = {
+      id: user?.id || `usr_temp_${Date.now()}`,
       name: user?.fullName || user?.firstName || 'Your Name',
       email: user?.primaryEmailAddress?.emailAddress || '',
       phone: user?.primaryPhoneNumber?.phoneNumber || 'XXXXXXXXXX',

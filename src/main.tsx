@@ -3,8 +3,18 @@ import { createRoot } from 'react-dom/client'
 import { dark, ClerkProvider } from './lib/clerk-mock'
 import './index.css'
 import App from './App.tsx'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { TemporaryHomepage } from './TemporaryHomepage';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { PublicLayout } from './public-platform/layouts/PublicLayout';
+import { HomePage } from './public-platform/pages/HomePage';
+import { AboutPage } from './public-platform/pages/AboutPage';
+import { ContactPage } from './public-platform/pages/ContactPage';
+import { MethodologyPage } from './public-platform/pages/MethodologyPage';
+import { EditorialPolicyPage } from './public-platform/pages/EditorialPolicyPage';
+import { AffiliateDisclosurePage } from './public-platform/pages/AffiliateDisclosurePage';
+import { PrivacyPage } from './public-platform/pages/PrivacyPage';
+import { TermsPage } from './public-platform/pages/TermsPage';
+import { DisclaimerPage } from './public-platform/pages/DisclaimerPage';
+import { NotFoundPage } from './public-platform/pages/NotFoundPage';
 import * as Sentry from "@sentry/react";
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
@@ -69,9 +79,22 @@ const appContent = (
     >
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<TemporaryHomepage />} />
+          {/* Private App Route */}
           <Route path="/app/*" element={<App />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          
+          {/* Public Platform Routes */}
+          <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+          <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+          <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+          <Route path="/methodology" element={<PublicLayout><MethodologyPage /></PublicLayout>} />
+          <Route path="/editorial-policy" element={<PublicLayout><EditorialPolicyPage /></PublicLayout>} />
+          <Route path="/affiliate-disclosure" element={<PublicLayout><AffiliateDisclosurePage /></PublicLayout>} />
+          <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
+          <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
+          <Route path="/disclaimer" element={<PublicLayout><DisclaimerPage /></PublicLayout>} />
+          
+          {/* 404 Fallback */}
+          <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
         </Routes>
       </BrowserRouter>
       <Toaster theme="dark" position="top-center" />

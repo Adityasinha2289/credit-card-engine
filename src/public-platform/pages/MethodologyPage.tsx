@@ -1,6 +1,13 @@
+import { SEO } from '../components/SEO';
+
 export function MethodologyPage() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <SEO 
+        title="Evaluation Methodology | How Renocred Compares Credit Cards"
+        description="Read how Renocred uses structured data and rule-based models to evaluate and recommend credit cards."
+        canonicalUrl="https://renocred.com/methodology"
+      />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Our Methodology</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>Our goal is to help you make informed financial decisions through structured data and clear evaluation tools.</p>

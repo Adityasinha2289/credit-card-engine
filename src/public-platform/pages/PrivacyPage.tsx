@@ -1,6 +1,13 @@
+import { SEO } from '../components/SEO';
+
 export function PrivacyPage() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <SEO 
+        title="Privacy Policy | Renocred"
+        description="Read how Renocred handles, protects, and respects your privacy and personal data."
+        canonicalUrl="https://renocred.com/privacy"
+      />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Privacy Policy</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>This is a baseline privacy overview for Renocred, which is currently in active development.</p>

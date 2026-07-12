@@ -1,6 +1,13 @@
+import { SEO } from '../components/SEO';
+
 export function DisclaimerPage() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <SEO 
+        title="Financial Disclaimer | Renocred"
+        description="Read the important financial disclaimers and limitations of liability for using Renocred."
+        canonicalUrl="https://renocred.com/disclaimer"
+      />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Financial Disclaimer</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>Renocred provides informational and analytical tools designed to help you understand credit cards and optimize your spending.</p>

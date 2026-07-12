@@ -1,6 +1,13 @@
+import { SEO } from '../components/SEO';
+
 export function AboutPage() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <SEO 
+        title="About Renocred | Optimizing Your Credit Card Strategy"
+        description="Learn about Renocred's mission to bring clarity and transparency to the Indian credit card ecosystem."
+        canonicalUrl="https://renocred.com/about"
+      />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">About Renocred</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>Renocred was built to solve a simple problem: understanding and maximizing credit card rewards is entirely too complicated.</p>

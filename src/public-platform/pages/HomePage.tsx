@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 
 export function HomePage() {
   return (
     <div className="flex-1 flex flex-col items-center">
+      <SEO 
+        title="Renocred | Credit Card Optimizer & Recommendation Engine India"
+        description="Renocred helps you understand your cards, compare benefits, and optimize credit card spending in India."
+        canonicalUrl="https://renocred.com/"
+      />
       {/* Hero Section */}
       <section className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-24 text-center">
         <h1 className="text-5xl font-display font-bold mb-6 tracking-tight">Make every credit card work harder for you.</h1>

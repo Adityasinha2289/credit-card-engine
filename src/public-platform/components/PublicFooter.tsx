@@ -9,6 +9,17 @@ export function PublicFooter() {
           <div className="col-span-1 md:col-span-1">
             <h2 className="text-2xl font-display font-bold text-white tracking-tight mb-4">renocred</h2>
             <p className="text-sm text-gray-400 leading-relaxed max-w-xs">Smarter credit card decisions, personalized for the way you spend.</p>
+            <div className="flex flex-col gap-2 mt-6">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Socials</span>
+              <div className="flex gap-4">
+                <a href="https://www.instagram.com/social_renocred/" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Instagram
+                </a>
+                <a href="https://www.linkedin.com/company/renocred" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  LinkedIn
+                </a>
+              </div>
+            </div>
           </div>
           <div>
             <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-wider">Navigation</h3>

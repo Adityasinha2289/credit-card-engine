@@ -1,6 +1,15 @@
 {
   "headers": [
     {
+      "source": "/app",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
       "source": "/app/(.*)",
       "headers": [
         {

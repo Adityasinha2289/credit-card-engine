@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom';
+import { SEO } from '../components/SEO';
 
 export function NotFoundPage() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 text-center">
+      <SEO 
+        title="Page Not Found | Renocred"
+        description="The page you are looking for does not exist."
+        canonicalUrl="https://renocred.com/404"
+        robotsDirective="noindex, nofollow"
+      />
       <h1 className="text-8xl font-display font-bold text-[#5da08c] mb-4">404</h1>
       <h2 className="text-3xl font-bold text-white mb-6">Page Not Found</h2>
       <p className="text-gray-400 mb-10 max-w-md mx-auto">

@@ -1,6 +1,13 @@
+import { SEO } from '../components/SEO';
+
 export function AffiliateDisclosurePage() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <SEO 
+        title="Affiliate Disclosure | Renocred"
+        description="Learn about our affiliate relationships and how Renocred maintains editorial independence."
+        canonicalUrl="https://renocred.com/affiliate-disclosure"
+      />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Affiliate Disclosure</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>Transparency is a core value at Renocred.</p>

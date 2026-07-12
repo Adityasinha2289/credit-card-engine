@@ -1,6 +1,13 @@
+import { SEO } from '../components/SEO';
+
 export function TermsPage() {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <SEO 
+        title="Terms of Service | Renocred"
+        description="Read the terms of service and conditions for using the Renocred platform."
+        canonicalUrl="https://renocred.com/terms"
+      />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Terms of Service</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>By accessing and using Renocred, you agree to the following terms.</p>

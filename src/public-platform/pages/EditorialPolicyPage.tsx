@@ -16,7 +16,7 @@ export function EditorialPolicyPage() {
         <h2 className="text-2xl font-bold text-white mt-12 mb-4">Updating Information</h2>
         <p>As we scale our platform, we are establishing processes for regular audits of our card database. If an error is identified, we are committed to correcting it promptly.</p>
         <h2 className="text-2xl font-bold text-white mt-12 mb-4">Editorial Independence</h2>
-        <p>Any commercial relationships we establish will be strictly separated from our core evaluation methodologies. Our objective recommendation tools and comparisons are driven by structured data and mathematical formulas, not by compensation.</p>
+        <p>Any commercial relationships we establish will be strictly separated from our core evaluation methodologies. Our objective recommendation tools and comparisons are driven by structured data and mathematical formulas, not by compensation. Learn more about <a href="/methodology" className="text-[#5da08c] hover:underline">Our Methodology</a>.</p>
       </div>
     </div>
   );

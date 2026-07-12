@@ -70,7 +70,11 @@ export function HomePage() {
         <p className="text-gray-400 max-w-2xl mx-auto mb-6">
           Renocred aims to provide structured information and tools to help you make informed decisions. We do not replace personal financial judgment.
         </p>
-        <Link to="/methodology" className="text-[#5da08c] hover:underline font-medium">Read our evaluation methodology &rarr;</Link>
+        <div className="flex items-center justify-center gap-4 text-sm">
+          <Link to="/methodology" className="text-[#5da08c] hover:underline font-medium">Read our evaluation methodology</Link>
+          <span className="text-white/20">•</span>
+          <Link to="/disclaimer" className="text-[#5da08c] hover:underline font-medium">View our disclaimer</Link>
+        </div>
       </section>
     </div>
   );

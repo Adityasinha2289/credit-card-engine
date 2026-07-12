@@ -16,7 +16,7 @@ export function PrivacyPage() {
         <p>When you use the Renocred application, you may input financial information such as estimated salary, monthly spend across categories, and your current credit cards. Currently, much of this application state is persisted locally in your browser using local storage.</p>
         
         <h2 className="text-2xl font-bold text-white mt-12 mb-4">Authentication and Databases</h2>
-        <p>Our platform intends to utilize third-party authentication and database infrastructure (such as Clerk and Supabase) to securely manage user accounts and sync application state across devices. As we transition from local state to cloud persistence, your data will be transmitted and stored securely according to the policies of those providers.</p>
+        <p>Our platform utilizes third-party authentication and database infrastructure (Clerk and Supabase) to securely manage user accounts and sync application state across devices. Your data is transmitted and stored securely according to the policies of those providers.</p>
         
         <h2 className="text-2xl font-bold text-white mt-12 mb-4">Analytics and Monitoring</h2>
         <p>To improve our product and fix bugs, we use third-party services:</p>

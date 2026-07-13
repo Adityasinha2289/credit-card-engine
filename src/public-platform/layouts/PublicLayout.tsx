@@ -7,7 +7,7 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Renocred",
-  "url": "https://renocred.com/",
+  "url": "https://www.renocred.com/",
   "sameAs": [
     "https://www.instagram.com/social_renocred/",
     "https://www.linkedin.com/company/renocred"
@@ -18,7 +18,7 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Renocred",
-  "url": "https://renocred.com/"
+  "url": "https://www.renocred.com/"
 };
 
 export function PublicLayout({ children }: { children: ReactNode }) {

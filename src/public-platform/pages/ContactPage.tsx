@@ -6,7 +6,7 @@ export function ContactPage() {
       <SEO 
         title="Contact Us | Renocred"
         description="Get in touch with the Renocred team."
-        canonicalUrl="https://renocred.com/contact"
+        canonicalUrl="https://www.renocred.com/contact"
       />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Contact Us</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">

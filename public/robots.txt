@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://renocred.com/sitemap.xml
+Sitemap: https://www.renocred.com/sitemap.xml

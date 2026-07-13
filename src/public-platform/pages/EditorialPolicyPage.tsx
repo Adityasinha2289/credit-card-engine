@@ -6,7 +6,7 @@ export function EditorialPolicyPage() {
       <SEO 
         title="Editorial Policy | Renocred"
         description="Learn about our commitment to providing clear, accurate, and objective financial information."
-        canonicalUrl="https://renocred.com/editorial-policy"
+        canonicalUrl="https://www.renocred.com/editorial-policy"
       />
       <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Editorial Policy</h1>
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">

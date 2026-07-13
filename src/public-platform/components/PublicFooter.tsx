@@ -27,6 +27,7 @@ export function PublicFooter() {
               <li><Link to="/" className="text-sm text-gray-400 hover:text-white transition-colors">Home</Link></li>
               <li><Link to="/about" className="text-sm text-gray-400 hover:text-white transition-colors">About</Link></li>
               <li><Link to="/methodology" className="text-sm text-gray-400 hover:text-white transition-colors">Methodology</Link></li>
+              <li><a href="https://careers.renocred.com" className="text-sm text-gray-400 hover:text-white transition-colors">Careers</a></li>
               <li><Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>

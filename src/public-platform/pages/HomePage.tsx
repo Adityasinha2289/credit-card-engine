@@ -7,7 +7,7 @@ export function HomePage() {
       <SEO 
         title="Renocred | Credit Card Optimizer & Recommendation Engine India"
         description="Renocred helps you understand your cards, compare benefits, and optimize credit card spending in India."
-        canonicalUrl="https://renocred.com/"
+        canonicalUrl="https://www.renocred.com/"
       />
       {/* Hero Section */}
       <section className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-24 text-center">

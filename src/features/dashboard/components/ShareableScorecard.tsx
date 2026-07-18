@@ -1,10 +1,10 @@
-﻿import { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Share2, Download, X,
   CheckCircle2,
 } from 'lucide-react';
-import html2canvas from 'html2canvas';
+
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
 import { CARD_DATASET } from '../../finix/data/cardDataset';
@@ -243,6 +243,7 @@ export function ShareableScorecard() {
     if (!captureRef.current) return;
     setCapturing(true);
     try {
+      const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(captureRef.current, {
         backgroundColor: null,
         scale: 2,
@@ -265,6 +266,7 @@ export function ShareableScorecard() {
     if (!captureRef.current) return;
     setCapturing(true);
     try {
+      const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(captureRef.current, {
         backgroundColor: null,
         scale: 2,

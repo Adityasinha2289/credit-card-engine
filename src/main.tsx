@@ -1,3 +1,4 @@
+import './lib/env' // 🚨 VALIDATE ENV VARS FIRST 🚨
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ClerkProvider } from '@clerk/clerk-react'
@@ -16,22 +17,16 @@ import { PrivacyPage } from './public-platform/pages/PrivacyPage';
 import { TermsPage } from './public-platform/pages/TermsPage';
 import { DisclaimerPage } from './public-platform/pages/DisclaimerPage';
 import { NotFoundPage } from './public-platform/pages/NotFoundPage';
-import * as Sentry from "@sentry/react";
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
 
+import './lib/sentry';
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Toaster } from 'sonner'
+import { AuthAnalytics } from './components/AuthAnalytics'
 
 // Import your publishable key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'mock_key'
-
-const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN
-if (SENTRY_DSN) {
-  Sentry.init({
-    dsn: SENTRY_DSN,
-  });
-}
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
 const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com'
@@ -80,6 +75,7 @@ const appContent = (
         }
       }}
     >
+      <AuthAnalytics />
       <BrowserRouter>
         <Routes>
           {/* Private App Route */}

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { analytics } from '../../../lib/analytics';
 import { CheckCircle2, Zap, Search, X, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '../../../lib/utils';
@@ -85,6 +86,20 @@ function WalletOptimizerTab() {
   const userCards = useDashboardStore((s) => s.userCards);
   const addUserCard = useDashboardStore((s) => s.addUserCard);
   const profile = useDashboardStore((s) => s.profile);
+
+  useEffect(() => {
+    if (userCards.length > 0) {
+      WALLET_CATEGORIES.forEach((cat) => {
+        const result = getBestCardForCategory(cat, userCards);
+        if (result) {
+          analytics.track('Wallet Optimization Run', { 
+            category: cat, 
+            topCardId: result.card.id 
+          });
+        }
+      });
+    }
+  }, [userCards]);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

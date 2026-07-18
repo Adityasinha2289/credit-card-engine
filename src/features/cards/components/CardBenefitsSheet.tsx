@@ -2,6 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Wallet, Award, Plane, Trophy, Sparkles } from 'lucide-react';
 import { CARD_DATASET } from '../../finix/data/cardDataset';
 import { BankLogo } from './BankLogo';
+import { analytics } from '../../../lib/analytics';
+import { useEffect } from 'react';
 
 interface CardBenefitsSheetProps {
   cardId: string | null;
@@ -42,6 +44,16 @@ export function CardBenefitsSheet({ cardId, onClose }: CardBenefitsSheetProps) {
   // If card is a custom user card that is not in CARD_DATASET, construct a fallback template
   // Wait, let's also fetch from userCards in case they added custom details. But usually CARD_DATASET has the data.
   const cardData = datasetCard;
+
+  useEffect(() => {
+    if (cardId && cardData) {
+      analytics.track('Card Viewed', {
+        bank: cardData.bank,
+        network: cardData.network,
+        cardName: cardData.name,
+      });
+    }
+  }, [cardId, cardData]);
 
   return (
     <AnimatePresence>

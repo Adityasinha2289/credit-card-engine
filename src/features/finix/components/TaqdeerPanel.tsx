@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Bot, ChevronDown, Loader2 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { generateTaqdeerResponse, type TaqdeerMessage } from '../lib/taqdeerEngine';
-
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
+import { analytics } from '../../../lib/analytics';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  QUICK SUGGESTION CHIPS
@@ -114,6 +114,7 @@ export function TaqdeerPanel() {
   // Focus input when panel opens
   useEffect(() => {
     if (isOpen) {
+      analytics.track('Taqdeer Chat Started', { source: 'floating_button' });
       setTimeout(() => inputRef.current?.focus(), 300);
     }
   }, [isOpen]);
@@ -133,6 +134,12 @@ export function TaqdeerPanel() {
     setInput('');
     setIsTyping(true);
 
+    const userCards = useDashboardStore.getState().userCards;
+    analytics.track('Prompt Sent', { 
+      promptLength: trimmed.length, 
+      hasContext: userCards.length > 0 
+    });
+
     // Simulate AI thinking delay (400–900ms)
     const delay = 400 + Math.random() * 500;
     setTimeout(async () => {
@@ -145,6 +152,10 @@ export function TaqdeerPanel() {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMsg]);
+      analytics.track('Response Generated', { 
+        responseLength: content.length,
+        modelName: 'taqdeer-local'
+      });
       setIsTyping(false);
     }, delay);
   }

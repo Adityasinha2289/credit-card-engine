@@ -1,3 +1,4 @@
+import { analytics } from './lib/analytics';
 import './index.css';
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
@@ -11,14 +12,12 @@ import {
   ShieldCheck,
   BarChart3,
   Plus,
-  X,
   Search,
   Trash2,
   Info,
   Target,
   Calculator,
 } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import type { TabId } from './components/layout/Sidebar';
@@ -29,24 +28,28 @@ import { useDashboardStore, useHydration } from './features/dashboard/store/dash
 import { useSupabase } from './hooks/useSupabase';
 import { cn, formatCents } from './lib/utils';
 
-// Finix features
-import { TaqdeerPanel } from './features/finix/components/TaqdeerPanel';
-import { RecommenderPanel } from './features/finix/components/RecommenderPanel';
-import { WalletOptimizerPanel, UpiSimulatorPanel } from './features/finix/components/WalletUpiPanels';
-import { CibilPanel, BillTrackerPanel, InsightsPanel } from './features/finix/components/FinixPanels';
+// Finix features (Lazy Loaded)
+import { lazy, Suspense } from 'react';
 import { LoginScreen } from './features/dashboard/components/LoginScreen';
 import { ProfileTab } from './features/dashboard/components/ProfileTab';
-import { CARD_DATASET } from './features/finix/data/cardDataset';
-import { SpendingAnalytics } from './features/dashboard/components/SpendingAnalytics';
-import { BankLogo } from './features/cards/components/BankLogo';
-import { CardBenefitsSheet } from './features/cards/components/CardBenefitsSheet';
-import { PerksDashboard } from './features/finix/components/PerksDashboard';
-import { BudgetingPanel } from './features/finix/components/BudgetingPanel';
-import { CardComparisonPanel } from './features/finix/components/CardComparisonPanel';
-import { SmartAlerts } from './features/finix/components/SmartAlerts';
-import { MonthlyReport } from './features/dashboard/components/MonthlyReport';
-import { CreditScoreSimulator } from './features/finix/components/CreditScoreSimulator';
-import { EmiCalculatorPanel } from './features/finix/components/EmiCalculatorPanel';
+
+const AddCardModal = lazy(() => import('./features/dashboard/components/AddCardModal'));
+const TaqdeerPanel = lazy(() => import('./features/finix/components/TaqdeerPanel').then(m => ({ default: m.TaqdeerPanel })));
+const RecommenderPanel = lazy(() => import('./features/finix/components/RecommenderPanel').then(m => ({ default: m.RecommenderPanel })));
+const WalletOptimizerPanel = lazy(() => import('./features/finix/components/WalletUpiPanels').then(m => ({ default: m.WalletOptimizerPanel })));
+const UpiSimulatorPanel = lazy(() => import('./features/finix/components/WalletUpiPanels').then(m => ({ default: m.UpiSimulatorPanel })));
+const CibilPanel = lazy(() => import('./features/finix/components/FinixPanels').then(m => ({ default: m.CibilPanel })));
+const BillTrackerPanel = lazy(() => import('./features/finix/components/FinixPanels').then(m => ({ default: m.BillTrackerPanel })));
+const InsightsPanel = lazy(() => import('./features/finix/components/FinixPanels').then(m => ({ default: m.InsightsPanel })));
+const SpendingAnalytics = lazy(() => import('./features/dashboard/components/SpendingAnalytics').then(m => ({ default: m.SpendingAnalytics })));
+const CardBenefitsSheet = lazy(() => import('./features/cards/components/CardBenefitsSheet').then(m => ({ default: m.CardBenefitsSheet })));
+const PerksDashboard = lazy(() => import('./features/finix/components/PerksDashboard').then(m => ({ default: m.PerksDashboard })));
+const BudgetingPanel = lazy(() => import('./features/finix/components/BudgetingPanel').then(m => ({ default: m.BudgetingPanel })));
+const CardComparisonPanel = lazy(() => import('./features/finix/components/CardComparisonPanel').then(m => ({ default: m.CardComparisonPanel })));
+const SmartAlerts = lazy(() => import('./features/finix/components/SmartAlerts').then(m => ({ default: m.SmartAlerts })));
+const MonthlyReport = lazy(() => import('./features/dashboard/components/MonthlyReport').then(m => ({ default: m.MonthlyReport })));
+const CreditScoreSimulator = lazy(() => import('./features/finix/components/CreditScoreSimulator').then(m => ({ default: m.CreditScoreSimulator })));
+const EmiCalculatorPanel = lazy(() => import('./features/finix/components/EmiCalculatorPanel').then(m => ({ default: m.EmiCalculatorPanel })));
 
 
 
@@ -171,13 +174,10 @@ function HomeTab() {
   const setActiveCard  = useDashboardStore((s) => s.setActiveCard);
   const rewards        = useDashboardStore((s) => s.rewards);
   const userCards      = useDashboardStore((s) => s.userCards);
-  const addUserCard    = useDashboardStore((s) => s.addUserCard);
   const deleteUserCard = useDashboardStore((s) => s.deleteUserCard);
   const profile        = useDashboardStore((s) => s.profile);
 
   const [showAddModal, setShowAddModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   
   // State for card deletion
   const [deleteCardId, setDeleteCardId] = useState<string | null>(null);
@@ -187,37 +187,10 @@ function HomeTab() {
   const [benefitsCardId, setBenefitsCardId] = useState<string | null>(null);
 
   // Form Inputs
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardNameInput, setCardNameInput] = useState('');
-  const [cardExpiryInput, setCardExpiryInput] = useState('');
-  const [cardLimitInput, setCardLimitInput] = useState('');
-  const [formError, setFormError] = useState('');
-
-  const handleCloseModal = () => {
-    setShowAddModal(false);
-    setSelectedTemplate(null);
-    setCardNumber('');
-    setCardNameInput('');
-    setCardExpiryInput('');
-    setCardLimitInput('');
-    setFormError('');
-    setSearchQuery('');
-  };
-
   const activeCard     = userCards.find((c) => c.id === activeCardId) || userCards[0];
   const activeAccount  = creditAccounts.find((a) => a.cardId === activeCardId);
   const liveBalance    = activeAccount ? activeAccount.currentBalance : 0;
   const availablePoints = rewards.totalPoints - rewards.redeemedPoints;
-
-  const availableCardsToAdd = CARD_DATASET.filter(
-    (mc) => !userCards.some((uc) => uc.id === mc.id)
-  );
-
-  const filteredCardsToAdd = availableCardsToAdd.filter(
-    (c) =>
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.bank.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -388,7 +361,7 @@ function HomeTab() {
 
                 {/* Smart Alerts — dynamic insights */}
                 <div className="panel-glass rounded-2xl p-5 flex flex-col justify-between h-44 border-gradient-animated relative overflow-hidden">
-                  <SmartAlerts />
+                  <Suspense fallback={null}><SmartAlerts /></Suspense>
                 </div>
               </>
             )}
@@ -407,7 +380,7 @@ function HomeTab() {
                 <Skeleton className="h-[72px] w-full rounded-2xl" />
               </div>
             ) : (
-              <WalletOptimizerPanel />
+              <Suspense fallback={null}><WalletOptimizerPanel /></Suspense>
             )}
           </div>
         </div>
@@ -427,7 +400,7 @@ function HomeTab() {
             </>
           ) : (
             <>
-              <SpendingAnalytics />
+              <Suspense fallback={null}><SpendingAnalytics /></Suspense>
               <div className="panel-glass rounded-3xl p-5">
                 <TransactionFeed limit={12} />
               </div>
@@ -440,238 +413,9 @@ function HomeTab() {
       <AnimatePresence>
         {showAddModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={handleCloseModal}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            />
-            {/* Panel */}
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-md bg-canvas-50 dark:bg-canvas-200 rounded-[2rem] p-6 shadow-ag-glow-primary border border-canvas-200/60 dark:border-white/[0.04] overflow-hidden flex flex-col max-h-[90vh]"
-            >
-              {!selectedTemplate ? (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-display font-bold text-ink-primary">Add Card to Wallet</h3>
-                    <button
-                      onClick={handleCloseModal}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-ink-tertiary hover:text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04]"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-
-                  {/* Search Bar */}
-                  <div className="relative mb-4">
-                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-tertiary" />
-                    <input
-                      type="text"
-                      placeholder="Search cards by bank or name..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full input-premium pl-10 py-2 text-sm"
-                    />
-                  </div>
-
-                  {/* Scrollable List */}
-                  <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2">
-                    {filteredCardsToAdd.length === 0 ? (
-                      <p className="text-sm text-ink-tertiary text-center py-8">No cards found matching search</p>
-                    ) : (
-                      filteredCardsToAdd.map((c) => (
-                        <button
-                          key={c.id}
-                          onClick={() => {
-                            setSelectedTemplate(c);
-                            setCardNameInput(profile?.name || '');
-                            setCardLimitInput(c.minIncome ? String(Math.floor(c.minIncome * 0.5)) : '150000');
-                          }}
-                          className="w-full p-3 rounded-2xl flex items-center gap-3 border border-canvas-200/40 dark:border-white/[0.03] hover:bg-canvas-200/50 dark:hover:bg-white/[0.02] text-left transition-all"
-                        >
-                          <BankLogo bank={c.bank} />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-ink-primary truncate">{c.name}</p>
-                            <p className="text-xs text-ink-tertiary">{c.bank} · {c.network}</p>
-                          </div>
-                          <span className="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-500/10 px-2.5 py-1 rounded-full">
-                            Select
-                          </span>
-                        </button>
-                      ))
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="flex flex-col gap-4 text-left">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h3 className="text-base font-display font-bold text-ink-primary">Enter Card Details</h3>
-                      <p className="text-xs text-ink-tertiary">{selectedTemplate.name}</p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setSelectedTemplate(null);
-                        setFormError('');
-                      }}
-                      className="text-xs font-bold text-brand-500 hover:text-brand-600 bg-brand-50 dark:bg-brand-500/10 px-3 py-1.5 rounded-full"
-                    >
-                      Back
-                    </button>
-                  </div>
-
-                  {/* Visual Card Preview */}
-                  <div
-                    className="h-28 rounded-2xl p-4 flex flex-col justify-between text-white relative overflow-hidden"
-                    style={{ background: `linear-gradient(135deg, ${selectedTemplate.gradientFrom}, ${selectedTemplate.gradientTo})` }}
-                  >
-                    <div className="flex justify-between items-start">
-                      <p className="text-[10px] font-bold uppercase tracking-wider">{selectedTemplate.name}</p>
-                      <p className="text-[10px] font-semibold opacity-80">{selectedTemplate.network}</p>
-                    </div>
-                    <div>
-                      <p className="font-mono text-xs tracking-widest">
-                        {selectedTemplate.first4Digits || '••••'} •••• •••• {cardNumber ? cardNumber : '••••'}
-                      </p>
-                      <div className="flex justify-between items-end mt-1 text-[9px] opacity-75">
-                        <span className="uppercase truncate max-w-[180px]">{cardNameInput || 'CARDHOLDER NAME'}</span>
-                        <span>{cardExpiryInput || 'MM/YY'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Form fields */}
-                  <div className="flex flex-col gap-3">
-                    <div className="flex flex-col gap-1 text-left">
-                      <label className="text-[11px] font-bold text-ink-secondary">Card Number (Last 4 Digits)</label>
-                      <input
-                        type="text"
-                        maxLength={4}
-                        placeholder="e.g. 4242"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
-                        className="input-premium py-2 px-3 text-xs"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-1 text-left">
-                      <label className="text-[11px] font-bold text-ink-secondary">Cardholder Name</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Atharva Mishra"
-                        value={cardNameInput}
-                        onChange={(e) => setCardNameInput(e.target.value)}
-                        className="input-premium py-2 px-3 text-xs"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1 text-left">
-                        <label className="text-[11px] font-bold text-ink-secondary">Expiry (MM/YY)</label>
-                        <input
-                          type="text"
-                          maxLength={5}
-                          placeholder="08/30"
-                          value={cardExpiryInput}
-                          onChange={(e) => {
-                            let value = e.target.value;
-                            if (value.length < cardExpiryInput.length) {
-                              setCardExpiryInput(value);
-                              return;
-                            }
-                            let clean = value.replace(/[^0-9]/g, '');
-                            if (clean.length > 0) {
-                              const firstDigit = parseInt(clean[0], 10);
-                              if (firstDigit > 1) {
-                                clean = '0' + clean;
-                              }
-                            }
-                            if (clean.length >= 2) {
-                              let month = parseInt(clean.slice(0, 2), 10);
-                              if (month > 12) {
-                                clean = '12' + clean.slice(2);
-                              } else if (month === 0) {
-                                clean = '01' + clean.slice(2);
-                              }
-                              clean = clean.slice(0, 2) + '/' + clean.slice(2, 4);
-                            }
-                            setCardExpiryInput(clean.slice(0, 5));
-                          }}
-                          className="input-premium py-2 px-3 text-xs"
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1 text-left">
-                        <label className="text-[11px] font-bold text-ink-secondary">Credit Limit (INR)</label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-tertiary">₹</span>
-                          <input
-                            type="number"
-                            placeholder="e.g. 300000"
-                            value={cardLimitInput}
-                            onChange={(e) => setCardLimitInput(e.target.value)}
-                            className="w-full input-premium py-2 pl-7 pr-3 text-xs font-semibold"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {formError && <p className="text-xs font-bold text-loss">{formError}</p>}
-
-                  <button
-                    onClick={() => {
-                      if (cardNumber.length < 4) {
-                        return setFormError('Card number must be exactly 4 digits.');
-                      }
-                      if (!cardNameInput.trim()) {
-                        return setFormError('Cardholder name is required.');
-                      }
-                      const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
-                      if (!expiryRegex.test(cardExpiryInput)) {
-                        return setFormError('Expiry must be a valid MM/YY format (months 01-12).');
-                      }
-                      const [expMonthStr, expYearStr] = cardExpiryInput.split('/');
-                      const expMonth = parseInt(expMonthStr, 10);
-                      const expYear = 2000 + parseInt(expYearStr, 10);
-                      const now = new Date();
-                      if (expYear < now.getFullYear() || (expYear === now.getFullYear() && expMonth < now.getMonth() + 1)) {
-                        toast.error('Your card is already expired');
-                        return;
-                      }
-                      const limitNum = parseFloat(cardLimitInput);
-                      if (isNaN(limitNum) || limitNum <= 0) {
-                        return setFormError('Please enter a valid credit limit.');
-                      }
-
-                      addUserCard({
-                        id: selectedTemplate.id,
-                        pan: cardNumber,
-                        cardholderName: cardNameInput.trim(),
-                        expiry: cardExpiryInput,
-                        network: selectedTemplate.network.toLowerCase() as any,
-                        bank: selectedTemplate.bank,
-                        status: 'active',
-                        availableCredit: limitNum * 100,
-                        creditLimit: limitNum * 100,
-                        label: selectedTemplate.name,
-                        gradientFrom: selectedTemplate.gradientFrom,
-                        gradientTo: selectedTemplate.gradientTo,
-                      });
-                      handleCloseModal();
-                    }}
-                    className="w-full mt-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm py-3 rounded-full flex items-center justify-center gap-2 shadow-ag-glow-primary transition-all active:scale-95"
-                  >
-                    Confirm & Link Card
-                  </button>
-                </div>
-              )}
-            </motion.div>
+            <Suspense fallback={null}>
+              <AddCardModal onClose={() => setShowAddModal(false)} />
+            </Suspense>
           </div>
         )}
       </AnimatePresence>
@@ -770,6 +514,13 @@ function HomeTab() {
                   </button>
                   <button
                     onClick={() => {
+                      if (cardToDelete) {
+                        analytics.track('Card Deleted', { 
+                          bank: cardToDelete.bank || 'Unknown', 
+                          network: cardToDelete.network || 'Unknown', 
+                          cardName: cardToDelete.label || 'Unknown' 
+                        });
+                      }
                       deleteUserCard(deleteCardId);
                       setDeleteCardId(null);
                     }}
@@ -789,10 +540,10 @@ function HomeTab() {
       </AnimatePresence>
 
       {/* Card Benefits Detail Sheet */}
-      <CardBenefitsSheet
+      <Suspense fallback={null}><CardBenefitsSheet
         cardId={benefitsCardId}
         onClose={() => setBenefitsCardId(null)}
-      />
+      /></Suspense>
     </div>
   );
 }
@@ -853,8 +604,10 @@ function AnalyzeTab() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === 'recommend' && <RecommenderPanel />}
+            <Suspense fallback={<div className="h-[400px] flex items-center justify-center text-ink-tertiary">Loading panel...</div>}>
+              {activeTab === 'recommend' && <RecommenderPanel />}
             {activeTab === 'compare'   && <CardComparisonPanel />}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -925,7 +678,7 @@ function WalletTab() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === 'optimizer' && <WalletOptimizerPanel />}
+            {activeTab === 'optimizer' && <Suspense fallback={null}><WalletOptimizerPanel /></Suspense>}
             {activeTab === 'upi'       && <UpiSimulatorPanel />}
             {activeTab === 'bills'     && <BillTrackerPanel />}
             {activeTab === 'emi'       && <EmiCalculatorPanel />}
@@ -993,11 +746,13 @@ function InsightsTab() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === 'insights'  && <InsightsPanel />}
+            <Suspense fallback={<div className="h-[400px] flex items-center justify-center text-ink-tertiary">Loading panel...</div>}>
+              {activeTab === 'insights'  && <InsightsPanel />}
             {activeTab === 'budget'    && <BudgetingPanel />}
             {activeTab === 'cibil'     && <CibilPanel />}
             {activeTab === 'simulator' && <CreditScoreSimulator />}
             {activeTab === 'report'    && <MonthlyReport />}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -1023,7 +778,7 @@ function PerksTab() {
       title="Perks & Rewards"
       subtitle="Milestone tracking & card benefits"
     >
-      <PerksDashboard />
+      <Suspense fallback={<div className="h-[400px] flex items-center justify-center text-ink-tertiary">Loading perks...</div>}><PerksDashboard /></Suspense>
     </PageContainer>
   );
 }
@@ -1095,11 +850,14 @@ export default function App() {
   // Always force dark mode as per user request and listen for navigation events
   useEffect(() => {
     document.documentElement.classList.add('dark');
+    analytics.track('App Opened', { source: 'web' });
+    analytics.track('Session Started', { sessionId: crypto.randomUUID() });
 
     const handleNavigate = (e: Event) => {
       const customEvent = e as CustomEvent;
       if (customEvent.detail) {
         setActiveTab(customEvent.detail as TabId);
+        analytics.track('Feature Used', { featureName: customEvent.detail as string, tab: 'nav' });
       }
     };
     window.addEventListener('NAVIGATE_TAB', handleNavigate);
@@ -1144,7 +902,7 @@ export default function App() {
       {activeTab === 'profile'  && <ProfileTab />}
 
       {/* ── Taqdeer AI Floating Chat ─────────────────────────────────── */}
-      <TaqdeerPanel />
+      <Suspense fallback={null}><TaqdeerPanel /></Suspense>
     </DashboardLayout>
   );
 }

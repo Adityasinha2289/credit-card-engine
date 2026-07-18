@@ -306,29 +306,58 @@ ${bankCards.map((c, i) => `${i + 1}. **${c.name}** (Fee: ₹${c.annualFee})
   },
 ];
 
+// Helper to get and validate the AI Backend URL
+const getAiBackendUrl = (): string | null => {
+  const envUrl = import.meta.env.VITE_AI_API_URL;
+  
+  if (envUrl) {
+    try {
+      new URL(envUrl); // Validates URL format
+      return envUrl;
+    } catch (e) {
+      console.error(`Invalid VITE_AI_API_URL provided: ${envUrl}`);
+      return null;
+    }
+  }
+
+  // Fallbacks
+  if (import.meta.env.DEV) {
+    return "http://localhost:8000/chat"; // Sensible development fallback
+  }
+
+  return null;
+};
+
 export async function generateTaqdeerResponse(
   query: string,
   userCards: CardData[] = [],
 ): Promise<{ content: string; cards?: FinixCard[] }> {
   const lower = query.toLowerCase().trim();
+  const apiUrl = getAiBackendUrl();
 
   // 0. TRY PYTHON BACKEND (BITEXT DATASET INTENT ENGINE)
-  try {
-    const response = await fetch("http://localhost:8000/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, userCards })
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      if (data.intent !== "unknown") {
-        return { content: data.content };
+  if (apiUrl) {
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, userCards })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.intent !== "unknown") {
+          return { content: data.content };
+        }
+        // If the backend didn't find a match, it will continue to the local engine below!
+      } else {
+        console.warn(`AI Backend returned status: ${response.status}. Falling back to local engine.`);
       }
-      // If the backend didn't find a match, it will continue to the local engine below!
+    } catch (error) {
+      console.error("Taqdeer AI Backend is unavailable. Please check your connection or configuration. Falling back to local engine.");
     }
-  } catch (error) {
-    console.warn("Taqdeer AI Backend not reachable, falling back to local engine.");
+  } else {
+    console.warn("No AI Backend URL configured. Falling back to local engine.");
   }
 
   // Match query against intent registry

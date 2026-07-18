@@ -50,11 +50,30 @@ npm run dev
 ```
 Open your browser and navigate to `http://localhost:5173`.
 
-### 4. Build for Production
+### 4. Environment Variables
+Create a `.env` file in the root directory based on `.env.example`:
+```bash
+cp .env.example .env
+```
+Ensure you set the `VITE_AI_API_URL` to point to your AI backend (e.g. `https://your-production-ai-backend.com/chat`). If it is not set, the app will gracefully fallback to the local AI engine. In local development, it defaults to `http://localhost:8000/chat` if not specified.
+
+### 5. Build for Production
 Compiles TypeScript and bundles the assets for static hosting.
 ```bash
 npm run build
 ```
+
+---
+
+## 🚀 Deployment (Vercel)
+
+This project is optimized for deployment on Vercel.
+
+1. Push your code to a GitHub, GitLab, or Bitbucket repository.
+2. Import the project into your Vercel dashboard.
+3. In the **Environment Variables** section of the Vercel project settings, add the required variables (like `VITE_AI_API_URL`, `VITE_CLERK_PUBLISHABLE_KEY`, etc.).
+4. The Build Command will default to `npm run build` and Output Directory to `dist`.
+5. Click **Deploy**.
 
 ---
 

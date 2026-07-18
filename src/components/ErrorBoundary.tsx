@@ -1,52 +1,46 @@
 import React from 'react';
 import * as Sentry from '@sentry/react';
+import { AlertTriangle, RefreshCcw } from 'lucide-react';
 
 interface Props {
   children: React.ReactNode;
 }
 
-interface State {
-  hasError: boolean;
-  error: Error | null;
-  errorInfo: React.ErrorInfo | null;
-}
-
-export class ErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    this.setState({ errorInfo });
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
-    if (import.meta.env.VITE_SENTRY_DSN) {
-      Sentry.captureException(error, {
-        extra: { componentStack: errorInfo.componentStack }
-      });
-    }
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{ padding: 20, color: 'red', backgroundColor: '#fff', height: '100vh', overflow: 'auto' }}>
-          <h1 style={{fontSize: '24px', fontWeight: 'bold'}}>Something went wrong.</h1>
-          <details open style={{ whiteSpace: 'pre-wrap', marginTop: '10px' }}>
-            <summary style={{cursor: 'pointer', fontWeight: 'bold'}}>Click for error details</summary>
-            <div style={{marginTop: '10px', padding: '10px', backgroundColor: '#fee', border: '1px solid #fcc'}}>
-              {this.state.error && this.state.error.toString()}
-              <br />
-              {this.state.errorInfo && this.state.errorInfo.componentStack}
-            </div>
-          </details>
+const FallbackComponent = ({ resetError }: { resetError: () => void }) => {
+  return (
+    <div className="min-h-screen bg-canvas-50 dark:bg-canvas-300 flex flex-col items-center justify-center p-6 text-center">
+      <div className="max-w-md w-full bg-canvas-100 dark:bg-canvas-200 rounded-[2rem] p-8 shadow-ag-glow-primary border border-canvas-200/60 dark:border-white/[0.04] flex flex-col items-center">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
+          <AlertTriangle size={32} className="text-red-500" />
         </div>
-      );
-    }
-    return this.props.children;
+        
+        <h1 className="text-2xl font-display font-bold text-ink-primary mb-3">
+          Something went wrong
+        </h1>
+        
+        <p className="text-sm text-ink-secondary leading-relaxed mb-8">
+          We encountered an unexpected error. Our engineering team has been automatically notified and is looking into it.
+        </p>
+
+        <button
+          onClick={resetError}
+          className="w-full flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm py-3.5 rounded-full shadow-ag-glow-primary transition-all active:scale-[0.98]"
+        >
+          <RefreshCcw size={16} />
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export class ErrorBoundary extends React.Component<Props> {
+  render() {
+    return (
+      <Sentry.ErrorBoundary fallback={({ resetError }) => <FallbackComponent resetError={resetError} />}>
+        {this.props.children}
+      </Sentry.ErrorBoundary>
+    );
   }
 }
+

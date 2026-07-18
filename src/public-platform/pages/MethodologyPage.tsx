@@ -1,24 +1,221 @@
 import { SEO } from '../components/SEO';
+import { motion } from 'framer-motion';
+import { Shield, Target, PieChart as PieChartIcon, Zap, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend
+} from 'recharts';
+
+// Mock data for the charts
+const valueComparisonData = [
+  { name: 'Travel', value: 450, fill: '#34d399' },
+  { name: 'Cashback', value: 320, fill: '#60a5fa' },
+  { name: 'Base', value: 150, fill: '#94a3b8' },
+];
+
+const scoringWeightsData = [
+  { name: 'Reward Rate', value: 40 },
+  { name: 'Annual Fees', value: 20 },
+  { name: 'Sign-up Bonus', value: 25 },
+  { name: 'Perks', value: 15 },
+];
+const COLORS = ['#34d399', '#f43f5e', '#60a5fa', '#fbbf24'];
+
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+};
 
 export function MethodologyPage() {
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div className="w-full relative overflow-hidden bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
       <SEO 
         title="Evaluation Methodology | How Renocred Compares Credit Cards"
         description="Read how Renocred uses structured data and rule-based models to evaluate and recommend credit cards."
         canonicalUrl="https://renocred.com/methodology"
       />
-      <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Our Methodology</h1>
-      <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
-        <p>Our goal is to help you make informed financial decisions through structured data and clear evaluation tools. Please read our <a href="/editorial-policy" className="text-[#5da08c] hover:underline">Editorial Policy</a> to understand how we maintain independence.</p>
-        <h2 className="text-2xl font-bold text-white mt-12 mb-4">How We Structure Data</h2>
-        <p>We collect and organize credit card information, such as fees, reward rates, category multipliers, and eligibility criteria. This data is the foundation of our comparison and recommendation tools.</p>
-        <h2 className="text-2xl font-bold text-white mt-12 mb-4">Evaluating Value</h2>
-        <p>The "best" credit card depends entirely on the individual. A premium travel card might offer massive value to a frequent flyer, but result in a net loss for someone who rarely travels. Our tools aim to evaluate cards based on user-defined spending categories and habits.</p>
-        <h2 className="text-2xl font-bold text-white mt-12 mb-4">Rule-Based Recommendations</h2>
-        <p>Our recommendation engine uses structured rules rather than opaque machine learning. By mapping your stated spending profile against known card reward structures, we estimate potential value and highlight cards that align with your lifestyle.</p>
-        <h2 className="text-2xl font-bold text-white mt-12 mb-4">Important Limitations</h2>
-        <p>Our tools are designed to support your decisions, not replace personal financial judgment. Credit card terms, fees, and reward structures change frequently. We strongly encourage all users to verify complete product details directly with the official card issuer before applying. See our <a href="/disclaimer" className="text-[#5da08c] hover:underline">Disclaimer</a> for more information.</p>
+      
+      {/* Background Effects */}
+      <div className="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-emerald-500/10 to-transparent pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* Hero Section with Logo */}
+      <section className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 text-center z-10">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="flex justify-center mb-8"
+        >
+          {/* Renocred Logo Badge */}
+          <div className="w-20 h-20 bg-gradient-to-br from-[#111] to-[#050505] border border-white/[0.08] rounded-[1.5rem] flex items-center justify-center shadow-[0_0_50px_rgba(52,211,153,0.15)] relative overflow-hidden group">
+             <div className="absolute inset-0 bg-emerald-500/20 blur-xl group-hover:bg-emerald-500/30 transition-colors" />
+             <span className="relative z-10 text-4xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
+               r.
+             </span>
+          </div>
+        </motion.div>
+
+        <motion.h1 
+          className="text-4xl md:text-6xl font-display font-bold mb-6 tracking-tight"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Methodology</span>
+        </motion.h1>
+        
+        <motion.p 
+          className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          We use structured data and clear, rule-based models to evaluate credit cards. No opaque AI, just transparent math tailored to your spending habits.
+        </motion.p>
+      </section>
+
+      {/* Main Content Area */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 z-10 relative">
+        
+        {/* Step 1: Structured Data */}
+        <motion.div 
+          variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true, margin: "-50px" }}
+          className="mb-12 bg-white/[0.02] border border-white/[0.05] rounded-[2rem] p-6 sm:p-10 md:p-12 overflow-hidden relative"
+        >
+          <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-blue-500/5 to-transparent pointer-events-none" />
+          
+          <div className="flex flex-col lg:flex-row gap-12 items-center relative z-10">
+            <div className="flex-1 w-full">
+              <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20">
+                <Target className="w-7 h-7 text-blue-400" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">How We Structure Data</h2>
+              <p className="text-gray-400 leading-relaxed text-base md:text-lg mb-6">
+                We collect and organize credit card information, such as fees, reward rates, category multipliers, and eligibility criteria. This normalized data forms the strict foundation of our comparison tools.
+              </p>
+              <ul className="space-y-4">
+                {['Card Rewards', 'Fee Waivers', 'Milestone Benefits', 'Welcome Bonus'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-gray-300 font-medium">
+                    <CheckCircle2 className="w-5 h-5 text-blue-400" /> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="w-full lg:w-1/2 h-[350px] bg-black/40 rounded-3xl p-4 border border-white/[0.05] shadow-inner">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={scoringWeightsData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={70}
+                    outerRadius={110}
+                    paddingAngle={5}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {scoringWeightsData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+                    itemStyle={{ color: '#fff' }}
+                  />
+                  <Legend verticalAlign="bottom" height={40} iconType="circle" wrapperStyle={{ fontSize: '14px', paddingTop: '10px' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Step 2: Evaluating Value */}
+        <motion.div 
+          variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true, margin: "-50px" }}
+          className="mb-12 bg-white/[0.02] border border-white/[0.05] rounded-[2rem] p-6 sm:p-10 md:p-12 overflow-hidden relative"
+        >
+          <div className="absolute left-0 top-0 w-1/2 h-full bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
+          
+          <div className="flex flex-col lg:flex-row-reverse gap-12 items-center relative z-10">
+            <div className="flex-1 w-full">
+              <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20">
+                <PieChartIcon className="w-7 h-7 text-emerald-400" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Evaluating Value</h2>
+              <p className="text-gray-400 leading-relaxed text-base md:text-lg mb-6">
+                The "best" credit card depends entirely on the individual. A premium travel card might offer massive value to a frequent flyer, but result in a net loss for someone who rarely travels.
+              </p>
+              <p className="text-gray-400 leading-relaxed text-base md:text-lg">
+                Our tools aim to evaluate cards based on user-defined spending categories and habits, calculating a realistic projected net value.
+              </p>
+            </div>
+
+            <div className="w-full lg:w-1/2 h-[350px] bg-black/40 rounded-3xl p-6 border border-white/[0.05] shadow-inner">
+              <h3 className="text-sm font-semibold text-gray-400 mb-6 text-center uppercase tracking-wider">Projected Net Value</h3>
+              <ResponsiveContainer width="100%" height="80%">
+                <BarChart data={valueComparisonData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis dataKey="name" stroke="rgba(255,255,255,0.4)" tick={{fill: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: 500}} axisLine={false} tickLine={false} dy={10} />
+                  <YAxis stroke="rgba(255,255,255,0.4)" tick={{fill: 'rgba(255,255,255,0.5)', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `₹${val}`} />
+                  <Tooltip 
+                    cursor={{fill: 'rgba(255,255,255,0.03)'}}
+                    contentStyle={{ backgroundColor: '#0f1115', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+                    formatter={(value) => [`₹${value}`, 'Net Value']}
+                  />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={60}>
+                    {valueComparisonData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Step 3 & 4: Rules & Limits */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <motion.div 
+            variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true, margin: "-50px" }}
+            className="bg-white/[0.02] border border-white/[0.05] rounded-[2rem] p-8 md:p-10 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6 border border-purple-500/20">
+                <Zap className="w-6 h-6 text-purple-400" />
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-3">Rule-Based Engine</h3>
+              <p className="text-gray-400 leading-relaxed">
+                Our recommendation engine uses structured rules rather than opaque machine learning. By mapping your stated spending profile against known card reward structures, we estimate potential value and highlight cards that align with your lifestyle.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true, margin: "-50px" }}
+            className="bg-white/[0.02] border border-white/[0.05] rounded-[2rem] p-8 md:p-10 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-6 border border-red-500/20">
+                <Shield className="w-6 h-6 text-red-400" />
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-3">Important Limitations</h3>
+              <p className="text-gray-400 leading-relaxed mb-6">
+                Our tools are designed to support your decisions, not replace personal financial judgment. Credit card terms, fees, and reward structures change frequently. We strongly encourage verifying complete product details directly with the issuer.
+              </p>
+              <div className="flex gap-4 text-sm font-medium">
+                <Link to="/editorial-policy" className="text-emerald-400 hover:text-emerald-300 transition-colors">Editorial Policy</Link>
+                <Link to="/disclaimer" className="text-emerald-400 hover:text-emerald-300 transition-colors">Disclaimer</Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
       </div>
     </div>
   );

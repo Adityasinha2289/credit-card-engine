@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
+import { analytics } from '../../../lib/analytics';
 import {
   recommendCards,
   CATEGORIES_LIST,
@@ -265,6 +266,13 @@ function ResultCard({
           href={getApplyUrl(card.bank)!}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            analytics.track('Recommendation Accepted', {
+              bank: card.bank,
+              network: card.network,
+              cardName: card.name
+            });
+          }}
           className="mt-1 w-full btn-primary py-2.5 flex items-center justify-center gap-2 shadow-ag-glow-primary active:scale-[0.98]"
         >
           Apply Now <ExternalLink size={14} />
@@ -305,7 +313,12 @@ export function RecommenderPanel() {
       maxAnnualFee: 0, // no limit
       wantsLounge,
     };
-    setResults(recommendCards(userProfile));
+    const newResults = recommendCards(userProfile);
+    setResults(newResults);
+    analytics.track('Recommendation Generated', {
+      context: categories.join(','),
+      resultCount: newResults.length
+    });
     setStep(1);
   }
 

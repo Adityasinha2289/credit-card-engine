@@ -23,6 +23,28 @@ import type { CardData } from '../../cards/types/card.types';
 //  HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { toast } from 'sonner';
+
+/** Helper to execute and handle Supabase database operations */
+async function safeDbWrite<T>(
+  operation: Promise<{ error: any; data: T | null }>,
+  contextMessage: string
+): Promise<T | null> {
+  try {
+    const { data, error } = await operation;
+    if (error) {
+      console.error(`[DB Error] ${contextMessage}:`, error);
+      toast.error(`Database Error: ${error.message || contextMessage}`);
+      return null;
+    }
+    return data;
+  } catch (err: any) {
+    console.error(`[DB Exception] ${contextMessage}:`, err);
+    toast.error(`Network or Database Exception: ${err.message || contextMessage}`);
+    return null;
+  }
+}
+
 /** Generate a simple UUID-v4-like string without a dependency. */
 function generateId(): string {
   return 'txn-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
@@ -89,50 +111,50 @@ interface DashboardActions {
    * Add a new transaction and automatically update the linked credit account
    * (balance, available credit) and rewards ledger.
    */
-  addTransaction: (input: AddTransactionInput) => void;
+  addTransaction: (input: AddTransactionInput) => Promise<void>;
 
   /**
    * Pay down the outstanding balance on a card.
    * Reduces currentBalance, updates available credit, and records a credit
    * transaction in the ledger.
    */
-  payBill: (input: PayBillInput) => void;
+  payBill: (input: PayBillInput) => Promise<void>;
 
   /** Freeze or unfreeze a card (sets CardData.status via activeCardId). */
   setActiveCard: (cardId: string) => void;
 
   /** Redeem reward points. */
-  redeemPoints: (points: number) => void;
+  redeemPoints: (points: number) => Promise<void>;
 
   /** Log in user */
-  login: (profile: AppProfile) => void;
+  login: (profile: AppProfile) => Promise<void>;
 
   /** Log out user */
   logout: () => void;
 
   /** Update user profile */
-  updateProfile: (profile: AppProfile) => void;
+  updateProfile: (profile: AppProfile) => Promise<void>;
 
   /** Add a card to user's wallet */
-  addUserCard: (card: CardData) => void;
+  addUserCard: (card: CardData) => Promise<void>;
 
   /** Remove a card from user's wallet */
-  deleteUserCard: (cardId: string) => void;
+  deleteUserCard: (cardId: string) => Promise<void>;
 
   /** Add a new category budget */
-  addBudget: (budget: CategoryBudget) => void;
+  addBudget: (budget: CategoryBudget) => Promise<void>;
 
   /** Remove a category budget */
-  deleteBudget: (budgetId: string) => void;
+  deleteBudget: (budgetId: string) => Promise<void>;
 
   /** Update a category budget limit */
-  updateBudgetLimit: (budgetId: string, limitAmount: number) => void;
+  updateBudgetLimit: (budgetId: string, limitAmount: number) => Promise<void>;
 
   /** Add a new subscription (renewal) */
-  addSubscription: (subscription: Subscription) => void;
+  addSubscription: (subscription: Subscription) => Promise<void>;
 
   /** Cancel a subscription */
-  cancelSubscription: (subscriptionId: string) => void;
+  cancelSubscription: (subscriptionId: string) => Promise<void>;
 
   /** Reset store to seed state — useful for development. */
   _reset: () => void;
@@ -367,7 +389,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         ...INITIAL_STATE,
 
         // ── addTransaction ───────────────────────────────────────────────────
-        addTransaction(input) {
+        async addTransaction(input) {
           const { rewards } = get();
           const points = calcRewardPoints(
             input.amount,
@@ -403,29 +425,34 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE
           const { supabaseClient, profile, creditAccounts } = get();
           if (supabaseClient && profile) {
-            (supabaseClient as any).from('transactions').insert({
-              id: newTx.id,
-              user_id: profile.id,
-              card_id: newTx.cardId,
-              merchant: newTx.merchant,
-              amount: newTx.amount,
-              category: newTx.category,
-              type: newTx.type,
-              is_pending: newTx.pending || false,
-            }).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('transactions').insert({
+                id: newTx.id,
+                user_id: profile.id,
+                card_id: newTx.cardId,
+                merchant: newTx.merchant,
+                amount: newTx.amount,
+                category: newTx.category,
+                type: newTx.type,
+                is_pending: newTx.pending || false,
+              }),
+              'insert transaction'
+            );
 
             const updatedAccount = creditAccounts.find(a => a.cardId === input.cardId);
             if (updatedAccount) {
-              (supabaseClient as any).from('credit_accounts')
-                .update({ current_balance: updatedAccount.currentBalance })
-                .eq('user_card_id', input.cardId)
-                .then();
+              await safeDbWrite(
+                (supabaseClient as any).from('credit_accounts')
+                  .update({ current_balance: updatedAccount.currentBalance })
+                  .eq('user_card_id', input.cardId),
+                'update credit account balance'
+              );
             }
           }
         },
 
         // ── payBill ──────────────────────────────────────────────────────────
-        payBill({ cardId, amount }) {
+        async payBill({ cardId, amount }) {
           if (amount <= 0) return;
 
           set((state) => {
@@ -467,22 +494,27 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             const effectivePayment = Math.min(amount, (updatedAccount?.currentBalance ?? 0) + amount);
             
             // Insert credit transaction
-            (supabaseClient as any).from('transactions').insert({
-              id: generateId(),
-              user_id: profile.id,
-              card_id: cardId,
-              merchant: 'Bill Payment',
-              amount: -effectivePayment,
-              category: 'other',
-              type: 'credit',
-              is_pending: false,
-            }).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('transactions').insert({
+                id: generateId(),
+                user_id: profile.id,
+                card_id: cardId,
+                merchant: 'Bill Payment',
+                amount: -effectivePayment,
+                category: 'other',
+                type: 'credit',
+                is_pending: false,
+              }),
+              'insert bill payment transaction'
+            );
 
             if (updatedAccount) {
-              (supabaseClient as any).from('credit_accounts')
-                .update({ current_balance: updatedAccount.currentBalance })
-                .eq('user_card_id', cardId)
-                .then();
+              await safeDbWrite(
+                (supabaseClient as any).from('credit_accounts')
+                  .update({ current_balance: updatedAccount.currentBalance })
+                  .eq('user_card_id', cardId),
+                'update credit account balance'
+              );
             }
           }
         },
@@ -495,7 +527,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         },
 
         // ── login ────────────────────────────────────────────────────────────
-        login(profile) {
+        async login(profile) {
           set((state) => {
             state.profile = profile;
             state.userCards.forEach((c) => {
@@ -506,23 +538,23 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE
           const { supabaseClient } = get();
           if (supabaseClient) {
-             (supabaseClient as any).from('users').upsert({
-                id: profile.id,
-                email: profile.email,
-                name: profile.name,
-                phone: profile.phone,
-                avatar_url: profile.avatar,
-                salary: profile.salary,
-                credit_score: profile.creditScore,
-             }).then(({ error }: any) => {
-               if (error) {
-                 console.error('Supabase Upsert Error:', error);
-                 import('sonner').then(m => m.toast.error(`Save Error: ${error.message}`));
-               } else {
-                 console.log('Successfully saved to Supabase!');
-                 import('sonner').then(m => m.toast.success(`Profile saved to cloud!`));
-               }
-             });
+             const result = await safeDbWrite(
+               (supabaseClient as any).from('users').upsert({
+                  id: profile.id,
+                  email: profile.email,
+                  name: profile.name,
+                  phone: profile.phone,
+                  avatar_url: profile.avatar,
+                  salary: profile.salary,
+                  credit_score: profile.creditScore,
+               }),
+               'sync user profile'
+             );
+
+             if (result !== null) {
+               console.log('Successfully saved to Supabase!');
+               toast.success('Profile saved to cloud!');
+             }
           }
         },
 
@@ -539,7 +571,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         },
 
         // ── updateProfile ────────────────────────────────────────────────────
-        updateProfile(profile) {
+        async updateProfile(profile) {
           set((state) => {
             state.profile = profile;
             state.userCards.forEach((c) => {
@@ -550,20 +582,23 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE
           const { supabaseClient } = get();
           if (supabaseClient) {
-             (supabaseClient as any).from('users').upsert({
-                id: profile.id,
-                email: profile.email,
-                name: profile.name,
-                phone: profile.phone,
-                avatar_url: profile.avatar,
-                salary: profile.salary,
-                credit_score: profile.creditScore,
-             }).then();
+             await safeDbWrite(
+               (supabaseClient as any).from('users').upsert({
+                  id: profile.id,
+                  email: profile.email,
+                  name: profile.name,
+                  phone: profile.phone,
+                  avatar_url: profile.avatar,
+                  salary: profile.salary,
+                  credit_score: profile.creditScore,
+               }),
+               'update user profile'
+             );
           }
         },
 
         // ── addUserCard ──────────────────────────────────────────────────────
-        addUserCard(card) {
+        async addUserCard(card) {
           set((state) => {
             const cardholderName = state.profile ? state.profile.name : 'Premium Member';
             const newCard: CardData = {
@@ -595,40 +630,37 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE
           const { supabaseClient, profile } = get();
           if (supabaseClient && profile) {
-            (supabaseClient as any).from('user_cards').insert({
-              user_id: profile.id,
-              card_id: card.id,
-              last_4_digits: card.pan.slice(-4),
-              cardholder_name: profile.name,
-              expiry: card.expiry,
-              credit_limit: card.creditLimit,
-              status: 'active',
-            }).select('id').single().then(({ data, error }: any) => {
-               if (error) {
-                 console.error("Supabase user_cards insert error:", error);
-                 import('sonner').then(m => m.toast.error(`Error saving card: ${error.message}`));
-               }
-               if (data && data.id) {
-                 (supabaseClient as any).from('credit_accounts').insert({
-                   user_id: profile.id,
-                   card_id: card.id,
-                   user_card_id: data.id,
-                   current_balance: 0,
-                   available_credit: card.creditLimit,
-                   next_statement_date: '2023-10-01',
-                 }).then(({ error: accError }: any) => {
-                    if (accError) {
-                       console.error("Supabase credit_accounts insert error:", accError);
-                       import('sonner').then(m => m.toast.error(`Error creating account: ${accError.message}`));
-                    }
-                 });
-               }
-            });
+            const data = await safeDbWrite(
+              (supabaseClient as any).from('user_cards').insert({
+                user_id: profile.id,
+                card_id: card.id,
+                last_4_digits: card.pan.slice(-4),
+                cardholder_name: profile.name,
+                expiry: card.expiry,
+                credit_limit: card.creditLimit,
+                status: 'active',
+              }).select('id').single(),
+              'add user card'
+            );
+
+            if (data && (data as any).id) {
+              await safeDbWrite(
+                (supabaseClient as any).from('credit_accounts').insert({
+                  user_id: profile.id,
+                  card_id: card.id,
+                  user_card_id: (data as any).id,
+                  current_balance: 0,
+                  available_credit: card.creditLimit,
+                  next_statement_date: '2023-10-01',
+                }),
+                'create credit account'
+              );
+            }
           }
         },
 
         // ── deleteUserCard ───────────────────────────────────────────────────
-        deleteUserCard(cardId) {
+        async deleteUserCard(cardId) {
           set((state) => {
             state.userCards = state.userCards.filter((c) => c.id !== cardId);
             state.creditAccounts = state.creditAccounts.filter((a) => a.cardId !== cardId);
@@ -641,12 +673,15 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           const { supabaseClient } = get();
           if (supabaseClient) {
             // cardId here is the master card_id, so we delete by card_id
-            (supabaseClient as any).from('user_cards').delete().eq('card_id', cardId).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('user_cards').delete().eq('card_id', cardId),
+              'delete user card'
+            );
           }
         },
 
         // ── redeemPoints ─────────────────────────────────────────────────────
-        redeemPoints(points) {
+        async redeemPoints(points) {
           set((state) => {
             const available = state.rewards.totalPoints - state.rewards.redeemedPoints;
             const toRedeem  = Math.min(points, available);
@@ -654,43 +689,52 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           });
           const { supabaseClient, profile, rewards } = get();
           if (supabaseClient && profile) {
-            (supabaseClient as any).from('users').update({
-              redeemed_reward_points: rewards.redeemedPoints
-            }).eq('id', profile.id).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('users').update({
+                redeemed_reward_points: rewards.redeemedPoints
+              }).eq('id', profile.id),
+              'redeem points'
+            );
           }
         },
 
         // ── addBudget ────────────────────────────────────────────────────────
-        addBudget(budget) {
+        async addBudget(budget) {
           set((state) => {
             state.budgets.push(budget);
           });
           const { supabaseClient, profile } = get();
           if (supabaseClient && profile) {
-            (supabaseClient as any).from('budgets').insert({
-              id: budget.id,
-              user_id: profile.id,
-              category: budget.category,
-              limit_amount: budget.limitAmount,
-              icon: budget.icon,
-              color: budget.color,
-            }).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('budgets').insert({
+                id: budget.id,
+                user_id: profile.id,
+                category: budget.category,
+                limit_amount: budget.limitAmount,
+                icon: budget.icon,
+                color: budget.color,
+              }),
+              'add budget'
+            );
           }
         },
 
         // ── deleteBudget ─────────────────────────────────────────────────────
-        deleteBudget(budgetId) {
+        async deleteBudget(budgetId) {
           set((state) => {
             state.budgets = state.budgets.filter((b) => b.id !== budgetId);
           });
           const { supabaseClient } = get();
           if (supabaseClient) {
-            (supabaseClient as any).from('budgets').delete().eq('id', budgetId).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('budgets').delete().eq('id', budgetId),
+              'delete budget'
+            );
           }
         },
 
         // ── updateBudgetLimit ────────────────────────────────────────────────
-        updateBudgetLimit(budgetId, limitAmount) {
+        async updateBudgetLimit(budgetId, limitAmount) {
           set((state) => {
             const budget = state.budgets.find(b => b.id === budgetId);
             if (budget) {
@@ -699,33 +743,39 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           });
           const { supabaseClient } = get();
           if (supabaseClient) {
-            (supabaseClient as any).from('budgets').update({ limit_amount: limitAmount }).eq('id', budgetId).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('budgets').update({ limit_amount: limitAmount }).eq('id', budgetId),
+              'update budget limit'
+            );
           }
         },
 
         // ── addSubscription ──────────────────────────────────────────────────
-        addSubscription(subscription) {
+        async addSubscription(subscription) {
           set((state) => {
             state.subscriptions.push(subscription);
           });
           const { supabaseClient, profile } = get();
           if (supabaseClient && profile) {
-            (supabaseClient as any).from('subscriptions').insert({
-              id: subscription.id,
-              user_id: profile.id,
-              card_id: subscription.cardId,
-              name: subscription.name,
-              amount: subscription.amount,
-              billing_cycle: subscription.billingCycle,
-              next_billing_date: subscription.nextBillingDate,
-              icon: subscription.icon,
-              category: subscription.category,
-            }).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('subscriptions').insert({
+                id: subscription.id,
+                user_id: profile.id,
+                card_id: subscription.cardId,
+                name: subscription.name,
+                amount: subscription.amount,
+                billing_cycle: subscription.billingCycle,
+                next_billing_date: subscription.nextBillingDate,
+                icon: subscription.icon,
+                category: subscription.category,
+              }),
+              'add subscription'
+            );
           }
         },
 
         // ── cancelSubscription ───────────────────────────────────────────────
-        cancelSubscription(subscriptionId) {
+        async cancelSubscription(subscriptionId) {
           set((state) => {
             const sub = state.subscriptions.find(s => s.id === subscriptionId);
             if (sub) {
@@ -735,7 +785,10 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           const { supabaseClient } = get();
           if (supabaseClient) {
             // Alternatively, could delete it or update status, but our table doesn't have status yet, let's just delete it for now to match cancellation
-            (supabaseClient as any).from('subscriptions').delete().eq('id', subscriptionId).then();
+            await safeDbWrite(
+              (supabaseClient as any).from('subscriptions').delete().eq('id', subscriptionId),
+              'cancel subscription'
+            );
           }
         },
 

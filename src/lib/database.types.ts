@@ -21,6 +21,8 @@ export interface Database {
           avatar_url: string | null;
           salary: number;
           credit_score: number;
+          total_reward_points: number;
+          redeemed_reward_points: number;
           created_at: string;
           updated_at: string;
         };
@@ -32,6 +34,8 @@ export interface Database {
           avatar_url?: string | null;
           salary?: number;
           credit_score?: number;
+          total_reward_points?: number;
+          redeemed_reward_points?: number;
         };
         Update: {
           name?: string | null;
@@ -39,6 +43,8 @@ export interface Database {
           avatar_url?: string | null;
           salary?: number;
           credit_score?: number;
+          total_reward_points?: number;
+          redeemed_reward_points?: number;
         };
       };
 
@@ -185,6 +191,82 @@ export interface Database {
         Update: {
           is_read?: boolean;
         };
+      };
+
+      credit_accounts: {
+        Row: {
+          id: string;
+          user_id: string;
+          card_id: string;
+          user_card_id: string;
+          current_balance: number;
+          available_credit: number;
+          next_statement_date: string | null;
+          due_date: string | null;
+          min_due: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          card_id: string;
+          user_card_id: string;
+          current_balance?: number;
+          available_credit?: number;
+          next_statement_date?: string | null;
+          due_date?: string | null;
+          min_due?: number;
+        };
+        Update: Partial<Database['public']['Tables']['credit_accounts']['Insert']>;
+      };
+
+      budgets: {
+        Row: {
+          id: string;
+          user_id: string;
+          category: string;
+          limit_amount: number;
+          icon: string | null;
+          color: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          category: string;
+          limit_amount: number;
+          icon?: string | null;
+          color?: string | null;
+        };
+        Update: Partial<Database['public']['Tables']['budgets']['Insert']>;
+      };
+
+      subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          card_id: string;
+          name: string;
+          amount: number;
+          billing_cycle: string;
+          next_billing_date: string;
+          icon: string | null;
+          category: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          card_id: string;
+          name: string;
+          amount: number;
+          billing_cycle: string;
+          next_billing_date: string;
+          icon?: string | null;
+          category?: string;
+        };
+        Update: Partial<Database['public']['Tables']['subscriptions']['Insert']>;
       };
     };
   };

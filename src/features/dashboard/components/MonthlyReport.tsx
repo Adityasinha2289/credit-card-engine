@@ -1,14 +1,15 @@
-﻿import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Download, ChevronLeft, ChevronRight, TrendingUp,
   Minus, ArrowUpRight, ArrowDownRight, Receipt, PiggyBank,
   CreditCard, Star,
 } from 'lucide-react';
-import html2canvas from 'html2canvas';
+
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
 import { CARD_DATASET } from '../../finix/data/cardDataset';
+import { analytics } from '../../../lib/analytics';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTS
@@ -213,6 +214,14 @@ export function MonthlyReport() {
 
   const data = useMonthlyData(year, month);
 
+  useEffect(() => {
+    analytics.track('Monthly Report Generated', {
+      month: MONTHS[month],
+      year,
+      totalSpend: data.totalSpend
+    });
+  }, [month, year, data.totalSpend]);
+
   const goPrev = () => {
     if (month === 0) { setMonth(11); setYear(year - 1); }
     else setMonth(month - 1);
@@ -227,8 +236,10 @@ export function MonthlyReport() {
 
   const handleDownload = async () => {
     if (!reportRef.current) return;
+    analytics.track('Report Downloaded', { reportType: 'Monthly Spend', format: 'png' });
     setSaving(true);
     try {
+      const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(reportRef.current, {
         backgroundColor: '#0a0a0f',
         scale: 2, useCORS: true, allowTaint: true, logging: false,

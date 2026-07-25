@@ -337,33 +337,47 @@ export async function generateTaqdeerResponse(
   const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (geminiApiKey) {
-    try {
-      const prompt = `You are Taqdeer, a highly knowledgeable AI credit card advisor for the Indian market.
+    const modelsToTry = [
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+    ];
+
+    const prompt = `You are Taqdeer, an expert AI credit card & wealth advisor for the Indian market at RenoCred.
 User query: "${query}"
-Context about user's wallet: ${JSON.stringify(userCards.map(c => c.label || c.id))}
+User's wallet cards: ${JSON.stringify(userCards.map(c => c.label || c.id))}
 
-Provide a short, direct, and helpful response. Use markdown formatting. Use emojis.`;
+Provide a short, direct, highly actionable response in 2-4 bullet points or paragraphs. Use emojis and markdown.`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (content) {
-          return { content };
+    for (const model of modelsToTry) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+            }),
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (content) {
+            console.log(`[Taqdeer AI] Successfully responded using ${model}`);
+            return { content };
+          }
+        } else {
+          const errData = await response.json().catch(() => ({}));
+          console.warn(`[Taqdeer AI] Model ${model} returned status ${response.status}:`, errData);
         }
-      } else {
-        console.warn(`Gemini API returned status: ${response.status}. Falling back to local engine.`);
+      } catch (err) {
+        console.warn(`[Taqdeer AI] Failed requesting ${model}:`, err);
       }
-    } catch (error) {
-      console.error("Gemini API error. Falling back to local engine.");
     }
+    console.error('[Taqdeer AI] All Gemini API models failed. Falling back to rule-based engine.');
   } else if (apiUrl) {
     try {
       const response = await fetch(apiUrl, {

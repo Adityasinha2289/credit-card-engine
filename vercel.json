@@ -1,4 +1,12 @@
 {
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "www.renocred.com" }],
+      "destination": "https://renocred.com/:path",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/app",

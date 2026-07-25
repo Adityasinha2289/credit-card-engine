@@ -1,0 +1,300 @@
+[
+  {
+    "id": "iob",
+    "name": "IOB",
+    "cardCount": 2,
+    "cardIds": [
+      "iob_platinum",
+      "iob_classic"
+    ]
+  },
+  {
+    "id": "indianbank",
+    "name": "INDIANBANK",
+    "cardCount": 2,
+    "cardIds": [
+      "indian_bank_rupay_platinum",
+      "indian_bank_rupay_select"
+    ]
+  },
+  {
+    "id": "indusind",
+    "name": "INDUSIND",
+    "cardCount": 12,
+    "cardIds": [
+      "indusind_platinum_visa",
+      "indusind_platinum_aura_edge",
+      "indusind_tiger",
+      "indusind_nexxt",
+      "indusind_eazydiner",
+      "indusind_iconia",
+      "indusind_legend",
+      "indusind_pinnacle",
+      "indusind_avios_visa_infinite",
+      "indusind_club_vistara_explorer",
+      "indusind_pioneer_heritage_metal",
+      "indusind_crest"
+    ]
+  },
+  {
+    "id": "canara",
+    "name": "CANARA",
+    "cardCount": 3,
+    "cardIds": [
+      "canara_rupay_select",
+      "canara_rupay_platinum",
+      "canara_visa_classic"
+    ]
+  },
+  {
+    "id": "yes-bank",
+    "name": "Yes Bank",
+    "cardCount": 8,
+    "cardIds": [
+      "yes_prosperity_cashback",
+      "yes_byoc",
+      "yes_bank_rupay",
+      "yes_wellness_plus",
+      "yes_select",
+      "yes_premia",
+      "yes_reserv",
+      "yes_marquee"
+    ]
+  },
+  {
+    "id": "bom",
+    "name": "BOM",
+    "cardCount": 2,
+    "cardIds": [
+      "bom_rupay_platinum",
+      "bom_rupay_select"
+    ]
+  },
+  {
+    "id": "icici",
+    "name": "ICICI",
+    "cardCount": 13,
+    "cardIds": [
+      "icici_platinum_chip",
+      "icici_coral",
+      "icici_amazon_pay",
+      "icici_hpcl_super_saver",
+      "icici_manchester_united_platinum",
+      "icici_makemytrip_platinum",
+      "icici_adani_platinum",
+      "icici_rubyx",
+      "icici_makemytrip_signature",
+      "icici_sapphiro",
+      "icici_adani_signature",
+      "icici_emeralde",
+      "icici_emeralde_private_metal"
+    ]
+  },
+  {
+    "id": "csb",
+    "name": "CSB",
+    "cardCount": 2,
+    "cardIds": [
+      "csb_onecard",
+      "csb_jupiter_edge"
+    ]
+  },
+  {
+    "id": "kotak",
+    "name": "KOTAK",
+    "cardCount": 12,
+    "cardIds": [
+      "kotak_811",
+      "kotak_upi_rupay",
+      "kotak_indianoil",
+      "kotak_myntra",
+      "kotak_league_platinum",
+      "kotak_pvr_gold",
+      "kotak_pvr_platinum",
+      "kotak_mojo_platinum",
+      "kotak_royale_signature",
+      "kotak_zen_signature",
+      "kotak_white",
+      "kotak_white_reserve"
+    ]
+  },
+  {
+    "id": "southindian",
+    "name": "SOUTHINDIAN",
+    "cardCount": 2,
+    "cardIds": [
+      "sib_onecard",
+      "sib_onecard_secured"
+    ]
+  },
+  {
+    "id": "centralbank",
+    "name": "CENTRALBANK",
+    "cardCount": 2,
+    "cardIds": [
+      "central_bank_rupay_platinum",
+      "central_bank_rupay_select"
+    ]
+  },
+  {
+    "id": "au",
+    "name": "AU",
+    "cardCount": 6,
+    "cardIds": [
+      "au_lit",
+      "au_altura_plus",
+      "au_ixigo",
+      "au_vetta",
+      "au_zenith",
+      "au_zenith_plus"
+    ]
+  },
+  {
+    "id": "axis",
+    "name": "AXIS",
+    "cardCount": 13,
+    "cardIds": [
+      "axis_neo",
+      "axis_my_zone",
+      "axis_indianoil",
+      "axis_flipkart",
+      "axis_ace",
+      "axis_airtel",
+      "axis_rewards",
+      "axis_privilege",
+      "axis_vistara_signature",
+      "axis_select",
+      "axis_atlas",
+      "axis_magnus",
+      "axis_reserve"
+    ]
+  },
+  {
+    "id": "bob",
+    "name": "BOB",
+    "cardCount": 6,
+    "cardIds": [
+      "bob_easy",
+      "bob_select",
+      "bob_hpcl_energie",
+      "bob_premier",
+      "bob_eterna",
+      "bob_icai_exclusive"
+    ]
+  },
+  {
+    "id": "hdfc",
+    "name": "HDFC",
+    "cardCount": 16,
+    "cardIds": [
+      "hdfc_freedom",
+      "hdfc_indianoil",
+      "hdfc_moneyback_plus",
+      "hdfc_swiggy",
+      "hdfc_tata_neu_plus",
+      "hdfc_irctc",
+      "hdfc_millennia",
+      "hdfc_indigo_6e_rewards",
+      "hdfc_marriott_bonvoy",
+      "hdfc_diners_privilege",
+      "hdfc_shoppers_stop_black",
+      "hdfc_regalia_gold",
+      "hdfc_tata_neu_infinity",
+      "hdfc_indigo_6e_rewards_xl",
+      "hdfc_diners_club_black",
+      "hdfc_infinia"
+    ]
+  },
+  {
+    "id": "pnb",
+    "name": "PNB",
+    "cardCount": 4,
+    "cardIds": [
+      "pnb_rupay_platinum",
+      "pnb_rupay_select",
+      "pnb_global_platinum",
+      "pnb_patanjali_platinum"
+    ]
+  },
+  {
+    "id": "rbl",
+    "name": "RBL",
+    "cardCount": 7,
+    "cardIds": [
+      "rbl_shoprite",
+      "rbl_play_bookmyshow",
+      "rbl_bajaj_finserv_binge",
+      "rbl_platinum_delight",
+      "rbl_platinum_maxima",
+      "rbl_world_safari",
+      "rbl_icon"
+    ]
+  },
+  {
+    "id": "sbi",
+    "name": "SBI",
+    "cardCount": 10,
+    "cardIds": [
+      "sbi_simplyclick",
+      "sbi_simplysave",
+      "sbi_cashback",
+      "sbi_bpcl_octane",
+      "sbi_pulse",
+      "sbi_prime",
+      "sbi_irctc_premier",
+      "sbi_elite",
+      "sbi_air_india_signature",
+      "sbi_aurum"
+    ]
+  },
+  {
+    "id": "union",
+    "name": "UNION",
+    "cardCount": 3,
+    "cardIds": [
+      "union_visa_platinum",
+      "union_uni_carbon",
+      "union_rupay_select"
+    ]
+  },
+  {
+    "id": "idfc",
+    "name": "IDFC",
+    "cardCount": 8,
+    "cardIds": [
+      "idfc_first_millennia",
+      "idfc_first_classic",
+      "idfc_first_power_plus",
+      "idfc_first_swyp",
+      "idfc_first_wow",
+      "idfc_first_select",
+      "idfc_first_wealth",
+      "club_vistara_idfc_first"
+    ]
+  },
+  {
+    "id": "amex",
+    "name": "AMEX",
+    "cardCount": 5,
+    "cardIds": [
+      "amex_smartearn",
+      "amex_mrcc",
+      "amex_gold_charge",
+      "amex_platinum_travel",
+      "amex_platinum_charge"
+    ]
+  },
+  {
+    "id": "hsbc",
+    "name": "HSBC",
+    "cardCount": 6,
+    "cardIds": [
+      "hsbc_live_plus",
+      "hsbc_visa_platinum",
+      "hsbc_rupay_platinum",
+      "hsbc_travelone",
+      "hsbc_premier_mastercard",
+      "hsbc_taj_premium"
+    ]
+  }
+]

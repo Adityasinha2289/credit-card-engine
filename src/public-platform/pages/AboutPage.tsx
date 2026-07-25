@@ -1,4 +1,5 @@
 import { SEO } from '../components/SEO';
+import { ContentMeta } from '../components/ContentMeta';
 
 export function AboutPage() {
   return (
@@ -8,8 +9,9 @@ export function AboutPage() {
         description="Learn about Renocred's mission to bring clarity and transparency to the Indian credit card ecosystem."
         canonicalUrl="https://renocred.com/about"
       />
-      <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">About Renocred</h1>
-      <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
+      <h1 className="text-4xl font-display font-bold mb-4 tracking-tight">About Renocred</h1>
+      <ContentMeta author="RenoCred Team" role="Credit Intelligence" date="2026-07-25" />
+      <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed mt-8">
         <p>Renocred was built to solve a simple problem: understanding and maximizing credit card rewards is entirely too complicated.</p>
         <p>The modern credit card ecosystem is filled with hidden benefits, complex reward structures, shifting eligibility rules, and opaque terms. For the average consumer, making a confident decision about which card to use—or which card to apply for next—requires building a spreadsheet.</p>
         <p>Our philosophy is clarity and transparency. We aim to structure credit card information logically and provide tools that help you understand your spending habits. By evaluating how different cards align with your personal expenses, you can optimize your wallet without the guesswork.</p>

@@ -1,7 +1,10 @@
 import { SEO } from '../components/SEO';
+import { ContentMeta } from '../components/ContentMeta';
+import { FAQSchema } from '../components/FAQSchema';
 import { motion } from 'framer-motion';
-import { Shield, Target, PieChart as PieChartIcon, Zap, CheckCircle2 } from 'lucide-react';
+import { Shield, Target, PieChart as PieChartIcon, Zap, CheckCircle2, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
@@ -75,6 +78,9 @@ export function MethodologyPage() {
         >
           We use structured data and clear, rule-based models to evaluate credit cards. No opaque AI, just transparent math tailored to your spending habits.
         </motion.p>
+        <div className="max-w-2xl mx-auto mt-6">
+          <ContentMeta author="RenoCred Team" role="Credit Intelligence" date="2026-07-25" variant="reviewed" />
+        </div>
       </section>
 
       {/* Main Content Area */}
@@ -216,7 +222,91 @@ export function MethodologyPage() {
           </motion.div>
         </div>
 
+        {/* FAQ Section — SEO: FAQPage schema for Google rich results */}
+        <MethodologyFAQ />
+
       </div>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  FAQ SECTION — Google FAQPage rich results + AI search citation target
+// ─────────────────────────────────────────────────────────────────────────────
+
+const METHODOLOGY_FAQS = [
+  {
+    question: 'How does RenoCred evaluate credit cards?',
+    answer: 'RenoCred uses a structured, rule-based scoring engine called Taqdeer that evaluates each credit card across multiple dimensions: reward rates per spending category, annual fees and fee waiver thresholds, welcome bonuses, lounge access, minimum eligibility criteria (income and CIBIL score), and network benefits. Each card receives a composite match score personalized to your spending profile.',
+  },
+  {
+    question: 'Is RenoCred a financial advisor?',
+    answer: 'No. RenoCred is an informational and analytical tool, not a licensed financial advisor. Our recommendations are based on structured data comparisons and mathematical models. We strongly encourage users to verify all product details directly with the issuing bank before making any financial decisions.',
+  },
+  {
+    question: 'How often is the credit card data updated?',
+    answer: 'Our credit card database of 133+ cards is reviewed and updated regularly. Reward structures, fees, and eligibility criteria are verified against official issuer sources. The last comprehensive update was performed in July 2026. If you notice any outdated information, please contact us.',
+  },
+  {
+    question: 'What data does RenoCred collect about me?',
+    answer: 'RenoCred collects your salary range and CIBIL score band solely to personalize card recommendations. We do not sell, rent, or share your personal financial data with third-party advertisers. All data is encrypted and stored securely. Read our full Privacy Policy for details.',
+  },
+  {
+    question: 'How does the Wallet Optimizer work?',
+    answer: 'The Wallet Optimizer analyzes the credit cards in your wallet and cross-references them with your spending categories. It identifies which card gives the highest reward rate for each type of purchase (dining, travel, shopping, fuel, etc.) and flags optimization opportunities where a different card in your wallet — or a new card — could earn you more cashback or reward points.',
+  },
+];
+
+function MethodologyFAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <motion.div
+      variants={fadeIn}
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true, margin: '-50px' }}
+      className="mt-16"
+    >
+      <FAQSchema items={METHODOLOGY_FAQS} />
+      <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 text-center">
+        Frequently Asked Questions
+      </h2>
+      <div className="space-y-3 max-w-3xl mx-auto">
+        {METHODOLOGY_FAQS.map((faq, idx) => {
+          const isOpen = openIndex === idx;
+          return (
+            <div
+              key={idx}
+              className="bg-white/[0.02] border border-white/[0.05] rounded-2xl overflow-hidden transition-colors hover:border-white/[0.08]"
+            >
+              <button
+                onClick={() => setOpenIndex(isOpen ? null : idx)}
+                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+                aria-expanded={isOpen}
+              >
+                <span className="text-sm md:text-base font-semibold text-white leading-snug">
+                  {faq.question}
+                </span>
+                <ChevronDown
+                  size={18}
+                  className={`flex-shrink-0 text-gray-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                />
+              </button>
+              <motion.div
+                initial={false}
+                animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="overflow-hidden"
+              >
+                <p className="px-6 pb-5 text-sm text-gray-400 leading-relaxed">
+                  {faq.answer}
+                </p>
+              </motion.div>
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
   );
 }

@@ -1,4 +1,5 @@
 import { SEO } from '../components/SEO';
+import { ContentMeta } from '../components/ContentMeta';
 
 export function EditorialPolicyPage() {
   return (
@@ -6,9 +7,10 @@ export function EditorialPolicyPage() {
       <SEO 
         title="Editorial Policy | Renocred"
         description="Learn about our commitment to providing clear, accurate, and objective financial information."
-        canonicalUrl="https://www.renocred.com/editorial-policy"
+        canonicalUrl="https://renocred.com/editorial-policy"
       />
-      <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Editorial Policy</h1>
+      <h1 className="text-4xl font-display font-bold mb-4 tracking-tight">Editorial Policy</h1>
+      <ContentMeta author="RenoCred Team" role="Credit Intelligence" date="2026-07-25" variant="reviewed" />
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>Renocred is committed to providing clear, accurate, and objective financial information.</p>
         <h2 className="text-2xl font-bold text-white mt-12 mb-4">Accuracy and Verification</h2>

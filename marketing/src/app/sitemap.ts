@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { ALL_CARDS, ALL_BANKS } from '../lib/cards';
+import merchantsData from '../data/merchants.json';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://renocred.com';
@@ -40,6 +41,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  // Dynamic Merchant pages (/merchants/[slug])
+  const merchantPages = (merchantsData as { slug: string }[]).map((merchant) => ({
+    url: `${baseUrl}/merchants/${merchant.slug}`,
+    lastModified: currentDate,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
   // Category pages (/best/[category])
   const categoryPages = [
     'travel-cards',
@@ -57,5 +66,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
-  return [...staticPages, ...cardPages, ...bankPages, ...categoryPages];
+  return [...staticPages, ...cardPages, ...bankPages, ...merchantPages, ...categoryPages];
 }

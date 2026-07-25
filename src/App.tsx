@@ -864,7 +864,9 @@ export default function App() {
     return () => window.removeEventListener('NAVIGATE_TAB', handleNavigate);
   }, []);
 
-  if (!isHydrated || !isLoaded || isHydratingFromSupabase) {
+  const isTestKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY?.includes('test');
+  
+  if (!isHydrated || (!isLoaded && !isTestKey) || isHydratingFromSupabase) {
     return (
       <DashboardLayout
         activeTab={activeTab}

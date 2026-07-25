@@ -334,9 +334,37 @@ export async function generateTaqdeerResponse(
 ): Promise<{ content: string; cards?: FinixCard[] }> {
   const lower = query.toLowerCase().trim();
   const apiUrl = getAiBackendUrl();
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-  // 0. TRY PYTHON BACKEND (BITEXT DATASET INTENT ENGINE)
-  if (apiUrl) {
+  if (geminiApiKey) {
+    try {
+      const prompt = `You are Taqdeer, a highly knowledgeable AI credit card advisor for the Indian market.
+User query: "${query}"
+Context about user's wallet: ${JSON.stringify(userCards.map(c => c.label || c.id))}
+
+Provide a short, direct, and helpful response. Use markdown formatting. Use emojis.`;
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (content) {
+          return { content };
+        }
+      } else {
+        console.warn(`Gemini API returned status: ${response.status}. Falling back to local engine.`);
+      }
+    } catch (error) {
+      console.error("Gemini API error. Falling back to local engine.");
+    }
+  } else if (apiUrl) {
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -349,15 +377,14 @@ export async function generateTaqdeerResponse(
         if (data.intent !== "unknown") {
           return { content: data.content };
         }
-        // If the backend didn't find a match, it will continue to the local engine below!
       } else {
         console.warn(`AI Backend returned status: ${response.status}. Falling back to local engine.`);
       }
     } catch (error) {
-      console.error("Taqdeer AI Backend is unavailable. Please check your connection or configuration. Falling back to local engine.");
+      console.error("Taqdeer AI Backend is unavailable. Falling back to local engine.");
     }
   } else {
-    console.warn("No AI Backend URL configured. Falling back to local engine.");
+    console.warn("No AI Backend URL or Gemini API key configured. Falling back to local engine.");
   }
 
   // Match query against intent registry

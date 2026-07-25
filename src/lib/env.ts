@@ -12,17 +12,12 @@ export function validateEnv() {
     'VITE_CLERK_PUBLISHABLE_KEY',
   ];
 
-  if (isProd) {
-    requiredVars.push('VITE_SENTRY_DSN', 'VITE_POSTHOG_KEY');
-  }
-
   const optionalVars = [
     'VITE_AI_API_URL',
+    'VITE_SENTRY_DSN',
+    'VITE_POSTHOG_KEY',
+    'VITE_GEMINI_API_KEY',
   ];
-
-  if (!isProd) {
-    optionalVars.push('VITE_SENTRY_DSN', 'VITE_POSTHOG_KEY');
-  }
 
   const missingRequiredVars = requiredVars.filter(
     (envVar) => !import.meta.env[envVar]

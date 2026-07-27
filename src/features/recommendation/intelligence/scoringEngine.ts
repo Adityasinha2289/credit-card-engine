@@ -13,14 +13,14 @@ import { ExplainabilityEngine } from './explainabilityEngine';
 
 export const DEFAULT_SCORING_CONFIG: ScoringConfig = {
   weights: {
-    rewardScore: 0.3,
-    merchantOfferScore: 0.2,
-    userOwnershipScore: 0.15,
-    categoryMatchScore: 0.1,
-    annualFeePenaltyScore: 0.1,
+    rewardScore: 0.40,
+    merchantOfferScore: 0.30,
+    userOwnershipScore: 0.10,
+    categoryMatchScore: 0.05,
+    annualFeePenaltyScore: 0.05,
     confidenceScore: 0.05,
     userPreferenceScore: 0.05,
-    spendingBehaviourScore: 0.05,
+    spendingBehaviourScore: 0.00,
   },
 };
 
@@ -39,12 +39,13 @@ export class ScoringEngine {
     isOwned: boolean,
     mode: RecommendationMode,
     userGoal: PrimaryGoal,
-    confidenceScore: number
+    confidenceScore: number,
+    merchantName?: string
   ): CardEvaluationResult {
     const weights = this.config.weights;
 
     // 1. Evaluate Factors
-    const rewardEval = ScoringRules.evalReward(card, amount, category);
+    const rewardEval = ScoringRules.evalReward(card, amount, category, merchantName);
     const matchingOffer = applicableOffers.find(
       (o) => o.eligibleCards.includes('all') || o.eligibleCards.includes(card.id)
     );

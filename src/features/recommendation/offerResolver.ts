@@ -15,7 +15,7 @@ export class OfferResolver {
 
     return allOffers.filter((offer) => {
       // 1. Merchant match check
-      if (merchantId && offer.merchantId !== merchantId && offer.category !== category) {
+      if (merchantId && offer.merchantId !== merchantId) {
         return false;
       }
 

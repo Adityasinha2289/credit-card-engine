@@ -58,7 +58,8 @@ export class RecommendationIntelligenceEngine {
         isOwned,
         context.mode,
         context.userPrimaryGoal,
-        context.resolvedMerchant.confidenceScore
+        context.resolvedMerchant.confidenceScore,
+        context.resolvedMerchant.merchant?.name || input.merchant
       );
     });
 

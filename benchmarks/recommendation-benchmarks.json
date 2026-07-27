@@ -1,0 +1,802 @@
+[
+  {
+    "id": "scenario-001",
+    "title": "Swiggy Small Food Order",
+    "description": "Routine ₹450 dinner order on Swiggy Food Delivery",
+    "input": { "merchant": "Swiggy", "amount": 450, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-swiggy-hdfc", "card-sbi-cashback", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 45, "acceptableAlternatives": ["card-sbi-cashback", "card-airtel-axis"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-002",
+    "title": "Swiggy Instamart Grocery",
+    "description": "Weekly grocery purchase of ₹1,200 on Swiggy Instamart",
+    "input": { "merchant": "Swiggy Instamart", "amount": 1200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-swiggy-hdfc", "card-airtel-axis", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 120, "acceptableAlternatives": ["card-airtel-axis", "card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-003",
+    "title": "Zomato Weekend Dinner",
+    "description": "Family dinner order of ₹1,500 on Zomato",
+    "input": { "merchant": "Zomato", "amount": 1500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-axis-ace", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 150, "acceptableAlternatives": ["card-axis-ace", "card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-004",
+    "title": "Zomato Gourmet Dining",
+    "description": "Premium restaurant takeaway worth ₹2,800 on Zomato",
+    "input": { "merchant": "Zomato Food Delivery", "amount": 2800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-airtel-axis", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 280, "acceptableAlternatives": ["card-hdfc-infinia", "card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-005",
+    "title": "Fine Dining Restaurant Payment",
+    "description": "Offline luxury restaurant dinner bill of ₹4,500",
+    "input": { "merchant": "Swiggy", "amount": 4500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-swiggy-hdfc", "card-axis-atlas"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 450, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-006",
+    "title": "Swiggy Gourmet Feast",
+    "description": "Office party food order of ₹3,500 on Swiggy",
+    "input": { "merchant": "Swiggy", "amount": 3500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-swiggy-hdfc", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 350, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-007",
+    "title": "Zomato Breakfast Delivery",
+    "description": "Quick breakfast order of ₹350 on Zomato",
+    "input": { "merchant": "Zomato", "amount": 350, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 35, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-008",
+    "title": "Swiggy Late Night Snacks",
+    "description": "Midnight snack craving of ₹600 on Swiggy",
+    "input": { "merchant": "Swiggy", "amount": 600, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-swiggy-hdfc", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 60, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-009",
+    "title": "Zomato Cafe Order",
+    "description": "Coffee and dessert order of ₹800 on Zomato",
+    "input": { "merchant": "Zomato", "amount": 800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 80, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-010",
+    "title": "Swiggy Ice Cream Delivery",
+    "description": "Ice cream order of ₹550 on Swiggy",
+    "input": { "merchant": "Swiggy", "amount": 550, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-swiggy-hdfc", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 55, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-011",
+    "title": "Zomato Pizza Order",
+    "description": "Large pizza order worth ₹1,100 on Zomato",
+    "input": { "merchant": "Zomato", "amount": 1100, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 110, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-012",
+    "title": "Swiggy Lunch Box",
+    "description": "Daily office lunch of ₹280 on Swiggy",
+    "input": { "merchant": "Swiggy", "amount": 280, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-swiggy-hdfc", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 28, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-013",
+    "title": "Zomato Bakery Order",
+    "description": "Birthday cake order of ₹1,400 on Zomato",
+    "input": { "merchant": "Zomato", "amount": 1400, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 140, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-014",
+    "title": "Swiggy Biryani Order",
+    "description": "Family Biryani feast worth ₹1,800 on Swiggy",
+    "input": { "merchant": "Swiggy", "amount": 1800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-swiggy-hdfc", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-swiggy-hdfc", "expectedSavings": 180, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-015",
+    "title": "Zomato Asian Food Order",
+    "description": "Sushi & Asian food order of ₹2,200 on Zomato",
+    "input": { "merchant": "Zomato", "amount": 2200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-hdfc-infinia"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 220, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-016",
+    "title": "MakeMyTrip Domestic Flight",
+    "description": "Delhi to Mumbai flight ticket booking worth ₹8,500 on MakeMyTrip",
+    "input": { "merchant": "MakeMyTrip", "amount": 8500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-hdfc-infinia", "card-sbi-cashback"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 1275, "acceptableAlternatives": ["card-hdfc-infinia", "card-hdfc-regalia-gold"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-017",
+    "title": "MakeMyTrip Luxury Hotel Stay",
+    "description": "Goa 3-night luxury hotel booking of ₹24,000 on MakeMyTrip",
+    "input": { "merchant": "MakeMyTrip", "amount": 24000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-hdfc-infinia", "card-hdfc-regalia-gold"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 3600, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-018",
+    "title": "IRCTC Train Ticket Booking",
+    "description": "Vande Bharat Express AC Executive chair train booking worth ₹3,200",
+    "input": { "merchant": "IRCTC", "amount": 3200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-hdfc-regalia-gold", "card-tata-neu-infinity"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 160, "acceptableAlternatives": ["card-tata-neu-infinity", "card-hdfc-regalia-gold"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-019",
+    "title": "MakeMyTrip International Flight",
+    "description": "Bangalore to Singapore round trip flight ticket worth ₹42,000",
+    "input": { "merchant": "MakeMyTrip", "amount": 42000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-hdfc-infinia"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 6300, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-020",
+    "title": "Uber Intercity Cab Ride",
+    "description": "Airport cab ride of ₹1,800 on Uber",
+    "input": { "merchant": "Uber Rides", "amount": 1800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-airtel-axis", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 72, "acceptableAlternatives": ["card-airtel-axis", "card-sbi-cashback"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-021",
+    "title": "MakeMyTrip Resort Booking",
+    "description": "Weekend hill station resort stay of ₹15,000",
+    "input": { "merchant": "MakeMyTrip", "amount": 15000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-hdfc-infinia"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 2250, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-022",
+    "title": "IRCTC Sleeper Train Ticket",
+    "description": "Sleeper class family train tickets worth ₹1,400",
+    "input": { "merchant": "IRCTC", "amount": 1400, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-tata-neu-infinity"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 70, "acceptableAlternatives": ["card-tata-neu-infinity"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-023",
+    "title": "MakeMyTrip Homestay Booking",
+    "description": "Coorg villa homestay booking worth ₹9,000",
+    "input": { "merchant": "MakeMyTrip", "amount": 9000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-hdfc-regalia-gold"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 1350, "acceptableAlternatives": ["card-hdfc-regalia-gold"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-024",
+    "title": "Uber Daily Commute",
+    "description": "Office commute ride worth ₹450 on Uber",
+    "input": { "merchant": "Uber Rides", "amount": 450, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 18, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-025",
+    "title": "MakeMyTrip Holiday Package",
+    "description": "Kerala tour package of ₹35,000 on MakeMyTrip",
+    "input": { "merchant": "MakeMyTrip", "amount": 35000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-hdfc-infinia"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 5250, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-026",
+    "title": "IRCTC Tejas Express",
+    "description": "Tejas Express premium train booking worth ₹2,100",
+    "input": { "merchant": "IRCTC", "amount": 2100, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 105, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-027",
+    "title": "MakeMyTrip Flight Cancellation Cover",
+    "description": "Domestic flight booking with flexible cancellation ₹6,800",
+    "input": { "merchant": "MakeMyTrip", "amount": 6800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-sbi-cashback"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 1020, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-028",
+    "title": "Uber Airport Drop",
+    "description": "Late night airport cab trip of ₹1,200 on Uber",
+    "input": { "merchant": "Uber Rides", "amount": 1200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-airtel-axis"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 48, "acceptableAlternatives": ["card-airtel-axis"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-029",
+    "title": "MakeMyTrip Business Class Upgrade",
+    "description": "Business class flight ticket of ₹58,000 on MakeMyTrip",
+    "input": { "merchant": "MakeMyTrip", "amount": 58000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-atlas", "card-hdfc-infinia"], "rewardPreference": "miles" },
+    "expected": { "winningCard": "card-axis-atlas", "expectedSavings": 8700, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-030",
+    "title": "IRCTC Rajdhani Booking",
+    "description": "Rajdhani 1st AC train ticket of ₹4,500 on IRCTC",
+    "input": { "merchant": "IRCTC", "amount": 4500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-hdfc-infinia"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 225, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-031",
+    "title": "BPCL Octane Fuel Refill",
+    "description": "Full tank petrol refill of ₹3,000 at BPCL fuel outlet",
+    "input": { "merchant": "BPCL Fuel Station", "amount": 3000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-bpcl-octane-sbi", "card-icici-hpcl-super-saver", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-bpcl-octane-sbi", "expectedSavings": 218, "acceptableAlternatives": ["card-icici-hpcl-super-saver", "card-axis-ace"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-032",
+    "title": "HPCL Petrol Pump Spend",
+    "description": "Car fuel filling of ₹2,500 at HPCL petrol station",
+    "input": { "merchant": "HPCL Fuel Station", "amount": 2500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-hpcl-super-saver", "card-axis-indian-oil", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-hpcl-super-saver", "expectedSavings": 125, "acceptableAlternatives": ["card-axis-indian-oil", "card-sbi-cashback"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-033",
+    "title": "IndianOil IOCL Fuel Refill",
+    "description": "Bike fuel tank refill worth ₹800 at IndianOil outlet",
+    "input": { "merchant": "IndianOil Fuel Station", "amount": 800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-indian-oil", "card-bpcl-octane-sbi", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-axis-indian-oil", "expectedSavings": 32, "acceptableAlternatives": ["card-bpcl-octane-sbi", "card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-034",
+    "title": "BPCL Diesel Refill",
+    "description": "Commercial SUV diesel filling worth ₹4,500 at BPCL",
+    "input": { "merchant": "BPCL Fuel Station", "amount": 4500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-bpcl-octane-sbi", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-bpcl-octane-sbi", "expectedSavings": 326, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-035",
+    "title": "HPCL LPG Cylinder Booking",
+    "description": "Home LPG cooking gas cylinder payment worth ₹950 at HPCL",
+    "input": { "merchant": "HPCL Fuel Station", "amount": 950, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-hpcl-super-saver", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-hpcl-super-saver", "expectedSavings": 48, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-036",
+    "title": "IndianOil Highway Refill",
+    "description": "Long drive highway fuel filling of ₹3,500 at IOCL",
+    "input": { "merchant": "IndianOil Fuel Station", "amount": 3500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-indian-oil", "card-bpcl-octane-sbi"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-axis-indian-oil", "expectedSavings": 140, "acceptableAlternatives": ["card-bpcl-octane-sbi"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-037",
+    "title": "BPCL Premium Petrol",
+    "description": "Speed premium petrol refill worth ₹2,000 at BPCL",
+    "input": { "merchant": "BPCL Fuel Station", "amount": 2000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-bpcl-octane-sbi", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-bpcl-octane-sbi", "expectedSavings": 145, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-038",
+    "title": "HPCL Auto Gas CNG",
+    "description": "CNG vehicle filling worth ₹650 at HPCL pump",
+    "input": { "merchant": "HPCL Fuel Station", "amount": 650, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-hpcl-super-saver", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-hpcl-super-saver", "expectedSavings": 33, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-039",
+    "title": "IndianOil XtraGreen Diesel",
+    "description": "XtraGreen diesel refill of ₹3,200 at IndianOil",
+    "input": { "merchant": "IndianOil Fuel Station", "amount": 3200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-indian-oil", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-axis-indian-oil", "expectedSavings": 128, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-040",
+    "title": "BPCL Scooter Tank Fill",
+    "description": "Two wheeler fuel topup worth ₹500 at BPCL",
+    "input": { "merchant": "BPCL Fuel Station", "amount": 500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-bpcl-octane-sbi", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-bpcl-octane-sbi", "expectedSavings": 36, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-041",
+    "title": "HPCL Lubricant Oil Spend",
+    "description": "Engine oil lubricant purchase of ₹1,500 at HPCL",
+    "input": { "merchant": "HPCL Fuel Station", "amount": 1500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-hpcl-super-saver", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-hpcl-super-saver", "expectedSavings": 75, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-042",
+    "title": "IndianOil City Petrol Pump",
+    "description": "Weekly petrol refill worth ₹1,800 at IOCL",
+    "input": { "merchant": "IndianOil Fuel Station", "amount": 1800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-indian-oil", "card-bpcl-octane-sbi"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-axis-indian-oil", "expectedSavings": 72, "acceptableAlternatives": ["card-bpcl-octane-sbi"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-043",
+    "title": "Amazon Prime Electronics Order",
+    "description": "Smart watch purchase worth ₹4,500 on Amazon.in",
+    "input": { "merchant": "Amazon.in", "amount": 4500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-amazon", "card-sbi-cashback", "card-hdfc-infinia"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 225, "acceptableAlternatives": ["card-sbi-cashback", "card-sbi-simplyclick"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-044",
+    "title": "Amazon Household Goods",
+    "description": "Monthly pantry & household spend of ₹3,200 on Amazon",
+    "input": { "merchant": "Amazon.in", "amount": 3200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-amazon", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 160, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-045",
+    "title": "Flipkart Big Billion Days Fashion",
+    "description": "Festival clothing purchase of ₹5,500 on Flipkart",
+    "input": { "merchant": "Flipkart", "amount": 5500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-icici-amazon", "card-tata-neu-infinity"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 275, "acceptableAlternatives": ["card-tata-neu-infinity"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-046",
+    "title": "Myntra End of Reason Sale",
+    "description": "Designer clothes & sneakers purchase worth ₹6,800 on Myntra",
+    "input": { "merchant": "Myntra Fashion", "amount": 6800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-regalia-gold", "card-sbi-cashback", "card-icici-amazon"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-regalia-gold", "expectedSavings": 340, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-047",
+    "title": "Amazon Books & Kindle Spend",
+    "description": "Bestseller novels purchase worth ₹1,200 on Amazon",
+    "input": { "merchant": "Amazon.in", "amount": 1200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-amazon", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 60, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-048",
+    "title": "Flipkart Home Appliances",
+    "description": "Air purifier purchase worth ₹9,500 on Flipkart",
+    "input": { "merchant": "Flipkart", "amount": 9500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 475, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-049",
+    "title": "Myntra Winter Wear Sale",
+    "description": "Jacket & boots purchase worth ₹4,200 on Myntra",
+    "input": { "merchant": "Myntra Fashion", "amount": 4200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-regalia-gold", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-regalia-gold", "expectedSavings": 210, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-050",
+    "title": "Amazon Fresh Groceries",
+    "description": "Weekly fresh fruits & vegetables order worth ₹1,800 on Amazon",
+    "input": { "merchant": "Amazon.in", "amount": 1800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-amazon", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 90, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-051",
+    "title": "Flipkart Footwear Order",
+    "description": "Running shoes purchase of ₹3,400 on Flipkart",
+    "input": { "merchant": "Flipkart", "amount": 3400, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-tata-neu-infinity"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 170, "acceptableAlternatives": ["card-tata-neu-infinity"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-052",
+    "title": "Myntra Accessories Sale",
+    "description": "Handbag & sunglasses order of ₹2,900 on Myntra",
+    "input": { "merchant": "Myntra Fashion", "amount": 2900, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-regalia-gold", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-regalia-gold", "expectedSavings": 145, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-053",
+    "title": "DMart Supermarket Offline Retail",
+    "description": "Monthly offline grocery store spend worth ₹6,500 at DMart",
+    "input": { "merchant": "DMart Ready & Supermarket", "amount": 6500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-tata-neu-infinity", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 130, "acceptableAlternatives": ["card-tata-neu-infinity", "card-sbi-cashback"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-054",
+    "title": "Amazon Gaming Console Accessories",
+    "description": "Playstation controller purchase worth ₹5,800 on Amazon",
+    "input": { "merchant": "Amazon.in", "amount": 5800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-amazon", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 290, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-055",
+    "title": "Flipkart Furniture Order",
+    "description": "Ergonomic office chair purchase worth ₹8,200 on Flipkart",
+    "input": { "merchant": "Flipkart", "amount": 8200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-cashback", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-sbi-cashback", "expectedSavings": 410, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-056",
+    "title": "Myntra Ethnic Wear",
+    "description": "Kurta set purchase worth ₹3,800 on Myntra",
+    "input": { "merchant": "Myntra Fashion", "amount": 3800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-regalia-gold", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-regalia-gold", "expectedSavings": 190, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-057",
+    "title": "Amazon Kitchenware",
+    "description": "Non-stick cookware set purchase worth ₹2,700 on Amazon",
+    "input": { "merchant": "Amazon.in", "amount": 2700, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-amazon", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 135, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-058",
+    "title": "DMart Weekend Shopping",
+    "description": "Weekly supermarket essentials worth ₹2,400 at DMart",
+    "input": { "merchant": "DMart Ready & Supermarket", "amount": 2400, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-tata-neu-infinity"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 48, "acceptableAlternatives": ["card-tata-neu-infinity"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-059",
+    "title": "Croma Smart TV Purchase",
+    "description": "55-inch 4K Smart TV purchase worth ₹45,000 at Croma",
+    "input": { "merchant": "Croma Electronics", "amount": 45000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-tata-neu-infinity", "card-sbi-cashback", "card-hdfc-infinia"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-tata-neu-infinity", "expectedSavings": 2250, "acceptableAlternatives": ["card-sbi-cashback", "card-hdfc-infinia"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-060",
+    "title": "Reliance Digital Laptop",
+    "description": "Gaming laptop purchase of ₹75,000 at Reliance Digital",
+    "input": { "merchant": "Reliance Digital", "amount": 75000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-regalia-gold", "card-sbi-cashback", "card-hdfc-infinia"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-regalia-gold", "expectedSavings": 3750, "acceptableAlternatives": ["card-sbi-cashback", "card-hdfc-infinia"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-061",
+    "title": "Amazon Apple iPhone Purchase",
+    "description": "iPhone 15 purchase of ₹79,900 on Amazon.in",
+    "input": { "merchant": "Amazon.in", "amount": 79900, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-icici-amazon", "card-sbi-cashback", "card-hdfc-infinia"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 3995, "acceptableAlternatives": ["card-sbi-cashback", "card-hdfc-infinia"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-062",
+    "title": "Croma Microwave Oven",
+    "description": "Convection microwave oven purchase worth ₹12,500 at Croma",
+    "input": { "merchant": "Croma Electronics", "amount": 12500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-tata-neu-infinity", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-tata-neu-infinity", "expectedSavings": 625, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-063",
+    "title": "Reliance Digital Wireless Earbuds",
+    "description": "Noise-cancelling earbuds purchase of ₹9,990 at Reliance Digital",
+    "input": { "merchant": "Reliance Digital", "amount": 9990, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-regalia-gold", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-regalia-gold", "expectedSavings": 500, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-064",
+    "title": "Croma iPad Purchase",
+    "description": "Apple iPad Air purchase of ₹59,900 at Croma",
+    "input": { "merchant": "Croma Electronics", "amount": 59900, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-tata-neu-infinity", "card-hdfc-infinia"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-tata-neu-infinity", "expectedSavings": 2995, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-065",
+    "title": "Reliance Digital Refrigerator",
+    "description": "Double door refrigerator purchase worth ₹34,000 at Reliance Digital",
+    "input": { "merchant": "Reliance Digital", "amount": 34000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-regalia-gold", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-regalia-gold", "expectedSavings": 1700, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-066",
+    "title": "Airtel Fiber Broadband Bill",
+    "description": "Monthly 1 Gbps broadband & Landline bill payment of ₹1,499",
+    "input": { "merchant": "Airtel Fiber Broadband", "amount": 1499, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-axis-ace", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 375, "acceptableAlternatives": ["card-axis-ace", "card-icici-amazon"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-067",
+    "title": "BESCOM Electricity Bill",
+    "description": "Monthly electricity bill payment of ₹2,800 via GPay",
+    "input": { "merchant": "Electricity Board (BESCOM / State)", "amount": 2800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-airtel-axis", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 280, "acceptableAlternatives": ["card-axis-ace", "card-icici-amazon"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-068",
+    "title": "Airtel Mobile Postpaid Bill",
+    "description": "Family postpaid mobile bill payment of ₹1,199",
+    "input": { "merchant": "Airtel Fiber Broadband", "amount": 1199, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 300, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-069",
+    "title": "BESCOM Summer Electricity Bill",
+    "description": "Peak summer AC electricity bill payment of ₹5,200",
+    "input": { "merchant": "Electricity Board (BESCOM / State)", "amount": 5200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-airtel-axis"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 520, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-070",
+    "title": "Airtel DTH Direct Recharge",
+    "description": "Annual DTH HD package recharge worth ₹3,600",
+    "input": { "merchant": "Airtel Fiber Broadband", "amount": 3600, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 900, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-071",
+    "title": "State Electricity Bill GPay",
+    "description": "Apartment maintenance electricity bill of ₹1,850",
+    "input": { "merchant": "Electricity Board (BESCOM / State)", "amount": 1850, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 93, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-072",
+    "title": "Airtel Prepaid Annual Plan",
+    "description": "365-day prepaid unlimited plan worth ₹2,999",
+    "input": { "merchant": "Airtel Fiber Broadband", "amount": 2999, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 750, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-073",
+    "title": "Piped Natural Gas Bill",
+    "description": "Monthly PNG gas bill payment of ₹750",
+    "input": { "merchant": "Electricity Board (BESCOM / State)", "amount": 750, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-airtel-axis"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 75, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-074",
+    "title": "Water Supply Board Bill",
+    "description": "Municipal water utility bill payment of ₹620",
+    "input": { "merchant": "Electricity Board (BESCOM / State)", "amount": 620, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 31, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-075",
+    "title": "Airtel Black Combined Bill",
+    "description": "Mobile + Fiber + DTH combined bill of ₹2,499",
+    "input": { "merchant": "Airtel Fiber Broadband", "amount": 2499, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 625, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-076",
+    "title": "Electricity Bill Off-Season",
+    "description": "Winter electricity bill payment of ₹1,200",
+    "input": { "merchant": "Electricity Board (BESCOM / State)", "amount": 1200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-airtel-axis"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 120, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-077",
+    "title": "Airtel Wi-Fi Booster",
+    "description": "Mesh Wi-Fi installation payment worth ₹3,999",
+    "input": { "merchant": "Airtel Fiber Broadband", "amount": 3999, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-airtel-axis", "card-sbi-cashback"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-airtel-axis", "expectedSavings": 1000, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 90 }
+  },
+  {
+    "id": "scenario-078",
+    "title": "Municipal Property Tax Utility",
+    "description": "Annual civic municipal tax bill of ₹8,500",
+    "input": { "merchant": "Electricity Board (BESCOM / State)", "amount": 8500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-icici-amazon"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-axis-ace", "expectedSavings": 425, "acceptableAlternatives": ["card-icici-amazon"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-079",
+    "title": "LIC Life Insurance Premium",
+    "description": "Annual LIC term insurance premium payment of ₹28,000",
+    "input": { "merchant": "LIC / HDFC ERGO Insurance", "amount": 28000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-axis-ace", "card-hdfc-infinia", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-infinia", "expectedSavings": 924, "acceptableAlternatives": ["card-axis-ace", "card-sbi-cashback"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-080",
+    "title": "HDFC ERGO Health Insurance",
+    "description": "Family floater health insurance premium of ₹18,500",
+    "input": { "merchant": "LIC / HDFC ERGO Insurance", "amount": 18500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-infinia", "expectedSavings": 611, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-081",
+    "title": "Government Tax GST Portal Payment",
+    "description": "Advance income tax portal payment of ₹45,000",
+    "input": { "merchant": "Government GST & Tax Portal", "amount": 45000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-tata-neu-infinity"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-infinia", "expectedSavings": 1485, "acceptableAlternatives": ["card-tata-neu-infinity"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-082",
+    "title": "Car Motor Insurance Renewal",
+    "description": "Comprehensive car insurance policy renewal of ₹12,400",
+    "input": { "merchant": "LIC / HDFC ERGO Insurance", "amount": 12400, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-infinia", "expectedSavings": 409, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-083",
+    "title": "Govt Stamp Duty Fee Payment",
+    "description": "Property e-stamp duty transaction worth ₹32,000",
+    "input": { "merchant": "Government GST & Tax Portal", "amount": 32000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-tata-neu-infinity"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-infinia", "expectedSavings": 1056, "acceptableAlternatives": ["card-tata-neu-infinity"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-084",
+    "title": "LIC Pension Plan Premium",
+    "description": "Annual retirement pension policy deposit of ₹50,000",
+    "input": { "merchant": "LIC / HDFC ERGO Insurance", "amount": 50000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-hdfc-infinia", "expectedSavings": 1650, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 75 }
+  },
+  {
+    "id": "scenario-085",
+    "title": "Apollo Pharmacy Prescription Medicines",
+    "description": "Monthly prescription medicine purchase of ₹2,400 at Apollo Pharmacy",
+    "input": { "merchant": "Apollo Pharmacy & Health", "amount": 2400, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 240, "acceptableAlternatives": ["card-sbi-cashback", "card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-086",
+    "title": "Apollo Health Checkup Package",
+    "description": "Full body diagnostic health test package worth ₹4,500",
+    "input": { "merchant": "Apollo Pharmacy & Health", "amount": 4500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 450, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-087",
+    "title": "Apollo Dental Care Spend",
+    "description": "Dental cleaning & consultation fee of ₹1,800 at Apollo Clinic",
+    "input": { "merchant": "Apollo Pharmacy & Health", "amount": 1800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 180, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-088",
+    "title": "Apollo Supplements Purchase",
+    "description": "Protein powder & vitamins order of ₹3,600 at Apollo Pharmacy",
+    "input": { "merchant": "Apollo Pharmacy & Health", "amount": 3600, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 360, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-089",
+    "title": "Apollo First Aid Essentials",
+    "description": "Home emergency medical kit worth ₹850 at Apollo",
+    "input": { "merchant": "Apollo Pharmacy & Health", "amount": 850, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 85, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-090",
+    "title": "BookMyShow IMAX Movie Tickets",
+    "description": "Weekend IMAX 3D movie ticket booking for 4 people worth ₹1,600",
+    "input": { "merchant": "BookMyShow", "amount": 1600, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback", "card-hdfc-infinia"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 160, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-091",
+    "title": "BookMyShow Concert Pass",
+    "description": "Live music concert ticket booking worth ₹4,800 on BookMyShow",
+    "input": { "merchant": "BookMyShow", "amount": 4800, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 480, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-092",
+    "title": "BookMyShow Standup Comedy",
+    "description": "Standup comedy show tickets worth ₹1,200 on BookMyShow",
+    "input": { "merchant": "BookMyShow", "amount": 1200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-axis-ace"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 120, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-093",
+    "title": "BookMyShow Theater Play",
+    "description": "Drama theater play tickets worth ₹2,200 on BookMyShow",
+    "input": { "merchant": "BookMyShow", "amount": 2200, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 220, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-094",
+    "title": "BookMyShow Sports Stadium Pass",
+    "description": "IPL Cricket match stadium tickets worth ₹6,500 on BookMyShow",
+    "input": { "merchant": "BookMyShow", "amount": 6500, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-sbi-simplyclick", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-sbi-simplyclick", "expectedSavings": 650, "acceptableAlternatives": ["card-sbi-cashback"], "minimumConfidence": 80 }
+  },
+  {
+    "id": "scenario-095",
+    "title": "RuPay UPI Chai Coffee Small Spend",
+    "description": "Small ₹60 tea & snack payment via RuPay UPI",
+    "input": { "merchant": "Swiggy", "amount": 60, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-tata-neu-infinity", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-tata-neu-infinity", "expectedSavings": 6, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 70 }
+  },
+  {
+    "id": "scenario-096",
+    "title": "RuPay UPI Small Bakery Item",
+    "description": "Small ₹120 fresh bread & milk payment",
+    "input": { "merchant": "DMart Ready & Supermarket", "amount": 120, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-tata-neu-infinity", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-tata-neu-infinity", "expectedSavings": 4, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 70 }
+  },
+  {
+    "id": "scenario-097",
+    "title": "Large Purchase Gold Jewelry",
+    "description": "High value ₹1,25,000 wedding gold ornament spend",
+    "input": { "merchant": "Amazon.in", "amount": 125000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-icici-amazon", "card-sbi-cashback"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 6250, "acceptableAlternatives": ["card-hdfc-infinia", "card-sbi-cashback"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-098",
+    "title": "Large Purchase Luxury Watch",
+    "description": "Swiss luxury watch purchase worth ₹85,000",
+    "input": { "merchant": "Amazon.in", "amount": 85000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-hdfc-infinia", "card-icici-amazon"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-icici-amazon", "expectedSavings": 4250, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 85 }
+  },
+  {
+    "id": "scenario-099",
+    "title": "RuPay UPI Small Auto Rickshaw Fare",
+    "description": "Small ₹80 local auto rickshaw ride fare via UPI",
+    "input": { "merchant": "Uber Rides", "amount": 80, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-tata-neu-infinity", "card-axis-ace"], "rewardPreference": "cashback" },
+    "expected": { "winningCard": "card-tata-neu-infinity", "expectedSavings": 3, "acceptableAlternatives": ["card-axis-ace"], "minimumConfidence": 70 }
+  },
+  {
+    "id": "scenario-100",
+    "title": "Large Purchase Home Solar Inverter",
+    "description": "Solar power inverter system worth ₹1,45,000",
+    "input": { "merchant": "Croma Electronics", "amount": 145000, "date": "2026-07-27", "mode": "wallet_optimisation" },
+    "userContext": { "ownedCards": ["card-tata-neu-infinity", "card-hdfc-infinia"], "rewardPreference": "points" },
+    "expected": { "winningCard": "card-tata-neu-infinity", "expectedSavings": 7250, "acceptableAlternatives": ["card-hdfc-infinia"], "minimumConfidence": 80 }
+  }
+]

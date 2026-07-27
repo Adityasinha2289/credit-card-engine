@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "import:cards": "npx tsx scripts/importCards.ts",
     "import:merchants": "npx tsx scripts/importMerchants.ts",
-    "import:offers": "npx tsx scripts/importOffers.ts"
+    "import:offers": "npx tsx scripts/importOffers.ts",
+    "evaluate": "npx tsx scripts/evaluate.ts"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.8",

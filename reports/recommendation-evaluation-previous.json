@@ -1,0 +1,3996 @@
+{
+  "timestamp": "2026-07-27T09:58:37.360Z",
+  "summary": "Recommendation Evaluation Platform evaluated 100 benchmark scenarios with Top-1 Accuracy 66% and Average Confidence 97.6%.",
+  "scenariosCount": 100,
+  "metrics": {
+    "totalScenarios": 100,
+    "passedScenarios": 65,
+    "failedScenarios": 35,
+    "top1Accuracy": 66,
+    "top3Accuracy": 100,
+    "averageConfidence": 97.6,
+    "averageSavings": 1132384,
+    "averageExecutionTimeMs": 0.03,
+    "merchantResolutionAccuracy": 99,
+    "offerResolutionAccuracy": 78,
+    "categoryAccuracy": 100,
+    "falseRecommendationCount": 35,
+    "confidenceCalibration": 35,
+    "categoryBreakdown": {
+      "dining": {
+        "totalScenarios": 15,
+        "passedScenarios": 12,
+        "top1Accuracy": 80,
+        "top3Accuracy": 100,
+        "averageConfidence": 90.7,
+        "averageSavings": 1699574,
+        "averageExecutionTimeMs": 0.09
+      },
+      "shopping": {
+        "totalScenarios": 28,
+        "passedScenarios": 11,
+        "top1Accuracy": 42.9,
+        "top3Accuracy": 100,
+        "averageConfidence": 97.9,
+        "averageSavings": 38178,
+        "averageExecutionTimeMs": 0.01
+      },
+      "travel": {
+        "totalScenarios": 16,
+        "passedScenarios": 8,
+        "top1Accuracy": 50,
+        "top3Accuracy": 100,
+        "averageConfidence": 97.5,
+        "averageSavings": 1335228,
+        "averageExecutionTimeMs": 0.03
+      },
+      "fuel": {
+        "totalScenarios": 12,
+        "passedScenarios": 11,
+        "top1Accuracy": 91.7,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 3484,
+        "averageExecutionTimeMs": 0.01
+      },
+      "utilities": {
+        "totalScenarios": 19,
+        "passedScenarios": 13,
+        "top1Accuracy": 68.4,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 3435025,
+        "averageExecutionTimeMs": 0.01
+      },
+      "medical": {
+        "totalScenarios": 5,
+        "passedScenarios": 5,
+        "top1Accuracy": 100,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 579,
+        "averageExecutionTimeMs": 0.01
+      },
+      "entertainment": {
+        "totalScenarios": 5,
+        "passedScenarios": 5,
+        "top1Accuracy": 100,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 391,
+        "averageExecutionTimeMs": 0
+      }
+    },
+    "cardRecommendationDistribution": {
+      "SBI Cashback Credit Card": 14,
+      "Swiggy HDFC Bank Credit Card": 6,
+      "Airtel Axis Bank Credit Card": 19,
+      "Amazon Pay ICICI Card": 13,
+      "Axis Bank Atlas Credit Card": 6,
+      "HDFC Regalia Gold Credit Card": 2,
+      "Tata Neu Infinity HDFC Credit Card": 9,
+      "Axis Bank ACE Credit Card": 8,
+      "HDFC Infinia Metal Edition": 1,
+      "ICICI Bank HPCL Super Saver": 5,
+      "IndianOil Axis Bank Credit Card": 4,
+      "BPCL SBI Card Octane": 3,
+      "SBI SimplyCLICK Credit Card": 10
+    },
+    "expectedCardDistribution": {
+      "card-swiggy-hdfc": 8,
+      "card-airtel-axis": 17,
+      "card-axis-atlas": 8,
+      "card-sbi-cashback": 8,
+      "card-axis-ace": 8,
+      "card-bpcl-octane-sbi": 4,
+      "card-icici-hpcl-super-saver": 4,
+      "card-axis-indian-oil": 4,
+      "card-icici-amazon": 9,
+      "card-hdfc-regalia-gold": 7,
+      "card-tata-neu-infinity": 7,
+      "card-hdfc-infinia": 6,
+      "card-sbi-simplyclick": 10
+    },
+    "overRecommendedCards": [
+      {
+        "cardId": "Airtel Axis Bank Credit Card",
+        "cardName": "Airtel Axis Bank Credit Card",
+        "recommendedCount": 19,
+        "expectedCount": 0,
+        "recommendationPercentage": 19,
+        "overRecommendationRatio": 19
+      },
+      {
+        "cardId": "SBI Cashback Credit Card",
+        "cardName": "SBI Cashback Credit Card",
+        "recommendedCount": 14,
+        "expectedCount": 0,
+        "recommendationPercentage": 14,
+        "overRecommendationRatio": 14
+      },
+      {
+        "cardId": "Amazon Pay ICICI Card",
+        "cardName": "Amazon Pay ICICI Card",
+        "recommendedCount": 13,
+        "expectedCount": 0,
+        "recommendationPercentage": 13,
+        "overRecommendationRatio": 13
+      },
+      {
+        "cardId": "SBI SimplyCLICK Credit Card",
+        "cardName": "SBI SimplyCLICK Credit Card",
+        "recommendedCount": 10,
+        "expectedCount": 0,
+        "recommendationPercentage": 10,
+        "overRecommendationRatio": 10
+      },
+      {
+        "cardId": "Tata Neu Infinity HDFC Credit Card",
+        "cardName": "Tata Neu Infinity HDFC Credit Card",
+        "recommendedCount": 9,
+        "expectedCount": 0,
+        "recommendationPercentage": 9,
+        "overRecommendationRatio": 9
+      },
+      {
+        "cardId": "Axis Bank ACE Credit Card",
+        "cardName": "Axis Bank ACE Credit Card",
+        "recommendedCount": 8,
+        "expectedCount": 0,
+        "recommendationPercentage": 8,
+        "overRecommendationRatio": 8
+      },
+      {
+        "cardId": "Swiggy HDFC Bank Credit Card",
+        "cardName": "Swiggy HDFC Bank Credit Card",
+        "recommendedCount": 6,
+        "expectedCount": 0,
+        "recommendationPercentage": 6,
+        "overRecommendationRatio": 6
+      },
+      {
+        "cardId": "Axis Bank Atlas Credit Card",
+        "cardName": "Axis Bank Atlas Credit Card",
+        "recommendedCount": 6,
+        "expectedCount": 0,
+        "recommendationPercentage": 6,
+        "overRecommendationRatio": 6
+      },
+      {
+        "cardId": "ICICI Bank HPCL Super Saver",
+        "cardName": "ICICI Bank HPCL Super Saver",
+        "recommendedCount": 5,
+        "expectedCount": 0,
+        "recommendationPercentage": 5,
+        "overRecommendationRatio": 5
+      },
+      {
+        "cardId": "IndianOil Axis Bank Credit Card",
+        "cardName": "IndianOil Axis Bank Credit Card",
+        "recommendedCount": 4,
+        "expectedCount": 0,
+        "recommendationPercentage": 4,
+        "overRecommendationRatio": 4
+      },
+      {
+        "cardId": "BPCL SBI Card Octane",
+        "cardName": "BPCL SBI Card Octane",
+        "recommendedCount": 3,
+        "expectedCount": 0,
+        "recommendationPercentage": 3,
+        "overRecommendationRatio": 3
+      },
+      {
+        "cardId": "HDFC Regalia Gold Credit Card",
+        "cardName": "HDFC Regalia Gold Credit Card",
+        "recommendedCount": 2,
+        "expectedCount": 0,
+        "recommendationPercentage": 2,
+        "overRecommendationRatio": 2
+      }
+    ],
+    "poorQualityMerchants": [
+      {
+        "merchantName": "IRCTC",
+        "scenarioCount": 4,
+        "passedCount": 0,
+        "accuracy": 0
+      },
+      {
+        "merchantName": "Myntra Fashion",
+        "scenarioCount": 4,
+        "passedCount": 0,
+        "accuracy": 0
+      },
+      {
+        "merchantName": "Reliance Digital",
+        "scenarioCount": 3,
+        "passedCount": 0,
+        "accuracy": 0
+      },
+      {
+        "merchantName": "LIC / HDFC ERGO Insurance",
+        "scenarioCount": 4,
+        "passedCount": 0,
+        "accuracy": 0
+      },
+      {
+        "merchantName": "Government GST & Tax Portal",
+        "scenarioCount": 2,
+        "passedCount": 0,
+        "accuracy": 0
+      },
+      {
+        "merchantName": "Flipkart",
+        "scenarioCount": 4,
+        "passedCount": 1,
+        "accuracy": 25
+      },
+      {
+        "merchantName": "DMart Ready & Supermarket",
+        "scenarioCount": 3,
+        "passedCount": 1,
+        "accuracy": 33.3
+      },
+      {
+        "merchantName": "Uber Rides",
+        "scenarioCount": 4,
+        "passedCount": 2,
+        "accuracy": 50
+      },
+      {
+        "merchantName": "Croma Electronics",
+        "scenarioCount": 4,
+        "passedCount": 2,
+        "accuracy": 50
+      },
+      {
+        "merchantName": "Swiggy",
+        "scenarioCount": 8,
+        "passedCount": 5,
+        "accuracy": 62.5
+      },
+      {
+        "merchantName": "MakeMyTrip",
+        "scenarioCount": 8,
+        "passedCount": 6,
+        "accuracy": 75
+      },
+      {
+        "merchantName": "BPCL Fuel Station",
+        "scenarioCount": 4,
+        "passedCount": 3,
+        "accuracy": 75
+      },
+      {
+        "merchantName": "Amazon.in",
+        "scenarioCount": 9,
+        "passedCount": 7,
+        "accuracy": 77.8
+      }
+    ],
+    "confidenceDistribution": {
+      "90-100%": 99,
+      "80-89%": 0,
+      "70-79%": 0,
+      "60-69%": 0,
+      "<60%": 1
+    },
+    "confusionMatrix": {
+      "card-swiggy-hdfc": {
+        "SBI Cashback Credit Card": 1,
+        "Swiggy HDFC Bank Credit Card": 6,
+        "Amazon Pay ICICI Card": 1
+      },
+      "card-airtel-axis": {
+        "Airtel Axis Bank Credit Card": 17
+      },
+      "card-axis-atlas": {
+        "Axis Bank Atlas Credit Card": 6,
+        "HDFC Regalia Gold Credit Card": 2
+      },
+      "card-sbi-cashback": {
+        "Tata Neu Infinity HDFC Credit Card": 2,
+        "Amazon Pay ICICI Card": 4,
+        "HDFC Infinia Metal Edition": 1,
+        "SBI Cashback Credit Card": 1
+      },
+      "card-axis-ace": {
+        "Airtel Axis Bank Credit Card": 2,
+        "Axis Bank ACE Credit Card": 4,
+        "SBI Cashback Credit Card": 1,
+        "Tata Neu Infinity HDFC Credit Card": 1
+      },
+      "card-bpcl-octane-sbi": {
+        "ICICI Bank HPCL Super Saver": 1,
+        "BPCL SBI Card Octane": 3
+      },
+      "card-icici-hpcl-super-saver": {
+        "ICICI Bank HPCL Super Saver": 4
+      },
+      "card-axis-indian-oil": {
+        "IndianOil Axis Bank Credit Card": 4
+      },
+      "card-icici-amazon": {
+        "Amazon Pay ICICI Card": 7,
+        "SBI Cashback Credit Card": 2
+      },
+      "card-hdfc-regalia-gold": {
+        "Amazon Pay ICICI Card": 1,
+        "SBI Cashback Credit Card": 6
+      },
+      "card-tata-neu-infinity": {
+        "SBI Cashback Credit Card": 2,
+        "Tata Neu Infinity HDFC Credit Card": 4,
+        "Axis Bank ACE Credit Card": 1
+      },
+      "card-hdfc-infinia": {
+        "Axis Bank ACE Credit Card": 3,
+        "Tata Neu Infinity HDFC Credit Card": 2,
+        "SBI Cashback Credit Card": 1
+      },
+      "card-sbi-simplyclick": {
+        "SBI SimplyCLICK Credit Card": 10
+      }
+    }
+  },
+  "regression": {
+    "hasRegression": false,
+    "improvedScenarios": [],
+    "regressedScenarios": [],
+    "unchangedScenarios": [
+      "scenario-001",
+      "scenario-002",
+      "scenario-003",
+      "scenario-004",
+      "scenario-005",
+      "scenario-006",
+      "scenario-007",
+      "scenario-008",
+      "scenario-009",
+      "scenario-010",
+      "scenario-011",
+      "scenario-012",
+      "scenario-013",
+      "scenario-014",
+      "scenario-015",
+      "scenario-016",
+      "scenario-017",
+      "scenario-018",
+      "scenario-019",
+      "scenario-020",
+      "scenario-021",
+      "scenario-022",
+      "scenario-023",
+      "scenario-024",
+      "scenario-025",
+      "scenario-026",
+      "scenario-027",
+      "scenario-028",
+      "scenario-029",
+      "scenario-030",
+      "scenario-031",
+      "scenario-032",
+      "scenario-033",
+      "scenario-034",
+      "scenario-035",
+      "scenario-036",
+      "scenario-037",
+      "scenario-038",
+      "scenario-039",
+      "scenario-040",
+      "scenario-041",
+      "scenario-042",
+      "scenario-043",
+      "scenario-044",
+      "scenario-045",
+      "scenario-046",
+      "scenario-047",
+      "scenario-048",
+      "scenario-049",
+      "scenario-050",
+      "scenario-051",
+      "scenario-052",
+      "scenario-053",
+      "scenario-054",
+      "scenario-055",
+      "scenario-056",
+      "scenario-057",
+      "scenario-058",
+      "scenario-059",
+      "scenario-060",
+      "scenario-061",
+      "scenario-062",
+      "scenario-063",
+      "scenario-064",
+      "scenario-065",
+      "scenario-066",
+      "scenario-067",
+      "scenario-068",
+      "scenario-069",
+      "scenario-070",
+      "scenario-071",
+      "scenario-072",
+      "scenario-073",
+      "scenario-074",
+      "scenario-075",
+      "scenario-076",
+      "scenario-077",
+      "scenario-078",
+      "scenario-079",
+      "scenario-080",
+      "scenario-081",
+      "scenario-082",
+      "scenario-083",
+      "scenario-084",
+      "scenario-085",
+      "scenario-086",
+      "scenario-087",
+      "scenario-088",
+      "scenario-089",
+      "scenario-090",
+      "scenario-091",
+      "scenario-092",
+      "scenario-093",
+      "scenario-094",
+      "scenario-095",
+      "scenario-096",
+      "scenario-097",
+      "scenario-098",
+      "scenario-099",
+      "scenario-100"
+    ],
+    "metricDeltas": {
+      "top1AccuracyDelta": 0,
+      "top3AccuracyDelta": 0,
+      "averageConfidenceDelta": 0,
+      "averageSavingsDelta": 0,
+      "averageExecutionTimeDelta": 0,
+      "failuresDelta": 0
+    }
+  },
+  "failedScenarios": [
+    {
+      "scenarioId": "scenario-001",
+      "title": "Swiggy Small Food Order",
+      "category": "dining",
+      "merchantInput": "Swiggy",
+      "amount": 450,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-swiggy-hdfc",
+      "acceptableAlternatives": [
+        "card-sbi-cashback",
+        "card-airtel-axis"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-icici-amazon",
+        "card-swiggy-hdfc"
+      ],
+      "actualSavings": 284,
+      "expectedSavings": 45,
+      "savingsDiff": 239,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Cashback on Zomato Orders\" saving ₹10",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹284",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 1.03,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Swiggy Food & Instamart",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Cashback on Zomato Orders",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146317358-pwndd",
+        "timestamp": "2026-07-27T09:58:37.358Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy",
+          "amount": 450,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-swiggy-hdfc",
+            "card-sbi-cashback",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Swiggy Food & Instamart",
+              "matchType": "alias",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 79
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-swiggy-hdfc\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-002",
+      "title": "Swiggy Instamart Grocery",
+      "category": "shopping",
+      "merchantInput": "Swiggy Instamart",
+      "amount": 1200,
+      "passed": false,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-swiggy-hdfc",
+      "actualWinnerName": "Swiggy HDFC Bank Credit Card",
+      "expectedWinner": "card-swiggy-hdfc",
+      "acceptableAlternatives": [
+        "card-airtel-axis",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-swiggy-hdfc",
+        "card-sbi-cashback",
+        "card-airtel-axis"
+      ],
+      "actualSavings": 1404,
+      "expectedSavings": 120,
+      "savingsDiff": 1284,
+      "confidence": 40,
+      "minimumConfidence": 80,
+      "confidencePassed": false,
+      "reasoning": [
+        "Active offer: \"10% Instant Discount on Swiggy Dining & Instamart\" saving ₹10",
+        "Effective 107% reward multiplier on spend",
+        "Generates total net savings of ₹1404",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.1,
+      "merchantResolved": false,
+      "resolvedMerchantName": "Unresolved/Fallback",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Instant Discount on Swiggy Dining & Instamart",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317358-8o5v9",
+        "timestamp": "2026-07-27T09:58:37.358Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy Instamart",
+          "amount": 1200,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-swiggy-hdfc",
+            "card-airtel-axis",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Fallback",
+              "matchType": "fallback",
+              "applicableOffersCount": 9
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-swiggy-hdfc",
+              "topCompositeScore": 83
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Confidence too low: Expected min 80%, got 40%"
+      ]
+    },
+    {
+      "scenarioId": "scenario-012",
+      "title": "Swiggy Lunch Box",
+      "category": "dining",
+      "merchantInput": "Swiggy",
+      "amount": 280,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-icici-amazon",
+      "actualWinnerName": "Amazon Pay ICICI Card",
+      "expectedWinner": "card-swiggy-hdfc",
+      "acceptableAlternatives": [
+        "card-icici-amazon"
+      ],
+      "actualTop3Ids": [
+        "card-icici-amazon",
+        "card-swiggy-hdfc"
+      ],
+      "actualSavings": 1490,
+      "expectedSavings": 28,
+      "savingsDiff": 1462,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 532% reward multiplier on spend",
+        "Generates total net savings of ₹1490",
+        "Available in your existing wallet (ICICI Bank)",
+        "Lifetime free card with zero annual maintenance fee"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Swiggy Food & Instamart",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146317359-amgbp",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy",
+          "amount": 280,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-swiggy-hdfc",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Swiggy Food & Instamart",
+              "matchType": "alias",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-icici-amazon",
+              "topCompositeScore": 71
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-swiggy-hdfc\", got \"Amazon Pay ICICI Card (card-icici-amazon)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-017",
+      "title": "MakeMyTrip Luxury Hotel Stay",
+      "category": "travel",
+      "merchantInput": "MakeMyTrip",
+      "amount": 24000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-hdfc-regalia-gold",
+      "actualWinnerName": "HDFC Regalia Gold Credit Card",
+      "expectedWinner": "card-axis-atlas",
+      "acceptableAlternatives": [
+        "card-hdfc-infinia"
+      ],
+      "actualTop3Ids": [
+        "card-hdfc-regalia-gold",
+        "card-axis-atlas",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 9965280,
+      "expectedSavings": 3600,
+      "savingsDiff": 9961680,
+      "confidence": 100,
+      "minimumConfidence": 85,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"15% Off Domestic Flights & 4× Miles\" saving ₹15",
+        "Effective 41507% reward multiplier on spend",
+        "Generates total net savings of ₹9965280",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.03,
+      "merchantResolved": true,
+      "resolvedMerchantName": "MakeMyTrip",
+      "offerResolved": true,
+      "appliedOfferTitle": "15% Off Domestic Flights & 4× Miles",
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-rrprn",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "MakeMyTrip",
+          "amount": 24000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-atlas",
+            "card-hdfc-infinia",
+            "card-hdfc-regalia-gold"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "MakeMyTrip",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-hdfc-regalia-gold",
+              "topCompositeScore": 89
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-axis-atlas\", got \"HDFC Regalia Gold Credit Card (card-hdfc-regalia-gold)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-018",
+      "title": "IRCTC Train Ticket Booking",
+      "category": "travel",
+      "merchantInput": "IRCTC",
+      "amount": 3200,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-tata-neu-infinity",
+      "actualWinnerName": "Tata Neu Infinity HDFC Credit Card",
+      "expectedWinner": "card-sbi-cashback",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity",
+        "card-hdfc-regalia-gold"
+      ],
+      "actualTop3Ids": [
+        "card-tata-neu-infinity",
+        "card-hdfc-regalia-gold",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 1712,
+      "expectedSavings": 160,
+      "savingsDiff": 1552,
+      "confidence": 90,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 53.5% reward multiplier on spend",
+        "Generates total net savings of ₹1712",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.02,
+      "merchantResolved": true,
+      "resolvedMerchantName": "IRCTC Train Booking",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-26vb5",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "IRCTC",
+          "amount": 3200,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-sbi-cashback",
+            "card-hdfc-regalia-gold",
+            "card-tata-neu-infinity"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "IRCTC Train Booking",
+              "matchType": "alias",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-tata-neu-infinity",
+              "topCompositeScore": 73
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-sbi-cashback\", got \"Tata Neu Infinity HDFC Credit Card (card-tata-neu-infinity)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-020",
+      "title": "Uber Intercity Cab Ride",
+      "category": "travel",
+      "merchantInput": "Uber Rides",
+      "amount": 1800,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-airtel-axis",
+      "actualWinnerName": "Airtel Axis Bank Credit Card",
+      "expectedWinner": "card-axis-ace",
+      "acceptableAlternatives": [
+        "card-airtel-axis",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-airtel-axis",
+        "card-axis-ace",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 4518180,
+      "expectedSavings": 72,
+      "savingsDiff": 4518108,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 251010% reward multiplier on spend",
+        "Generates total net savings of ₹4518180",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Uber Rides",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-5ypxo",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Uber Rides",
+          "amount": 1800,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-ace",
+            "card-airtel-axis",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Uber Rides",
+              "matchType": "exact",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-airtel-axis",
+              "topCompositeScore": 69
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-axis-ace\", got \"Airtel Axis Bank Credit Card (card-airtel-axis)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-022",
+      "title": "IRCTC Sleeper Train Ticket",
+      "category": "travel",
+      "merchantInput": "IRCTC",
+      "amount": 1400,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-tata-neu-infinity",
+      "actualWinnerName": "Tata Neu Infinity HDFC Credit Card",
+      "expectedWinner": "card-sbi-cashback",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity"
+      ],
+      "actualTop3Ids": [
+        "card-tata-neu-infinity",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 749,
+      "expectedSavings": 70,
+      "savingsDiff": 679,
+      "confidence": 90,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 53.5% reward multiplier on spend",
+        "Generates total net savings of ₹749",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "IRCTC Train Booking",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-zt4bz",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "IRCTC",
+          "amount": 1400,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-sbi-cashback",
+            "card-tata-neu-infinity"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "IRCTC Train Booking",
+              "matchType": "alias",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-tata-neu-infinity",
+              "topCompositeScore": 68
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-sbi-cashback\", got \"Tata Neu Infinity HDFC Credit Card (card-tata-neu-infinity)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-023",
+      "title": "MakeMyTrip Homestay Booking",
+      "category": "travel",
+      "merchantInput": "MakeMyTrip",
+      "amount": 9000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-hdfc-regalia-gold",
+      "actualWinnerName": "HDFC Regalia Gold Credit Card",
+      "expectedWinner": "card-axis-atlas",
+      "acceptableAlternatives": [
+        "card-hdfc-regalia-gold"
+      ],
+      "actualTop3Ids": [
+        "card-hdfc-regalia-gold",
+        "card-axis-atlas"
+      ],
+      "actualSavings": 3736980,
+      "expectedSavings": 1350,
+      "savingsDiff": 3735630,
+      "confidence": 100,
+      "minimumConfidence": 85,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"15% Off Domestic Flights & 4× Miles\" saving ₹15",
+        "Effective 41507% reward multiplier on spend",
+        "Generates total net savings of ₹3736980",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "MakeMyTrip",
+      "offerResolved": true,
+      "appliedOfferTitle": "15% Off Domestic Flights & 4× Miles",
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-79l4s",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "MakeMyTrip",
+          "amount": 9000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-atlas",
+            "card-hdfc-regalia-gold"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "MakeMyTrip",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-hdfc-regalia-gold",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-axis-atlas\", got \"HDFC Regalia Gold Credit Card (card-hdfc-regalia-gold)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-026",
+      "title": "IRCTC Tejas Express",
+      "category": "travel",
+      "merchantInput": "IRCTC",
+      "amount": 2100,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-icici-amazon",
+      "actualWinnerName": "Amazon Pay ICICI Card",
+      "expectedWinner": "card-sbi-cashback",
+      "acceptableAlternatives": [
+        "card-icici-amazon"
+      ],
+      "actualTop3Ids": [
+        "card-icici-amazon",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 11172,
+      "expectedSavings": 105,
+      "savingsDiff": 11067,
+      "confidence": 90,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 532% reward multiplier on spend",
+        "Generates total net savings of ₹11172",
+        "Available in your existing wallet (ICICI Bank)",
+        "Lifetime free card with zero annual maintenance fee"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "IRCTC Train Booking",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-lrlub",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "IRCTC",
+          "amount": 2100,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-sbi-cashback",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "IRCTC Train Booking",
+              "matchType": "alias",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-icici-amazon",
+              "topCompositeScore": 71
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-sbi-cashback\", got \"Amazon Pay ICICI Card (card-icici-amazon)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-028",
+      "title": "Uber Airport Drop",
+      "category": "travel",
+      "merchantInput": "Uber Rides",
+      "amount": 1200,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-airtel-axis",
+      "actualWinnerName": "Airtel Axis Bank Credit Card",
+      "expectedWinner": "card-axis-ace",
+      "acceptableAlternatives": [
+        "card-airtel-axis"
+      ],
+      "actualTop3Ids": [
+        "card-airtel-axis",
+        "card-axis-ace"
+      ],
+      "actualSavings": 3012120,
+      "expectedSavings": 48,
+      "savingsDiff": 3012072,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 251010% reward multiplier on spend",
+        "Generates total net savings of ₹3012120",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Uber Rides",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-l7753",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Uber Rides",
+          "amount": 1200,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-ace",
+            "card-airtel-axis"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Uber Rides",
+              "matchType": "exact",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-airtel-axis",
+              "topCompositeScore": 68
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-axis-ace\", got \"Airtel Axis Bank Credit Card (card-airtel-axis)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-030",
+      "title": "IRCTC Rajdhani Booking",
+      "category": "travel",
+      "merchantInput": "IRCTC",
+      "amount": 4500,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-hdfc-infinia",
+      "actualWinnerName": "HDFC Infinia Metal Edition",
+      "expectedWinner": "card-sbi-cashback",
+      "acceptableAlternatives": [
+        "card-hdfc-infinia"
+      ],
+      "actualTop3Ids": [
+        "card-hdfc-infinia",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 916,
+      "expectedSavings": 225,
+      "savingsDiff": 691,
+      "confidence": 90,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"15% Off Domestic Flights & 4× Miles\" saving ₹15",
+        "Effective 5.3515999999999995% reward multiplier on spend",
+        "Generates total net savings of ₹916",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "IRCTC Train Booking",
+      "offerResolved": true,
+      "appliedOfferTitle": "15% Off Domestic Flights & 4× Miles",
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-4pjwd",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "IRCTC",
+          "amount": 4500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-sbi-cashback",
+            "card-hdfc-infinia"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "IRCTC Train Booking",
+              "matchType": "alias",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-hdfc-infinia",
+              "topCompositeScore": 74
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-sbi-cashback\", got \"HDFC Infinia Metal Edition (card-hdfc-infinia)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-031",
+      "title": "BPCL Octane Fuel Refill",
+      "category": "fuel",
+      "merchantInput": "BPCL Fuel Station",
+      "amount": 3000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-icici-hpcl-super-saver",
+      "actualWinnerName": "ICICI Bank HPCL Super Saver",
+      "expectedWinner": "card-bpcl-octane-sbi",
+      "acceptableAlternatives": [
+        "card-icici-hpcl-super-saver",
+        "card-axis-ace"
+      ],
+      "actualTop3Ids": [
+        "card-icici-hpcl-super-saver",
+        "card-bpcl-octane-sbi",
+        "card-axis-ace"
+      ],
+      "actualSavings": 360,
+      "expectedSavings": 218,
+      "savingsDiff": 142,
+      "confidence": 100,
+      "minimumConfidence": 85,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Savings on HPCL Fuel & LPG\" saving ₹5",
+        "Effective 7% reward multiplier on spend",
+        "Generates total net savings of ₹360",
+        "Available in your existing wallet (ICICI Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "BPCL Fuel Station",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Savings on HPCL Fuel & LPG",
+      "categoryMatched": true,
+      "inferredCategory": "fuel",
+      "trace": {
+        "traceId": "trace-1785146317359-555t2",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "BPCL Fuel Station",
+          "amount": 3000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-bpcl-octane-sbi",
+            "card-icici-hpcl-super-saver",
+            "card-axis-ace"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "BPCL Fuel Station",
+              "matchType": "exact",
+              "applicableOffersCount": 3
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-icici-hpcl-super-saver",
+              "topCompositeScore": 87
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-bpcl-octane-sbi\", got \"ICICI Bank HPCL Super Saver (card-icici-hpcl-super-saver)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-045",
+      "title": "Flipkart Big Billion Days Fashion",
+      "category": "shopping",
+      "merchantInput": "Flipkart",
+      "amount": 5500,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-icici-amazon",
+      "actualWinnerName": "Amazon Pay ICICI Card",
+      "expectedWinner": "card-sbi-cashback",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity"
+      ],
+      "actualTop3Ids": [
+        "card-icici-amazon",
+        "card-sbi-cashback",
+        "card-tata-neu-infinity"
+      ],
+      "actualSavings": 29645,
+      "expectedSavings": 275,
+      "savingsDiff": 29370,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 534% reward multiplier on spend",
+        "Generates total net savings of ₹29645",
+        "Available in your existing wallet (ICICI Bank)",
+        "Lifetime free card with zero annual maintenance fee"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Flipkart",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-g1su1",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Flipkart",
+          "amount": 5500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-sbi-cashback",
+            "card-icici-amazon",
+            "card-tata-neu-infinity"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Flipkart",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-icici-amazon",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-sbi-cashback\", got \"Amazon Pay ICICI Card (card-icici-amazon)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-046",
+      "title": "Myntra End of Reason Sale",
+      "category": "shopping",
+      "merchantInput": "Myntra Fashion",
+      "amount": 6800,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-icici-amazon",
+      "actualWinnerName": "Amazon Pay ICICI Card",
+      "expectedWinner": "card-hdfc-regalia-gold",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-icici-amazon",
+        "card-sbi-cashback",
+        "card-hdfc-regalia-gold"
+      ],
+      "actualSavings": 36652,
+      "expectedSavings": 340,
+      "savingsDiff": 36312,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 534% reward multiplier on spend",
+        "Generates total net savings of ₹36652",
+        "Available in your existing wallet (ICICI Bank)",
+        "Lifetime free card with zero annual maintenance fee"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Myntra Fashion",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-cz6hm",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Myntra Fashion",
+          "amount": 6800,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-regalia-gold",
+            "card-sbi-cashback",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Myntra Fashion",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-icici-amazon",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-regalia-gold\", got \"Amazon Pay ICICI Card (card-icici-amazon)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-048",
+      "title": "Flipkart Home Appliances",
+      "category": "shopping",
+      "merchantInput": "Flipkart",
+      "amount": 9500,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-icici-amazon",
+      "actualWinnerName": "Amazon Pay ICICI Card",
+      "expectedWinner": "card-sbi-cashback",
+      "acceptableAlternatives": [
+        "card-icici-amazon"
+      ],
+      "actualTop3Ids": [
+        "card-icici-amazon",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 51205,
+      "expectedSavings": 475,
+      "savingsDiff": 50730,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 534% reward multiplier on spend",
+        "Generates total net savings of ₹51205",
+        "Available in your existing wallet (ICICI Bank)",
+        "Lifetime free card with zero annual maintenance fee"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Flipkart",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-i18b3",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Flipkart",
+          "amount": 9500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-sbi-cashback",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Flipkart",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-icici-amazon",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-sbi-cashback\", got \"Amazon Pay ICICI Card (card-icici-amazon)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-049",
+      "title": "Myntra Winter Wear Sale",
+      "category": "shopping",
+      "merchantInput": "Myntra Fashion",
+      "amount": 4200,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-hdfc-regalia-gold",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-hdfc-regalia-gold"
+      ],
+      "actualSavings": 2436,
+      "expectedSavings": 210,
+      "savingsDiff": 2226,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹2436",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Myntra Fashion",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-hp45r",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Myntra Fashion",
+          "amount": 4200,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-regalia-gold",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Myntra Fashion",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 86
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-regalia-gold\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-052",
+      "title": "Myntra Accessories Sale",
+      "category": "shopping",
+      "merchantInput": "Myntra Fashion",
+      "amount": 2900,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-hdfc-regalia-gold",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-hdfc-regalia-gold"
+      ],
+      "actualSavings": 1682,
+      "expectedSavings": 145,
+      "savingsDiff": 1537,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹1682",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Myntra Fashion",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-3g1d2",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Myntra Fashion",
+          "amount": 2900,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-regalia-gold",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Myntra Fashion",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 85
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-regalia-gold\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-053",
+      "title": "DMart Supermarket Offline Retail",
+      "category": "shopping",
+      "merchantInput": "DMart Ready & Supermarket",
+      "amount": 6500,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-axis-ace",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-tata-neu-infinity",
+        "card-axis-ace"
+      ],
+      "actualSavings": 3770,
+      "expectedSavings": 130,
+      "savingsDiff": 3640,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹3770",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "DMart Ready & Supermarket",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-30q5o",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "DMart Ready & Supermarket",
+          "amount": 6500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-ace",
+            "card-tata-neu-infinity",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "DMart Ready & Supermarket",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 87
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-axis-ace\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-055",
+      "title": "Flipkart Furniture Order",
+      "category": "shopping",
+      "merchantInput": "Flipkart",
+      "amount": 8200,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-icici-amazon",
+      "actualWinnerName": "Amazon Pay ICICI Card",
+      "expectedWinner": "card-sbi-cashback",
+      "acceptableAlternatives": [
+        "card-icici-amazon"
+      ],
+      "actualTop3Ids": [
+        "card-icici-amazon",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 44198,
+      "expectedSavings": 410,
+      "savingsDiff": 43788,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 534% reward multiplier on spend",
+        "Generates total net savings of ₹44198",
+        "Available in your existing wallet (ICICI Bank)",
+        "Lifetime free card with zero annual maintenance fee"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Flipkart",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-sjdf3",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Flipkart",
+          "amount": 8200,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-sbi-cashback",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Flipkart",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-icici-amazon",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-sbi-cashback\", got \"Amazon Pay ICICI Card (card-icici-amazon)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-056",
+      "title": "Myntra Ethnic Wear",
+      "category": "shopping",
+      "merchantInput": "Myntra Fashion",
+      "amount": 3800,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-hdfc-regalia-gold",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-hdfc-regalia-gold"
+      ],
+      "actualSavings": 2204,
+      "expectedSavings": 190,
+      "savingsDiff": 2014,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹2204",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Myntra Fashion",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-lbocz",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Myntra Fashion",
+          "amount": 3800,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-regalia-gold",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Myntra Fashion",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 86
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-regalia-gold\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-058",
+      "title": "DMart Weekend Shopping",
+      "category": "shopping",
+      "merchantInput": "DMart Ready & Supermarket",
+      "amount": 2400,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-tata-neu-infinity",
+      "actualWinnerName": "Tata Neu Infinity HDFC Credit Card",
+      "expectedWinner": "card-axis-ace",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity"
+      ],
+      "actualTop3Ids": [
+        "card-tata-neu-infinity",
+        "card-axis-ace"
+      ],
+      "actualSavings": 1284,
+      "expectedSavings": 48,
+      "savingsDiff": 1236,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 53.5% reward multiplier on spend",
+        "Generates total net savings of ₹1284",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "DMart Ready & Supermarket",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-n59w2",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "DMart Ready & Supermarket",
+          "amount": 2400,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-ace",
+            "card-tata-neu-infinity"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "DMart Ready & Supermarket",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-tata-neu-infinity",
+              "topCompositeScore": 72
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-axis-ace\", got \"Tata Neu Infinity HDFC Credit Card (card-tata-neu-infinity)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-059",
+      "title": "Croma Smart TV Purchase",
+      "category": "shopping",
+      "merchantInput": "Croma Electronics",
+      "amount": 45000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-tata-neu-infinity",
+      "acceptableAlternatives": [
+        "card-sbi-cashback",
+        "card-hdfc-infinia"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-tata-neu-infinity",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 26100,
+      "expectedSavings": 2250,
+      "savingsDiff": 23850,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹26100",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Croma Electronics",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-110x9",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Croma Electronics",
+          "amount": 45000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-tata-neu-infinity",
+            "card-sbi-cashback",
+            "card-hdfc-infinia"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Croma Electronics",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-tata-neu-infinity\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-060",
+      "title": "Reliance Digital Laptop",
+      "category": "shopping",
+      "merchantInput": "Reliance Digital",
+      "amount": 75000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-hdfc-regalia-gold",
+      "acceptableAlternatives": [
+        "card-sbi-cashback",
+        "card-hdfc-infinia"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-hdfc-regalia-gold",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 43500,
+      "expectedSavings": 3750,
+      "savingsDiff": 39750,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹43500",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Reliance Digital",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-m69oi",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Reliance Digital",
+          "amount": 75000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-regalia-gold",
+            "card-sbi-cashback",
+            "card-hdfc-infinia"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Reliance Digital",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-regalia-gold\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-061",
+      "title": "Amazon Apple iPhone Purchase",
+      "category": "shopping",
+      "merchantInput": "Amazon.in",
+      "amount": 79900,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-icici-amazon",
+      "acceptableAlternatives": [
+        "card-sbi-cashback",
+        "card-hdfc-infinia"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-icici-amazon",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 46342,
+      "expectedSavings": 3995,
+      "savingsDiff": 42347,
+      "confidence": 100,
+      "minimumConfidence": 90,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹46342",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Amazon.in",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-wamkq",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Amazon.in",
+          "amount": 79900,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-icici-amazon",
+            "card-sbi-cashback",
+            "card-hdfc-infinia"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Amazon.in",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-icici-amazon\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-062",
+      "title": "Croma Microwave Oven",
+      "category": "shopping",
+      "merchantInput": "Croma Electronics",
+      "amount": 12500,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-tata-neu-infinity",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-tata-neu-infinity"
+      ],
+      "actualSavings": 7250,
+      "expectedSavings": 625,
+      "savingsDiff": 6625,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹7250",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Croma Electronics",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-0oogz",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Croma Electronics",
+          "amount": 12500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-tata-neu-infinity",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Croma Electronics",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 87
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-tata-neu-infinity\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-063",
+      "title": "Reliance Digital Wireless Earbuds",
+      "category": "shopping",
+      "merchantInput": "Reliance Digital",
+      "amount": 9990,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-hdfc-regalia-gold",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-hdfc-regalia-gold"
+      ],
+      "actualSavings": 5795,
+      "expectedSavings": 500,
+      "savingsDiff": 5295,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹5795",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Reliance Digital",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-fh47g",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Reliance Digital",
+          "amount": 9990,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-regalia-gold",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Reliance Digital",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 87
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-regalia-gold\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-065",
+      "title": "Reliance Digital Refrigerator",
+      "category": "shopping",
+      "merchantInput": "Reliance Digital",
+      "amount": 34000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-hdfc-regalia-gold",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-hdfc-regalia-gold"
+      ],
+      "actualSavings": 19720,
+      "expectedSavings": 1700,
+      "savingsDiff": 18020,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹19720",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Reliance Digital",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317359-8oi5d",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Reliance Digital",
+          "amount": 34000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-regalia-gold",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Reliance Digital",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-regalia-gold\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-079",
+      "title": "LIC Life Insurance Premium",
+      "category": "utilities",
+      "merchantInput": "LIC / HDFC ERGO Insurance",
+      "amount": 28000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-axis-ace",
+      "actualWinnerName": "Axis Bank ACE Credit Card",
+      "expectedWinner": "card-hdfc-infinia",
+      "acceptableAlternatives": [
+        "card-axis-ace",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-axis-ace",
+        "card-sbi-cashback",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 153720,
+      "expectedSavings": 924,
+      "savingsDiff": 152796,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Cashback on Electricity Bill Payments\" saving ₹5",
+        "Effective 544% reward multiplier on spend",
+        "Generates total net savings of ₹153720",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Cashback on Electricity Bill Payments",
+      "categoryMatched": true,
+      "inferredCategory": "utilities",
+      "trace": {
+        "traceId": "trace-1785146317359-mrf60",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "LIC / HDFC ERGO Insurance",
+          "amount": 28000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-ace",
+            "card-hdfc-infinia",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "LIC / HDFC ERGO Insurance",
+              "matchType": "exact",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-axis-ace",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-infinia\", got \"Axis Bank ACE Credit Card (card-axis-ace)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-080",
+      "title": "HDFC ERGO Health Insurance",
+      "category": "utilities",
+      "merchantInput": "LIC / HDFC ERGO Insurance",
+      "amount": 18500,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-axis-ace",
+      "actualWinnerName": "Axis Bank ACE Credit Card",
+      "expectedWinner": "card-hdfc-infinia",
+      "acceptableAlternatives": [
+        "card-axis-ace"
+      ],
+      "actualTop3Ids": [
+        "card-axis-ace",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 101565,
+      "expectedSavings": 611,
+      "savingsDiff": 100954,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Cashback on Electricity Bill Payments\" saving ₹5",
+        "Effective 544% reward multiplier on spend",
+        "Generates total net savings of ₹101565",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Cashback on Electricity Bill Payments",
+      "categoryMatched": true,
+      "inferredCategory": "utilities",
+      "trace": {
+        "traceId": "trace-1785146317359-q90mw",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "LIC / HDFC ERGO Insurance",
+          "amount": 18500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-axis-ace"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "LIC / HDFC ERGO Insurance",
+              "matchType": "exact",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-axis-ace",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-infinia\", got \"Axis Bank ACE Credit Card (card-axis-ace)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-081",
+      "title": "Government Tax GST Portal Payment",
+      "category": "utilities",
+      "merchantInput": "Government GST & Tax Portal",
+      "amount": 45000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-tata-neu-infinity",
+      "actualWinnerName": "Tata Neu Infinity HDFC Credit Card",
+      "expectedWinner": "card-hdfc-infinia",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity"
+      ],
+      "actualTop3Ids": [
+        "card-tata-neu-infinity",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 23175,
+      "expectedSavings": 1485,
+      "savingsDiff": 21690,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 51.5% reward multiplier on spend",
+        "Generates total net savings of ₹23175",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Government GST & Tax Portal",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "utilities",
+      "trace": {
+        "traceId": "trace-1785146317360-8l5vq",
+        "timestamp": "2026-07-27T09:58:37.360Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Government GST & Tax Portal",
+          "amount": 45000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-tata-neu-infinity"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Government GST & Tax Portal",
+              "matchType": "exact",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-tata-neu-infinity",
+              "topCompositeScore": 71
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-infinia\", got \"Tata Neu Infinity HDFC Credit Card (card-tata-neu-infinity)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-082",
+      "title": "Car Motor Insurance Renewal",
+      "category": "utilities",
+      "merchantInput": "LIC / HDFC ERGO Insurance",
+      "amount": 12400,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-hdfc-infinia",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 6324,
+      "expectedSavings": 409,
+      "savingsDiff": 5915,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 51% reward multiplier on spend",
+        "Generates total net savings of ₹6324",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "utilities",
+      "trace": {
+        "traceId": "trace-1785146317360-s9ruy",
+        "timestamp": "2026-07-27T09:58:37.360Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "LIC / HDFC ERGO Insurance",
+          "amount": 12400,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "LIC / HDFC ERGO Insurance",
+              "matchType": "exact",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 70
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-infinia\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-083",
+      "title": "Govt Stamp Duty Fee Payment",
+      "category": "utilities",
+      "merchantInput": "Government GST & Tax Portal",
+      "amount": 32000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-tata-neu-infinity",
+      "actualWinnerName": "Tata Neu Infinity HDFC Credit Card",
+      "expectedWinner": "card-hdfc-infinia",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity"
+      ],
+      "actualTop3Ids": [
+        "card-tata-neu-infinity",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 16480,
+      "expectedSavings": 1056,
+      "savingsDiff": 15424,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 51.5% reward multiplier on spend",
+        "Generates total net savings of ₹16480",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Government GST & Tax Portal",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "utilities",
+      "trace": {
+        "traceId": "trace-1785146317360-f6m8b",
+        "timestamp": "2026-07-27T09:58:37.360Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Government GST & Tax Portal",
+          "amount": 32000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-tata-neu-infinity"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Government GST & Tax Portal",
+              "matchType": "exact",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-tata-neu-infinity",
+              "topCompositeScore": 71
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-infinia\", got \"Tata Neu Infinity HDFC Credit Card (card-tata-neu-infinity)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-084",
+      "title": "LIC Pension Plan Premium",
+      "category": "utilities",
+      "merchantInput": "LIC / HDFC ERGO Insurance",
+      "amount": 50000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-axis-ace",
+      "actualWinnerName": "Axis Bank ACE Credit Card",
+      "expectedWinner": "card-hdfc-infinia",
+      "acceptableAlternatives": [
+        "card-axis-ace"
+      ],
+      "actualTop3Ids": [
+        "card-axis-ace",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 274500,
+      "expectedSavings": 1650,
+      "savingsDiff": 272850,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Cashback on Electricity Bill Payments\" saving ₹5",
+        "Effective 544% reward multiplier on spend",
+        "Generates total net savings of ₹274500",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Cashback on Electricity Bill Payments",
+      "categoryMatched": true,
+      "inferredCategory": "utilities",
+      "trace": {
+        "traceId": "trace-1785146317360-vx9gk",
+        "timestamp": "2026-07-27T09:58:37.360Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "LIC / HDFC ERGO Insurance",
+          "amount": 50000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-axis-ace"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "LIC / HDFC ERGO Insurance",
+              "matchType": "exact",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-axis-ace",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-hdfc-infinia\", got \"Axis Bank ACE Credit Card (card-axis-ace)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-095",
+      "title": "RuPay UPI Chai Coffee Small Spend",
+      "category": "dining",
+      "merchantInput": "Swiggy",
+      "amount": 60,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-axis-ace",
+      "actualWinnerName": "Axis Bank ACE Credit Card",
+      "expectedWinner": "card-tata-neu-infinity",
+      "acceptableAlternatives": [
+        "card-axis-ace"
+      ],
+      "actualTop3Ids": [
+        "card-axis-ace",
+        "card-tata-neu-infinity"
+      ],
+      "actualSavings": 326,
+      "expectedSavings": 6,
+      "savingsDiff": 320,
+      "confidence": 90,
+      "minimumConfidence": 70,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 544% reward multiplier on spend",
+        "Generates total net savings of ₹326",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Swiggy Food & Instamart",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146317360-31hft",
+        "timestamp": "2026-07-27T09:58:37.360Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy",
+          "amount": 60,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-tata-neu-infinity",
+            "card-axis-ace"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Swiggy Food & Instamart",
+              "matchType": "alias",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-axis-ace",
+              "topCompositeScore": 67
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-tata-neu-infinity\", got \"Axis Bank ACE Credit Card (card-axis-ace)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-097",
+      "title": "Large Purchase Gold Jewelry",
+      "category": "shopping",
+      "merchantInput": "Amazon.in",
+      "amount": 125000,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-icici-amazon",
+      "acceptableAlternatives": [
+        "card-hdfc-infinia",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-icici-amazon",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 72500,
+      "expectedSavings": 6250,
+      "savingsDiff": 66250,
+      "confidence": 100,
+      "minimumConfidence": 85,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"5% Instant Cashback on Amazon Shopping\" saving ₹5",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹72500",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Amazon.in",
+      "offerResolved": true,
+      "appliedOfferTitle": "5% Instant Cashback on Amazon Shopping",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317360-7ds5a",
+        "timestamp": "2026-07-27T09:58:37.360Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Amazon.in",
+          "amount": 125000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-icici-amazon",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Amazon.in",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-icici-amazon\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    }
+  ],
+  "slowestRequests": [
+    {
+      "scenarioId": "scenario-001",
+      "title": "Swiggy Small Food Order",
+      "category": "dining",
+      "merchantInput": "Swiggy",
+      "amount": 450,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-swiggy-hdfc",
+      "acceptableAlternatives": [
+        "card-sbi-cashback",
+        "card-airtel-axis"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-icici-amazon",
+        "card-swiggy-hdfc"
+      ],
+      "actualSavings": 284,
+      "expectedSavings": 45,
+      "savingsDiff": 239,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Cashback on Zomato Orders\" saving ₹10",
+        "Effective 53% reward multiplier on spend",
+        "Generates total net savings of ₹284",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 1.03,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Swiggy Food & Instamart",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Cashback on Zomato Orders",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146317358-pwndd",
+        "timestamp": "2026-07-27T09:58:37.358Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy",
+          "amount": 450,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-swiggy-hdfc",
+            "card-sbi-cashback",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Swiggy Food & Instamart",
+              "matchType": "alias",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 79
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-swiggy-hdfc\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-019",
+      "title": "MakeMyTrip International Flight",
+      "category": "travel",
+      "merchantInput": "MakeMyTrip",
+      "amount": 42000,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-axis-atlas",
+      "actualWinnerName": "Axis Bank Atlas Credit Card",
+      "expectedWinner": "card-axis-atlas",
+      "acceptableAlternatives": [
+        "card-hdfc-infinia"
+      ],
+      "actualTop3Ids": [
+        "card-axis-atlas",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 28980,
+      "expectedSavings": 6300,
+      "savingsDiff": 22680,
+      "confidence": 100,
+      "minimumConfidence": 85,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"15% Off Domestic Flights & 4× Miles\" saving ₹15",
+        "Effective 54% reward multiplier on spend",
+        "Generates total net savings of ₹28980",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.22,
+      "merchantResolved": true,
+      "resolvedMerchantName": "MakeMyTrip",
+      "offerResolved": true,
+      "appliedOfferTitle": "15% Off Domestic Flights & 4× Miles",
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146317359-7zmxm",
+        "timestamp": "2026-07-27T09:58:37.359Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "MakeMyTrip",
+          "amount": 42000,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-atlas",
+            "card-hdfc-infinia"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "MakeMyTrip",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-axis-atlas",
+              "topCompositeScore": 89
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": []
+    },
+    {
+      "scenarioId": "scenario-002",
+      "title": "Swiggy Instamart Grocery",
+      "category": "shopping",
+      "merchantInput": "Swiggy Instamart",
+      "amount": 1200,
+      "passed": false,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-swiggy-hdfc",
+      "actualWinnerName": "Swiggy HDFC Bank Credit Card",
+      "expectedWinner": "card-swiggy-hdfc",
+      "acceptableAlternatives": [
+        "card-airtel-axis",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-swiggy-hdfc",
+        "card-sbi-cashback",
+        "card-airtel-axis"
+      ],
+      "actualSavings": 1404,
+      "expectedSavings": 120,
+      "savingsDiff": 1284,
+      "confidence": 40,
+      "minimumConfidence": 80,
+      "confidencePassed": false,
+      "reasoning": [
+        "Active offer: \"10% Instant Discount on Swiggy Dining & Instamart\" saving ₹10",
+        "Effective 107% reward multiplier on spend",
+        "Generates total net savings of ₹1404",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.1,
+      "merchantResolved": false,
+      "resolvedMerchantName": "Unresolved/Fallback",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Instant Discount on Swiggy Dining & Instamart",
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146317358-8o5v9",
+        "timestamp": "2026-07-27T09:58:37.358Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy Instamart",
+          "amount": 1200,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-swiggy-hdfc",
+            "card-airtel-axis",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Fallback",
+              "matchType": "fallback",
+              "applicableOffersCount": 9
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-swiggy-hdfc",
+              "topCompositeScore": 83
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Confidence too low: Expected min 80%, got 40%"
+      ]
+    },
+    {
+      "scenarioId": "scenario-003",
+      "title": "Zomato Weekend Dinner",
+      "category": "dining",
+      "merchantInput": "Zomato",
+      "amount": 1500,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-airtel-axis",
+      "actualWinnerName": "Airtel Axis Bank Credit Card",
+      "expectedWinner": "card-airtel-axis",
+      "acceptableAlternatives": [
+        "card-axis-ace",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-airtel-axis",
+        "card-axis-ace",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 3765330,
+      "expectedSavings": 150,
+      "savingsDiff": 3765180,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Instant Discount on Swiggy Dining & Instamart\" saving ₹10",
+        "Effective 251012% reward multiplier on spend",
+        "Generates total net savings of ₹3765330",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.06,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Zomato Food Delivery",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Instant Discount on Swiggy Dining & Instamart",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146317358-397mu",
+        "timestamp": "2026-07-27T09:58:37.358Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Zomato",
+          "amount": 1500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-airtel-axis",
+            "card-axis-ace",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Zomato Food Delivery",
+              "matchType": "alias",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-airtel-axis",
+              "topCompositeScore": 86
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": []
+    },
+    {
+      "scenarioId": "scenario-004",
+      "title": "Zomato Gourmet Dining",
+      "category": "dining",
+      "merchantInput": "Zomato Food Delivery",
+      "amount": 2800,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-airtel-axis",
+      "actualWinnerName": "Airtel Axis Bank Credit Card",
+      "expectedWinner": "card-airtel-axis",
+      "acceptableAlternatives": [
+        "card-hdfc-infinia",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-airtel-axis",
+        "card-sbi-cashback",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 7028616,
+      "expectedSavings": 280,
+      "savingsDiff": 7028336,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Instant Discount on Swiggy Dining & Instamart\" saving ₹10",
+        "Effective 251012% reward multiplier on spend",
+        "Generates total net savings of ₹7028616",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.06,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Zomato Food Delivery",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Instant Discount on Swiggy Dining & Instamart",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146317358-05e3i",
+        "timestamp": "2026-07-27T09:58:37.358Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Zomato Food Delivery",
+          "amount": 2800,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-airtel-axis",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Zomato Food Delivery",
+              "matchType": "exact",
+              "applicableOffersCount": 2
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-airtel-axis",
+              "topCompositeScore": 88
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": []
+    }
+  ],
+  "recommendations": [
+    "Top-1 Accuracy is currently 66%. Tune card category reward weights to boost accuracy to >95%.",
+    "Merchant resolution accuracy is 99%. Add missing aliases in MerchantResolver for fallback merchants.",
+    "Card \"Airtel Axis Bank Credit Card\" is over-recommended (19 times vs 0 expected). Review annual fee and composite score weighting.",
+    "Merchant \"IRCTC\" has poor recommendation quality (0% accuracy). Verify merchant category tags and active offers.",
+    "Investigate 35 failed benchmark scenario(s) in reports/recommendation-evaluation.json."
+  ],
+  "qualityGatePassed": false,
+  "qualityGateFailures": [
+    "Top-1 Accuracy (66%) is below configured threshold (90%)"
+  ]
+}

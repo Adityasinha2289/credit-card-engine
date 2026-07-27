@@ -1,0 +1,1106 @@
+{
+  "timestamp": "2026-07-27T10:02:01.453Z",
+  "summary": "Recommendation Evaluation Platform evaluated 100 benchmark scenarios with Top-1 Accuracy 97% and Average Confidence 98.1%.",
+  "scenariosCount": 100,
+  "metrics": {
+    "totalScenarios": 100,
+    "passedScenarios": 97,
+    "failedScenarios": 3,
+    "top1Accuracy": 97,
+    "top3Accuracy": 100,
+    "averageConfidence": 98.1,
+    "averageSavings": 1436,
+    "averageExecutionTimeMs": 0.02,
+    "merchantResolutionAccuracy": 100,
+    "offerResolutionAccuracy": 59,
+    "categoryAccuracy": 100,
+    "falseRecommendationCount": 3,
+    "confidenceCalibration": 4.7,
+    "categoryBreakdown": {
+      "dining": {
+        "totalScenarios": 16,
+        "passedScenarios": 15,
+        "top1Accuracy": 93.8,
+        "top3Accuracy": 100,
+        "averageConfidence": 90.6,
+        "averageSavings": 289,
+        "averageExecutionTimeMs": 0.1
+      },
+      "travel": {
+        "totalScenarios": 16,
+        "passedScenarios": 15,
+        "top1Accuracy": 93.8,
+        "top3Accuracy": 100,
+        "averageConfidence": 97.5,
+        "averageSavings": 3204,
+        "averageExecutionTimeMs": 0.01
+      },
+      "fuel": {
+        "totalScenarios": 12,
+        "passedScenarios": 12,
+        "top1Accuracy": 100,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 240,
+        "averageExecutionTimeMs": 0.01
+      },
+      "shopping": {
+        "totalScenarios": 27,
+        "passedScenarios": 26,
+        "top1Accuracy": 96.3,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 2350,
+        "averageExecutionTimeMs": 0.01
+      },
+      "utilities": {
+        "totalScenarios": 19,
+        "passedScenarios": 19,
+        "top1Accuracy": 100,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 891,
+        "averageExecutionTimeMs": 0.01
+      },
+      "medical": {
+        "totalScenarios": 5,
+        "passedScenarios": 5,
+        "top1Accuracy": 100,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 539,
+        "averageExecutionTimeMs": 0.01
+      },
+      "entertainment": {
+        "totalScenarios": 5,
+        "passedScenarios": 5,
+        "top1Accuracy": 100,
+        "top3Accuracy": 100,
+        "averageConfidence": 100,
+        "averageSavings": 342,
+        "averageExecutionTimeMs": 0.01
+      }
+    },
+    "cardRecommendationDistribution": {
+      "Swiggy HDFC Bank Credit Card": 8,
+      "Airtel Axis Bank Credit Card": 17,
+      "Axis Bank Atlas Credit Card": 8,
+      "SBI Cashback Credit Card": 9,
+      "Axis Bank ACE Credit Card": 9,
+      "BPCL SBI Card Octane": 4,
+      "ICICI Bank HPCL Super Saver": 4,
+      "IndianOil Axis Bank Credit Card": 4,
+      "Amazon Pay ICICI Card": 9,
+      "HDFC Regalia Gold Credit Card": 7,
+      "Tata Neu Infinity HDFC Credit Card": 5,
+      "HDFC Infinia Metal Edition": 6,
+      "SBI SimplyCLICK Credit Card": 10
+    },
+    "expectedCardDistribution": {
+      "card-swiggy-hdfc": 8,
+      "card-airtel-axis": 17,
+      "card-axis-atlas": 8,
+      "card-sbi-cashback": 8,
+      "card-axis-ace": 8,
+      "card-bpcl-octane-sbi": 4,
+      "card-icici-hpcl-super-saver": 4,
+      "card-axis-indian-oil": 4,
+      "card-icici-amazon": 9,
+      "card-hdfc-regalia-gold": 7,
+      "card-tata-neu-infinity": 7,
+      "card-hdfc-infinia": 6,
+      "card-sbi-simplyclick": 10
+    },
+    "overRecommendedCards": [
+      {
+        "cardId": "Airtel Axis Bank Credit Card",
+        "cardName": "Airtel Axis Bank Credit Card",
+        "recommendedCount": 17,
+        "expectedCount": 0,
+        "recommendationPercentage": 17,
+        "overRecommendationRatio": 17
+      },
+      {
+        "cardId": "SBI SimplyCLICK Credit Card",
+        "cardName": "SBI SimplyCLICK Credit Card",
+        "recommendedCount": 10,
+        "expectedCount": 0,
+        "recommendationPercentage": 10,
+        "overRecommendationRatio": 10
+      },
+      {
+        "cardId": "SBI Cashback Credit Card",
+        "cardName": "SBI Cashback Credit Card",
+        "recommendedCount": 9,
+        "expectedCount": 0,
+        "recommendationPercentage": 9,
+        "overRecommendationRatio": 9
+      },
+      {
+        "cardId": "Axis Bank ACE Credit Card",
+        "cardName": "Axis Bank ACE Credit Card",
+        "recommendedCount": 9,
+        "expectedCount": 0,
+        "recommendationPercentage": 9,
+        "overRecommendationRatio": 9
+      },
+      {
+        "cardId": "Amazon Pay ICICI Card",
+        "cardName": "Amazon Pay ICICI Card",
+        "recommendedCount": 9,
+        "expectedCount": 0,
+        "recommendationPercentage": 9,
+        "overRecommendationRatio": 9
+      },
+      {
+        "cardId": "Swiggy HDFC Bank Credit Card",
+        "cardName": "Swiggy HDFC Bank Credit Card",
+        "recommendedCount": 8,
+        "expectedCount": 0,
+        "recommendationPercentage": 8,
+        "overRecommendationRatio": 8
+      },
+      {
+        "cardId": "Axis Bank Atlas Credit Card",
+        "cardName": "Axis Bank Atlas Credit Card",
+        "recommendedCount": 8,
+        "expectedCount": 0,
+        "recommendationPercentage": 8,
+        "overRecommendationRatio": 8
+      },
+      {
+        "cardId": "HDFC Regalia Gold Credit Card",
+        "cardName": "HDFC Regalia Gold Credit Card",
+        "recommendedCount": 7,
+        "expectedCount": 0,
+        "recommendationPercentage": 7,
+        "overRecommendationRatio": 7
+      },
+      {
+        "cardId": "HDFC Infinia Metal Edition",
+        "cardName": "HDFC Infinia Metal Edition",
+        "recommendedCount": 6,
+        "expectedCount": 0,
+        "recommendationPercentage": 6,
+        "overRecommendationRatio": 6
+      },
+      {
+        "cardId": "Tata Neu Infinity HDFC Credit Card",
+        "cardName": "Tata Neu Infinity HDFC Credit Card",
+        "recommendedCount": 5,
+        "expectedCount": 0,
+        "recommendationPercentage": 5,
+        "overRecommendationRatio": 5
+      },
+      {
+        "cardId": "BPCL SBI Card Octane",
+        "cardName": "BPCL SBI Card Octane",
+        "recommendedCount": 4,
+        "expectedCount": 0,
+        "recommendationPercentage": 4,
+        "overRecommendationRatio": 4
+      },
+      {
+        "cardId": "ICICI Bank HPCL Super Saver",
+        "cardName": "ICICI Bank HPCL Super Saver",
+        "recommendedCount": 4,
+        "expectedCount": 0,
+        "recommendationPercentage": 4,
+        "overRecommendationRatio": 4
+      },
+      {
+        "cardId": "IndianOil Axis Bank Credit Card",
+        "cardName": "IndianOil Axis Bank Credit Card",
+        "recommendedCount": 4,
+        "expectedCount": 0,
+        "recommendationPercentage": 4,
+        "overRecommendationRatio": 4
+      }
+    ],
+    "poorQualityMerchants": [
+      {
+        "merchantName": "DMart Ready & Supermarket",
+        "scenarioCount": 3,
+        "passedCount": 2,
+        "accuracy": 66.7
+      },
+      {
+        "merchantName": "Uber Rides",
+        "scenarioCount": 4,
+        "passedCount": 3,
+        "accuracy": 75
+      }
+    ],
+    "confidenceDistribution": {
+      "90-100%": 100,
+      "80-89%": 0,
+      "70-79%": 0,
+      "60-69%": 0,
+      "<60%": 0
+    },
+    "confusionMatrix": {
+      "card-swiggy-hdfc": {
+        "Swiggy HDFC Bank Credit Card": 8
+      },
+      "card-airtel-axis": {
+        "Airtel Axis Bank Credit Card": 17
+      },
+      "card-axis-atlas": {
+        "Axis Bank Atlas Credit Card": 8
+      },
+      "card-sbi-cashback": {
+        "SBI Cashback Credit Card": 8
+      },
+      "card-axis-ace": {
+        "Axis Bank ACE Credit Card": 7,
+        "SBI Cashback Credit Card": 1
+      },
+      "card-bpcl-octane-sbi": {
+        "BPCL SBI Card Octane": 4
+      },
+      "card-icici-hpcl-super-saver": {
+        "ICICI Bank HPCL Super Saver": 4
+      },
+      "card-axis-indian-oil": {
+        "IndianOil Axis Bank Credit Card": 4
+      },
+      "card-icici-amazon": {
+        "Amazon Pay ICICI Card": 9
+      },
+      "card-hdfc-regalia-gold": {
+        "HDFC Regalia Gold Credit Card": 7
+      },
+      "card-tata-neu-infinity": {
+        "Tata Neu Infinity HDFC Credit Card": 5,
+        "Axis Bank ACE Credit Card": 2
+      },
+      "card-hdfc-infinia": {
+        "HDFC Infinia Metal Edition": 6
+      },
+      "card-sbi-simplyclick": {
+        "SBI SimplyCLICK Credit Card": 10
+      }
+    }
+  },
+  "regression": {
+    "hasRegression": true,
+    "improvedScenarios": [
+      "scenario-001",
+      "scenario-002",
+      "scenario-012",
+      "scenario-017",
+      "scenario-018",
+      "scenario-020",
+      "scenario-022",
+      "scenario-023",
+      "scenario-026",
+      "scenario-028",
+      "scenario-030",
+      "scenario-031",
+      "scenario-045",
+      "scenario-046",
+      "scenario-048",
+      "scenario-049",
+      "scenario-052",
+      "scenario-055",
+      "scenario-056",
+      "scenario-058",
+      "scenario-059",
+      "scenario-060",
+      "scenario-061",
+      "scenario-062",
+      "scenario-063",
+      "scenario-065",
+      "scenario-079",
+      "scenario-080",
+      "scenario-081",
+      "scenario-082",
+      "scenario-083",
+      "scenario-084",
+      "scenario-097"
+    ],
+    "regressedScenarios": [
+      "scenario-099"
+    ],
+    "unchangedScenarios": [
+      "scenario-003",
+      "scenario-004",
+      "scenario-005",
+      "scenario-006",
+      "scenario-007",
+      "scenario-008",
+      "scenario-009",
+      "scenario-010",
+      "scenario-011",
+      "scenario-013",
+      "scenario-014",
+      "scenario-015",
+      "scenario-016",
+      "scenario-019",
+      "scenario-021",
+      "scenario-024",
+      "scenario-025",
+      "scenario-027",
+      "scenario-029",
+      "scenario-032",
+      "scenario-033",
+      "scenario-034",
+      "scenario-035",
+      "scenario-036",
+      "scenario-037",
+      "scenario-038",
+      "scenario-039",
+      "scenario-040",
+      "scenario-041",
+      "scenario-042",
+      "scenario-043",
+      "scenario-044",
+      "scenario-047",
+      "scenario-050",
+      "scenario-051",
+      "scenario-053",
+      "scenario-054",
+      "scenario-057",
+      "scenario-064",
+      "scenario-066",
+      "scenario-067",
+      "scenario-068",
+      "scenario-069",
+      "scenario-070",
+      "scenario-071",
+      "scenario-072",
+      "scenario-073",
+      "scenario-074",
+      "scenario-075",
+      "scenario-076",
+      "scenario-077",
+      "scenario-078",
+      "scenario-085",
+      "scenario-086",
+      "scenario-087",
+      "scenario-088",
+      "scenario-089",
+      "scenario-090",
+      "scenario-091",
+      "scenario-092",
+      "scenario-093",
+      "scenario-094",
+      "scenario-095",
+      "scenario-096",
+      "scenario-098",
+      "scenario-100"
+    ],
+    "metricDeltas": {
+      "top1AccuracyDelta": 31,
+      "top3AccuracyDelta": 0,
+      "averageConfidenceDelta": 0.5,
+      "averageSavingsDelta": -1130948,
+      "averageExecutionTimeDelta": -0.01,
+      "failuresDelta": -32
+    }
+  },
+  "failedScenarios": [
+    {
+      "scenarioId": "scenario-053",
+      "title": "DMart Supermarket Offline Retail",
+      "category": "shopping",
+      "merchantInput": "DMart Ready & Supermarket",
+      "amount": 6500,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-sbi-cashback",
+      "actualWinnerName": "SBI Cashback Credit Card",
+      "expectedWinner": "card-axis-ace",
+      "acceptableAlternatives": [
+        "card-tata-neu-infinity",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-sbi-cashback",
+        "card-axis-ace",
+        "card-tata-neu-infinity"
+      ],
+      "actualSavings": 98,
+      "expectedSavings": 130,
+      "savingsDiff": -32,
+      "confidence": 100,
+      "minimumConfidence": 75,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 1.5% reward multiplier on spend",
+        "Generates total net savings of ₹98",
+        "Available in your existing wallet (SBI Card)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "DMart Ready & Supermarket",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "shopping",
+      "trace": {
+        "traceId": "trace-1785146521452-5q3i9",
+        "timestamp": "2026-07-27T10:02:01.452Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "DMart Ready & Supermarket",
+          "amount": 6500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-axis-ace",
+            "card-tata-neu-infinity",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "DMart Ready & Supermarket",
+              "matchType": "exact",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-sbi-cashback",
+              "topCompositeScore": 35
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-axis-ace\", got \"SBI Cashback Credit Card (card-sbi-cashback)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-095",
+      "title": "RuPay UPI Chai Coffee Small Spend",
+      "category": "dining",
+      "merchantInput": "Swiggy",
+      "amount": 60,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-axis-ace",
+      "actualWinnerName": "Axis Bank ACE Credit Card",
+      "expectedWinner": "card-tata-neu-infinity",
+      "acceptableAlternatives": [
+        "card-axis-ace"
+      ],
+      "actualTop3Ids": [
+        "card-axis-ace",
+        "card-tata-neu-infinity"
+      ],
+      "actualSavings": 3,
+      "expectedSavings": 6,
+      "savingsDiff": -3,
+      "confidence": 90,
+      "minimumConfidence": 70,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 4.5% reward multiplier on spend",
+        "Generates total net savings of ₹3",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Swiggy Food & Instamart",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146521452-rwynk",
+        "timestamp": "2026-07-27T10:02:01.452Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy",
+          "amount": 60,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-tata-neu-infinity",
+            "card-axis-ace"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Swiggy Food & Instamart",
+              "matchType": "alias",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-axis-ace",
+              "topCompositeScore": 43
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-tata-neu-infinity\", got \"Axis Bank ACE Credit Card (card-axis-ace)\""
+      ]
+    },
+    {
+      "scenarioId": "scenario-099",
+      "title": "RuPay UPI Small Auto Rickshaw Fare",
+      "category": "travel",
+      "merchantInput": "Uber Rides",
+      "amount": 80,
+      "passed": false,
+      "top1Match": false,
+      "top3Match": true,
+      "actualWinnerId": "card-axis-ace",
+      "actualWinnerName": "Axis Bank ACE Credit Card",
+      "expectedWinner": "card-tata-neu-infinity",
+      "acceptableAlternatives": [
+        "card-axis-ace"
+      ],
+      "actualTop3Ids": [
+        "card-axis-ace",
+        "card-tata-neu-infinity"
+      ],
+      "actualSavings": 3,
+      "expectedSavings": 3,
+      "savingsDiff": 0,
+      "confidence": 100,
+      "minimumConfidence": 70,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 4% reward multiplier on spend",
+        "Generates total net savings of ₹3",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.01,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Uber Rides",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "travel",
+      "trace": {
+        "traceId": "trace-1785146521452-bece7",
+        "timestamp": "2026-07-27T10:02:01.452Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Uber Rides",
+          "amount": 80,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-tata-neu-infinity",
+            "card-axis-ace"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Uber Rides",
+              "matchType": "exact",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-axis-ace",
+              "topCompositeScore": 38
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": [
+        "Card mismatch: Expected \"card-tata-neu-infinity\", got \"Axis Bank ACE Credit Card (card-axis-ace)\""
+      ]
+    }
+  ],
+  "slowestRequests": [
+    {
+      "scenarioId": "scenario-001",
+      "title": "Swiggy Small Food Order",
+      "category": "dining",
+      "merchantInput": "Swiggy",
+      "amount": 450,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-swiggy-hdfc",
+      "actualWinnerName": "Swiggy HDFC Bank Credit Card",
+      "expectedWinner": "card-swiggy-hdfc",
+      "acceptableAlternatives": [
+        "card-sbi-cashback",
+        "card-airtel-axis"
+      ],
+      "actualTop3Ids": [
+        "card-swiggy-hdfc",
+        "card-sbi-cashback",
+        "card-icici-amazon"
+      ],
+      "actualSavings": 47,
+      "expectedSavings": 45,
+      "savingsDiff": 2,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Effective 10.5% reward multiplier on spend",
+        "Generates total net savings of ₹47",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.92,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Swiggy Food & Instamart",
+      "offerResolved": false,
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146521450-5zzu2",
+        "timestamp": "2026-07-27T10:02:01.451Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy",
+          "amount": 450,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-swiggy-hdfc",
+            "card-sbi-cashback",
+            "card-icici-amazon"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Swiggy Food & Instamart",
+              "matchType": "alias",
+              "applicableOffersCount": 0
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-swiggy-hdfc",
+              "topCompositeScore": 65
+            }
+          }
+        ],
+        "totalDurationMs": 1
+      },
+      "failureReasons": []
+    },
+    {
+      "scenarioId": "scenario-009",
+      "title": "Zomato Cafe Order",
+      "category": "dining",
+      "merchantInput": "Zomato",
+      "amount": 800,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-airtel-axis",
+      "actualWinnerName": "Airtel Axis Bank Credit Card",
+      "expectedWinner": "card-airtel-axis",
+      "acceptableAlternatives": [
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-airtel-axis",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 164,
+      "expectedSavings": 80,
+      "savingsDiff": 84,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Cashback on Zomato Orders\" saving ₹10",
+        "Effective 10.5% reward multiplier on spend",
+        "Generates total net savings of ₹164",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.34,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Zomato Food Delivery",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Cashback on Zomato Orders",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146521451-f7qem",
+        "timestamp": "2026-07-27T10:02:01.451Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Zomato",
+          "amount": 800,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-airtel-axis",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Zomato Food Delivery",
+              "matchType": "alias",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 2,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-airtel-axis",
+              "topCompositeScore": 85
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": []
+    },
+    {
+      "scenarioId": "scenario-002",
+      "title": "Swiggy Instamart Grocery",
+      "category": "dining",
+      "merchantInput": "Swiggy Instamart",
+      "amount": 1200,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-swiggy-hdfc",
+      "actualWinnerName": "Swiggy HDFC Bank Credit Card",
+      "expectedWinner": "card-swiggy-hdfc",
+      "acceptableAlternatives": [
+        "card-airtel-axis",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-swiggy-hdfc",
+        "card-airtel-axis",
+        "card-sbi-cashback"
+      ],
+      "actualSavings": 246,
+      "expectedSavings": 120,
+      "savingsDiff": 126,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Instant Discount on Swiggy Dining & Instamart\" saving ₹10",
+        "Effective 10.5% reward multiplier on spend",
+        "Generates total net savings of ₹246",
+        "Available in your existing wallet (HDFC Bank)"
+      ],
+      "executionTimeMs": 0.06,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Swiggy Food & Instamart",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Instant Discount on Swiggy Dining & Instamart",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146521451-dqydg",
+        "timestamp": "2026-07-27T10:02:01.451Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Swiggy Instamart",
+          "amount": 1200,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-swiggy-hdfc",
+            "card-airtel-axis",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Swiggy Food & Instamart",
+              "matchType": "alias",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-swiggy-hdfc",
+              "topCompositeScore": 86
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": []
+    },
+    {
+      "scenarioId": "scenario-004",
+      "title": "Zomato Gourmet Dining",
+      "category": "dining",
+      "merchantInput": "Zomato Food Delivery",
+      "amount": 2800,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-airtel-axis",
+      "actualWinnerName": "Airtel Axis Bank Credit Card",
+      "expectedWinner": "card-airtel-axis",
+      "acceptableAlternatives": [
+        "card-hdfc-infinia",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-airtel-axis",
+        "card-sbi-cashback",
+        "card-hdfc-infinia"
+      ],
+      "actualSavings": 574,
+      "expectedSavings": 280,
+      "savingsDiff": 294,
+      "confidence": 100,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Cashback on Zomato Orders\" saving ₹10",
+        "Effective 10.5% reward multiplier on spend",
+        "Generates total net savings of ₹574",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.06,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Zomato Food Delivery",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Cashback on Zomato Orders",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146521451-2abui",
+        "timestamp": "2026-07-27T10:02:01.451Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Zomato Food Delivery",
+          "amount": 2800,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-hdfc-infinia",
+            "card-airtel-axis",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Zomato Food Delivery",
+              "matchType": "exact",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-airtel-axis",
+              "topCompositeScore": 87
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": []
+    },
+    {
+      "scenarioId": "scenario-003",
+      "title": "Zomato Weekend Dinner",
+      "category": "dining",
+      "merchantInput": "Zomato",
+      "amount": 1500,
+      "passed": true,
+      "top1Match": true,
+      "top3Match": true,
+      "actualWinnerId": "card-airtel-axis",
+      "actualWinnerName": "Airtel Axis Bank Credit Card",
+      "expectedWinner": "card-airtel-axis",
+      "acceptableAlternatives": [
+        "card-axis-ace",
+        "card-sbi-cashback"
+      ],
+      "actualTop3Ids": [
+        "card-airtel-axis",
+        "card-sbi-cashback",
+        "card-axis-ace"
+      ],
+      "actualSavings": 308,
+      "expectedSavings": 150,
+      "savingsDiff": 158,
+      "confidence": 90,
+      "minimumConfidence": 80,
+      "confidencePassed": true,
+      "reasoning": [
+        "Active offer: \"10% Cashback on Zomato Orders\" saving ₹10",
+        "Effective 10.5% reward multiplier on spend",
+        "Generates total net savings of ₹308",
+        "Available in your existing wallet (Axis Bank)"
+      ],
+      "executionTimeMs": 0.05,
+      "merchantResolved": true,
+      "resolvedMerchantName": "Zomato Food Delivery",
+      "offerResolved": true,
+      "appliedOfferTitle": "10% Cashback on Zomato Orders",
+      "categoryMatched": true,
+      "inferredCategory": "dining",
+      "trace": {
+        "traceId": "trace-1785146521451-ol2f3",
+        "timestamp": "2026-07-27T10:02:01.451Z",
+        "mode": "wallet_optimisation",
+        "input": {
+          "merchant": "Zomato",
+          "amount": 1500,
+          "mode": "wallet_optimisation",
+          "ownedCardIds": [
+            "card-airtel-axis",
+            "card-axis-ace",
+            "card-sbi-cashback"
+          ],
+          "userPrimaryGoal": "maximize_cashback",
+          "transactionDate": "2026-07-27T00:00:00.000Z"
+        },
+        "stages": [
+          {
+            "stageName": "Resolution & Context Building",
+            "durationMs": 0,
+            "details": {
+              "resolvedMerchant": "Zomato Food Delivery",
+              "matchType": "alias",
+              "applicableOffersCount": 1
+            }
+          },
+          {
+            "stageName": "Candidate Retrieval",
+            "durationMs": 0,
+            "details": {
+              "totalCardsInCatalog": 13,
+              "candidateCount": 3,
+              "mode": "wallet_optimisation"
+            }
+          },
+          {
+            "stageName": "Multi-Factor Scoring & Ranking",
+            "durationMs": 0,
+            "details": {
+              "topCardId": "card-airtel-axis",
+              "topCompositeScore": 86
+            }
+          }
+        ],
+        "totalDurationMs": 0
+      },
+      "failureReasons": []
+    }
+  ],
+  "recommendations": [
+    "Card \"Airtel Axis Bank Credit Card\" is over-recommended (17 times vs 0 expected). Review annual fee and composite score weighting.",
+    "Merchant \"DMart Ready & Supermarket\" has poor recommendation quality (66.7% accuracy). Verify merchant category tags and active offers.",
+    "Investigate 3 failed benchmark scenario(s) in reports/recommendation-evaluation.json."
+  ],
+  "qualityGatePassed": true,
+  "qualityGateFailures": []
+}

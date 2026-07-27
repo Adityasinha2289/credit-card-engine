@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "import:cards": "npx tsx scripts/importCards.ts",
+    "import:merchants": "npx tsx scripts/importMerchants.ts",
+    "import:offers": "npx tsx scripts/importOffers.ts"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.8",

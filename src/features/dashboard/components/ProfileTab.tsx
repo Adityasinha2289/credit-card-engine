@@ -1,11 +1,28 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, ShieldCheck, Coins, Mail, Phone, CheckCircle2, UserCheck } from 'lucide-react';
+import { User, ShieldCheck, Coins, Mail, Phone, CheckCircle2, UserCheck, Sparkles, Target, Briefcase, MapPin } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
+import type { UserSegment, PrimaryGoal, Occupation } from '../types/dashboard.types';
 import { ShareableScorecard } from './ShareableScorecard';
 
 const AVATAR_SEEDS = ['Atharva', 'Aria', 'Kabir', 'Zoe', 'Rohan', 'Elena'];
+
+const GOAL_LIST: PrimaryGoal[] = [
+  'Maximise Cashback',
+  'Travel Rewards',
+  'Save More Money',
+  'Build Credit Score',
+  'Earn Reward Points',
+];
+
+const OCCUPATION_LIST: Occupation[] = [
+  'Student',
+  'Salaried',
+  'Self-employed',
+  'Business Owner',
+  'Other',
+];
 
 function formatINR(val: number) {
   if (val >= 10000000) {
@@ -38,6 +55,12 @@ export function ProfileTab() {
   // Credit Score state (manual + slider)
   const [creditScore, setCreditScore] = useState(profile?.creditScore || 750);
   const [creditInput, setCreditInput] = useState(() => (profile?.creditScore || 750).toString());
+
+  // User Segment & Personalization state
+  const [userSegment, setUserSegment] = useState<UserSegment>(profile?.userSegment || 'adult');
+  const [primaryGoal, setPrimaryGoal] = useState<PrimaryGoal>(profile?.primaryGoal || 'Maximise Cashback');
+  const [occupation, setOccupation] = useState<Occupation | undefined>(profile?.occupation);
+  const [city, setCity] = useState(profile?.city || '');
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -88,6 +111,11 @@ export function ProfileTab() {
       avatar: avatarUrl,
       salary,
       creditScore,
+      userSegment,
+      primaryGoal,
+      occupation,
+      city: city.trim() || undefined,
+      onboardingCompleted: true,
     });
     setSuccess(true);
     setError('');
@@ -104,7 +132,7 @@ export function ProfileTab() {
           Profile Settings
         </h1>
         <p className="text-sm text-ink-tertiary mt-1">
-          Review and update your CIBIL score, income details, and personal contacts.
+          Review and update your financial goals, income details, and personal contacts.
         </p>
       </div>
 
@@ -259,6 +287,98 @@ export function ProfileTab() {
             onChange={handleCreditSliderChange}
             className="w-full accent-brand-500 cursor-pointer h-1.5 bg-canvas-200 rounded-lg appearance-none mt-1"
           />
+        </div>
+
+        {/* User Stage / Segment Selector */}
+        <div className="flex flex-col gap-2 pt-4 border-t border-canvas-200/50 dark:border-white/[0.04]">
+          <label className="text-xs font-bold text-ink-secondary flex items-center gap-1.5">
+            <Sparkles size={13} className="text-brand-500" /> Financial Stage Segment
+          </label>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setUserSegment('youth')}
+              className={cn(
+                "flex-1 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-between cursor-pointer",
+                userSegment === 'youth'
+                  ? "bg-brand-500/10 border-brand-500 text-brand-500 shadow-ag-glow-primary"
+                  : "bg-surface border-canvas-300 dark:border-white/5 text-ink-tertiary hover:text-ink-secondary"
+              )}
+            >
+              <span>Youth (18–22)</span>
+              {userSegment === 'youth' && <CheckCircle2 size={14} className="text-brand-500" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => setUserSegment('adult')}
+              className={cn(
+                "flex-1 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-between cursor-pointer",
+                userSegment === 'adult'
+                  ? "bg-brand-500/10 border-brand-500 text-brand-500 shadow-ag-glow-primary"
+                  : "bg-surface border-canvas-300 dark:border-white/5 text-ink-tertiary hover:text-ink-secondary"
+              )}
+            >
+              <span>Adult (22+)</span>
+              {userSegment === 'adult' && <CheckCircle2 size={14} className="text-brand-500" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Primary Goal Selector */}
+        <div className="flex flex-col gap-2 pt-4 border-t border-canvas-200/50 dark:border-white/[0.04]">
+          <label className="text-xs font-bold text-ink-secondary flex items-center gap-1.5">
+            <Target size={13} className="text-brand-500" /> Primary Financial Goal
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {GOAL_LIST.map((goal) => (
+              <button
+                key={goal}
+                type="button"
+                onClick={() => setPrimaryGoal(goal)}
+                className={cn(
+                  "py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5",
+                  primaryGoal === goal
+                    ? "bg-brand-500/10 border-brand-500 text-brand-500 ring-1 ring-brand-500/50 shadow-ag-glow-primary"
+                    : "bg-surface border-canvas-300 dark:border-white/5 text-ink-tertiary hover:text-ink-secondary"
+                )}
+              >
+                <span>{goal}</span>
+                {primaryGoal === goal && <CheckCircle2 size={12} className="text-brand-500" />}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Occupation & City */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-canvas-200/50 dark:border-white/[0.04]">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-ink-secondary flex items-center gap-1.5">
+              <Briefcase size={13} className="text-brand-500" /> Occupation
+            </label>
+            <select
+              value={occupation || ''}
+              onChange={(e) => setOccupation((e.target.value as Occupation) || undefined)}
+              className="input-premium w-full text-xs py-2 bg-canvas-50 dark:bg-canvas-200"
+            >
+              <option value="">Select Occupation (Optional)</option>
+              {OCCUPATION_LIST.map((occ) => (
+                <option key={occ} value={occ}>{occ}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-ink-secondary flex items-center gap-1.5">
+              <MapPin size={13} className="text-brand-500" /> City
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Mumbai, Bengaluru"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="input-premium w-full text-xs py-2 bg-canvas-50 dark:bg-canvas-200"
+            />
+          </div>
         </div>
 
         {error && <p className="text-xs font-bold text-loss mt-1">{error}</p>}

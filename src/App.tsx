@@ -17,6 +17,10 @@ import {
   Info,
   Target,
   Calculator,
+  User,
+  Sparkles,
+  ChevronRight,
+  Coins,
 } from 'lucide-react';
 
 import { DashboardLayout } from './components/layout/DashboardLayout';
@@ -27,6 +31,17 @@ import { TransactionFeed } from './features/dashboard/components/TransactionFeed
 import { useDashboardStore, useHydration } from './features/dashboard/store/dashboardStore';
 import { useSupabase } from './hooks/useSupabase';
 import { cn, formatCents } from './lib/utils';
+import { PersonalizationEngine, usePersona } from './features/personalization';
+import { useBehaviourInsights } from './features/behaviour';
+import { useRecommendations } from './features/recommendations';
+import { useTaqdeerDecision } from './features/taqdeer';
+import { useCardIntelligence } from './features/card-intelligence';
+import { useMerchantOffers } from './features/merchant-intelligence';
+import { useKnowledgeGraph } from './features/knowledge';
+import { useFinancialHealth } from './features/financial-health';
+import { useFinancialLedger } from './features/financial-ledger';
+import { useNotificationEngine } from './features/notifications';
+import { useFeatureFlag } from './features/feature-flags';
 
 // Finix features (Lazy Loaded)
 import { lazy, Suspense } from 'react';
@@ -177,6 +192,43 @@ function HomeTab() {
   const deleteUserCard = useDashboardStore((s) => s.deleteUserCard);
   const profile        = useDashboardStore((s) => s.profile);
 
+  // Feature Flag Engine consumption
+  const isLiveOffersEnabled = useFeatureFlag('live_offers');
+
+  // Personalization Engine consumption
+  const persona = usePersona();
+  const contextualSentence = PersonalizationEngine.getContextualSentence(profile);
+  const quickActions = PersonalizationEngine.getQuickActions(profile);
+  const motivationBanner = PersonalizationEngine.getMotivationBanner(profile);
+
+  // Behaviour Engine consumption
+  const { insights } = useBehaviourInsights();
+
+  // Recommendation Engine consumption
+  const { recommendations } = useRecommendations(profile);
+
+  // TAQDEER Decision Engine consumption
+  const { decision } = useTaqdeerDecision(profile);
+
+  // Card Intelligence Platform consumption
+  const { featuredCard } = useCardIntelligence();
+
+  // Merchant Intelligence Platform consumption
+  const { bestOffer } = useMerchantOffers(profile);
+
+  // Financial Knowledge Graph consumption
+  const { tipOfTheDay } = useKnowledgeGraph();
+
+  // Financial Health Engine consumption
+  const { health } = useFinancialHealth(profile);
+
+  // Financial Ledger consumption
+  const { summary: ledgerSummary, recentHistory: ledgerHistory } = useFinancialLedger();
+  const recentWin = ledgerHistory[0];
+
+  // Notification & Automation Engine consumption
+  const { highestPriorityAlert } = useNotificationEngine();
+
   const [showAddModal, setShowAddModal] = useState(false);
   
   // State for card deletion
@@ -195,13 +247,454 @@ function HomeTab() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* ── Greeting ──────────────────────────────────────────────── */}
-      <div className="mb-8">
+      <div className="mb-6">
         <p className="text-ink-tertiary text-xs font-semibold tracking-[0.2em] uppercase mb-1">
           Overview
         </p>
         <h1 className="text-4xl lg:text-5xl font-display font-bold tracking-tight text-ink-primary">
           {getGreeting()}, <span className="text-gradient-brand">{profile?.name?.split(' ')[0] || 'there'}</span>
         </h1>
+        <p className="text-sm text-ink-secondary mt-1 font-medium">
+          {contextualSentence}
+        </p>
+      </div>
+
+      {/* ── Today's Alerts Widget (Notification Engine) ─────────── */}
+      {highestPriorityAlert && (
+        <div className="panel-glass rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-caution/20 bg-caution/5 text-left">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-caution/10 text-caution flex items-center justify-center font-bold shrink-0 border border-caution/20">
+              <Zap size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-extrabold tracking-wider uppercase text-caution">
+                  TODAY'S ALERTS
+                </span>
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-caution text-white uppercase tracking-wider">
+                  {highestPriorityAlert.priority}
+                </span>
+              </div>
+              <h4 className="text-sm font-bold text-ink-primary leading-tight mt-0.5">
+                {highestPriorityAlert.title}
+              </h4>
+              <p className="text-xs text-ink-tertiary mt-0.5">
+                {highestPriorityAlert.message}
+              </p>
+            </div>
+          </div>
+          <button className="shrink-0 self-end sm:self-auto px-3.5 py-1.5 rounded-xl bg-caution/10 hover:bg-caution/20 text-caution text-xs font-bold transition-colors">
+            {highestPriorityAlert.action}
+          </button>
+        </div>
+      )}
+
+      {/* ── Your Financial Impact Widget (Financial Ledger) ──────── */}
+      <div className="panel-glass rounded-3xl p-6 mb-6 border border-canvas-200/50 dark:border-white/[0.06] shadow-xl text-left relative overflow-hidden bg-gradient-to-br from-brand-500/10 via-surface to-profit/5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold shrink-0 border border-brand-500/20">
+              <Coins size={18} />
+            </div>
+            <div>
+              <span className="text-[10px] font-extrabold tracking-[0.2em] uppercase text-brand-500">
+                YOUR FINANCIAL IMPACT
+              </span>
+              <p className="text-xs text-ink-tertiary">Lifetime Savings & Rewards Ledger</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div className="p-4 rounded-2xl bg-canvas-200/50 dark:bg-white/[0.04] border border-canvas-200/60 dark:border-white/[0.05]">
+            <span className="text-[10px] uppercase font-bold text-ink-tertiary">Total Estimated Savings</span>
+            <p className="text-2xl font-display font-bold text-profit mt-1">
+              ₹{ledgerSummary.totalSavings.toLocaleString('en-IN')}
+            </p>
+          </div>
+          <div className="p-4 rounded-2xl bg-canvas-200/50 dark:bg-white/[0.04] border border-canvas-200/60 dark:border-white/[0.05]">
+            <span className="text-[10px] uppercase font-bold text-ink-tertiary">Total Reward Points</span>
+            <p className="text-2xl font-display font-bold text-brand-500 mt-1">
+              {ledgerSummary.totalRewards.toLocaleString('en-IN')} pts
+            </p>
+          </div>
+        </div>
+
+        {recentWin && (
+          <div className="p-3.5 rounded-2xl bg-profit/5 border border-profit/20 flex items-center justify-between gap-3">
+            <div>
+              <span className="text-[10px] uppercase font-bold text-profit tracking-wider">Recent Financial Win</span>
+              <p className="text-xs font-semibold text-ink-primary mt-0.5">
+                {recentWin.explanation}
+              </p>
+            </div>
+            <span className="text-xs font-bold text-profit shrink-0">
+              +₹{recentWin.estimatedSavings}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Financial Health Widget (Financial Health Engine) ───── */}
+      <div className="panel-glass rounded-3xl p-6 mb-6 border border-canvas-200/50 dark:border-white/[0.06] shadow-xl text-left relative overflow-hidden bg-gradient-to-br from-profit/10 via-surface to-brand-500/5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-profit/10 text-profit flex items-center justify-center font-bold shrink-0 border border-profit/20">
+              <ShieldCheck size={18} />
+            </div>
+            <div>
+              <span className="text-[10px] font-extrabold tracking-[0.2em] uppercase text-profit">
+                FINANCIAL HEALTH
+              </span>
+              <p className="text-xs text-ink-tertiary">RenoCred Intelligence Score</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <div className="text-right">
+              <span className="text-2xl font-display font-extrabold text-ink-primary tabular-nums">
+                {health.score}
+              </span>
+              <span className="text-xs text-ink-tertiary">/100</span>
+            </div>
+            <span className="text-xs font-black px-3 py-1 rounded-xl bg-profit text-white shadow-ag-glow-profit">
+              Grade {health.grade}
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-canvas-200/60 dark:border-white/[0.06]">
+          <div className="p-3 rounded-2xl bg-profit/5 border border-profit/20">
+            <span className="text-[10px] uppercase font-bold text-profit tracking-wider">Top Strength</span>
+            <p className="text-xs font-semibold text-ink-primary mt-1">
+              {health.strengths[0] || 'Profile Completeness: High accuracy'}
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-caution/5 border border-caution/20">
+            <span className="text-[10px] uppercase font-bold text-caution tracking-wider">Biggest Improvement Area</span>
+            <p className="text-xs font-semibold text-ink-primary mt-1">
+              {health.improvements[0] || 'Reward Optimisation: Consolidate card usage'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Financial Tip of the Day (Financial Knowledge Graph) ── */}
+      <div className="panel-glass rounded-2xl p-4 mb-6 flex items-center justify-between gap-4 border border-canvas-200/50 dark:border-white/[0.05] shadow-lg text-left">
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold shrink-0 border border-brand-500/20">
+            <FileText size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-extrabold tracking-wider uppercase text-brand-500">
+                FINANCIAL TIP OF THE DAY
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20 capitalize">
+                {tipOfTheDay.category.replace('_', ' ')}
+              </span>
+            </div>
+            <h4 className="text-sm font-bold text-ink-primary leading-tight mt-0.5">
+              {tipOfTheDay.title}
+            </h4>
+            <p className="text-xs text-ink-tertiary mt-0.5 leading-relaxed">
+              {tipOfTheDay.summary}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Today's Best Offer Widget (Merchant Intelligence - Gated by feature flag) ────── */}
+      {isLiveOffersEnabled && (
+        <div className="panel-glass rounded-2xl p-5 mb-6 border border-canvas-200/50 dark:border-white/[0.05] shadow-xl text-left relative overflow-hidden">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-extrabold tracking-[0.2em] uppercase text-brand-500">
+                TODAY'S BEST OFFER
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-profit/10 text-profit border border-profit/20">
+                {bestOffer.confidence}% Match
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold text-ink-tertiary">
+              Valid until {new Date(bestOffer.offer.validity).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-canvas-200 dark:bg-white/10 p-1 flex items-center justify-center shrink-0 border border-canvas-300 dark:border-white/10">
+                <img src={bestOffer.merchant.logo} alt={bestOffer.merchant.name} className="w-full h-full object-contain rounded-lg" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-ink-primary leading-tight">
+                  {bestOffer.offer.title}
+                </h4>
+                <p className="text-xs text-ink-tertiary mt-0.5">
+                  Merchant: <span className="font-semibold text-ink-secondary">{bestOffer.merchant.name}</span> • Eligible Cards: <span className="font-semibold text-ink-secondary">Partner Cards ({bestOffer.offer.eligibleCards.length})</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="self-end md:self-auto shrink-0 text-right">
+              <p className="text-[10px] uppercase font-bold text-ink-tertiary">Estimated Savings</p>
+              <p className="text-sm font-bold text-profit">
+                ₹{bestOffer.estimatedSavings.toLocaleString('en-IN')}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Featured Card Widget (Card Intelligence Platform) ───── */}
+      <div className="panel-glass rounded-2xl p-4 mb-6 flex items-center justify-between gap-4 border border-canvas-200/50 dark:border-white/[0.05] shadow-lg text-left">
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold shrink-0 border border-brand-500/20">
+            <CreditCard size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-extrabold tracking-wider uppercase text-brand-500">
+                Featured Card Intelligence
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-caution/10 text-caution border border-caution/20 capitalize">
+                {featuredCard.premiumTier.replace('_', ' ')}
+              </span>
+            </div>
+            <h4 className="text-sm font-bold text-ink-primary leading-tight mt-0.5">
+              {featuredCard.cardName}
+            </h4>
+            <p className="text-xs text-ink-tertiary">
+              {featuredCard.issuer} • <span className="text-ink-secondary font-medium">{featuredCard.topBenefit}</span>
+            </p>
+          </div>
+        </div>
+        <div className="shrink-0 hidden sm:block text-right">
+          <span className="text-xs font-bold text-ink-primary">₹{featuredCard.annualFee.toLocaleString('en-IN')}/yr</span>
+          <p className="text-[10px] text-ink-tertiary">Annual Fee</p>
+        </div>
+      </div>
+
+      {/* ── TAQDEER's PICK Card (Decision Engine) ──────────────── */}
+      <div className="panel-glass rounded-3xl p-6 mb-8 border border-brand-500/30 shadow-2xl relative overflow-hidden bg-gradient-to-br from-brand-500/10 via-surface to-brand-500/5">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-brand-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center font-bold shrink-0 shadow-ag-glow-primary">
+              <Sparkles size={16} />
+            </div>
+            <div>
+              <span className="text-[10px] font-extrabold tracking-[0.2em] uppercase text-brand-500">
+                TAQDEER'S PICK
+              </span>
+              <p className="text-xs text-ink-tertiary">Single Best Financial Action Right Now</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-profit/10 text-profit border border-profit/20">
+              {decision.confidence}% Match Confidence
+            </span>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <h3 className="text-lg font-display font-extrabold text-ink-primary tracking-tight mb-1">
+            {decision.title}
+          </h3>
+          <p className="text-xs text-ink-secondary leading-relaxed font-medium">
+            {decision.summary}
+          </p>
+        </div>
+
+        {/* Estimated Impact */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 p-3.5 rounded-2xl bg-canvas-200/50 dark:bg-white/[0.04] border border-canvas-200/60 dark:border-white/[0.05]">
+          <div>
+            <span className="text-[10px] uppercase font-bold text-ink-tertiary">Estimated Impact</span>
+            <p className="text-sm font-bold text-brand-500 mt-0.5">
+              {decision.estimatedImpact.savings
+                ? `₹${decision.estimatedImpact.savings.toLocaleString('en-IN')} annual savings`
+                : decision.estimatedImpact.rewards
+                ? `${decision.estimatedImpact.rewards.toLocaleString()} bonus reward points`
+                : 'High CIBIL Score Protection'}
+            </p>
+          </div>
+          <div>
+            <span className="text-[10px] uppercase font-bold text-ink-tertiary">Timeframe</span>
+            <p className="text-xs font-semibold text-ink-secondary capitalize mt-0.5">
+              {decision.estimatedImpact.timeFrame.replace('_', ' ')}
+            </p>
+          </div>
+        </div>
+
+        {/* Explanation & Evidence */}
+        <div className="space-y-2 pt-3 border-t border-canvas-200/60 dark:border-white/[0.06]">
+          <p className="text-xs text-ink-secondary leading-relaxed">
+            <span className="font-bold text-ink-primary">Explanation: </span>
+            {decision.explanation}
+          </p>
+
+          <div className="mt-2">
+            <p className="text-[10px] font-bold text-ink-tertiary uppercase tracking-wider mb-1">
+              Why This Recommendation?
+            </p>
+            <ul className="space-y-1">
+              {decision.evidence.map((ev, idx) => (
+                <li key={idx} className="text-xs text-ink-tertiary flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-500 shrink-0" />
+                  {ev}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Persona Insight Card ──────────────────────────────────── */}
+      <div className="panel-glass rounded-2xl p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-canvas-200/60 dark:border-white/[0.06] shadow-xl relative overflow-hidden">
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold shrink-0 border border-brand-500/20">
+            <User size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-bold text-ink-primary">Your Financial Profile</h3>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20 capitalize">
+                {persona.segment} Segment
+              </span>
+            </div>
+            <p className="text-xs text-ink-tertiary mt-1">
+              Goal: <span className="font-semibold text-ink-secondary">{persona.primaryGoal || 'General'}</span>
+              {persona.occupation && <span> • {persona.occupation}</span>}
+              {persona.city && <span> • {persona.city}</span>}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 self-end md:self-auto shrink-0">
+          <div className="text-right">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-ink-tertiary">Profile Completion</p>
+            <p className="text-sm font-bold text-brand-500">{persona.profileCompleteness}%</p>
+          </div>
+          <div className="w-20 bg-canvas-200 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-brand-500 h-full rounded-full transition-all duration-500 shadow-ag-glow-primary"
+              style={{ width: `${persona.profileCompleteness}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Smart Quick Actions ───────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+        {quickActions.map((action, i) => (
+          <div
+            key={i}
+            className="panel-glass rounded-xl p-3.5 flex items-center gap-3 border border-canvas-200/50 dark:border-white/[0.05] cursor-pointer hover:border-brand-500/30 transition-all text-left"
+          >
+            <div className="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center shrink-0">
+              <Zap size={16} />
+            </div>
+            <span className="text-xs font-bold text-ink-primary truncate">{action}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Motivation Banner ─────────────────────────────────────── */}
+      <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-brand-500/15 via-brand-500/5 to-transparent border border-brand-500/20 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center shrink-0 shadow-ag-glow-primary">
+          <Sparkles size={16} />
+        </div>
+        <p className="text-xs font-bold text-ink-primary leading-snug">
+          "{motivationBanner}"
+        </p>
+      </div>
+
+      {/* ── Recommended For You Section (Recommendation Engine) ─── */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-display font-bold text-ink-primary flex items-center gap-2">
+            <Target className="text-brand-500" size={18} /> Recommended For You
+          </h2>
+          <span className="text-[10px] font-bold text-ink-tertiary uppercase tracking-wider bg-canvas-200 dark:bg-white/5 px-2.5 py-1 rounded-full border border-white/5">
+            Rule Engine
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {recommendations.slice(0, 3).map((rec) => (
+            <div
+              key={rec.id}
+              className="panel-glass rounded-2xl p-4 flex flex-col justify-between border border-canvas-200/50 dark:border-white/[0.05] hover:border-brand-500/30 transition-all text-left"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold text-brand-500 bg-brand-500/10 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                    {rec.category.replace('_', ' ')}
+                  </span>
+                  <span className="text-[10px] font-bold text-profit bg-profit/10 px-2 py-0.5 rounded-full border border-profit/20">
+                    {rec.confidence}% Match
+                  </span>
+                </div>
+                <h3 className="text-xs font-bold text-ink-primary leading-tight mb-1">
+                  {rec.title}
+                </h3>
+                <p className="text-[11px] text-ink-tertiary leading-relaxed mb-2">
+                  {rec.description}
+                </p>
+              </div>
+              <div className="mt-2 pt-2.5 border-t border-canvas-200/50 dark:border-white/[0.04]">
+                <p className="text-[10px] text-ink-secondary italic leading-tight">
+                  <span className="font-semibold not-italic text-brand-500">Why: </span>
+                  {rec.reason}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Financial Insights Section (Behaviour Engine) ───────── */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-display font-bold text-ink-primary flex items-center gap-2">
+            <BarChart3 className="text-brand-500" size={18} /> Financial Insights
+          </h2>
+          <span className="text-[10px] font-bold text-ink-tertiary uppercase tracking-wider bg-canvas-200 dark:bg-white/5 px-2.5 py-1 rounded-full border border-white/5">
+            Rule Engine
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {insights.slice(0, 3).map((ins) => (
+            <div
+              key={ins.id}
+              className="panel-glass rounded-2xl p-4 flex flex-col justify-between border border-canvas-200/50 dark:border-white/[0.05] hover:border-brand-500/30 transition-all text-left"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-500 bg-brand-500/10 px-2 py-0.5 rounded-md">
+                    {ins.type.replace('_', ' ')}
+                  </span>
+                  <span className="text-[10px] font-semibold text-ink-tertiary">
+                    Impact {ins.impactScore}%
+                  </span>
+                </div>
+                <h3 className="text-xs font-bold text-ink-primary leading-tight mb-1">
+                  {ins.title}
+                </h3>
+                <p className="text-[11px] text-ink-tertiary leading-relaxed">
+                  {ins.description}
+                </p>
+              </div>
+              {ins.actionableText && (
+                <div className="mt-3 pt-2.5 border-t border-canvas-200/50 dark:border-white/[0.04] flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-brand-500">{ins.actionableText}</span>
+                  <ChevronRight size={13} className="text-brand-500" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── Two-column layout ─────────────────────────────────────── */}
@@ -884,8 +1377,8 @@ export default function App() {
     return <LoginScreen />;
   }
 
-  // 2. If signed in, but no profile generated yet, show LoginScreen (Questionnaire View)
-  if (isSignedIn && !profile) {
+  // 2. If signed in, but profile or onboarding is incomplete, show LoginScreen (Questionnaire View)
+  if (isSignedIn && (!profile || !profile.onboardingCompleted)) {
     return <LoginScreen />;
   }
 

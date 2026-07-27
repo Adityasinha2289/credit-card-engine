@@ -102,6 +102,22 @@ export interface PayBillInput {
 
 export type AddTransactionInput = Omit<Transaction, 'id' | 'rewardPoints'>;
 
+export type UserSegment = 'youth' | 'adult';
+
+export type PrimaryGoal =
+  | 'Maximise Cashback'
+  | 'Travel Rewards'
+  | 'Save More Money'
+  | 'Build Credit Score'
+  | 'Earn Reward Points';
+
+export type Occupation =
+  | 'Student'
+  | 'Salaried'
+  | 'Self-employed'
+  | 'Business Owner'
+  | 'Other';
+
 export interface AppProfile {
   id: string;
   name: string;
@@ -110,6 +126,11 @@ export interface AppProfile {
   avatar: string;
   salary: number;
   creditScore: number;
+  userSegment?: UserSegment;
+  onboardingCompleted?: boolean;
+  primaryGoal?: PrimaryGoal;
+  occupation?: Occupation;
+  city?: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

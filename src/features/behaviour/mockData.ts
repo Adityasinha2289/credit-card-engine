@@ -1,0 +1,63 @@
+import type { BehaviourTransaction } from './types';
+
+export const MOCK_BEHAVIOUR_TRANSACTIONS: BehaviourTransaction[] = [
+  {
+    id: 'tx-101',
+    merchant: 'Swiggy',
+    amount: 145000,
+    category: 'dining',
+    paymentMethod: 'credit_card',
+    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    isRecurring: true,
+  },
+  {
+    id: 'tx-102',
+    merchant: 'Uber',
+    amount: 65000,
+    category: 'transport',
+    paymentMethod: 'upi',
+    date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'tx-103',
+    merchant: 'Zara Shopping',
+    amount: 890000,
+    category: 'shopping',
+    paymentMethod: 'credit_card',
+    date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'tx-104',
+    merchant: 'Electricity Bill',
+    amount: 320000,
+    category: 'utilities',
+    paymentMethod: 'debit_card',
+    date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    isRecurring: true,
+  },
+  {
+    id: 'tx-105',
+    merchant: 'Starbucks Coffee',
+    amount: 85000,
+    category: 'dining',
+    paymentMethod: 'credit_card',
+    date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'tx-106',
+    merchant: 'MakeMyTrip Flights',
+    amount: 450000,
+    category: 'travel',
+    paymentMethod: 'credit_card',
+    date: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'tx-107',
+    merchant: 'Netflix Subscription',
+    amount: 64900,
+    category: 'subscriptions',
+    paymentMethod: 'credit_card',
+    date: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString(),
+    isRecurring: true,
+  },
+];

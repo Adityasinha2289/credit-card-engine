@@ -1,0 +1,40 @@
+import type { FinancialRecommendation } from './types';
+
+export const MOCK_FALLBACK_RECOMMENDATIONS: FinancialRecommendation[] = [
+  {
+    id: 'rec-card-opt',
+    title: 'Unlock 5× Rewards on Travel & Dining',
+    description: 'Switch your primary card for dining & flight bookings to optimize reward rate.',
+    reason: 'Based on your goal to maximize rewards and frequent dining transactions.',
+    confidence: 94,
+    priority: 'high',
+    category: 'credit_card',
+    cta: 'Explore Cards',
+    dismissible: true,
+    source: 'rule_engine',
+  },
+  {
+    id: 'rec-bill-autopay',
+    title: 'Automate Recurring Utility Cashback',
+    description: 'Set up automated bill payments to earn up to ₹500 cashback monthly.',
+    reason: 'Recurring monthly utility bills detected in your spending analysis.',
+    confidence: 88,
+    priority: 'medium',
+    category: 'cashback',
+    cta: 'Set Up Autopay',
+    dismissible: true,
+    source: 'rule_engine',
+  },
+  {
+    id: 'rec-credit-util',
+    title: 'Keep Credit Utilization Below 30%',
+    description: 'Maintain low credit utilization to boost your CIBIL score faster.',
+    reason: 'Optimizing credit limit utilization helps improve your credit score evaluation.',
+    confidence: 90,
+    priority: 'high',
+    category: 'credit_score',
+    cta: 'View Score Simulator',
+    dismissible: true,
+    source: 'rule_engine',
+  },
+];

@@ -1,0 +1,82 @@
+import type { LedgerEntry, Achievement } from './types';
+
+export const MOCK_LEDGER_ENTRIES: LedgerEntry[] = [
+  {
+    id: 'led-101',
+    timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    type: 'taqdeer_decision',
+    status: 'completed',
+    merchant: 'Swiggy',
+    card: 'HDFC Infinia Metal Edition',
+    category: 'dining',
+    taqdeerDecisionId: 'dec-dining-cashback-switch',
+    estimatedSavings: 1200,
+    estimatedRewards: 2400,
+    explanation: 'Switched dining spends to 10% cashback card, saving ₹1,200 on monthly food delivery.',
+    source: 'taqdeer',
+  },
+  {
+    id: 'led-102',
+    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    type: 'merchant_offer',
+    status: 'completed',
+    merchant: 'Amazon.in',
+    card: 'Amazon Pay ICICI Card',
+    category: 'shopping',
+    recommendationId: 'rec-dining-cashback',
+    estimatedSavings: 1250,
+    estimatedRewards: 1250,
+    explanation: 'Utilized flat 5% instant cashback offer on Amazon online electronics shopping.',
+    source: 'rule_engine',
+  },
+  {
+    id: 'led-103',
+    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    type: 'recommendation',
+    status: 'completed',
+    merchant: 'MakeMyTrip',
+    card: 'Axis Bank Atlas Credit Card',
+    category: 'travel',
+    recommendationId: 'rec-travel-cards',
+    estimatedSavings: 2500,
+    estimatedRewards: 15000,
+    explanation: 'Booked flights using miles multiplier card, earning 4× reward air miles.',
+    source: 'rule_engine',
+  },
+];
+
+export const MOCK_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: 'ach-first-saving',
+    title: 'First Saving',
+    description: 'Unlocked your very first savings win through RenoCred.',
+    unlocked: true,
+    unlockedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'ach-1k-saved',
+    title: '₹1,000 Saved',
+    description: 'Accumulated over ₹1,000 in total financial savings.',
+    unlocked: true,
+    unlockedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'ach-10k-saved',
+    title: '₹10,000 Saved',
+    description: 'Reached ₹10,000 total lifetime savings via intelligent card routing.',
+    unlocked: false,
+  },
+  {
+    id: 'ach-first-travel',
+    title: 'First Travel Reward',
+    description: 'Earned 4× miles on your first travel flight booking.',
+    unlocked: true,
+    unlockedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'ach-cashback-master',
+    title: 'Cashback Master',
+    description: 'Utilized 5+ targeted merchant cashback offers.',
+    unlocked: false,
+  },
+];

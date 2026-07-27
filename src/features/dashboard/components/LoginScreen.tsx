@@ -1,11 +1,42 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CreditCard, BookOpen, X, ChevronRight, Info } from 'lucide-react';
+import {
+  CreditCard,
+  BookOpen,
+  X,
+  ChevronRight,
+  ChevronLeft,
+  Sparkles,
+  ShieldCheck,
+  Coins,
+  Compass,
+  PiggyBank,
+  Award,
+  Gift,
+  CheckCircle2,
+  MapPin,
+  Briefcase,
+} from 'lucide-react';
 import { SignIn, SignUp, useUser } from '@clerk/clerk-react';
 import { useDashboardStore } from '../store/dashboardStore';
-import type { AppProfile } from '../types/dashboard.types';
-import { CreditScoreDial } from '../../../components/ui/CreditScoreDial';
+import type { AppProfile, UserSegment, PrimaryGoal, Occupation } from '../types/dashboard.types';
 import { cn } from '../../../lib/utils';
+
+const GOAL_OPTIONS: { id: PrimaryGoal; label: string; icon: any; description: string }[] = [
+  { id: 'Maximise Cashback', label: 'Maximise Cashback', icon: Coins, description: 'Get maximum cash returns on your daily expenses' },
+  { id: 'Travel Rewards', label: 'Travel Rewards', icon: Compass, description: 'Unlock lounge access, air miles & hotel perks' },
+  { id: 'Save More Money', label: 'Save More Money', icon: PiggyBank, description: 'Optimize annual fees and reduce interest charges' },
+  { id: 'Build Credit Score', label: 'Build Credit Score', icon: Award, description: 'Improve credit limits and CIBIL health rating' },
+  { id: 'Earn Reward Points', label: 'Earn Reward Points', icon: Gift, description: 'Multiply reward multipliers across categories' },
+];
+
+const OCCUPATION_OPTIONS: Occupation[] = [
+  'Student',
+  'Salaried',
+  'Self-employed',
+  'Business Owner',
+  'Other',
+];
 
 export function LoginScreen() {
   const { isSignedIn, user } = useUser();
@@ -17,10 +48,15 @@ export function LoginScreen() {
   const [livePreviewName, setLivePreviewName] = useState('');
   const authPanelRef = useRef<HTMLDivElement>(null);
 
-  // Credit profile state (Step 2)
-  const [salary, setSalary] = useState(1500000);
-  const [creditScore, setCreditScore] = useState(750);
-  const [error, setError] = useState('');
+  // 3-step onboarding sequence state
+  const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3>(1);
+  const [userSegment, setUserSegment] = useState<UserSegment>('adult');
+  const [primaryGoal, setPrimaryGoal] = useState<PrimaryGoal>('Maximise Cashback');
+  const [occupation, setOccupation] = useState<Occupation | undefined>(undefined);
+  const [city, setCity] = useState('');
+
+  const salary = 1500000;
+  const creditScore = 750;
 
   // Listen to hash changes to toggle between sign-in and sign-up
   useEffect(() => {
@@ -43,6 +79,9 @@ export function LoginScreen() {
       avatar: 'https://ui-avatars.com/api/?name=Demo+User&background=1F5247&color=fff',
       salary: 2500000,
       creditScore: 810,
+      userSegment: 'adult',
+      primaryGoal: 'Maximise Cashback',
+      onboardingCompleted: true,
     });
   };
 
@@ -82,24 +121,16 @@ export function LoginScreen() {
     };
   }, [mode]);
 
-  const handleSalarySliderChange = (val: number) => setSalary(val);
-  const handleSalaryInputChange = (valStr: string) => {
-    const val = parseInt(valStr.replace(/[^0-9]/g, '')) || 0;
-    setSalary(val);
-  };
-
-  const handleScoreSliderChange = (val: number) => setCreditScore(val);
-  const handleScoreInputChange = (valStr: string) => {
-    const val = parseInt(valStr.replace(/[^0-9]/g, '')) || 0;
-    setCreditScore(Math.min(900, val));
-  };
-
-  const handleFinalSubmit = () => {
-    if (creditScore < 300 || creditScore > 900) {
-      return setError('CIBIL Score must be between 300 and 900.');
-    }
-
-    const profile: AppProfile = {
+  const handleOnboardingSubmit = (skipOptional = false) => {
+    const existingProfile = useDashboardStore.getState().profile;
+    const profile: AppProfile = existingProfile ? {
+      ...existingProfile,
+      userSegment,
+      primaryGoal,
+      occupation: skipOptional ? undefined : occupation,
+      city: skipOptional ? undefined : (city.trim() || undefined),
+      onboardingCompleted: true,
+    } : {
       id: user?.id || `usr_temp_${Date.now()}`,
       name: user?.fullName || user?.firstName || 'Your Name',
       email: user?.primaryEmailAddress?.emailAddress || '',
@@ -107,6 +138,11 @@ export function LoginScreen() {
       avatar: user?.imageUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=User&backgroundColor=f8f9fa`,
       salary,
       creditScore,
+      userSegment,
+      primaryGoal,
+      occupation: skipOptional ? undefined : occupation,
+      city: skipOptional ? undefined : (city.trim() || undefined),
+      onboardingCompleted: true,
     };
 
     login(profile);
@@ -226,7 +262,7 @@ export function LoginScreen() {
           </div>
         </div>
 
-        {/* Right Side: Auth or Questionnaire */}
+        {/* Right Side: Auth or Onboarding */}
         {isSignedIn ? (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -234,119 +270,261 @@ export function LoginScreen() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="panel-glass rounded-[2rem] p-6 lg:p-8 w-full shadow-2xl relative overflow-hidden text-left flex flex-col gap-5"
           >
-            <div className="mb-2">
-              <h2 className="text-xl font-display font-bold text-ink-primary">Complete Profile</h2>
-              <p className="text-xs text-ink-tertiary mt-0.5">
-                Verify credit profile details to generate your dashboard
-              </p>
+            {/* Step Indicator Header */}
+            <div className="flex items-center justify-between border-b border-canvas-200/50 dark:border-white/[0.05] pb-3">
+              <div>
+                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-brand-500">
+                  Step {onboardingStep} of 3
+                </span>
+                <h2 className="text-lg lg:text-xl font-display font-bold text-ink-primary mt-0.5">
+                  {onboardingStep === 1 && 'Financial Stage'}
+                  {onboardingStep === 2 && 'Primary Goal'}
+                  {onboardingStep === 3 && 'Optional Profile Details'}
+                </h2>
+              </div>
+              <div className="flex gap-1.5">
+                <div className={cn("w-5 h-1.5 rounded-full transition-all duration-300", onboardingStep >= 1 ? "bg-brand-500 shadow-ag-glow-primary" : "bg-canvas-300 dark:bg-white/10")} />
+                <div className={cn("w-5 h-1.5 rounded-full transition-all duration-300", onboardingStep >= 2 ? "bg-brand-500 shadow-ag-glow-primary" : "bg-canvas-300 dark:bg-white/10")} />
+                <div className={cn("w-5 h-1.5 rounded-full transition-all duration-300", onboardingStep >= 3 ? "bg-brand-500 shadow-ag-glow-primary" : "bg-canvas-300 dark:bg-white/10")} />
+              </div>
             </div>
 
-            {/* Salary Input + Slider */}
-            <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-ink-secondary">Annual Salary (INR)</label>
-                <div className="relative w-40">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-tertiary">₹</span>
-                  <input
-                    type="text"
-                    value={salary.toLocaleString('en-IN')}
-                    onChange={(e) => handleSalaryInputChange(e.target.value)}
-                    className="w-full input-premium pl-7 pr-3 py-2 text-sm font-bold text-right tabular-nums bg-canvas-50 dark:bg-canvas-200 focus:ring-2 focus:ring-brand-500/50"
-                  />
-                </div>
-              </div>
-              
-              {/* Quick Select Salary Pills */}
-              <div className="flex gap-2">
-                {[500000, 1000000, 1500000, 2500000].map((val) => (
+            <AnimatePresence mode="wait">
+              {onboardingStep === 1 && (
+                <motion.div
+                  key="step1"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col gap-4"
+                >
+                  <p className="text-xs text-ink-secondary leading-relaxed">
+                    What stage of your financial journey are you in?
+                  </p>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {/* Youth Option */}
+                    <button
+                      type="button"
+                      onClick={() => setUserSegment('youth')}
+                      className={cn(
+                        "p-4 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden flex items-start gap-4 cursor-pointer",
+                        userSegment === 'youth'
+                          ? "bg-brand-500/10 border-brand-500 ring-2 ring-brand-500/50 shadow-ag-glow-primary"
+                          : "bg-canvas-50 dark:bg-canvas-200/40 border-canvas-300 dark:border-white/5 hover:border-brand-500/30"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                        userSegment === 'youth' ? "bg-brand-500 text-white" : "bg-canvas-200 dark:bg-white/5 text-ink-tertiary"
+                      )}>
+                        <Sparkles size={20} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold text-ink-primary">Youth</h3>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20">
+                            18–22
+                          </span>
+                        </div>
+                        <p className="text-xs text-ink-tertiary mt-1 leading-relaxed">
+                          Build your financial foundation and discover smarter ways to experience more.
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Adult Option */}
+                    <button
+                      type="button"
+                      onClick={() => setUserSegment('adult')}
+                      className={cn(
+                        "p-4 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden flex items-start gap-4 cursor-pointer",
+                        userSegment === 'adult'
+                          ? "bg-brand-500/10 border-brand-500 ring-2 ring-brand-500/50 shadow-ag-glow-primary"
+                          : "bg-canvas-50 dark:bg-canvas-200/40 border-canvas-300 dark:border-white/5 hover:border-brand-500/30"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                        userSegment === 'adult' ? "bg-brand-500 text-white" : "bg-canvas-200 dark:bg-white/5 text-ink-tertiary"
+                      )}>
+                        <ShieldCheck size={20} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold text-ink-primary">Adult</h3>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20">
+                            22+
+                          </span>
+                        </div>
+                        <p className="text-xs text-ink-tertiary mt-1 leading-relaxed">
+                          Optimize your spending, rewards and financial lifestyle.
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
                   <button
-                    key={val}
                     type="button"
-                    onClick={() => setSalary(val)}
-                    className={cn(
-                      "flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all border",
-                      salary === val 
-                        ? "btn-primary shadow-ag-glow-primary" 
-                        : "bg-surface border-canvas-300 dark:border-white/5 text-ink-secondary hover:bg-canvas-200"
-                    )}
+                    onClick={() => setOnboardingStep(2)}
+                    className="mt-2 w-full btn-primary py-3 flex items-center justify-center gap-2 shadow-ag-glow-primary active:scale-[0.98]"
                   >
-                    {val >= 100000 ? `${val / 100000}L` : val.toLocaleString()}
+                    Continue <ChevronRight size={16} />
                   </button>
-                ))}
-              </div>
+                </motion.div>
+              )}
 
-              <input
-                type="range"
-                min={100000}
-                max={5000000}
-                step={50000}
-                value={salary}
-                onChange={(e) => handleSalarySliderChange(Number(e.target.value))}
-                className="w-full accent-brand-500 bg-canvas-300 h-1.5 rounded-lg appearance-none cursor-pointer mt-1"
-              />
-            </div>
+              {onboardingStep === 2 && (
+                <motion.div
+                  key="step2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col gap-4"
+                >
+                  <p className="text-xs text-ink-secondary leading-relaxed">
+                    What do you want RenoCred to help you with the most?
+                  </p>
 
-            <hr className="border-canvas-300 dark:border-white/[0.05]" />
+                  <div className="grid grid-cols-1 gap-2.5 max-h-[320px] overflow-y-auto pr-1">
+                    {GOAL_OPTIONS.map((opt) => {
+                      const IconComp = opt.icon;
+                      const isSelected = primaryGoal === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setPrimaryGoal(opt.id)}
+                          className={cn(
+                            "p-3 rounded-2xl border text-left transition-all duration-200 flex items-center gap-3 cursor-pointer",
+                            isSelected
+                              ? "bg-brand-500/10 border-brand-500 ring-2 ring-brand-500/50 shadow-ag-glow-primary"
+                              : "bg-canvas-50 dark:bg-canvas-200/40 border-canvas-300 dark:border-white/5 hover:border-brand-500/30"
+                          )}
+                        >
+                          <div className={cn(
+                            "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                            isSelected ? "bg-brand-500 text-white" : "bg-canvas-200 dark:bg-white/5 text-ink-tertiary"
+                          )}>
+                            <IconComp size={18} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-xs font-bold text-ink-primary">{opt.label}</h3>
+                            <p className="text-[11px] text-ink-tertiary leading-tight mt-0.5 truncate">
+                              {opt.description}
+                            </p>
+                          </div>
+                          {isSelected && (
+                            <CheckCircle2 size={16} className="text-brand-500 shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
 
-            {/* Credit Score Input + Dial */}
-            <div className="flex gap-6 items-center">
-              <div className="flex-shrink-0">
-                <CreditScoreDial score={creditScore} size={110} animate={false} />
-              </div>
-              <div className="flex flex-col gap-3 flex-1">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-ink-secondary">CIBIL Score</label>
-                  <input
-                    type="number"
-                    min={300}
-                    max={900}
-                    value={creditScore || ''}
-                    onChange={(e) => handleScoreInputChange(e.target.value)}
-                    className="w-20 input-premium py-1.5 px-3 text-sm font-bold text-right tabular-nums bg-canvas-50 dark:bg-canvas-200 focus:ring-2 focus:ring-brand-500/50"
-                  />
-                </div>
-                <input
-                  type="range"
-                  min={300}
-                  max={900}
-                  step={1}
-                  value={creditScore}
-                  onChange={(e) => handleScoreSliderChange(Number(e.target.value))}
-                  className="w-full accent-brand-500 bg-canvas-300 h-1.5 rounded-lg appearance-none cursor-pointer"
-                />
-                <div className="flex justify-between text-[9px] text-ink-disabled font-bold uppercase tracking-wider">
-                  <span>300 (Poor)</span>
-                  <span>900 (Excellent)</span>
-                </div>
-              </div>
-            </div>
+                  <div className="flex gap-3 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(1)}
+                      className="px-4 py-3 rounded-xl border border-canvas-300 dark:border-white/10 text-xs font-bold text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04] transition-colors flex items-center gap-1.5"
+                    >
+                      <ChevronLeft size={16} /> Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(3)}
+                      className="flex-1 btn-primary py-3 flex items-center justify-center gap-2 shadow-ag-glow-primary active:scale-[0.98]"
+                    >
+                      Continue <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
 
-            {/* Don't know score button */}
-            <button
-              type="button"
-              onClick={() => setShowBlog(true)}
-              className="text-xs text-brand-500 hover:text-brand-650 font-bold self-start mt-1 transition-colors flex items-center gap-1.5"
-            >
-              <BookOpen size={13} /> Don't know your credit score?
-            </button>
+              {onboardingStep === 3 && (
+                <motion.div
+                  key="step3"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col gap-4"
+                >
+                  <div>
+                    <p className="text-xs font-bold text-ink-primary">Optional Profile Details</p>
+                    <p className="text-[11px] text-ink-tertiary mt-0.5">
+                      Help us customize your recommendations further.
+                    </p>
+                  </div>
 
-            {error && <p className="text-xs font-bold text-loss mt-1">{error}</p>}
+                  {/* Occupation Pills */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-bold text-ink-secondary flex items-center gap-1.5">
+                      <Briefcase size={12} className="text-brand-500" /> Occupation (optional)
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {OCCUPATION_OPTIONS.map((occ) => (
+                        <button
+                          key={occ}
+                          type="button"
+                          onClick={() => setOccupation(occupation === occ ? undefined : occ)}
+                          className={cn(
+                            "px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer",
+                            occupation === occ
+                              ? "bg-brand-500/10 border-brand-500 text-brand-500 ring-1 ring-brand-500/50 shadow-ag-glow-primary"
+                              : "bg-canvas-50 dark:bg-canvas-200/40 border-canvas-300 dark:border-white/5 text-ink-tertiary hover:border-brand-500/30"
+                          )}
+                        >
+                          {occ}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-            <div className="flex gap-2 p-3 bg-canvas-200/50 rounded-xl border border-white/5 mt-2">
-              <Info size={16} className="text-brand-500 flex-shrink-0 mt-0.5" />
-              <p className="text-[10px] text-ink-tertiary leading-relaxed">
-                We use your salary and CIBIL score strictly to recommend cards you are highly likely to be approved for. <strong>We do not sell your data.</strong>
-              </p>
-            </div>
+                  {/* City Input */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-bold text-ink-secondary flex items-center gap-1.5">
+                      <MapPin size={12} className="text-brand-500" /> City (optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Mumbai, Bengaluru, Delhi..."
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="input-premium w-full text-xs py-2.5 px-3 bg-canvas-50 dark:bg-canvas-200"
+                    />
+                  </div>
 
-            <button
-              type="button"
-              onClick={handleFinalSubmit}
-              className="mt-4 w-full btn-primary py-3 flex items-center justify-center gap-2 shadow-ag-glow-primary active:scale-[0.98]"
-            >
-              Generate Dashboard <ChevronRight size={16} />
-            </button>
-            <div className="text-center flex justify-center gap-3">
+                  <div className="flex gap-2.5 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(2)}
+                      className="px-3.5 py-3 rounded-xl border border-canvas-300 dark:border-white/10 text-xs font-bold text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04] transition-colors flex items-center gap-1"
+                    >
+                      <ChevronLeft size={15} /> Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleOnboardingSubmit(true)}
+                      className="px-3.5 py-3 rounded-xl border border-canvas-300 dark:border-white/10 text-xs font-bold text-ink-tertiary hover:text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04] transition-colors whitespace-nowrap"
+                    >
+                      Skip for now
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleOnboardingSubmit(false)}
+                      className="flex-1 btn-primary py-3 flex items-center justify-center gap-1.5 shadow-ag-glow-primary active:scale-[0.98] text-xs font-bold"
+                    >
+                      Complete Setup <ChevronRight size={15} />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="text-center flex justify-center gap-3 mt-2">
               <button onClick={() => setShowLegal('terms')} className="text-[10px] text-ink-disabled hover:text-ink-secondary">Terms of Service</button>
               <span className="text-ink-disabled text-[10px]">•</span>
               <button onClick={() => setShowLegal('privacy')} className="text-[10px] text-ink-disabled hover:text-ink-secondary">Privacy Policy</button>

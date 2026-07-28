@@ -55,9 +55,7 @@ export function MethodologyPage() {
           {/* Renocred Logo Badge */}
           <div className="w-20 h-20 bg-gradient-to-br from-[#111] to-[#050505] border border-white/[0.08] rounded-[1.5rem] flex items-center justify-center shadow-[0_0_50px_rgba(52,211,153,0.15)] relative overflow-hidden group">
              <div className="absolute inset-0 bg-emerald-500/20 blur-xl group-hover:bg-emerald-500/30 transition-colors" />
-             <span className="relative z-10 text-4xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
-               r.
-             </span>
+             <img src="/logo.jpg" alt="RenoCred Logo" className="w-12 h-12 rounded-xl object-cover relative z-10" />
           </div>
         </motion.div>
 
@@ -221,6 +219,78 @@ export function MethodologyPage() {
             </div>
           </motion.div>
         </div>
+
+        {/* Category specific methodologies */}
+        <motion.div 
+          variants={fadeIn} initial="initial" whileInView="animate" viewport={{ once: true }}
+          className="space-y-8 mt-24 mb-16"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">Category-Specific Logic</h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">See exactly how we calculate maximum value across different spending scenarios.</p>
+          </div>
+          
+          {/* Food */}
+          <div id="food" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
+            <div className="absolute inset-0 z-0">
+              <img src="/images/features/food.png" alt="Food & Dining Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
+            </div>
+            <div className="relative z-10 h-full flex flex-col justify-end p-8 md:p-16">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg">Food & Dining</h3>
+              <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed drop-shadow-md">
+                When evaluating cards for food and dining, we strictly analyze Merchant Category Codes (MCCs) used by major aggregators like Zomato, Swiggy, and local restaurants. We factor in monthly cashback caps and minimum spend requirements to ensure you get the absolute maximum net value from every meal.
+              </p>
+            </div>
+          </div>
+
+          {/* Flights */}
+          <div id="flights" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
+            <div className="absolute inset-0 z-0">
+              <img src="/images/features/travel.png" alt="Travel & Flights Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
+            </div>
+            <div className="relative z-10 h-full flex flex-col justify-end p-8 md:p-16">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg">Travel & Flights</h3>
+              <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed drop-shadow-md">
+                Air miles optimization is complex. We convert proprietary reward points (like Edge Rewards or MR points) into exact cash equivalents based on real-time transfer ratios to airline partners. This allows us to instantly compare a premium travel card against a flat cashback card to tell you exactly which one saves you more money on a flight booking.
+              </p>
+            </div>
+          </div>
+
+          {/* Fuel */}
+          <div id="fuel" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
+            <div className="absolute inset-0 z-0">
+              <img src="/images/features/fuel.png" alt="Fuel Stations Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
+            </div>
+            <div className="relative z-10 h-full flex flex-col justify-end p-8 md:p-16">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg">Fuel Stations</h3>
+              <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed drop-shadow-md">
+                Fuel surcharges can eat into your rewards. Our model tracks exact MCCs used by HPCL, BPCL, and IndianOil. We calculate the net benefit by factoring in the 1% surcharge waiver, minus any applicable GST on that waiver, combined with the co-branded reward points you earn at the pump.
+              </p>
+            </div>
+          </div>
+
+          {/* Shopping */}
+          <div id="shopping" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
+            <div className="absolute inset-0 z-0">
+              <img src="/images/features/shopping.png" alt="Online Shopping Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
+            </div>
+            <div className="relative z-10 h-full flex flex-col justify-end p-8 md:p-16">
+              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg">Online Shopping</h3>
+              <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed drop-shadow-md">
+                E-commerce rewards fluctuate rapidly. Our engine dynamically accounts for instant bank discounts during major sale events, accelerated rewards on preferred platforms (like Amazon or Flipkart), and smart routing through affiliate platforms like SmartBuy or Gyftr to maximize your return on every cart checkout.
+              </p>
+            </div>
+          </div>
+
+        </motion.div>
 
         {/* FAQ Section — SEO: FAQPage schema for Google rich results */}
         <MethodologyFAQ />

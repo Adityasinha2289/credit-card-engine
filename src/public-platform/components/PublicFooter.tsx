@@ -1,7 +1,19 @@
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export function PublicFooter() {
   const year = new Date().getFullYear();
+  
+  const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    toast('Sign up or log in to RenoCred to explore this feature and access all tools.', {
+      style: {
+        background: '#0A0A0A',
+        color: '#fff',
+        border: '1px solid rgba(255,255,255,0.1)'
+      }
+    });
+  };
   return (
     <footer className="border-t border-white/5 bg-[#0f1115] py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -31,8 +43,8 @@ export function PublicFooter() {
               <li><Link to="/" className="text-sm text-gray-400 hover:text-white transition-colors">Home</Link></li>
               <li><Link to="/about" className="text-sm text-gray-400 hover:text-white transition-colors">About</Link></li>
               <li><Link to="/methodology" className="text-sm text-gray-400 hover:text-white transition-colors">Methodology</Link></li>
-              <li><a href="https://careers.renocred.com" className="text-sm text-gray-400 hover:text-white transition-colors">Careers</a></li>
-              <li><Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">Contact</Link></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Careers</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Contact</a></li>
             </ul>
           </nav>
 
@@ -40,12 +52,12 @@ export function PublicFooter() {
           <nav aria-label="Credit card resources">
             <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-wider">Cards</h3>
             <ul className="space-y-4">
-              <li><Link to="/cards" className="text-sm text-gray-400 hover:text-white transition-colors">All Credit Cards</Link></li>
-              <li><Link to="/best/travel-cards" className="text-sm text-gray-400 hover:text-white transition-colors">Best Travel Cards</Link></li>
-              <li><Link to="/best/cashback-cards" className="text-sm text-gray-400 hover:text-white transition-colors">Best Cashback Cards</Link></li>
-              <li><Link to="/best/fuel-cards" className="text-sm text-gray-400 hover:text-white transition-colors">Best Fuel Cards</Link></li>
-              <li><Link to="/best/student-cards" className="text-sm text-gray-400 hover:text-white transition-colors">Best Student Cards</Link></li>
-              <li><Link to="/best/lifetime-free-cards" className="text-sm text-gray-400 hover:text-white transition-colors">Lifetime Free Cards</Link></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">All Credit Cards</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Best Travel Cards</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Best Cashback Cards</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Best Fuel Cards</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Best Student Cards</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Lifetime Free Cards</a></li>
             </ul>
           </nav>
 
@@ -53,11 +65,11 @@ export function PublicFooter() {
           <nav aria-label="Tools and calculators">
             <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-wider">Tools</h3>
             <ul className="space-y-4">
-              <li><Link to="/compare" className="text-sm text-gray-400 hover:text-white transition-colors">Compare Cards</Link></li>
-              <li><Link to="/calculators/rewards" className="text-sm text-gray-400 hover:text-white transition-colors">Rewards Calculator</Link></li>
-              <li><Link to="/calculators/savings" className="text-sm text-gray-400 hover:text-white transition-colors">Savings Estimator</Link></li>
-              <li><Link to="/calculators/eligibility" className="text-sm text-gray-400 hover:text-white transition-colors">Eligibility Checker</Link></li>
-              <li><Link to="/app" className="text-sm text-[#5da08c] font-semibold hover:text-[#4d8675] transition-colors">Open RenoCred App →</Link></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Compare Cards</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Rewards Calculator</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Savings Estimator</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Eligibility Checker</a></li>
+              <li><Link to="/app" className="text-sm text-[#00E599] font-semibold hover:text-teal-400 transition-colors">Open RenoCred App →</Link></li>
             </ul>
           </nav>
 
@@ -65,11 +77,11 @@ export function PublicFooter() {
           <nav aria-label="Legal and trust pages">
             <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-wider">Trust & Legal</h3>
             <ul className="space-y-4">
-              <li><Link to="/editorial-policy" className="text-sm text-gray-400 hover:text-white transition-colors">Editorial Policy</Link></li>
-              <li><Link to="/affiliate-disclosure" className="text-sm text-gray-400 hover:text-white transition-colors">Affiliate Disclosure</Link></li>
-              <li><Link to="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="text-sm text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><Link to="/disclaimer" className="text-sm text-gray-400 hover:text-white transition-colors">Financial Disclaimer</Link></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Editorial Policy</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Affiliate Disclosure</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Financial Disclaimer</a></li>
             </ul>
           </nav>
 

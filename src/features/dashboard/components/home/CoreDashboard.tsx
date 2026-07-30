@@ -33,20 +33,20 @@ export function CoreDashboard({ onNavigateToTab }: CoreDashboardProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="text-lg text-ink-secondary mb-8">Hello, {userName}.</p>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-medium text-ink-primary tracking-tight leading-[1.1] mb-8">
+            <p className="text-lg text-text-secondary mb-8">Hello, {userName}.</p>
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-medium text-text-primary tracking-tight leading-[1.1] mb-8">
               Let's build your<br />
               <span className="font-extrabold">first wallet.</span>
             </h1>
-            <p className="text-xl text-ink-tertiary max-w-lg leading-relaxed mb-16">
+            <p className="text-xl text-text-muted max-w-lg leading-relaxed mb-16">
               Add your existing credit cards to unlock intelligent recommendations, or let TAQDEER find the perfect first card for you.
             </p>
             <button 
               onClick={() => onNavigateToTab('discover')}
-              className="text-lg font-medium text-ink-primary hover:text-brand-500 transition-colors flex items-center gap-3 group"
+              className="text-lg font-medium text-text-primary hover:text-brand-emerald transition-colors flex items-center gap-3 group"
             >
               Start discovering
-              <span className="w-10 h-10 rounded-full border border-canvas-200 dark:border-white/10 flex items-center justify-center group-hover:border-brand-500/50 transition-colors">
+              <span className="w-10 h-10 rounded-full border border-border-subtle  flex items-center justify-center group-hover:border-brand-emerald/50 transition-colors">
                 →
               </span>
             </button>

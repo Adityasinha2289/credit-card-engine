@@ -12,7 +12,7 @@ export class ExplainabilityEngine {
     const reasons: string[] = [];
 
     if (matchingOffer) {
-      reasons.push(`Active offer: "${matchingOffer.title}" saving ₹${matchingOffer.discountValue}`);
+      reasons.push(`Active offer:"${matchingOffer.title}" saving ₹${matchingOffer.discountValue}`);
     }
 
     reasons.push(`Effective ${effectiveRate}% reward multiplier on spend`);

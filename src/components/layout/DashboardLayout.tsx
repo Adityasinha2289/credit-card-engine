@@ -109,7 +109,7 @@ export function DashboardLayout({
           <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 h-14 topnav-glass">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-ink-secondary hover:text-ink-primary hover:bg-canvas-200/70 dark:hover:bg-white/[0.04] transition-all"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-secondary/70 dark:hover:bg-white/[0.04] transition-all"
               aria-label="Open menu"
             >
               <Menu size={20} strokeWidth={1.8} />
@@ -118,16 +118,16 @@ export function DashboardLayout({
               key={activeTab}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-base font-display font-bold text-ink-primary"
+              className="text-base font-display font-bold text-text-primary"
             >
               renocred
             </motion.p>
             <button 
               onClick={() => onTabChange('profile')}
-              className="w-9 h-9 rounded-full bg-canvas-200 dark:bg-canvas-300 overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-500/50 transition-all cursor-pointer"
+              className="w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-emerald-glow transition-all cursor-pointer"
             >
               <img
-                src={profile?.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
+                src={profile?.avatar ||"https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />

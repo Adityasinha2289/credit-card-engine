@@ -96,7 +96,7 @@ export class OfferValidator {
           cardId: offer.id,
           cardName: offer.title,
           field: 'eligibleCards',
-          message: 'At least one eligible card or "all" must be specified',
+          message: 'At least one eligible card or"all" must be specified',
         });
       }
 

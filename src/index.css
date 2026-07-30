@@ -140,6 +140,38 @@
     --sidebar-width: 272px;
     --sidebar-collapsed-width: 72px;
     --topnav-height: 64px;
+
+    /* ── NEW PREMIUM SEMANTIC TOKENS ── */
+    --brand-primary: #043B27;
+    --brand-primary-hover: #054a31;
+    --brand-subtle: rgba(4, 59, 39, 0.15);
+    --brand-glow: rgba(4, 59, 39, 0.4);
+
+    --surface-primary: #050505;
+    --surface-secondary: #0A0A0A;
+    --surface-elevated: #111111;
+    --surface-card: #141414;
+
+    --border-subtle: rgba(255, 255, 255, 0.06);
+
+    --text-primary: #F6F6F6;
+    --text-secondary: rgba(255, 255, 255, 0.68);
+    --text-muted: rgba(255, 255, 255, 0.42);
+
+    /* ONBOARDING REFINED TOKENS */
+    --bg-page: #050606;
+    --bg-surface: #0C0D0D;
+    --bg-elevated: #121414;
+    --bg-hover: #121414; /* Using elevated for hover */
+    --border-default: #232626;
+    --border-hover: #333838;
+    --border-selected: #5D8F74;
+    --border-selected-hover: #6A9B80;
+    --border-selected-pressed: #507A65;
+    --brand-emerald-glow: rgba(93, 143, 116, 0.14);
+    --text-primary: #F4F4F2;
+    --text-secondary: #A4A8A6;
+    --text-muted: #6E7471;
   }
 
   .dark {
@@ -414,34 +446,55 @@
     cursor: pointer;
   }
 
-  /* Teal button (Labeled Primary in UI Kit) */
+  /* Premium Emerald Button (Machined Aesthetic) */
   .btn-primary {
-    background-color: rgb(var(--color-secondary-400));
-    color: rgb(10, 12, 11); /* Dark text for contrast on teal */
-    border: 1px solid transparent;
+    background: linear-gradient(to bottom, #064d34, #043b27);
+    color: #ffffff;
+    border: 1px solid #054a31;
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+                0 4px 15px rgba(4, 59, 39, 0.25);
+    font-weight: 600;
   }
   .btn-primary:hover {
-    background-color: rgb(var(--color-secondary-300));
+    background: linear-gradient(to bottom, #075a3e, #054a31);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 6px 20px rgba(4, 59, 39, 0.35);
+    border-color: #065b3c;
+  }
+  .btn-primary:active {
+    background: #032b1c;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(0.98);
   }
 
-  /* Dark elevated button */
+  /* Dark elevated button (Machined surface) */
   .btn-secondary {
-    background-color: rgb(var(--color-canvas-200));
-    color: rgb(var(--color-ink-primary));
-    border: 1px solid rgb(var(--color-ink-primary) / 0.05);
+    background: linear-gradient(to bottom, #1a1a1a, #111111);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   }
   .btn-secondary:hover {
-    background-color: rgb(var(--color-canvas-300));
+    background: linear-gradient(to bottom, #222222, #181818);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  .btn-secondary:active {
+    background: #0a0a0a;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    transform: scale(0.98);
   }
 
-  /* Inverted (White) */
+  /* Inverted (White - Machined) */
   .btn-inverted {
-    background-color: #ffffff;
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
     color: #0A0C0B;
     border: 1px solid transparent;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
   }
   .btn-inverted:hover {
-    background-color: #f3f4f6;
+    background: linear-gradient(to bottom, #ffffff, #e0e0e0);
   }
 
   /* Outlined */
@@ -481,6 +534,11 @@
   }
 }
 
+/* Onboarding spinner keyframe */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    CUSTOM UTILITIES
 ───────────────────────────────────────────────────────────────────────────── */
@@ -495,7 +553,7 @@
 
   /* ── Mesh gradient background — light mode ── */
   .bg-mesh {
-    background-color: rgb(var(--color-canvas-100));
+    background-color: var(--surface-primary);
     background-image:
       radial-gradient(ellipse 80% 50% at 20% 40%, rgb(var(--color-brand-500) / 0.06) 0%, transparent 60%),
       radial-gradient(ellipse 60% 40% at 80% 70%, rgb(var(--color-copper-500) / 0.05) 0%, transparent 55%),
@@ -504,18 +562,18 @@
 
   /* ── Mesh gradient — dark mode (richer, deeper) ── */
   .dark .bg-mesh {
-    background-color: rgb(var(--color-canvas-100));
+    background-color: var(--surface-primary);
     background-image:
-      radial-gradient(ellipse 90% 60% at 15% 30%, rgb(var(--color-brand-400) / 0.08) 0%, transparent 55%),
-      radial-gradient(ellipse 70% 50% at 85% 65%, rgb(var(--color-copper-400) / 0.06) 0%, transparent 50%),
-      radial-gradient(ellipse 60% 70% at 50% 5%, rgb(var(--color-steel-400) / 0.05) 0%, transparent 45%),
-      radial-gradient(ellipse 40% 40% at 70% 90%, rgb(var(--color-sage-400) / 0.04) 0%, transparent 40%);
+      radial-gradient(ellipse 90% 60% at 15% 30%, rgba(4, 59, 39, 0.15) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 85% 65%, rgba(4, 59, 39, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 70% at 50% 5%, rgba(255, 255, 255, 0.02) 0%, transparent 45%),
+      radial-gradient(ellipse 40% 40% at 70% 90%, rgba(4, 59, 39, 0.08) 0%, transparent 40%);
   }
 
   /* ── Card glow halo ── */
   .card-glow {
-    filter: drop-shadow(0 20px 60px rgb(var(--color-brand-500) / 0.15))
-            drop-shadow(0 8px 24px rgb(var(--color-brand-500) / 0.08));
+    filter: drop-shadow(0 20px 60px rgba(4, 59, 39, 0.15))
+            drop-shadow(0 8px 24px rgba(4, 59, 39, 0.08));
   }
 
   /* ── Card rim light (inner border glow) ── */

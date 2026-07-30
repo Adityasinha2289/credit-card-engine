@@ -82,21 +82,21 @@ function CardPicker({ onSelect, onClose, excludeIds }: {
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-        className="relative w-full max-w-lg bg-canvas-100 dark:bg-canvas-200 rounded-[2rem] shadow-2xl border border-white/[0.06] overflow-hidden flex flex-col max-h-[80vh]"
+        className="relative w-full max-w-lg bg-surface-primary  rounded-[2rem] shadow-2xl border border-border-subtle overflow-hidden flex flex-col max-h-[80vh]"
       >
-        <div className="flex items-center justify-between p-6 pb-4 border-b border-white/[0.04]">
+        <div className="flex items-center justify-between p-6 pb-4 border-b border-border-subtle">
           <div>
-            <h3 className="text-lg font-display font-bold text-ink-primary">Pick a Card</h3>
-            <p className="text-xs text-ink-tertiary mt-0.5">{CARD_DATASET.length} cards available</p>
+            <h3 className="text-lg font-display font-bold text-text-primary">Pick a Card</h3>
+            <p className="text-xs text-text-muted mt-0.5">{CARD_DATASET.length} cards available</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-ink-tertiary hover:text-ink-primary hover:bg-white/[0.06] transition-all">
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-white/[0.06] transition-all">
             <X size={16} />
           </button>
         </div>
 
         <div className="px-6 py-4 flex flex-col gap-3">
           <div className="relative">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-tertiary" />
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <input type="text" placeholder="Search by bank or card name..." value={query} onChange={(e) => setQuery(e.target.value)}
               className="input-search" autoFocus />
           </div>
@@ -104,7 +104,7 @@ function CardPicker({ onSelect, onClose, excludeIds }: {
             {['', 'HDFC Bank', 'SBI Card', 'Axis Bank', 'ICICI Bank'].map((b) => (
               <button key={b || 'all'} onClick={() => setBankFilter(b)}
                 className={cn('text-[11px] font-bold px-3 py-1 rounded-full transition-all',
-                  bankFilter === b ? 'bg-secondary-400 text-neutral-900' : 'bg-canvas-300/50 dark:bg-white/[0.05] text-ink-tertiary hover:text-ink-secondary')}>
+                  bankFilter === b ? 'bg-secondary-400 text-neutral-900' : 'bg-surface-elevated/50 dark:bg-white/[0.05] text-text-muted hover:text-text-secondary')}>
                 {b === '' ? 'All Banks' : b.replace(' Bank', '').replace(' Card', '')}
               </button>
             ))}
@@ -113,22 +113,22 @@ function CardPicker({ onSelect, onClose, excludeIds }: {
 
         <div className="flex-1 overflow-y-auto px-6 pb-6 flex flex-col gap-2">
           {filtered.length === 0 ? (
-            <p className="text-sm text-ink-tertiary text-center py-8">No cards found</p>
+            <p className="text-sm text-text-muted text-center py-8">No cards found</p>
           ) : (
             filtered.slice(0, 60).map((c) => (
               <motion.button key={c.id} whileHover={{ x: 4 }}
                 onClick={() => { onSelect(c); onClose(); }}
-                className="w-full p-3 rounded-2xl flex items-center gap-3 border border-white/[0.03] hover:border-brand-500/20 hover:bg-brand-500/[0.03] text-left transition-all group"
+                className="w-full p-3 rounded-2xl flex items-center gap-3 border border-white/[0.03] hover:border-border-emerald hover:bg-brand-emerald/[0.03] text-left transition-all group"
               >
                 <div className="w-10 h-7 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
                   style={{ background: `linear-gradient(135deg, ${c.gradientFrom}, ${c.gradientTo})` }}>
                   <span className="text-[7px] font-black text-white/80 uppercase tracking-wide truncate px-1">{c.bank.slice(0, 4)}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-ink-primary truncate leading-tight">{c.name}</p>
-                  <p className="text-[11px] text-ink-tertiary mt-0.5">{c.bank} · {c.annualFee === 0 ? 'Free' : formatINR(c.annualFee) + '/yr'}</p>
+                  <p className="text-sm font-semibold text-text-primary truncate leading-tight">{c.name}</p>
+                  <p className="text-[11px] text-text-muted mt-0.5">{c.bank} · {c.annualFee === 0 ? 'Free' : formatINR(c.annualFee) + '/yr'}</p>
                 </div>
-                <span className="text-xs font-bold text-brand-500 bg-brand-500/10 px-2.5 py-1 rounded-full flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">Add</span>
+                <span className="text-xs font-bold text-brand-emerald bg-brand-emerald-muted px-2.5 py-1 rounded-full flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">Add</span>
               </motion.button>
             ))
           )}
@@ -147,7 +147,7 @@ function ScoreBar({ score, maxScore }: { score: number; maxScore: number }) {
   return (
     <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
       <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
-        className="h-full bg-brand-500 rounded-full" />
+        className="h-full bg-brand-emerald rounded-full" />
     </div>
   );
 }
@@ -159,8 +159,8 @@ function ScoreBar({ score, maxScore }: { score: number; maxScore: number }) {
 function CompareSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-[10px] font-black text-ink-disabled uppercase tracking-[0.15em] mb-2 px-1">{title}</p>
-      <div className="rounded-2xl border border-white/[0.04] bg-white/[0.01] overflow-hidden divide-y divide-white/[0.03]">
+      <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.15em] mb-2 px-1">{title}</p>
+      <div className="rounded-2xl border border-border-subtle bg-white/[0.01] overflow-hidden divide-y divide-white/[0.03]">
         {children}
       </div>
     </div>
@@ -181,19 +181,19 @@ function CompareRow({ label, cards, getValue, format = 'text', higherIsBetter = 
 
   return (
     <div className="grid items-center py-2.5 px-3" style={{ gridTemplateColumns: `120px repeat(${cards.length}, 1fr)` }}>
-      <p className="text-xs font-semibold text-ink-tertiary truncate pr-2">{label}</p>
+      <p className="text-xs font-semibold text-text-muted truncate pr-2">{label}</p>
       {cards.map((card, i) => {
         const val = getValue(card);
         const display = format === 'rate' ? `${val}%` : format === 'inr' ? formatINR(Number(val)) : `${val}${suffix ?? ''}`;
         const isWinner = winnerIdx === i;
         const isLoser  = loserIdx === i;
         return (
-          <div key={card.id} className={cn('flex flex-col items-center justify-center py-2 px-1 rounded-xl text-center transition-colors', isWinner && 'bg-brand-500/[0.06]', isLoser && 'opacity-50')}>
-            <span className={cn('text-sm font-bold tabular-nums', isWinner ? 'text-brand-500' : 'text-ink-primary')}>{display}</span>
+          <div key={card.id} className={cn('flex flex-col items-center justify-center py-2 px-1 rounded-xl text-center transition-colors', isWinner && 'bg-brand-emerald/[0.06]', isLoser && 'opacity-50')}>
+            <span className={cn('text-sm font-bold tabular-nums', isWinner ? 'text-brand-emerald' : 'text-text-primary')}>{display}</span>
             {isWinner && (
               <div className="flex items-center gap-0.5 mt-0.5">
-                <Trophy size={8} className="text-brand-500" />
-                <span className="text-[9px] font-bold text-brand-500 uppercase tracking-wide">Best</span>
+                <Trophy size={8} className="text-brand-emerald" />
+                <span className="text-[9px] font-bold text-brand-emerald uppercase tracking-wide">Best</span>
               </div>
             )}
           </div>
@@ -235,13 +235,13 @@ export function CardComparisonPanel() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-display font-bold text-ink-primary flex items-center gap-2">
-              <Scale size={18} className="text-brand-500" /> Card Comparison
+            <h3 className="text-base font-display font-bold text-text-primary flex items-center gap-2">
+              <Scale size={18} className="text-brand-emerald" /> Card Comparison
             </h3>
-            <p className="text-xs text-ink-tertiary mt-0.5">Select 2–3 cards to compare side-by-side</p>
+            <p className="text-xs text-text-muted mt-0.5">Select 2–3 cards to compare side-by-side</p>
           </div>
           {selectedCards.length > 0 && (
-            <button onClick={() => setSelectedCards([])} className="text-xs font-bold text-ink-tertiary hover:text-loss transition-colors flex items-center gap-1">
+            <button onClick={() => setSelectedCards([])} className="text-xs font-bold text-text-muted hover:text-loss transition-colors flex items-center gap-1">
               <X size={12} /> Clear All
             </button>
           )}
@@ -253,7 +253,7 @@ export function CardComparisonPanel() {
             return card ? (
               <motion.div key={card.id} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                className="relative rounded-2xl border border-brand-500/15 bg-brand-500/[0.03] flex flex-col gap-3 p-4 group overflow-hidden"
+                className="relative rounded-2xl border border-brand-emerald/15 bg-brand-emerald/[0.03] flex flex-col gap-3 p-4 group overflow-hidden"
               >
                 <div className="w-full h-20 rounded-xl overflow-hidden relative shadow-lg"
                   style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}>
@@ -264,13 +264,13 @@ export function CardComparisonPanel() {
                 </div>
                 <div className="px-1">
                   <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-[10px] font-semibold text-ink-tertiary">Score</p>
-                    <p className="text-[10px] font-bold text-brand-500">{Math.round(scores[slot] ?? 0)}</p>
+                    <p className="text-[10px] font-semibold text-text-muted">Score</p>
+                    <p className="text-[10px] font-bold text-brand-emerald">{Math.round(scores[slot] ?? 0)}</p>
                   </div>
                   <ScoreBar score={scores[slot] ?? 0} maxScore={maxScore} />
                 </div>
                 <button onClick={() => removeCard(card.id)}
-                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/[0.06] flex items-center justify-center text-ink-tertiary hover:text-loss hover:bg-loss/10 transition-all opacity-0 group-hover:opacity-100">
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/[0.06] flex items-center justify-center text-text-muted hover:text-loss hover:bg-loss/10 transition-all opacity-0 group-hover:opacity-100">
                   <X size={11} />
                 </button>
               </motion.div>
@@ -282,14 +282,14 @@ export function CardComparisonPanel() {
                 disabled={slot > selectedCards.length}
                 className={cn('rounded-2xl p-4 border-2 border-dashed flex flex-col items-center justify-center gap-2 h-[148px] transition-all group',
                   slot <= selectedCards.length
-                    ? 'border-canvas-300 dark:border-white/[0.08] hover:border-brand-500/40 hover:bg-brand-500/[0.02] cursor-pointer'
-                    : 'border-canvas-200 dark:border-white/[0.04] opacity-30 cursor-not-allowed')}
+                    ? 'border-border-subtle dark:border-white/[0.08] hover:border-brand-emerald/40 hover:bg-brand-emerald/[0.02] cursor-pointer'
+                    : 'border-border-subtle  opacity-30 cursor-not-allowed')}
               >
                 <div className={cn('w-10 h-10 rounded-full flex items-center justify-center transition-colors',
-                  slot <= selectedCards.length ? 'bg-white/[0.04] group-hover:bg-brand-500/10' : 'bg-white/[0.02]')}>
-                  <Plus size={18} className={cn('transition-colors', slot <= selectedCards.length ? 'text-ink-disabled group-hover:text-brand-500' : 'text-ink-disabled/40')} />
+                  slot <= selectedCards.length ? 'bg-white/[0.04] group-hover:bg-brand-emerald-muted' : 'bg-white/[0.02]')}>
+                  <Plus size={18} className={cn('transition-colors', slot <= selectedCards.length ? 'text-text-muted group-hover:text-brand-emerald' : 'text-text-muted/40')} />
                 </div>
-                <p className="text-xs font-semibold text-ink-disabled group-hover:text-ink-tertiary transition-colors text-center">
+                <p className="text-xs font-semibold text-text-muted group-hover:text-text-muted transition-colors text-center">
                   {slot === 0 ? 'Add first card' : slot === 1 ? 'Add second card' : 'Add third (optional)'}
                 </p>
               </motion.button>
@@ -302,12 +302,12 @@ export function CardComparisonPanel() {
       {!hasCards && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="flex flex-col items-center justify-center py-12 text-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-brand-500/10 flex items-center justify-center">
-            <Scale size={28} className="text-brand-500" />
+          <div className="w-16 h-16 rounded-2xl bg-brand-emerald-muted flex items-center justify-center">
+            <Scale size={28} className="text-brand-emerald" />
           </div>
           <div>
-            <p className="text-sm font-bold text-ink-primary">Ready to compare?</p>
-            <p className="text-xs text-ink-tertiary mt-1 max-w-[280px]">Add at least 2 cards to see a detailed side-by-side comparison of fees, rewards, and perks.</p>
+            <p className="text-sm font-bold text-text-primary">Ready to compare?</p>
+            <p className="text-xs text-text-muted mt-1 max-w-[280px]">Add at least 2 cards to see a detailed side-by-side comparison of fees, rewards, and perks.</p>
           </div>
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => setShowPicker(true)}
             className="btn-brand text-sm px-5 py-2.5 rounded-xl font-bold flex items-center gap-2">
@@ -326,8 +326,8 @@ export function CardComparisonPanel() {
               <div />
               {selectedCards.map((card) => (
                 <div key={card.id} className="text-center px-1">
-                  <p className="text-xs font-bold text-ink-primary leading-tight truncate">{card.name}</p>
-                  <p className="text-[10px] text-ink-tertiary mt-0.5 truncate">{card.bank}</p>
+                  <p className="text-xs font-bold text-text-primary leading-tight truncate">{card.name}</p>
+                  <p className="text-[10px] text-text-muted mt-0.5 truncate">{card.bank}</p>
                 </div>
               ))}
             </div>
@@ -359,8 +359,8 @@ export function CardComparisonPanel() {
                   <div key={card.id} className="flex flex-col gap-2">
                     {card.highlights.slice(0, 4).map((h, i) => (
                       <div key={i} className="flex items-start gap-1.5">
-                        <Check size={10} className="text-brand-500 mt-0.5 flex-shrink-0" />
-                        <p className="text-[11px] text-ink-secondary leading-snug">{h}</p>
+                        <Check size={10} className="text-brand-emerald mt-0.5 flex-shrink-0" />
+                        <p className="text-[11px] text-text-secondary leading-snug">{h}</p>
                       </div>
                     ))}
                   </div>
@@ -373,15 +373,15 @@ export function CardComparisonPanel() {
               const winnerCard = selectedCards[scores.indexOf(Math.max(...scores))];
               return (
                 <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-                  className="rounded-2xl border border-brand-500/20 bg-brand-500/[0.04] p-5">
+                  className="rounded-2xl border border-border-emerald bg-brand-emerald/[0.04] p-5">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-brand-500/15 flex items-center justify-center flex-shrink-0">
-                      <Trophy size={18} className="text-brand-500" />
+                    <div className="w-10 h-10 rounded-xl bg-brand-emerald/15 flex items-center justify-center flex-shrink-0">
+                      <Trophy size={18} className="text-brand-emerald" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black text-brand-500 uppercase tracking-wider">Our Verdict</p>
-                      <p className="text-sm font-bold text-ink-primary mt-0.5">
-                        <span className="text-brand-500">{winnerCard.name}</span> wins overall
+                      <p className="text-[10px] font-black text-brand-emerald uppercase tracking-wider">Our Verdict</p>
+                      <p className="text-sm font-bold text-text-primary mt-0.5">
+                        <span className="text-brand-emerald">{winnerCard.name}</span> wins overall
                       </p>
                     </div>
                   </div>
@@ -389,14 +389,14 @@ export function CardComparisonPanel() {
                     {selectedCards.map((card, i) => (
                       <div key={card.id} className="flex flex-col gap-1.5">
                         <div className="flex items-center justify-between">
-                          <p className="text-[10px] font-semibold text-ink-tertiary truncate">{card.name.split(' ')[0]}</p>
-                          <p className="text-[10px] font-bold text-ink-primary">{Math.round(scores[i])}</p>
+                          <p className="text-[10px] font-semibold text-text-muted truncate">{card.name.split(' ')[0]}</p>
+                          <p className="text-[10px] font-bold text-text-primary">{Math.round(scores[i])}</p>
                         </div>
                         <ScoreBar score={scores[i]} maxScore={maxScore} />
                       </div>
                     ))}
                   </div>
-                  <p className="text-[11px] text-ink-tertiary mt-3 leading-relaxed">
+                  <p className="text-[11px] text-text-muted mt-3 leading-relaxed">
                     Score = reward rates across all categories + fee efficiency + lounge access. Higher is better.
                   </p>
                 </motion.div>

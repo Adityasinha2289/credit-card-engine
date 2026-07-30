@@ -81,7 +81,7 @@ export function BudgetingPanel() {
       
       {/* Gamified Health Score */}
       <div className="panel-glass rounded-3xl p-6 relative overflow-hidden border-gradient-animated">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-emerald-muted rounded-full blur-3xl -mr-10 -mt-10" />
         
         <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
           <div className="flex flex-col items-center justify-center">
@@ -91,18 +91,18 @@ export function BudgetingPanel() {
                 <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="276.46" strokeDashoffset={276.46 - (276.46 * healthScore) / 100} className={cn("transition-all duration-1000 ease-out", healthColor)} strokeLinecap="round" />
               </svg>
               <div className="flex flex-col items-center relative z-10">
-                <span className="text-2xl font-display font-bold text-ink-primary">{Math.round(healthScore)}</span>
+                <span className="text-2xl font-display font-bold text-text-primary">{Math.round(healthScore)}</span>
               </div>
             </div>
           </div>
           
           <div className="flex-1 text-center md:text-left">
-            <h3 className="text-lg font-bold text-ink-primary flex items-center justify-center md:justify-start gap-2 mb-1">
+            <h3 className="text-lg font-bold text-text-primary flex items-center justify-center md:justify-start gap-2 mb-1">
               <HeartPulse size={18} className={healthColor} />
               Credit Health Score
             </h3>
-            <p className="text-sm text-ink-tertiary mb-3">
-              Your credit utilization is at <span className="font-semibold text-ink-primary">{utilization.toFixed(1)}%</span>.
+            <p className="text-sm text-text-muted mb-3">
+              Your credit utilization is at <span className="font-semibold text-text-primary">{utilization.toFixed(1)}%</span>.
               Keeping it under 30% improves your score!
             </p>
             <div className={cn("inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider", healthBg, healthColor)}>
@@ -116,13 +116,13 @@ export function BudgetingPanel() {
       {/* Category Budgets */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-ink-primary flex items-center gap-2">
-            <Target size={16} className="text-brand-500" />
+          <h3 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+            <Target size={16} className="text-brand-emerald" />
             Category Budgets
           </h3>
           <button 
             onClick={() => setShowAddBudget(true)}
-            className="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-500/10 px-3 py-1 rounded-full hover:bg-brand-100 dark:hover:bg-brand-500/20 transition-colors"
+            className="text-xs font-bold text-brand-emerald bg-brand-50 dark:bg-brand-emerald-muted px-3 py-1 rounded-full hover:bg-brand-100 dark:hover:bg-brand-emerald-muted transition-colors"
           >
             + Add Budget
           </button>
@@ -140,7 +140,7 @@ export function BudgetingPanel() {
             const isNearLimit = progress > 85;
             const isOverLimit = progress >= 100;
             
-            let barColor = 'bg-brand-500';
+            let barColor = 'bg-brand-emerald';
             if (isNearLimit) barColor = 'bg-copper-500';
             if (isOverLimit) barColor = 'bg-red-500';
 
@@ -152,18 +152,18 @@ export function BudgetingPanel() {
               >
                 <div className="flex justify-between items-center mb-1">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-canvas-200 dark:bg-white/[0.04] flex items-center justify-center text-ink-secondary capitalize">
+                    <div className="w-8 h-8 rounded-lg bg-surface-secondary dark:bg-white/[0.04] flex items-center justify-center text-text-secondary capitalize">
                       {budget.category.substring(0, 1)}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-ink-primary capitalize">{budget.category}</p>
-                      <p className="text-[10px] text-ink-tertiary uppercase tracking-wider">{budget.period}</p>
+                      <p className="text-sm font-bold text-text-primary capitalize">{budget.category}</p>
+                      <p className="text-[10px] text-text-muted uppercase tracking-wider">{budget.period}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <p className="text-sm font-bold text-ink-primary">{formatCents(dynamicSpend)}</p>
+                      <p className="text-sm font-bold text-text-primary">{formatCents(dynamicSpend)}</p>
                       {editingBudgetId === budget.id ? (
                         <input
                           type="number"
@@ -188,17 +188,17 @@ export function BudgetingPanel() {
                             setEditingBudgetId(null);
                           }}
                           autoFocus
-                          className="w-20 text-[10px] py-0.5 px-1 mt-0.5 bg-canvas-200 dark:bg-canvas-300 rounded outline-none border border-brand-500/50 text-ink-primary text-right"
+                          className="w-20 text-[10px] py-0.5 px-1 mt-0.5 bg-surface-secondary dark:bg-surface-elevated rounded outline-none border border-brand-emerald/50 text-text-primary text-right"
                         />
                       ) : (
-                        <p className="text-[10px] text-ink-tertiary font-medium">of {formatCents(budget.limitAmount)}</p>
+                        <p className="text-[10px] text-text-muted font-medium">of {formatCents(budget.limitAmount)}</p>
                       )}
                     </div>
                     
                     <div className="relative">
                       <button
                         onClick={() => setActiveMenuId(activeMenuId === budget.id ? null : budget.id)}
-                        className="p-1.5 rounded-full text-ink-tertiary hover:bg-canvas-200 dark:hover:bg-white/5 transition-colors"
+                        className="p-1.5 rounded-full text-text-muted hover:bg-surface-secondary dark:hover:bg-white/5 transition-colors"
                       >
                         <MoreVertical size={14} />
                       </button>
@@ -212,7 +212,7 @@ export function BudgetingPanel() {
                           <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="absolute right-0 top-full mt-1 w-32 bg-canvas-50 dark:bg-canvas-300 rounded-xl shadow-ag-modal border border-canvas-200/50 dark:border-white/10 z-50 overflow-hidden flex flex-col"
+                            className="absolute right-0 top-full mt-1 w-32 bg-surface-primary dark:bg-surface-elevated rounded-xl shadow-ag-modal border border-border-subtle  z-50 overflow-hidden flex flex-col"
                           >
                             <button
                               onClick={() => {
@@ -220,7 +220,7 @@ export function BudgetingPanel() {
                                 setEditingBudgetId(budget.id);
                                 setActiveMenuId(null);
                               }}
-                              className="w-full text-left px-3 py-2.5 text-xs font-semibold text-ink-primary hover:bg-canvas-100 dark:hover:bg-white/5 flex items-center gap-2 transition-colors"
+                              className="w-full text-left px-3 py-2.5 text-xs font-semibold text-text-primary hover:bg-surface-primary dark:hover:bg-white/5 flex items-center gap-2 transition-colors"
                             >
                               <Edit2 size={13} /> Edit Limit
                             </button>
@@ -240,11 +240,11 @@ export function BudgetingPanel() {
                   </div>
                 </div>
 
-                <div className="w-full h-2.5 bg-canvas-200 dark:bg-white/5 rounded-full overflow-hidden mt-1 relative">
+                <div className="w-full h-2.5 bg-surface-secondary dark:bg-white/5 rounded-full overflow-hidden mt-1 relative">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
+                    transition={{ duration: 1, ease:"easeOut" }}
                     className={cn("h-full rounded-full", barColor)}
                   />
                 </div>
@@ -271,16 +271,16 @@ export function BudgetingPanel() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="w-full max-w-md bg-canvas-50 dark:bg-canvas-200 rounded-[2rem] p-6 shadow-ag-modal border border-canvas-200/60 dark:border-white/[0.04]"
+            className="w-full max-w-md bg-surface-primary  rounded-[2rem] p-6 shadow-ag-modal border border-border-subtle"
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-display font-bold text-ink-primary">Add a Budget</h3>
+              <h3 className="text-xl font-display font-bold text-text-primary">Add a Budget</h3>
               <button 
                 onClick={() => {
                   setShowAddBudget(false);
                   setIsCustomBudget(false);
                 }} 
-                className="w-8 h-8 rounded-full bg-canvas-100 dark:bg-white/5 flex items-center justify-center text-ink-tertiary hover:text-ink-primary"
+                className="w-8 h-8 rounded-full bg-surface-primary dark:bg-white/5 flex items-center justify-center text-text-muted hover:text-text-primary"
               >
                 ✕
               </button>
@@ -289,11 +289,11 @@ export function BudgetingPanel() {
             {isCustomBudget ? (
               <form onSubmit={handleCustomSubmit} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-bold text-ink-primary">Category</label>
+                  <label className="text-sm font-bold text-text-primary">Category</label>
                   <select
                     value={customCategory}
                     onChange={(e) => setCustomCategory(e.target.value as TransactionCategory)}
-                    className="w-full bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 rounded-xl px-4 py-3 text-ink-primary text-sm focus:outline-none focus:border-brand-500/50 transition-colors capitalize"
+                    className="w-full bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:border-brand-emerald/50 transition-colors capitalize"
                   >
                     {['dining', 'travel', 'groceries', 'entertainment', 'utilities', 'shopping', 'health', 'transport', 'subscriptions', 'other'].map(cat => (
                       <option key={cat} value={cat}>{cat}</option>
@@ -302,7 +302,7 @@ export function BudgetingPanel() {
                 </div>
                 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-bold text-ink-primary">Limit Amount (₹)</label>
+                  <label className="text-sm font-bold text-text-primary">Limit Amount (₹)</label>
                   <input
                     type="number"
                     min="1"
@@ -311,7 +311,7 @@ export function BudgetingPanel() {
                     value={customAmountStr}
                     onChange={(e) => setCustomAmountStr(e.target.value)}
                     required
-                    className="w-full bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 rounded-xl px-4 py-3 text-ink-primary text-sm focus:outline-none focus:border-brand-500/50 transition-colors"
+                    className="w-full bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:border-brand-emerald/50 transition-colors"
                   />
                 </div>
 
@@ -319,7 +319,7 @@ export function BudgetingPanel() {
                   <button
                     type="button"
                     onClick={() => setIsCustomBudget(false)}
-                    className="flex-1 px-4 py-3 rounded-xl font-bold text-ink-secondary bg-canvas-100 dark:bg-white/5 hover:bg-canvas-200 dark:hover:bg-white/10 transition-colors"
+                    className="flex-1 px-4 py-3 rounded-xl font-bold text-text-secondary bg-surface-primary dark:bg-white/5 hover:bg-surface-secondary dark:hover:bg-white/10 transition-colors"
                   >
                     Back
                   </button>
@@ -333,18 +333,18 @@ export function BudgetingPanel() {
               </form>
             ) : (
               <div className="flex flex-col gap-3">
-                <p className="text-sm font-medium text-ink-secondary mb-2">Popular Options:</p>
+                <p className="text-sm font-medium text-text-secondary mb-2">Popular Options:</p>
               {PRESET_BUDGETS.map((preset) => (
                 <button
                   key={preset.category}
                   onClick={() => handleAddBudget(preset.category, preset.defaultLimit)}
-                  className="flex items-center justify-between p-4 rounded-2xl bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 hover:border-brand-500/30 transition-all text-left"
+                  className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  hover:border-border-emerald transition-all text-left"
                 >
                   <div>
-                    <p className="text-sm font-bold text-ink-primary">{preset.label}</p>
-                    <p className="text-xs text-ink-tertiary">Default Limit: {formatCents(preset.defaultLimit)}</p>
+                    <p className="text-sm font-bold text-text-primary">{preset.label}</p>
+                    <p className="text-xs text-text-muted">Default Limit: {formatCents(preset.defaultLimit)}</p>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-brand-500">
+                  <div className="w-8 h-8 rounded-full bg-brand-50 dark:bg-brand-emerald-muted flex items-center justify-center text-brand-emerald">
                     +
                   </div>
                 </button>
@@ -352,13 +352,13 @@ export function BudgetingPanel() {
 
                 <button
                   onClick={() => setIsCustomBudget(true)}
-                  className="flex items-center justify-between p-4 rounded-2xl bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 hover:border-brand-500/30 transition-all text-left mt-2"
+                  className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  hover:border-border-emerald transition-all text-left mt-2"
                 >
                   <div>
-                    <p className="text-sm font-bold text-ink-primary">Other (Custom)</p>
-                    <p className="text-xs text-ink-tertiary">Set your own category and limit</p>
+                    <p className="text-sm font-bold text-text-primary">Other (Custom)</p>
+                    <p className="text-xs text-text-muted">Set your own category and limit</p>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-canvas-200 dark:bg-white/10 flex items-center justify-center text-ink-secondary">
+                  <div className="w-8 h-8 rounded-full bg-surface-secondary dark:bg-white/10 flex items-center justify-center text-text-secondary">
                     →
                   </div>
                 </button>

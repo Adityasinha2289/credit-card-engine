@@ -72,7 +72,7 @@ export function QuickAskTaqdeer() {
         setAppState('result');
       }, 3000);
     } catch (e) {
-      setDecision({ content: "I couldn't process that request right now." });
+      setDecision({ content:"I couldn't process that request right now." });
       setAppState('result');
     }
   };
@@ -165,12 +165,12 @@ export function QuickAskTaqdeer() {
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-600 mb-6 pl-2">Recent Recommendations</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {RECENT_RECS.map((rec, i) => (
-                    <div key={i} className="bg-[#111] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between hover:border-white/[0.08] transition-colors cursor-pointer group">
+                    <div key={i} className="bg-[#111] border border-border-subtle rounded-2xl p-5 flex flex-col justify-between hover:border-white/[0.08] transition-colors cursor-pointer group">
                       <div>
                         <div className="text-gray-400 text-xs font-medium mb-1">{rec.title}</div>
                         <div className="text-white font-medium text-lg tracking-tight mb-4">{rec.card}</div>
                       </div>
-                      <div className="flex items-center justify-between border-t border-white/[0.04] pt-4 mt-2">
+                      <div className="flex items-center justify-between border-t border-border-subtle pt-4 mt-2">
                         <span className="text-xs text-gray-500">Saved</span>
                         <span className="text-sm font-semibold text-[#00E599] group-hover:text-white transition-colors">{rec.saved}</span>
                       </div>
@@ -197,12 +197,12 @@ export function QuickAskTaqdeer() {
             <div className="w-24 h-24 relative mb-12 flex items-center justify-center">
               <motion.div 
                 animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 8, repeat: Infinity, ease:"linear" }}
                 className="absolute inset-0 rounded-full border border-dashed border-white/[0.1]"
               />
               <motion.div 
                 animate={{ rotate: -360 }}
-                transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 12, repeat: Infinity, ease:"linear" }}
                 className="absolute inset-2 rounded-full border border-dashed border-[#00E599]/30"
               />
               <Sparkles className="w-8 h-8 text-[#00E599] animate-pulse" />
@@ -257,7 +257,7 @@ export function QuickAskTaqdeer() {
             <div className="flex-1 overflow-y-auto no-scrollbar pb-32 pt-10">
               <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
                 
-                <div className="flex items-center justify-between w-full border-b border-white/[0.05] pb-4">
+                <div className="flex items-center justify-between w-full border-b border-border-subtle pb-4">
                   <h3 className="text-lg font-display font-medium text-white flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-[#00E599]" />
                     Financial Decision Report
@@ -286,7 +286,7 @@ export function QuickAskTaqdeer() {
                         </div>
                         
                         <h3 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">
-                          {decision.cards?.[0]?.name || "Recommended Strategy"}
+                          {decision.cards?.[0]?.name ||"Recommended Strategy"}
                         </h3>
                         
                         <p className="text-gray-400 text-lg leading-relaxed max-w-xl mb-8">
@@ -311,11 +311,11 @@ export function QuickAskTaqdeer() {
                             <span className="text-[10px] font-mono text-white/30 tracking-widest">TAP TO PAY</span>
                           </div>
                           <div className="relative z-10">
-                            <div className="text-sm font-medium text-white/80 mb-1">{decision.cards?.[0]?.bank || "Bank Name"}</div>
-                            <div className="text-lg font-bold text-white tracking-tight">{decision.cards?.[0]?.name || "Credit Card"}</div>
+                            <div className="text-sm font-medium text-white/80 mb-1">{decision.cards?.[0]?.bank ||"Bank Name"}</div>
+                            <div className="text-lg font-bold text-white tracking-tight">{decision.cards?.[0]?.name ||"Credit Card"}</div>
                           </div>
                         </div>
-                        <div className="mt-4 bg-[#111] rounded-xl p-4 border border-white/[0.05]">
+                        <div className="mt-4 bg-[#111] rounded-xl p-4 border border-border-subtle">
                           <div className="flex justify-between items-center mb-1">
                             <span className="text-xs text-gray-500 font-medium">Base Multiplier</span>
                             <span className="text-sm font-bold text-white">5.0%</span>
@@ -328,7 +328,7 @@ export function QuickAskTaqdeer() {
 
                 {/* Detailed Explanation */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="lg:col-span-2 bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-white/[0.04]">
+                  <div className="lg:col-span-2 bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-border-subtle">
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                       <Activity className="w-4 h-4 text-[#00E599]" />
                       Decision Breakdown
@@ -349,7 +349,7 @@ export function QuickAskTaqdeer() {
                     </div>
                   </div>
 
-                  <div className="bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-white/[0.04]">
+                  <div className="bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-border-subtle">
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-[#00E599]" />
                       Alternatives

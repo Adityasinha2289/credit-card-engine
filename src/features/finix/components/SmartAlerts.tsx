@@ -65,7 +65,7 @@ function generateAlerts(state: {
         id: `mile-${m.id}`,
         type: 'milestone',
         title: `Almost There: ${m.title}`,
-        message: `You're ₹${remaining} away from unlocking "${m.rewardValue}". Keep going!`,
+        message: `You're ₹${remaining} away from unlocking"${m.rewardValue}". Keep going!`,
         icon: Target,
         targetTab: 'perks',
       });
@@ -122,7 +122,7 @@ function generateAlerts(state: {
 
 const ALERT_STYLES: Record<SmartAlert['type'], { bg: string; iconBg: string; iconColor: string; border: string }> = {
   warning:   { bg: 'bg-amber-500/[0.04]',  iconBg: 'bg-amber-500/10',  iconColor: 'text-amber-500',  border: 'border-amber-500/10' },
-  milestone: { bg: 'bg-brand-500/[0.04]',   iconBg: 'bg-brand-500/10',  iconColor: 'text-brand-500',  border: 'border-brand-500/10' },
+  milestone: { bg: 'bg-brand-emerald/[0.04]',   iconBg: 'bg-brand-emerald-muted',  iconColor: 'text-brand-emerald',  border: 'border-brand-emerald/10' },
   tip:       { bg: 'bg-purple-500/[0.04]',  iconBg: 'bg-purple-500/10', iconColor: 'text-purple-500', border: 'border-purple-500/10' },
   insight:   { bg: 'bg-blue-500/[0.04]',    iconBg: 'bg-blue-500/10',   iconColor: 'text-blue-500',   border: 'border-blue-500/10' },
 };
@@ -165,12 +165,12 @@ export function SmartAlerts() {
   if (visibleAlerts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full w-full text-center gap-3">
-        <div className="w-12 h-12 rounded-full bg-canvas-200 dark:bg-white/[0.04] flex items-center justify-center">
-          <Bell size={18} className="text-ink-disabled" />
+        <div className="w-12 h-12 rounded-full bg-surface-secondary dark:bg-white/[0.04] flex items-center justify-center">
+          <Bell size={18} className="text-text-muted" />
         </div>
         <div>
-          <p className="text-sm font-bold text-ink-primary">All caught up!</p>
-          <p className="text-xs text-ink-tertiary mt-0.5">No new alerts to show.</p>
+          <p className="text-sm font-bold text-text-primary">All caught up!</p>
+          <p className="text-xs text-text-muted mt-0.5">No new alerts to show.</p>
         </div>
       </div>
     );
@@ -186,8 +186,8 @@ export function SmartAlerts() {
     <div className="flex flex-col h-full w-full">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Bell size={14} className="text-brand-500" />
-          <p className="text-xs font-bold text-ink-tertiary uppercase tracking-widest">Smart Alerts</p>
+          <Bell size={14} className="text-brand-emerald" />
+          <p className="text-xs font-bold text-text-muted uppercase tracking-widest">Smart Alerts</p>
         </div>
         <div className="flex items-center gap-2">
           {visibleAlerts.length > 1 && (
@@ -196,14 +196,14 @@ export function SmartAlerts() {
                 <span
                   key={i}
                   className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-colors",
-                    i === currentIndex ? "bg-brand-500" : "bg-canvas-300 dark:bg-white/10"
+"w-1.5 h-1.5 rounded-full transition-colors",
+                    i === currentIndex ?"bg-brand-emerald" :"bg-surface-elevated dark:bg-white/10"
                   )}
                 />
               ))}
             </div>
           )}
-          <span className="text-[10px] font-bold text-brand-500 bg-brand-500/10 px-2 py-0.5 rounded-full ml-1">
+          <span className="text-[10px] font-bold text-brand-emerald bg-brand-emerald-muted px-2 py-0.5 rounded-full ml-1">
             {visibleAlerts.length}
           </span>
         </div>
@@ -217,7 +217,7 @@ export function SmartAlerts() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className={cn("flex items-start gap-3 w-full", currentAlert.targetTab && "cursor-pointer hover:opacity-80 transition-opacity")}
+            className={cn("flex items-start gap-3 w-full", currentAlert.targetTab &&"cursor-pointer hover:opacity-80 transition-opacity")}
             onClick={() => {
               if (currentAlert.targetTab) {
                 window.dispatchEvent(new CustomEvent('NAVIGATE_TAB', { detail: currentAlert.targetTab }));
@@ -228,15 +228,15 @@ export function SmartAlerts() {
               <Icon size={14} className={style.iconColor} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-ink-primary leading-tight line-clamp-2">{currentAlert.title}</p>
-              <p className="text-[11px] text-ink-secondary leading-snug mt-1 line-clamp-3">{currentAlert.message}</p>
+              <p className="text-xs font-bold text-text-primary leading-tight line-clamp-2">{currentAlert.title}</p>
+              <p className="text-[11px] text-text-secondary leading-snug mt-1 line-clamp-3">{currentAlert.message}</p>
             </div>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setDismissed((prev) => new Set(prev).add(currentAlert.id));
               }}
-              className="w-6 h-6 rounded-full flex items-center justify-center text-ink-disabled hover:text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04] flex-shrink-0 transition-colors -mr-1"
+              className="w-6 h-6 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.04] flex-shrink-0 transition-colors -mr-1"
             >
               <X size={12} />
             </button>

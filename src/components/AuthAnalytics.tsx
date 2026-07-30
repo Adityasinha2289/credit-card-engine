@@ -34,7 +34,7 @@ export function AuthAnalytics() {
     // Initialize state on first load without triggering login if they were already logged in
     if (previousAuthState.current === undefined && isSignedIn && user) {
       analytics.identify(user.id);
-      // We don't trigger "User Logged In" on simple page refresh to avoid duplicate events.
+      // We don't trigger"User Logged In" on simple page refresh to avoid duplicate events.
     }
 
     previousAuthState.current = isSignedIn;

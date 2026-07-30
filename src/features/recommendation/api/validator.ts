@@ -15,18 +15,18 @@ export class ApiValidator {
 
     // 1. Merchant validation
     if (!payload.merchant || typeof payload.merchant !== 'string' || payload.merchant.trim() === '') {
-      errors.push({ field: 'merchant', message: 'Field "merchant" is required and must be a non-empty string.' });
+      errors.push({ field: 'merchant', message: 'Field"merchant" is required and must be a non-empty string.' });
     }
 
     // 2. Amount validation
     if (typeof payload.amount !== 'number' || isNaN(payload.amount) || payload.amount <= 0) {
-      errors.push({ field: 'amount', message: 'Field "amount" is required and must be a positive number greater than 0.' });
+      errors.push({ field: 'amount', message: 'Field"amount" is required and must be a positive number greater than 0.' });
     }
 
     // 3. Transaction Date validation (optional)
     if (payload.transactionDate) {
       if (typeof payload.transactionDate !== 'string' || isNaN(Date.parse(payload.transactionDate))) {
-        errors.push({ field: 'transactionDate', message: 'Field "transactionDate" must be a valid ISO date string if provided.' });
+        errors.push({ field: 'transactionDate', message: 'Field"transactionDate" must be a valid ISO date string if provided.' });
       }
     }
 

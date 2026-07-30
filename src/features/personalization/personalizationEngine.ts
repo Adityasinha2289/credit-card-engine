@@ -121,17 +121,17 @@ export class PersonalizationEngine {
     const goal = this.getPrimaryGoal(profile);
     switch (goal) {
       case 'Travel Rewards':
-        return "Let's help you earn more miles today.";
+        return"Let's help you earn more miles today.";
       case 'Maximise Cashback':
-        return "Let's maximise your cashback opportunities.";
+        return"Let's maximise your cashback opportunities.";
       case 'Save More Money':
         return 'Every smart payment saves money.';
       case 'Build Credit Score':
         return 'Small habits build strong credit.';
       case 'Earn Reward Points':
-        return "Let's unlock more rewards.";
+        return"Let's unlock more rewards.";
       default:
-        return "Let's optimize your financial journey today.";
+        return"Let's optimize your financial journey today.";
     }
   }
 

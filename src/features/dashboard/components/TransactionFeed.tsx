@@ -118,15 +118,15 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
     >
       <div className="glass-surface rounded-2xl shadow-ag-card p-4 mb-3 flex flex-col gap-3">
         {/* Toggle tabs */}
-        <div className="flex bg-canvas-200/50 dark:bg-white/[0.03] p-1 rounded-xl gap-1">
+        <div className="flex bg-surface-secondary dark:bg-white/[0.03] p-1 rounded-xl gap-1">
           <button
             type="button"
             onClick={() => { setTab('manual'); setError(null); }}
             className={cn(
               'flex-1 text-xs font-semibold py-1.5 rounded-lg transition-all',
               tab === 'manual'
-                ? 'bg-surface dark:bg-surface-raised text-brand-500 shadow-sm'
-                : 'text-ink-tertiary hover:text-ink-secondary'
+                ? 'bg-surface dark:bg-surface-raised text-brand-emerald shadow-sm'
+                : 'text-text-muted hover:text-text-secondary'
             )}
           >
             Manual Add
@@ -137,8 +137,8 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
             className={cn(
               'flex-1 text-xs font-semibold py-1.5 rounded-lg transition-all',
               tab === 'sms'
-                ? 'bg-surface dark:bg-surface-raised text-brand-500 shadow-sm'
-                : 'text-ink-tertiary hover:text-ink-secondary'
+                ? 'bg-surface dark:bg-surface-raised text-brand-emerald shadow-sm'
+                : 'text-text-muted hover:text-text-secondary'
             )}
           >
             Paste SMS
@@ -168,7 +168,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
               />
               {/* Amount */}
               <div className="relative w-28">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-tertiary">₹</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">₹</span>
                 <input
                   id={`${formId}-amount`}
                   type="number"
@@ -196,8 +196,8 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   className={cn(
                     'text-[10px] font-semibold px-2.5 py-1 rounded-full transition-all duration-150',
                     category === value
-                      ? 'btn-primary shadow-ag-glow-primary'
-                      : 'bg-canvas-200 dark:bg-white/[0.04] text-ink-secondary hover:bg-canvas-300 dark:hover:bg-white/[0.08]',
+                      ? 'btn-primary shadow-[0_0_20px_rgba(4,59,39,0.3)]'
+                      : 'bg-surface-secondary dark:bg-white/[0.04] text-text-secondary hover:bg-surface-elevated dark:hover:bg-white/[0.08]',
                   )}
                   aria-pressed={category === value}
                 >
@@ -207,11 +207,11 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2 pt-1 border-t border-canvas-200/40 dark:border-white/[0.03] pt-2">
+            <div className="flex items-center justify-end gap-2 pt-1 border-t border-border-subtle dark:border-white/[0.03] pt-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="text-xs font-medium text-ink-tertiary hover:text-ink-secondary px-3 py-1.5 rounded-lg transition-colors"
+                className="text-xs font-medium text-text-muted hover:text-text-secondary px-3 py-1.5 rounded-lg transition-colors"
               >
                 Cancel
               </button>
@@ -219,7 +219,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                 type="submit"
                 className={cn(
                   'text-xs font-semibold text-white px-4 py-1.5 rounded-full',
-                  'btn-primary shadow-ag-glow-primary',
+                  'btn-primary shadow-[0_0_20px_rgba(4,59,39,0.3)]',
                   'transition-all duration-150 active:scale-95',
                 )}
               >
@@ -242,14 +242,14 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                 
                 {/* Sample SMS list */}
                 <div>
-                  <p className="text-[9px] font-bold text-ink-disabled uppercase tracking-wider mb-1">Click to try a sample SMS:</p>
+                  <p className="text-[9px] font-bold text-text-muted uppercase tracking-wider mb-1">Click to try a sample SMS:</p>
                   <div className="flex flex-col gap-1 max-h-24 overflow-y-auto pr-1">
                     {SMS_SAMPLES.map((sample, i) => (
                       <button
                         key={i}
                         type="button"
                         onClick={() => { setSmsText(sample); setError(null); }}
-                        className="text-left text-[10px] text-ink-tertiary hover:text-brand-500 hover:bg-brand-50/50 dark:hover:bg-brand-500/5 px-2 py-1 rounded border border-canvas-200/50 dark:border-white/[0.02] truncate transition-colors"
+                        className="text-left text-[10px] text-text-muted hover:text-brand-emerald hover:bg-brand-50/50 dark:hover:bg-brand-emerald/5 px-2 py-1 rounded border border-border-subtle dark:border-white/[0.02] truncate transition-colors"
                       >
                         {sample}
                       </button>
@@ -257,18 +257,18 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 border-t border-canvas-200/40 dark:border-white/[0.03] pt-2">
+                <div className="flex items-center justify-end gap-2 border-t border-border-subtle dark:border-white/[0.03] pt-2">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="text-xs font-medium text-ink-tertiary hover:text-ink-secondary px-3 py-1.5 rounded-lg transition-colors"
+                    className="text-xs font-medium text-text-muted hover:text-text-secondary px-3 py-1.5 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleParseSms}
-                    className="text-xs font-semibold text-white px-4 py-1.5 rounded-full btn-primary shadow-ag-glow-primary transition-all active:scale-95"
+                    className="text-xs font-semibold text-white px-4 py-1.5 rounded-full btn-primary shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
                   >
                     Auto Parse SMS
                   </button>
@@ -276,15 +276,15 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
               </>
             ) : (
               <form onSubmit={handleSmsConfirm} className="flex flex-col gap-3">
-                <div className="bg-brand-50/50 dark:bg-brand-500/[0.02] border border-brand-500/10 rounded-xl p-3 mb-1">
-                  <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest">Parsed Transaction Details</p>
-                  <p className="text-[9px] text-ink-disabled truncate mt-0.5">Original SMS: "{smsText}"</p>
+                <div className="bg-brand-50/50 dark:bg-brand-emerald/[0.02] border border-brand-emerald/10 rounded-xl p-3 mb-1">
+                  <p className="text-[10px] font-bold text-brand-emerald uppercase tracking-widest">Parsed Transaction Details</p>
+                  <p className="text-[9px] text-text-muted truncate mt-0.5">Original SMS:"{smsText}"</p>
                 </div>
 
                 <div className="flex gap-2">
                   {/* Merchant (Parsed/Editable) */}
                   <div className="flex-1 flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-ink-secondary">Merchant</label>
+                    <label className="text-[10px] font-bold text-text-secondary">Merchant</label>
                     <input
                       type="text"
                       value={parsedData.merchant}
@@ -294,7 +294,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   </div>
                   {/* Amount (Parsed/Editable) */}
                   <div className="w-24 flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-ink-secondary">Amount (₹)</label>
+                    <label className="text-[10px] font-bold text-text-secondary">Amount (₹)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -308,11 +308,11 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                 <div className="grid grid-cols-2 gap-2">
                   {/* Category */}
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-ink-secondary">Category</label>
+                    <label className="text-[10px] font-bold text-text-secondary">Category</label>
                     <select
                       value={parsedData.category}
                       onChange={(e) => setParsedData({ ...parsedData, category: e.target.value })}
-                      className="input-premium py-1.5 text-xs bg-canvas-50 dark:bg-canvas-200"
+                      className="input-premium py-1.5 text-xs bg-surface-primary"
                     >
                       {CATEGORIES.map(({ value, label }) => (
                         <option key={value} value={value}>{label}</option>
@@ -321,11 +321,11 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   </div>
                   {/* Card Select */}
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-ink-secondary">Matched Card</label>
+                    <label className="text-[10px] font-bold text-text-secondary">Matched Card</label>
                     <select
                       value={parsedData.cardId}
                       onChange={(e) => setParsedData({ ...parsedData, cardId: e.target.value })}
-                      className="input-premium py-1.5 text-xs bg-canvas-50 dark:bg-canvas-200"
+                      className="input-premium py-1.5 text-xs bg-surface-primary"
                     >
                       {userCards.map((c) => (
                         <option key={c.id} value={c.id}>
@@ -336,17 +336,17 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 border-t border-canvas-200/40 dark:border-white/[0.03] pt-2">
+                <div className="flex items-center justify-end gap-2 border-t border-border-subtle dark:border-white/[0.03] pt-2">
                   <button
                     type="button"
                     onClick={() => setParsedData(null)}
-                    className="text-xs font-medium text-ink-tertiary hover:text-ink-secondary px-3 py-1.5 rounded-lg transition-colors"
+                    className="text-xs font-medium text-text-muted hover:text-text-secondary px-3 py-1.5 rounded-lg transition-colors"
                   >
                     Re-paste
                   </button>
                   <button
                     type="submit"
-                    className="text-xs font-semibold text-white px-4 py-1.5 rounded-full bg-profit hover:bg-green-600 shadow-ag-glow-primary transition-all active:scale-95"
+                    className="text-xs font-semibold text-white px-4 py-1.5 rounded-full bg-profit hover:bg-green-600 shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
                   >
                     Confirm & Add
                   </button>
@@ -391,28 +391,28 @@ function EmptyState() {
     >
       <div className="relative mb-6">
         {/* Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-brand-500/20 rounded-full blur-2xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-brand-emerald-muted rounded-full blur-2xl" />
         
         {/* Floating Receipt Illustration */}
         <motion.div
           animate={{ y: [0, -8, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative w-20 h-24 panel-glass rounded-xl border border-white/10 flex flex-col items-center justify-start pt-3 overflow-hidden shadow-2xl"
+          className="relative w-20 h-24 panel-glass rounded-xl border border-border-subtle flex flex-col items-center justify-start pt-3 overflow-hidden shadow-2xl"
         >
           <div className="w-12 h-1 bg-white/20 rounded-full mb-3" />
           <div className="w-14 h-1 bg-white/10 rounded-full mb-1.5" />
           <div className="w-10 h-1 bg-white/10 rounded-full mb-4" />
           
           <div className="w-full flex-1 bg-gradient-to-t from-brand-500/20 to-transparent flex items-end justify-center pb-2">
-            <div className="w-6 h-6 rounded-full bg-brand-500/30 flex items-center justify-center border border-brand-500/30">
+            <div className="w-6 h-6 rounded-full bg-brand-emerald/30 flex items-center justify-center border border-border-emerald">
               <span className="text-[10px] text-brand-300 font-bold">₹</span>
             </div>
           </div>
         </motion.div>
       </div>
 
-      <p className="text-sm font-display font-bold text-ink-primary mb-2">No Transactions Yet</p>
-      <p className="text-xs text-ink-tertiary max-w-[220px] leading-relaxed">
+      <p className="text-sm font-display font-bold text-text-primary mb-2">No Transactions Yet</p>
+      <p className="text-xs text-text-muted max-w-[220px] leading-relaxed">
         Your spending history will appear here once you make your first purchase.
       </p>
     </motion.li>
@@ -515,10 +515,10 @@ export function TransactionFeed({ limit = 12, className }: TransactionFeedProps)
       {/* ── Header ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-base font-display font-bold text-ink-primary tracking-tight">
+          <h2 className="text-base font-display font-bold text-text-primary tracking-tight">
             Recent Activity
           </h2>
-          <p className="text-[11px] text-ink-disabled font-medium mt-0.5">
+          <p className="text-[11px] text-text-muted font-medium mt-0.5">
             {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
             {' '}· active card
           </p>
@@ -528,7 +528,7 @@ export function TransactionFeed({ limit = 12, className }: TransactionFeedProps)
           <select
             value={timeFilter}
             onChange={(e) => setTimeFilter(e.target.value as any)}
-            className="h-8 px-2 rounded-full text-xs font-semibold bg-white dark:bg-canvas-200/50 border border-zinc-200/20 dark:border-white/10 text-ink-secondary focus:outline-none cursor-pointer hover:bg-zinc-50 dark:hover:bg-canvas-300 transition-colors"
+            className="h-8 px-2 rounded-full text-xs font-semibold bg-white  border border-zinc-200/20  text-text-secondary focus:outline-none cursor-pointer hover:bg-zinc-50 dark:hover:bg-surface-elevated transition-colors"
           >
             <option value="all">All Time</option>
             <option value="week">This Week</option>
@@ -541,7 +541,7 @@ export function TransactionFeed({ limit = 12, className }: TransactionFeedProps)
             type="button"
             onClick={exportTransactionsCSV}
             aria-label="Download transactions as CSV"
-            className="h-8 px-3 rounded-full flex items-center justify-center gap-1.5 bg-white dark:bg-canvas-200/50 border border-zinc-200/20 dark:border-white/10 shadow-ag-base text-ink-secondary hover:text-ink-primary hover:bg-zinc-50 dark:hover:bg-canvas-300 transition-all duration-200 text-xs font-semibold"
+            className="h-8 px-3 rounded-full flex items-center justify-center gap-1.5 bg-white  border border-zinc-200/20  shadow-ag-base text-text-secondary hover:text-text-primary hover:bg-zinc-50 dark:hover:bg-surface-elevated transition-all duration-200 text-xs font-semibold"
           >
             <Download size={14} />
             Export
@@ -553,7 +553,7 @@ export function TransactionFeed({ limit = 12, className }: TransactionFeedProps)
           onClick={() => setShowForm((v) => !v)}
           aria-expanded={showForm}
           aria-label={showForm ? 'Close add transaction form' : 'Add transaction'}
-          className="w-8 h-8 rounded-full flex items-center justify-center bg-white border border-zinc-200/20 dark:border-white/10 shadow-ag-base text-brand-500 hover:bg-zinc-50 hover:text-brand-600 transition-all duration-200"
+          className="w-8 h-8 rounded-full flex items-center justify-center bg-white border border-zinc-200/20  shadow-ag-base text-brand-emerald hover:bg-zinc-50 hover:text-brand-600 transition-all duration-200"
         >
           {showForm ? (
             <Minus size={14} strokeWidth={3} />

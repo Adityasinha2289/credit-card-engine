@@ -193,6 +193,31 @@ export default {
         'success-glow': 'rgba(0, 229, 153, 0.15)',
         'border-emerald': 'rgba(4, 59, 39, 0.4)',
         'premium-highlight': '#076041',
+
+        // New App Semantic Tokens
+        'brand-primary': 'var(--brand-primary)',
+        'brand-primary-hover': 'var(--brand-primary-hover)',
+        'brand-subtle': 'var(--brand-subtle)',
+        'brand-glow': 'var(--brand-glow)',
+        
+        'surface-primary': 'var(--surface-primary)',
+        'surface-secondary': 'var(--surface-secondary)',
+        'surface-elevated': 'var(--surface-elevated)',
+        'surface-card': 'var(--surface-card)',
+        
+        'border-subtle': 'var(--border-subtle)',
+        
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
+
+        'bg-page': 'var(--bg-page)',
+        'bg-surface': 'var(--bg-surface)',
+        'bg-elevated': 'var(--bg-elevated)',
+        'bg-hover': 'var(--bg-hover)',
+        'border-default': 'var(--border-default)',
+        'border-hover': 'var(--border-hover)',
+        'border-selected': 'var(--border-selected)',
       },
 
       // ─────────────────────────────────────────────────────────────────

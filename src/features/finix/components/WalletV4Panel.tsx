@@ -67,39 +67,39 @@ export function WalletV4Panel() {
     <div className="relative w-full max-w-[1000px] mx-auto flex flex-col gap-8 pb-12 pt-4">
       {/* Background Ambient Effects */}
       <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden rounded-3xl">
-        <div className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] bg-brand-500/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[-20%] left-[10%] w-[600px] h-[600px] bg-brand-emerald/5 rounded-full blur-[120px]" />
         <div className="absolute top-[30%] right-[-10%] w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[100px]" />
       </div>
 
       {/* Header */}
       <div className="flex flex-col gap-1 px-2">
-        <h1 className="text-[22px] font-display font-medium text-ink-primary flex items-center gap-2">
-          Your card intelligence <Sparkles size={18} className="text-brand-500" />
+        <h1 className="text-[22px] font-display font-medium text-text-primary flex items-center gap-2">
+          Your card intelligence <Sparkles size={18} className="text-brand-emerald" />
         </h1>
-        <p className="text-[13px] text-ink-secondary">AI picks the best card for every category.</p>
+        <p className="text-[13px] text-text-secondary">AI picks the best card for every category.</p>
       </div>
 
       {/* ── Immersive Hero Section ────────────────────────────────────────── */}
-      <div className="relative w-full rounded-[24px] bg-[#0A0A0A] border border-white/[0.04] p-8 overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-10">
+      <div className="relative w-full rounded-[24px] bg-[#0A0A0A] border border-border-subtle p-8 overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-10">
         
         {/* Subtle background glow behind the card */}
-        <div className="absolute left-[15%] top-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-brand-500/10 rounded-full blur-[80px] pointer-events-none" />
+        <div className="absolute left-[15%] top-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-brand-emerald-muted rounded-full blur-[80px] pointer-events-none" />
 
         {/* Hero Card Visual */}
         <motion.div 
           className="relative w-full md:w-[320px] flex-shrink-0 perspective-[1000px]"
           animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 6, repeat: Infinity, ease:"easeInOut" }}
         >
           {/* Card Component */}
-          <div className="w-full aspect-[1.586/1] rounded-[16px] relative overflow-hidden bg-gradient-to-br from-[#1A1E2E] to-black border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-white/5">
+          <div className="w-full aspect-[1.586/1] rounded-[16px] relative overflow-hidden bg-gradient-to-br from-[#1A1E2E] to-black border border-border-subtle shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-white/5">
             {/* Card Background Details */}
             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-brand-500/10 to-white/10" />
             
             {/* Ambient Lighting curves */}
-            <div className="absolute -bottom-[20%] -left-[10%] w-[150%] h-[150%] rounded-[100%] border-t-[0.5px] border-white/10" />
-            <div className="absolute -bottom-[10%] -left-[5%] w-[120%] h-[120%] rounded-[100%] border-t-[0.5px] border-brand-500/20" />
+            <div className="absolute -bottom-[20%] -left-[10%] w-[150%] h-[150%] rounded-[100%] border-t-[0.5px] border-border-subtle" />
+            <div className="absolute -bottom-[10%] -left-[5%] w-[120%] h-[120%] rounded-[100%] border-t-[0.5px] border-border-emerald" />
             
             {/* Card Content */}
             <div className="absolute inset-0 p-5 flex flex-col justify-between z-10">
@@ -119,7 +119,7 @@ export function WalletV4Panel() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
           </div>
           
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-500/10 border border-brand-500/30 text-brand-500 text-[9px] font-bold uppercase tracking-widest px-3 py-0.5 rounded-full whitespace-nowrap backdrop-blur-md z-20">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-emerald-muted border border-border-emerald text-brand-emerald text-[9px] font-bold uppercase tracking-widest px-3 py-0.5 rounded-full whitespace-nowrap backdrop-blur-md z-20">
             Today's Top Pick
           </div>
         </motion.div>
@@ -130,38 +130,38 @@ export function WalletV4Panel() {
             <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center">
               <span className="text-[11px]">🍽️</span>
             </div>
-            <span className="text-[10px] font-bold text-ink-tertiary uppercase tracking-widest">Dining</span>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Dining</span>
           </div>
-          <h2 className="text-[28px] font-display font-medium text-ink-primary leading-tight">{heroCard.name || 'HDFC Infinia'}</h2>
+          <h2 className="text-[28px] font-display font-medium text-text-primary leading-tight">{heroCard.name || 'HDFC Infinia'}</h2>
           
           <div className="flex flex-col mt-2">
-            <span className="text-[12px] text-ink-tertiary mb-1">Estimated savings</span>
+            <span className="text-[12px] text-text-muted mb-1">Estimated savings</span>
             <span className="text-[32px] font-light text-brand-400 tabular-nums">₹340</span>
           </div>
 
           <div className="mt-2 flex items-center gap-2">
-            <div className="bg-white/5 border border-white/5 text-ink-secondary text-[11px] px-3 py-1 rounded-full flex items-center gap-1.5 font-medium">
+            <div className="bg-white/5 border border-border-subtle text-text-secondary text-[11px] px-3 py-1 rounded-full flex items-center gap-1.5 font-medium">
               Confidence 99%
             </div>
           </div>
         </div>
 
         {/* Right: Why this card? & 3D Element */}
-        <div className="flex-[1.2] flex flex-col gap-5 border-l border-white/[0.04] pl-8 z-10 relative h-full min-h-[220px]">
-          <h3 className="text-[13px] font-semibold text-ink-primary">Why this card?</h3>
+        <div className="flex-[1.2] flex flex-col gap-5 border-l border-border-subtle pl-8 z-10 relative h-full min-h-[220px]">
+          <h3 className="text-[13px] font-semibold text-text-primary">Why this card?</h3>
           
           <div className="flex flex-col gap-3.5">
             <div className="flex items-start gap-3">
-              <Check size={14} strokeWidth={2.5} className="text-brand-500 mt-0.5" />
-              <span className="text-[13px] text-ink-secondary leading-tight">10% instant discount at Swiggy</span>
+              <Check size={14} strokeWidth={2.5} className="text-brand-emerald mt-0.5" />
+              <span className="text-[13px] text-text-secondary leading-tight">10% instant discount at Swiggy</span>
             </div>
             <div className="flex items-start gap-3">
-              <Check size={14} strokeWidth={2.5} className="text-brand-500 mt-0.5" />
-              <span className="text-[13px] text-ink-secondary leading-tight">Dining rewards active</span>
+              <Check size={14} strokeWidth={2.5} className="text-brand-emerald mt-0.5" />
+              <span className="text-[13px] text-text-secondary leading-tight">Dining rewards active</span>
             </div>
             <div className="flex items-start gap-3">
-              <Check size={14} strokeWidth={2.5} className="text-brand-500 mt-0.5" />
-              <span className="text-[13px] text-ink-secondary leading-tight">Highest effective return</span>
+              <Check size={14} strokeWidth={2.5} className="text-brand-emerald mt-0.5" />
+              <span className="text-[13px] text-text-secondary leading-tight">Highest effective return</span>
             </div>
           </div>
 
@@ -169,7 +169,7 @@ export function WalletV4Panel() {
             <button className="bg-white hover:bg-white/90 text-black font-semibold text-[12px] py-2 px-4 rounded-xl transition-all active:scale-95 shadow-xl">
               Tap to Pay
             </button>
-            <button className="flex items-center gap-1 text-[12px] font-medium text-ink-tertiary hover:text-ink-primary transition-colors">
+            <button className="flex items-center gap-1 text-[12px] font-medium text-text-muted hover:text-text-primary transition-colors">
               Compare <ChevronRight size={14} />
             </button>
           </div>
@@ -178,7 +178,7 @@ export function WalletV4Panel() {
           <div className="absolute right-0 bottom-0 w-28 h-36 pointer-events-none flex flex-col items-center justify-end">
             <motion.div 
               animate={{ y: [-4, 4, -4], rotateY: [0, 15, -15, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 5, repeat: Infinity, ease:"easeInOut" }}
               className="w-14 h-14 rounded-full bg-gradient-to-br from-brand-300 via-brand-500 to-emerald-700 shadow-[0_0_25px_rgba(34,197,94,0.3)] border border-white/20 flex items-center justify-center text-white font-bold text-xl relative z-10 transform-gpu mb-4"
             >
               <span className="opacity-90 drop-shadow-md">₹</span>
@@ -187,7 +187,7 @@ export function WalletV4Panel() {
             </motion.div>
             
             {/* Pedestal base */}
-            <div className="w-20 h-5 bg-brand-500/20 rounded-[100%] blur-[4px] absolute bottom-1 shadow-[0_0_15px_rgba(34,197,94,0.1)]" />
+            <div className="w-20 h-5 bg-brand-emerald-muted rounded-[100%] blur-[4px] absolute bottom-1 shadow-[0_0_15px_rgba(34,197,94,0.1)]" />
             <div className="w-16 h-8 bg-gradient-to-t from-transparent to-brand-500/10 rounded-[100%] absolute bottom-3 blur-sm" />
           </div>
         </div>
@@ -209,22 +209,22 @@ export function WalletV4Panel() {
               key={cat.id}
               onMouseEnter={() => setHoveredCategory(cat.id)}
               onMouseLeave={() => setHoveredCategory(null)}
-              className="relative rounded-2xl bg-[#0F0F0F] border border-white/[0.03] p-5 flex flex-col gap-4 overflow-hidden group cursor-pointer hover:border-white/[0.06] hover:bg-[#141414] transition-all duration-300 min-h-[190px]"
+              className="relative rounded-2xl bg-[#0F0F0F] border border-white/[0.03] p-5 flex flex-col gap-4 overflow-hidden group cursor-pointer hover:border-border-subtle hover:bg-[#141414] transition-all duration-300 min-h-[190px]"
             >
               <div className="relative z-10 flex flex-col h-full justify-between">
                 <div>
                   <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                     <span className="text-[13px]">{cat.icon}</span>
                   </div>
-                  <h4 className="text-[13px] font-semibold text-ink-primary leading-none mb-1">{cat.label}</h4>
-                  <p className="text-[11px] text-ink-tertiary mt-0.5 truncate">{cardName}</p>
+                  <h4 className="text-[13px] font-semibold text-text-primary leading-none mb-1">{cat.label}</h4>
+                  <p className="text-[11px] text-text-muted mt-0.5 truncate">{cardName}</p>
                 </div>
                 
                 <div className="mt-4 flex flex-col gap-1.5">
-                  <span className="text-[10px] text-ink-tertiary">Save up to</span>
+                  <span className="text-[10px] text-text-muted">Save up to</span>
                   <span className="text-[20px] font-light text-brand-400 tabular-nums">₹{savings.toLocaleString()}</span>
                   <div className="mt-2">
-                    <span className="inline-block text-[9px] font-bold text-brand-500/90 border border-brand-500/20 bg-brand-500/10 px-2 py-0.5 rounded-[4px] uppercase tracking-widest">
+                    <span className="inline-block text-[9px] font-bold text-brand-emerald/90 border border-border-emerald bg-brand-emerald-muted px-2 py-0.5 rounded-[4px] uppercase tracking-widest">
                       {cat.tag}
                     </span>
                   </div>
@@ -242,8 +242,8 @@ export function WalletV4Panel() {
              <div className="w-1.5 h-1.5 rounded-sm bg-white" />
              <div className="w-1.5 h-1.5 rounded-sm bg-white" />
            </div>
-           <span className="text-[13px] font-medium text-ink-secondary text-center mt-2">More categories</span>
-           <span className="text-[11px] font-medium text-ink-tertiary flex items-center gap-1 mt-1 group-hover:text-ink-primary transition-colors">
+           <span className="text-[13px] font-medium text-text-secondary text-center mt-2">More categories</span>
+           <span className="text-[11px] font-medium text-text-muted flex items-center gap-1 mt-1 group-hover:text-text-primary transition-colors">
              View all <ChevronRight size={12} strokeWidth={2} />
            </span>
         </div>

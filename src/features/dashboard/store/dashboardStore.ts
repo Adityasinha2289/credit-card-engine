@@ -79,7 +79,7 @@ interface DashboardState {
   creditAccounts: CreditAccount[];
   /** Single rewards ledger across all cards */
   rewards: RewardsAccount;
-  /** Which card is currently "active" / selected in the UI */
+  /** Which card is currently"active" / selected in the UI */
   activeCardId: string | null;
   /** Whether a bill payment is in flight (optimistic UI) */
   isPaymentProcessing: boolean;

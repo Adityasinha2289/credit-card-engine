@@ -29,7 +29,7 @@ export function CreditScoreDial({ score, size = 120, className, animate = true }
   let label = 'Poor';
 
   if (validScore >= 750) {
-    colorClass = 'text-brand-500 stroke-brand-500'; // Excellent
+    colorClass = 'text-brand-emerald stroke-brand-500'; // Excellent
     label = 'Excellent';
   } else if (validScore >= 650) {
     colorClass = 'text-caution stroke-caution'; // Good
@@ -80,7 +80,7 @@ export function CreditScoreDial({ score, size = 120, className, animate = true }
         >
           {validScore}
         </motion.span>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-ink-tertiary">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">
           {label}
         </span>
       </div>

@@ -66,10 +66,10 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
           initial="hidden"
           animate="show"
         >
-          <h1 className="text-lg font-display font-bold text-ink-primary tracking-tight truncate">
+          <h1 className="text-lg font-display font-bold text-text-primary tracking-tight truncate">
             {title}
           </h1>
-          <p className="text-xs text-ink-tertiary hidden sm:block">{subtitle}</p>
+          <p className="text-xs text-text-muted hidden sm:block">{subtitle}</p>
         </motion.div>
       </div>
 
@@ -78,10 +78,10 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
         {/* Mobile-only profile avatar (visible < lg) */}
         <button
           onClick={() => onTabChange && onTabChange('profile')}
-          className="lg:hidden w-9 h-9 rounded-full bg-canvas-200 dark:bg-canvas-300 overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-500/50 transition-all cursor-pointer"
+          className="lg:hidden w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-emerald-glow transition-all cursor-pointer"
         >
           <img
-            src={profile?.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
+            src={profile?.avatar ||"https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
             alt="Profile"
             className="w-full h-full object-cover"
           />
@@ -94,16 +94,16 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
             onClick={() => setShowNotifications(!showNotifications)}
             className={cn(
               'relative w-9 h-9 rounded-full flex items-center justify-center',
-              'text-ink-tertiary hover:text-ink-secondary',
-              'hover:bg-canvas-200/70 dark:hover:bg-white/[0.04]',
-              showNotifications && 'bg-canvas-200/70 dark:bg-white/[0.04] text-ink-primary',
+              'text-text-muted hover:text-text-secondary',
+              'hover:bg-surface-secondary/70 dark:hover:bg-white/[0.04]',
+              showNotifications && 'bg-surface-secondary/70 dark:bg-white/[0.04] text-text-primary',
               'transition-colors duration-200',
             )}
             aria-label="Notifications"
           >
             <Bell size={17} strokeWidth={1.8} />
             {/* Badge dot */}
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-500 border-2 border-canvas-100 dark:border-canvas-50" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-emerald border-2 border-canvas-100 dark:border-canvas-50" />
           </MotionButton>
 
           <AnimatePresence>
@@ -112,21 +112,21 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
-                className="absolute right-0 top-full mt-2 w-80 panel-glass bg-canvas-50/95 dark:bg-canvas-300/95 rounded-2xl shadow-ag-modal border border-canvas-200/50 dark:border-white/5 overflow-hidden z-50"
+                transition={{ duration: 0.15, ease:"easeOut" }}
+                className="absolute right-0 top-full mt-2 w-80 panel-glass bg-surface-primary/95 dark:bg-surface-elevated/95 rounded-2xl shadow-ag-modal border border-border-subtle  overflow-hidden z-50"
               >
-                <div className="p-4 border-b border-canvas-200/50 dark:border-white/5 flex justify-between items-center bg-canvas-100/50 dark:bg-black/10">
-                  <h3 className="font-bold text-ink-primary text-sm">Notifications</h3>
-                  <button className="text-xs font-semibold text-brand-500 hover:text-brand-600">Mark all as read</button>
+                <div className="p-4 border-b border-border-subtle  flex justify-between items-center bg-surface-primary/50 dark:bg-black/10">
+                  <h3 className="font-bold text-text-primary text-sm">Notifications</h3>
+                  <button className="text-xs font-semibold text-brand-emerald hover:text-brand-600">Mark all as read</button>
                 </div>
                 <div className="flex flex-col max-h-[300px] overflow-y-auto">
                   {NOTIFICATIONS.map(notif => (
-                    <button key={notif.id} className="text-left p-4 hover:bg-canvas-100 dark:hover:bg-white/[0.02] transition-colors border-b border-canvas-200/30 dark:border-white/5 last:border-0 relative">
-                      {notif.unread && <span className="absolute left-3 top-5 w-1.5 h-1.5 rounded-full bg-brand-500" />}
-                      <div className={cn("pl-4", !notif.unread && "opacity-70")}>
-                        <h4 className="text-sm font-bold text-ink-primary mb-1">{notif.title}</h4>
-                        <p className="text-xs text-ink-secondary leading-relaxed mb-2">{notif.desc}</p>
-                        <p className="text-[10px] text-ink-tertiary uppercase tracking-wider font-semibold">{notif.time}</p>
+                    <button key={notif.id} className="text-left p-4 hover:bg-surface-primary dark:hover:bg-white/[0.02] transition-colors border-b border-border-subtle  last:border-0 relative">
+                      {notif.unread && <span className="absolute left-3 top-5 w-1.5 h-1.5 rounded-full bg-brand-emerald" />}
+                      <div className={cn("pl-4", !notif.unread &&"opacity-70")}>
+                        <h4 className="text-sm font-bold text-text-primary mb-1">{notif.title}</h4>
+                        <p className="text-xs text-text-secondary leading-relaxed mb-2">{notif.desc}</p>
+                        <p className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">{notif.time}</p>
                       </div>
                     </button>
                   ))}

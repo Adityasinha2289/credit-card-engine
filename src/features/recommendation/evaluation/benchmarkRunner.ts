@@ -96,7 +96,7 @@ export class BenchmarkRunner {
     const failureReasons: string[] = [];
     if (!top1Match) {
       failureReasons.push(
-        `Card mismatch: Expected "${expectedWinner}", got "${actualWinnerName} (${actualWinnerId})"`
+        `Card mismatch: Expected"${expectedWinner}", got"${actualWinnerName} (${actualWinnerId})"`
       );
     }
     if (!confidencePassed) {

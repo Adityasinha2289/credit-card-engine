@@ -48,13 +48,13 @@ function extractAmount(sms: string): number | null {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MERCHANT_PATTERNS = [
-  // "at MERCHANT" or "at MERCHANT on"
+  //"at MERCHANT" or"at MERCHANT on"
   /\bat\s+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+for|\s+ref|\.|\n|$)/i,
-  // "to MERCHANT" (e.g. UPI transfers)
+  //"to MERCHANT" (e.g. UPI transfers)
   /\bto\s+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
-  // "for MERCHANT"
+  //"for MERCHANT"
   /\bfor\s+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
-  // "@ MERCHANT"
+  //"@ MERCHANT"
   /@\s*([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
   // Merchant: MERCHANT
   /Merchant[:\s]+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\.|,|\n|$)/i,

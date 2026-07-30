@@ -53,7 +53,7 @@ export const MERCHANT_CATEGORY_MAP: Record<string, SpendCategory> = {
   max: 'shopping',
   pantaloons: 'shopping',
   westside: 'shopping',
-  "d'decor": 'shopping',
+"d'decor": 'shopping',
   amazon: 'shopping',
   flipkart: 'shopping',
   myntra: 'shopping',

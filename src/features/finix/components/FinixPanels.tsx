@@ -79,9 +79,9 @@ export function CibilPanel() {
       {/* Gauge */}
       <div className="flex flex-col items-center">
         <CreditScoreDial score={cibilScore} size={220} className="mb-2" />
-        <div className="flex items-center gap-6 text-xs text-ink-disabled">
+        <div className="flex items-center gap-6 text-xs text-text-muted">
           <span>300</span>
-          <div className="flex-1 text-center text-ink-tertiary text-xs">TransUnion CIBIL</div>
+          <div className="flex-1 text-center text-text-muted text-xs">TransUnion CIBIL</div>
           <span>900</span>
         </div>
       </div>
@@ -99,20 +99,20 @@ export function CibilPanel() {
               'flex flex-col items-center gap-1 p-3 rounded-2xl border text-center',
               eligible 
                 ? 'border-profit/25 bg-profit/5' 
-                : 'border-canvas-200/60 dark:border-white/[0.04] bg-canvas-50/50 dark:bg-white/[0.02]',
+                : 'border-border-subtle  bg-surface-primary/50 dark:bg-white/[0.02]',
             )}
           >
             {eligible
               ? <CheckCircle2 size={16} className="text-profit" />
-              : <Minus size={16} className="text-ink-disabled" />}
-            <p className={cn('text-xs font-semibold', eligible ? 'text-profit' : 'text-ink-disabled')}>{l}</p>
+              : <Minus size={16} className="text-text-muted" />}
+            <p className={cn('text-xs font-semibold', eligible ? 'text-profit' : 'text-text-muted')}>{l}</p>
           </div>
         ))}
       </div>
 
       {/* Factors */}
       <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold tracking-widest uppercase text-ink-tertiary">Score Factors</p>
+        <p className="text-xs font-semibold tracking-widest uppercase text-text-muted">Score Factors</p>
         {cibilFactors.map((factor) => {
           const styles = STATUS_STYLES[factor.status];
           const Icon = factor.icon;
@@ -132,10 +132,10 @@ export function CibilPanel() {
               <Icon size={16} className={cn('flex-shrink-0 mt-0.5', styles.text)} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-ink-primary">{factor.label}</p>
-                  <span className="text-[10px] text-ink-disabled">{factor.weight}%</span>
+                  <p className="text-sm font-semibold text-text-primary">{factor.label}</p>
+                  <span className="text-[10px] text-text-muted">{factor.weight}%</span>
                 </div>
-                <p className="text-xs text-ink-tertiary mt-0.5">{factor.description}</p>
+                <p className="text-xs text-text-muted mt-0.5">{factor.description}</p>
                 {factor.note && (
                   <p className={cn('text-xs font-medium mt-1', styles.text)}>{factor.note}</p>
                 )}
@@ -239,7 +239,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
         initial={{ scale: 0.95, opacity: 0, y: 15 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 15 }}
-        className="relative w-full max-w-sm bg-canvas-50 dark:bg-[#1a1d21] rounded-[2rem] p-6 shadow-2xl border border-canvas-200/40 dark:border-white/[0.06] overflow-hidden flex flex-col text-left"
+        className="relative w-full max-w-sm bg-surface-primary dark:bg-[#1a1d21] rounded-[2rem] p-6 shadow-2xl border border-border-subtle  overflow-hidden flex flex-col text-left"
         style={{
           boxShadow: '0 10px 50px rgba(0,0,0,0.4)',
         }}
@@ -248,12 +248,12 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
         {step === 1 && (
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-display font-bold text-ink-primary">Pay Credit Card Bill</h3>
-              <p className="text-[11px] text-ink-tertiary">Safe & secure instant settlement</p>
+              <h3 className="text-base font-display font-bold text-text-primary">Pay Credit Card Bill</h3>
+              <p className="text-[11px] text-text-muted">Safe & secure instant settlement</p>
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-ink-tertiary hover:text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04]"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.04]"
             >
               <X size={16} />
             </button>
@@ -287,22 +287,22 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
 
             {/* Editable Amount */}
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] font-bold text-ink-secondary uppercase tracking-wider">Payment Amount (INR)</label>
+              <label className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Payment Amount (INR)</label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-brand-500">₹</span>
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-brand-emerald">₹</span>
                 <input
                   type="number"
                   step="0.01"
                   value={payAmount}
                   onChange={(e) => { setPayAmount(e.target.value); setError(null); }}
-                  className="w-full input-premium pl-8 pr-4 py-2.5 font-display font-extrabold text-base text-ink-primary"
+                  className="w-full input-premium pl-8 pr-4 py-2.5 font-display font-extrabold text-base text-text-primary"
                   autoFocus
                 />
               </div>
               <button
                 type="button"
                 onClick={() => setPayAmount(String(bill.amount))}
-                className="text-[10px] text-brand-500 hover:text-brand-600 font-semibold self-end mt-0.5"
+                className="text-[10px] text-brand-emerald hover:text-brand-600 font-semibold self-end mt-0.5"
               >
                 Pay Full Outstanding (₹{bill.amount.toLocaleString('en-IN')})
               </button>
@@ -310,7 +310,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
 
             {/* Payment Method Selector */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold text-ink-secondary uppercase tracking-wider">Select Payment Method</label>
+              <label className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Select Payment Method</label>
               <div className="flex flex-col gap-1.5">
                 {[
                   { id: 'upi', label: 'UPI / GooglePay / PhonePe', detail: 'Instant Settlement' },
@@ -324,16 +324,16 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
                     className={cn(
                       'p-2.5 rounded-xl border text-left flex justify-between items-center transition-all',
                       paymentMethod === m.id
-                        ? 'border-brand-500/40 bg-brand-50/20 dark:bg-brand-500/10'
-                        : 'border-canvas-200/60 dark:border-white/[0.03] hover:bg-canvas-100 dark:hover:bg-white/[0.01]'
+                        ? 'border-brand-emerald/40 bg-brand-50/20 dark:bg-brand-emerald-muted'
+                        : 'border-border-subtle dark:border-white/[0.03] hover:bg-surface-primary dark:hover:bg-white/[0.01]'
                     )}
                   >
                     <div>
-                      <p className="text-xs font-semibold text-ink-primary">{m.label}</p>
-                      <p className="text-[9px] text-ink-disabled">{m.detail}</p>
+                      <p className="text-xs font-semibold text-text-primary">{m.label}</p>
+                      <p className="text-[9px] text-text-muted">{m.detail}</p>
                     </div>
                     {paymentMethod === m.id && (
-                      <span className="w-4 h-4 rounded-full bg-brand-500 flex items-center justify-center text-white">
+                      <span className="w-4 h-4 rounded-full bg-brand-emerald flex items-center justify-center text-white">
                         <Check size={10} strokeWidth={3} />
                       </span>
                     )}
@@ -346,7 +346,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
 
             <button
               type="submit"
-              className="w-full btn-primary py-3 mt-2 flex items-center justify-center gap-2 shadow-ag-glow-primary active:scale-95"
+              className="w-full btn-primary py-3 mt-2 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(4,59,39,0.3)] active:scale-95"
             >
               Pay Securely ₹{parseFloat(payAmount || '0').toLocaleString('en-IN')}
             </button>
@@ -356,10 +356,10 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
         {/* Step 2: Processing */}
         {step === 2 && (
           <div className="py-12 flex flex-col items-center justify-center text-center gap-4">
-            <Loader2 className="animate-spin text-brand-500" size={36} />
+            <Loader2 className="animate-spin text-brand-emerald" size={36} />
             <div>
-              <p className="text-sm font-bold text-ink-primary">Verifying Payment</p>
-              <p className="text-xs text-ink-disabled mt-1 max-w-[200px] mx-auto">Connecting to bank servers via secure SSL channel...</p>
+              <p className="text-sm font-bold text-text-primary">Verifying Payment</p>
+              <p className="text-xs text-text-muted mt-1 max-w-[200px] mx-auto">Connecting to bank servers via secure SSL channel...</p>
             </div>
             <div className="flex items-center gap-1 text-[10px] text-profit bg-profit/5 px-3 py-1 rounded-full border border-profit/15 mt-2">
               <ShieldCheck size={12} /> SECURE 256-BIT ENCRYPTION
@@ -380,15 +380,15 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
             </motion.div>
             
             <div>
-              <p className="text-lg font-display font-extrabold text-ink-primary">Payment Successful!</p>
-              <p className="text-xs text-ink-tertiary mt-1">₹{parseFloat(payAmount).toLocaleString('en-IN')} paid towards {bill.cardName}</p>
+              <p className="text-lg font-display font-extrabold text-text-primary">Payment Successful!</p>
+              <p className="text-xs text-text-muted mt-1">₹{parseFloat(payAmount).toLocaleString('en-IN')} paid towards {bill.cardName}</p>
             </div>
 
             {/* Reward Points Box */}
-            <div className="w-full bg-brand-50/30 dark:bg-brand-500/[0.04] border border-brand-500/10 rounded-2xl p-4 flex flex-col items-center gap-1 mt-2">
-              <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest">renocred cashback rewards</p>
+            <div className="w-full bg-brand-50/30 dark:bg-brand-emerald/[0.04] border border-brand-emerald/10 rounded-2xl p-4 flex flex-col items-center gap-1 mt-2">
+              <p className="text-[10px] font-bold text-brand-emerald uppercase tracking-widest">renocred cashback rewards</p>
               <p className="text-2xl font-display font-bold text-profit">+{pointsEarned.toLocaleString()}</p>
-              <p className="text-[10px] text-ink-disabled">Reward Points credited to your ledger</p>
+              <p className="text-[10px] text-text-muted">Reward Points credited to your ledger</p>
             </div>
 
             <button
@@ -436,11 +436,11 @@ export function BillTrackerPanel() {
   if (userBills.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-canvas-200/60 dark:bg-canvas-300/20 flex items-center justify-center mb-5 shadow-ag-base text-ink-disabled text-2xl">
+        <div className="w-16 h-16 rounded-2xl bg-surface-secondary/60 dark:bg-surface-elevated/20 flex items-center justify-center mb-5 shadow-ag-base text-text-muted text-2xl">
           💳
         </div>
-        <p className="text-sm font-display font-bold text-ink-secondary mb-1">No upcoming bills</p>
-        <p className="text-xs text-ink-tertiary max-w-[240px] leading-relaxed">
+        <p className="text-sm font-display font-bold text-text-secondary mb-1">No upcoming bills</p>
+        <p className="text-xs text-text-muted max-w-[240px] leading-relaxed">
           When you have cards with outstanding balances, your bills will automatically show up here.
         </p>
       </div>
@@ -455,8 +455,8 @@ export function BillTrackerPanel() {
       {/* Summary */}
       <div className="grid grid-cols-2 gap-3">
         <div className="panel-glass rounded-2xl shadow-ag-base p-4">
-          <p className="text-xs text-ink-tertiary uppercase tracking-widest">Total Due</p>
-          <p className="text-2xl font-display font-bold text-ink-primary mt-1">
+          <p className="text-xs text-text-muted uppercase tracking-widest">Total Due</p>
+          <p className="text-2xl font-display font-bold text-text-primary mt-1">
             ₹{totalDue.toLocaleString('en-IN')}
           </p>
         </div>
@@ -464,7 +464,7 @@ export function BillTrackerPanel() {
           'panel-glass rounded-2xl shadow-ag-base p-4',
           urgentCount > 0 ? 'bg-loss/5 border border-loss/20 dark:bg-loss/10' : '',
         )}>
-          <p className="text-xs text-ink-tertiary uppercase tracking-widest">Urgent</p>
+          <p className="text-xs text-text-muted uppercase tracking-widest">Urgent</p>
           <p className={cn(
             'text-2xl font-display font-bold mt-1',
             urgentCount > 0 ? 'text-loss' : 'text-profit',
@@ -489,23 +489,23 @@ export function BillTrackerPanel() {
                 bill.status === 'urgent' ? 'border-loss/20' : bill.status === 'warning' ? 'border-caution/20' : 'border-profit/20'
               )}
             >
-              <div className="w-10 h-10 rounded-xl bg-canvas-100 dark:bg-canvas-200/50 flex items-center justify-center text-lg flex-shrink-0 shadow-ag-base">
+              <div className="w-10 h-10 rounded-xl bg-surface-primary  flex items-center justify-center text-lg flex-shrink-0 shadow-ag-base">
                 {bill.emoji}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-ink-primary truncate">{bill.merchant}</p>
+                  <p className="text-sm font-semibold text-text-primary truncate">{bill.merchant}</p>
                   <span className={cn('flex-shrink-0 text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-full', styles.badge)}>
                     {BILL_STATUS_LABELS[bill.status]}
                   </span>
                 </div>
-                <p className="text-xs text-ink-tertiary mt-0.5">
+                <p className="text-xs text-text-muted mt-0.5">
                   Due {new Date(bill.dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} · {bill.cardName}
                 </p>
               </div>
               
               <div className="flex items-center gap-4">
-                <p className="text-sm font-bold text-ink-primary whitespace-nowrap">
+                <p className="text-sm font-bold text-text-primary whitespace-nowrap">
                   ₹{bill.amount.toLocaleString('en-IN')}
                 </p>
                 <button
@@ -589,8 +589,8 @@ function SpendTrendChart({ debits }: { debits: any[] }) {
     <div className="panel-glass rounded-2xl shadow-ag-base p-5">
       <div className="flex justify-between items-end mb-4">
         <div>
-          <p className="text-xs font-semibold tracking-widest uppercase text-ink-tertiary mb-1">Spend Trend</p>
-          <p className="text-lg font-bold text-ink-primary">Last 7 Days</p>
+          <p className="text-xs font-semibold tracking-widest uppercase text-text-muted mb-1">Spend Trend</p>
+          <p className="text-lg font-bold text-text-primary">Last 7 Days</p>
         </div>
       </div>
       <div className="relative w-full h-[100px]">
@@ -614,7 +614,7 @@ function SpendTrendChart({ debits }: { debits: any[] }) {
             d={pathData.replace(`M 0,${height} L`, 'M')}
             fill="none"
             stroke="currentColor"
-            className="text-brand-500"
+            className="text-brand-emerald"
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -663,11 +663,11 @@ export function InsightsPanel() {
   if (debits.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-canvas-200/60 dark:bg-canvas-300/20 flex items-center justify-center mb-5 shadow-ag-base text-ink-disabled text-2xl">
+        <div className="w-16 h-16 rounded-2xl bg-surface-secondary/60 dark:bg-surface-elevated/20 flex items-center justify-center mb-5 shadow-ag-base text-text-muted text-2xl">
           📊
         </div>
-        <p className="text-sm font-display font-bold text-ink-secondary mb-1">No spend insights yet</p>
-        <p className="text-xs text-ink-tertiary max-w-[245px] leading-relaxed">
+        <p className="text-sm font-display font-bold text-text-secondary mb-1">No spend insights yet</p>
+        <p className="text-xs text-text-muted max-w-[245px] leading-relaxed">
           Perform a transaction or pay bills on your cards to view categories analysis and smart credit nudges.
         </p>
       </div>
@@ -739,7 +739,7 @@ export function InsightsPanel() {
     <div className="flex flex-col gap-6">
       {/* Spend breakdown */}
       <div>
-        <p className="text-xs font-semibold tracking-widest uppercase text-ink-tertiary mb-3">This Month's Spend</p>
+        <p className="text-xs font-semibold tracking-widest uppercase text-text-muted mb-3">This Month's Spend</p>
         {/* Stacked bar */}
         <div className="w-full h-3 rounded-full overflow-hidden flex gap-px mb-3">
           {dynamicBreakdown.map((item) => (
@@ -757,16 +757,16 @@ export function InsightsPanel() {
           {dynamicBreakdown.map((item) => (
             <div key={item.category} className="flex items-center gap-2.5">
               <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-              <p className="text-sm text-ink-secondary flex-1">{item.category}</p>
-              <p className="text-xs text-ink-tertiary">{item.pct}%</p>
-              <p className="text-sm font-semibold text-ink-primary w-20 text-right">
+              <p className="text-sm text-text-secondary flex-1">{item.category}</p>
+              <p className="text-xs text-text-muted">{item.pct}%</p>
+              <p className="text-sm font-semibold text-text-primary w-20 text-right">
                 ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
           ))}
-          <div className="flex items-center pt-2 border-t border-canvas-200/60 dark:border-white/[0.04]">
-            <p className="text-sm font-bold text-ink-primary flex-1">Total</p>
-            <p className="text-sm font-bold text-ink-primary">₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+          <div className="flex items-center pt-2 border-t border-border-subtle">
+            <p className="text-sm font-bold text-text-primary flex-1">Total</p>
+            <p className="text-sm font-bold text-text-primary">₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
         </div>
       </div>
@@ -778,17 +778,17 @@ export function InsightsPanel() {
             <TrendingDown size={16} className="text-profit" />
           </div>
           <div>
-            <p className="text-xs text-ink-tertiary">vs last month</p>
+            <p className="text-xs text-text-muted">vs last month</p>
             <p className="text-sm font-bold text-profit">0%</p>
           </div>
         </div>
         <div className="panel-glass rounded-2xl shadow-ag-base p-4 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center flex-shrink-0">
-            <TrendingUp size={16} className="text-brand-500" />
+          <div className="w-8 h-8 rounded-full bg-brand-50 dark:bg-brand-emerald-muted flex items-center justify-center flex-shrink-0">
+            <TrendingUp size={16} className="text-brand-emerald" />
           </div>
           <div>
-            <p className="text-xs text-ink-tertiary">Rewards earned</p>
-            <p className="text-sm font-bold text-brand-500">₹{rewards.cycleEarnings.toLocaleString('en-IN')}</p>
+            <p className="text-xs text-text-muted">Rewards earned</p>
+            <p className="text-sm font-bold text-brand-emerald">₹{rewards.cycleEarnings.toLocaleString('en-IN')}</p>
           </div>
         </div>
       </div>
@@ -799,7 +799,7 @@ export function InsightsPanel() {
 
       {/* Smart nudges */}
       <div>
-        <p className="text-xs font-semibold tracking-widest uppercase text-ink-tertiary mb-3">Smart Nudges</p>
+        <p className="text-xs font-semibold tracking-widest uppercase text-text-muted mb-3">Smart Nudges</p>
         <div className="flex flex-col gap-3">
           {dynamicNudges.map((nudge, i) => (
             <motion.div
@@ -811,8 +811,8 @@ export function InsightsPanel() {
             >
               <span className="text-xl flex-shrink-0">{nudge.emoji}</span>
               <div>
-                <p className="text-sm font-semibold text-ink-primary">{nudge.title}</p>
-                <p className="text-xs text-ink-tertiary mt-0.5">{nudge.desc}</p>
+                <p className="text-sm font-semibold text-text-primary">{nudge.title}</p>
+                <p className="text-xs text-text-muted mt-0.5">{nudge.desc}</p>
               </div>
             </motion.div>
           ))}

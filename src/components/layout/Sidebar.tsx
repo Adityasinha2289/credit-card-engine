@@ -62,9 +62,9 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
       {/* ── Logo ───────────────────────────────────────────────────────── */}
       <div className={cn(
         'flex items-center gap-3 px-5 h-[72px] flex-shrink-0',
-        'border-b border-canvas-200/50 dark:border-white/[0.04]',
+        'border-b border-border-subtle ',
       )}>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-ag-glow-primary flex-shrink-0 overflow-hidden bg-black">
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(4,59,39,0.3)] flex-shrink-0 overflow-hidden bg-black">
           <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />
         </div>
         <AnimatePresence>
@@ -76,10 +76,10 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <p className="text-lg font-display font-bold text-ink-primary tracking-tight whitespace-nowrap">
+              <p className="text-lg font-display font-bold text-text-primary tracking-tight whitespace-nowrap">
                 renocred
               </p>
-              <p className="text-[10px] font-medium text-ink-disabled tracking-widest uppercase whitespace-nowrap">
+              <p className="text-[10px] font-medium text-text-muted tracking-widest uppercase whitespace-nowrap">
                 credit intelligence
               </p>
             </motion.div>
@@ -90,7 +90,7 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
       {/* ── Navigation ─────────────────────────────────────────────────── */}
       <nav className="flex-1 flex flex-col gap-1 px-3 py-4 overflow-y-auto">
         <p className={cn(
-          'text-[10px] font-semibold tracking-[0.2em] uppercase text-ink-disabled px-3 mb-2',
+          'text-[10px] font-semibold tracking-[0.2em] uppercase text-text-muted px-3 mb-2',
           'transition-opacity duration-200',
           collapsed ? 'opacity-0 h-0 mb-0' : 'opacity-100',
         )}>
@@ -110,15 +110,15 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
                 'relative flex items-center gap-3 rounded-xl transition-all duration-200',
                 collapsed ? 'px-0 py-3 justify-center' : 'px-3 py-2.5',
                 isActive
-                  ? 'text-brand-500'
-                  : 'text-ink-tertiary hover:text-ink-secondary hover:bg-canvas-200/50 dark:hover:bg-white/[0.03]',
+                  ? 'text-brand-emerald'
+                  : 'text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.03]',
               )}
             >
               {/* Active background indicator */}
               {isActive && (
                 <motion.div
                   layoutId="sidebar-active-bg"
-                  className="absolute inset-0 rounded-xl bg-brand-50 dark:bg-brand-500/10 border-y border-r border-brand-200/50 dark:border-brand-500/20 border-l-[3px] border-l-brand-500 dark:border-l-brand-400"
+                  className="absolute inset-0 rounded-xl bg-brand-50 dark:bg-brand-emerald-muted border-y border-r border-brand-200/50 dark:border-border-emerald border-l-[3px] border-l-brand-500 dark:border-l-brand-400"
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />
               )}
@@ -128,7 +128,7 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
                 strokeWidth={isActive ? 2.2 : 1.7}
                 className={cn(
                   'relative z-10 flex-shrink-0 transition-colors duration-200',
-                  isActive ? 'text-brand-500' : '',
+                  isActive ? 'text-brand-emerald' : '',
                 )}
               />
 
@@ -143,12 +143,12 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
                   >
                     <p className={cn(
                       'text-sm font-semibold whitespace-nowrap',
-                      isActive ? 'text-brand-600 dark:text-brand-500' : '',
+                      isActive ? 'text-brand-600 dark:text-brand-emerald' : '',
                     )}>
                       {item.label}
                     </p>
                     <p className={cn(
-                      'text-[10px] text-ink-disabled whitespace-nowrap',
+                      'text-[10px] text-text-muted whitespace-nowrap',
                       isActive ? 'text-brand-400 dark:text-brand-600' : '',
                     )}>
                       {item.description}
@@ -165,7 +165,7 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
 
       {/* ── User Profile + Collapse Toggle ──────────────────────────────── */}
       <div className={cn(
-        'flex flex-col gap-3 px-3 py-4 border-t border-canvas-200/50 dark:border-white/[0.04]',
+        'flex flex-col gap-3 px-3 py-4 border-t border-border-subtle ',
         'flex-shrink-0',
       )}>
         {/* User card */}
@@ -173,13 +173,13 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
           onClick={() => onTabChange('profile')}
           className={cn(
             'flex items-center gap-3 rounded-xl cursor-pointer group',
-            'transition-all duration-200 hover:bg-canvas-200/50 dark:hover:bg-white/[0.03]',
+            'transition-all duration-200 hover:bg-surface-secondary dark:hover:bg-white/[0.03]',
             collapsed ? 'px-0 py-2 justify-center' : 'px-3 py-2.5',
           )}
         >
-          <div className="w-9 h-9 rounded-full bg-canvas-200 dark:bg-canvas-300 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0 ring-2 ring-brand-500/20 group-hover:ring-brand-500/40 transition-all duration-200">
+          <div className="w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0 ring-2 ring-brand-emerald/20 group-hover:ring-brand-emerald/40 transition-all duration-200">
             <img
-              src={profile?.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
+              src={profile?.avatar ||"https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
               alt="Profile"
               className="w-full h-full object-cover"
             />
@@ -194,12 +194,12 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
                 className="overflow-hidden flex-1 min-w-0"
               >
                 <div className="flex items-center justify-between gap-1">
-                  <p className="text-sm font-semibold text-ink-primary truncate group-hover:text-brand-500 transition-colors">
-                    {profile?.name || "Atharva Kulkarni"}
+                  <p className="text-sm font-semibold text-text-primary truncate group-hover:text-brand-emerald transition-colors">
+                    {profile?.name ||"Atharva Kulkarni"}
                   </p>
                   <button 
                     onClick={(e) => { e.stopPropagation(); logout(); signOut(); }} 
-                    className="text-ink-disabled hover:text-loss transition-colors p-1 rounded-lg"
+                    className="text-text-muted hover:text-loss transition-colors p-1 rounded-lg"
                     title="Logout"
                   >
                     <LogOut size={13} />
@@ -207,8 +207,8 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-profit animate-ag-glow-pulse" />
-                  <p className="text-[10px] font-medium text-ink-disabled">
-                    {profile ? `CIBIL: ${profile.creditScore}` : "Premium Member"}
+                  <p className="text-[10px] font-medium text-text-muted">
+                    {profile ? `CIBIL: ${profile.creditScore}` :"Premium Member"}
                   </p>
                 </div>
               </motion.div>
@@ -222,8 +222,8 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className={cn(
             'flex items-center justify-center w-full rounded-lg py-2',
-            'text-ink-disabled hover:text-ink-secondary',
-            'hover:bg-canvas-200/50 dark:hover:bg-white/[0.03]',
+            'text-text-muted hover:text-text-secondary',
+            'hover:bg-surface-secondary dark:hover:bg-white/[0.03]',
             'transition-all duration-200',
           )}
         >

@@ -80,10 +80,10 @@ function EmiSlider({
           >
             <Icon size={14} style={{ color }} />
           </div>
-          <p className="text-sm font-semibold text-ink-primary">{label}</p>
+          <p className="text-sm font-semibold text-text-primary">{label}</p>
         </div>
         <div className="flex items-center gap-1.5 bg-white/[0.04] rounded-xl px-3 py-1.5">
-          <span className="text-sm font-bold text-ink-primary tabular-nums">{display}</span>
+          <span className="text-sm font-bold text-text-primary tabular-nums">{display}</span>
         </div>
       </div>
       <div className="relative">
@@ -109,14 +109,14 @@ function StatTile({ label, value, icon: Icon, colorVar }: {
   label: string; value: string; icon: typeof TrendingUp; colorVar: string;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-white/[0.04] bg-white/[0.01] p-4">
+    <div className="flex flex-col gap-2 rounded-2xl border border-border-subtle bg-white/[0.01] p-4">
       <div className="flex items-center gap-2">
         <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `rgb(var(${colorVar}) / 0.12)` }}>
           <Icon size={13} style={{ color: `rgb(var(${colorVar}))` }} />
         </div>
-        <p className="text-[11px] font-semibold text-ink-tertiary">{label}</p>
+        <p className="text-[11px] font-semibold text-text-muted">{label}</p>
       </div>
-      <p className="text-lg font-display font-bold text-ink-primary tabular-nums leading-none">{value}</p>
+      <p className="text-lg font-display font-bold text-text-primary tabular-nums leading-none">{value}</p>
     </div>
   );
 }
@@ -143,7 +143,7 @@ export function EmiCalculatorPanel() {
   // Principal vs interest split for the amortization bar
   const principalPct = totalPayable > 0 ? (amount / totalPayable) * 100 : 100;
 
-  // ── "Which card" ranking ──────────────────────────────────────────────────
+  // ──"Which card" ranking ──────────────────────────────────────────────────
   const rankedCards = useMemo(() => {
     return userCards
       .map((card) => {
@@ -176,12 +176,12 @@ export function EmiCalculatorPanel() {
 
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-brand-500/15 flex items-center justify-center flex-shrink-0">
-          <Calculator size={18} className="text-brand-500" />
+        <div className="w-10 h-10 rounded-xl bg-brand-emerald/15 flex items-center justify-center flex-shrink-0">
+          <Calculator size={18} className="text-brand-emerald" />
         </div>
         <div>
-          <h3 className="text-base font-display font-bold text-ink-primary">EMI Calculator</h3>
-          <p className="text-xs text-ink-tertiary">Plan a big purchase and find the best card to convert it</p>
+          <h3 className="text-base font-display font-bold text-text-primary">EMI Calculator</h3>
+          <p className="text-xs text-text-muted">Plan a big purchase and find the best card to convert it</p>
         </div>
       </div>
 
@@ -189,38 +189,38 @@ export function EmiCalculatorPanel() {
       <div className="panel-glass rounded-2xl p-6">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-1.5">Monthly EMI</p>
+            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1.5">Monthly EMI</p>
             <div className="flex items-baseline gap-2">
               <motion.p
                 key={Math.round(emi)}
                 initial={{ opacity: 0.4, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-4xl font-display font-bold text-ink-primary tabular-nums tracking-tight"
+                className="text-4xl font-display font-bold text-text-primary tabular-nums tracking-tight"
               >
                 {formatFullINR(emi)}
               </motion.p>
-              <span className="text-sm font-semibold text-ink-tertiary">/mo</span>
+              <span className="text-sm font-semibold text-text-muted">/mo</span>
             </div>
-            <p className="text-xs text-ink-tertiary mt-1.5">
+            <p className="text-xs text-text-muted mt-1.5">
               {formatFullINR(amount)} over {tenure} months at {rate}% p.a.
             </p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-500/[0.08] border border-brand-500/15 self-start">
-            <Sparkles size={13} className="text-brand-500" />
-            <span className="text-xs font-bold text-brand-500">Reducing balance</span>
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-emerald/[0.08] border border-brand-emerald/15 self-start">
+            <Sparkles size={13} className="text-brand-emerald" />
+            <span className="text-xs font-bold text-brand-emerald">Reducing balance</span>
           </div>
         </div>
 
         {/* Amortization bar */}
         <div className="mt-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold text-ink-tertiary">Principal vs Interest</span>
-            <span className="text-[11px] font-semibold text-ink-tertiary tabular-nums">{formatFullINR(totalPayable)}</span>
+            <span className="text-[11px] font-semibold text-text-muted">Principal vs Interest</span>
+            <span className="text-[11px] font-semibold text-text-muted tabular-nums">{formatFullINR(totalPayable)}</span>
           </div>
           <div className="w-full h-2.5 rounded-full overflow-hidden flex bg-white/[0.06]">
             <motion.div
-              className="h-full bg-brand-500"
+              className="h-full bg-brand-emerald"
               initial={{ width: 0 }}
               animate={{ width: `${principalPct}%` }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -234,12 +234,12 @@ export function EmiCalculatorPanel() {
           </div>
           <div className="flex items-center gap-4 mt-2.5">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-brand-500" />
-              <span className="text-[11px] text-ink-tertiary">Principal · {formatINR(amount)}</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-brand-emerald" />
+              <span className="text-[11px] text-text-muted">Principal · {formatINR(amount)}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-copper-500" />
-              <span className="text-[11px] text-ink-tertiary">Interest · {formatINR(totalInterest)}</span>
+              <span className="text-[11px] text-text-muted">Interest · {formatINR(totalInterest)}</span>
             </div>
           </div>
         </div>
@@ -254,19 +254,19 @@ export function EmiCalculatorPanel() {
 
       {/* Inputs */}
       <div className="panel-glass rounded-2xl p-5">
-        <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-3">Loan Details</p>
+        <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-3">Loan Details</p>
 
         {/* Amount with text input */}
         <div className="flex flex-col gap-2 py-3 border-b border-white/[0.03]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-500/[0.12]">
-                <Wallet size={14} className="text-brand-500" />
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-brand-emerald/[0.12]">
+                <Wallet size={14} className="text-brand-emerald" />
               </div>
-              <p className="text-sm font-semibold text-ink-primary">Purchase Amount</p>
+              <p className="text-sm font-semibold text-text-primary">Purchase Amount</p>
             </div>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-tertiary">₹</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">₹</span>
               <input
                 type="number"
                 value={amount}
@@ -282,7 +282,7 @@ export function EmiCalculatorPanel() {
           </div>
           <div className="relative">
             <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-              <div className="h-full rounded-full bg-brand-500 transition-all duration-150" style={{ width: `${((amount - 5000) / (1000000 - 5000)) * 100}%` }} />
+              <div className="h-full rounded-full bg-brand-emerald transition-all duration-150" style={{ width: `${((amount - 5000) / (1000000 - 5000)) * 100}%` }} />
             </div>
             <input
               type="range" min={5000} max={1000000} step={5000} value={Math.min(1000000, Math.max(5000, amount))}
@@ -299,11 +299,11 @@ export function EmiCalculatorPanel() {
               <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-steel-500/[0.12]">
                 <Clock size={14} className="text-steel-500" />
               </div>
-              <p className="text-sm font-semibold text-ink-primary">Tenure</p>
+              <p className="text-sm font-semibold text-text-primary">Tenure</p>
             </div>
             <div className="flex items-center gap-1.5 bg-white/[0.04] rounded-xl px-3 py-1.5">
-              <span className="text-sm font-bold text-ink-primary tabular-nums">{tenure}</span>
-              <span className="text-[10px] text-ink-tertiary">months</span>
+              <span className="text-sm font-bold text-text-primary tabular-nums">{tenure}</span>
+              <span className="text-[10px] text-text-muted">months</span>
             </div>
           </div>
           <div className="flex gap-1.5 flex-wrap">
@@ -314,8 +314,8 @@ export function EmiCalculatorPanel() {
                 className={cn(
                   'text-[11px] font-bold px-3 py-1 rounded-full transition-all',
                   tenure === m
-                    ? 'bg-brand-500 text-white'
-                    : 'bg-white/[0.05] text-ink-tertiary hover:text-ink-secondary',
+                    ? 'bg-brand-emerald text-white'
+                    : 'bg-white/[0.05] text-text-muted hover:text-text-secondary',
                 )}
               >
                 {m}mo
@@ -350,24 +350,24 @@ export function EmiCalculatorPanel() {
       <div className="panel-glass rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-brand-500/15 flex items-center justify-center flex-shrink-0">
-              <CreditCard size={15} className="text-brand-500" />
+            <div className="w-8 h-8 rounded-xl bg-brand-emerald/15 flex items-center justify-center flex-shrink-0">
+              <CreditCard size={15} className="text-brand-emerald" />
             </div>
             <div>
-              <p className="text-sm font-display font-bold text-ink-primary">Which card should I use?</p>
-              <p className="text-[11px] text-ink-tertiary">Ranked by lowest EMI interest cost</p>
+              <p className="text-sm font-display font-bold text-text-primary">Which card should I use?</p>
+              <p className="text-[11px] text-text-muted">Ranked by lowest EMI interest cost</p>
             </div>
           </div>
         </div>
 
         {rankedCards.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center">
-              <CreditCard size={24} className="text-brand-500" />
+            <div className="w-14 h-14 rounded-2xl bg-brand-emerald-muted flex items-center justify-center">
+              <CreditCard size={24} className="text-brand-emerald" />
             </div>
             <div>
-              <p className="text-sm font-bold text-ink-primary">No cards in your wallet yet</p>
-              <p className="text-xs text-ink-tertiary mt-1 max-w-[260px]">
+              <p className="text-sm font-bold text-text-primary">No cards in your wallet yet</p>
+              <p className="text-xs text-text-muted mt-1 max-w-[260px]">
                 Add a card on the Dashboard to see which one gives you the cheapest EMI for this purchase.
               </p>
             </div>
@@ -384,8 +384,8 @@ export function EmiCalculatorPanel() {
                   className={cn(
                     'relative flex items-center gap-3 rounded-2xl border p-3 transition-all',
                     isBest
-                      ? 'border-brand-500/25 bg-brand-500/[0.05]'
-                      : 'border-white/[0.04] bg-white/[0.01]',
+                      ? 'border-brand-emerald/25 bg-brand-emerald/[0.05]'
+                      : 'border-border-subtle bg-white/[0.01]',
                   )}
                 >
                   {/* Card face chip */}
@@ -401,16 +401,16 @@ export function EmiCalculatorPanel() {
                   {/* Name + meta */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-semibold text-ink-primary truncate leading-tight">{card.label || 'Credit Card'}</p>
+                      <p className="text-sm font-semibold text-text-primary truncate leading-tight">{card.label || 'Credit Card'}</p>
                       {isBest && (
-                        <span className="flex items-center gap-0.5 bg-brand-500/15 text-brand-500 text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full flex-shrink-0">
+                        <span className="flex items-center gap-0.5 bg-brand-emerald/15 text-brand-emerald text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full flex-shrink-0">
                           <Trophy size={8} /> Best
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-ink-tertiary">{apr}% p.a.</span>
-                      <span className="text-[10px] text-ink-disabled">·</span>
+                      <span className="text-[10px] text-text-muted">{apr}% p.a.</span>
+                      <span className="text-[10px] text-text-muted">·</span>
                       {covered ? (
                         <span className="flex items-center gap-1 text-[10px] text-profit">
                           <CheckCircle2 size={9} /> {formatINR(availableRupees)} avail.
@@ -425,10 +425,10 @@ export function EmiCalculatorPanel() {
 
                   {/* EMI figure */}
                   <div className="text-right flex-shrink-0">
-                    <p className={cn('text-sm font-bold tabular-nums', isBest ? 'text-brand-500' : 'text-ink-primary')}>
+                    <p className={cn('text-sm font-bold tabular-nums', isBest ? 'text-brand-emerald' : 'text-text-primary')}>
                       {formatFullINR(cardEmi)}
                     </p>
-                    <p className="text-[10px] text-ink-tertiary tabular-nums">+{formatINR(cardInterest)} int.</p>
+                    <p className="text-[10px] text-text-muted tabular-nums">+{formatINR(cardInterest)} int.</p>
                   </div>
                 </motion.div>
               );
@@ -438,9 +438,9 @@ export function EmiCalculatorPanel() {
       </div>
 
       {/* Disclaimer */}
-      <div className="flex items-start gap-2.5 px-4 py-3 rounded-2xl bg-brand-500/[0.04] border border-brand-500/10">
-        <Info size={13} className="text-brand-500 mt-0.5 flex-shrink-0" />
-        <p className="text-[11px] text-ink-secondary leading-relaxed">
+      <div className="flex items-start gap-2.5 px-4 py-3 rounded-2xl bg-brand-emerald/[0.04] border border-brand-emerald/10">
+        <Info size={13} className="text-brand-emerald mt-0.5 flex-shrink-0" />
+        <p className="text-[11px] text-text-secondary leading-relaxed">
           Estimates use the reducing-balance method. Actual EMI offers, interest rates, and processing
           fees vary by bank, card, and merchant. Per-card rates shown here are indicative, derived from
           each card's tier — always confirm the exact terms before converting a transaction to EMI.

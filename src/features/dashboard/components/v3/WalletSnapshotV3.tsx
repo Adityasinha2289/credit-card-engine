@@ -55,13 +55,13 @@ export function WalletSnapshotV3({
   };
 
   return (
-    <div className="panel-glass rounded-[2rem] p-6 border border-canvas-200/50 dark:border-white/[0.05] shadow-xl">
+    <div className="panel-glass rounded-[2rem] p-6 border border-border-subtle  shadow-xl">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-display font-bold text-ink-primary flex items-center gap-2">
-          <WalletIcon size={20} className="text-brand-500" />
+        <h3 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
+          <WalletIcon size={20} className="text-brand-emerald" />
           Wallet Snapshot
         </h3>
-        <span className="text-[10px] font-bold tracking-wider uppercase bg-canvas-200 dark:bg-white/5 px-2.5 py-1 rounded-full text-ink-secondary">
+        <span className="text-[10px] font-bold tracking-wider uppercase bg-surface-secondary dark:bg-white/5 px-2.5 py-1 rounded-full text-text-secondary">
           {userCards.length} Cards
         </span>
       </div>
@@ -85,7 +85,7 @@ export function WalletSnapshotV3({
                 <ActiveCard card={cardWithLiveCredit} revealed={false} />
               ) : (
                 <div 
-                  className="w-full h-[190px] rounded-2xl opacity-50 border border-white/10"
+                  className="w-full h-[190px] rounded-2xl opacity-50 border border-border-subtle"
                   style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}
                 />
               )}
@@ -95,19 +95,19 @@ export function WalletSnapshotV3({
       </div>
 
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <div className="p-4 rounded-2xl bg-canvas-50 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/[0.04]">
+        <div className="p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
           <div className="flex items-center gap-2 mb-1">
-            <PieChart size={14} className="text-ink-tertiary" />
-            <span className="text-[10px] uppercase font-bold tracking-wider text-ink-tertiary">Utilization</span>
+            <PieChart size={14} className="text-text-muted" />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Utilization</span>
           </div>
-          <p className="text-lg font-bold text-ink-primary">{utilization}%</p>
+          <p className="text-lg font-bold text-text-primary">{utilization}%</p>
         </div>
-        <div className="p-4 rounded-2xl bg-canvas-50 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/[0.04]">
+        <div className="p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
           <div className="flex items-center gap-2 mb-1">
-            <Calendar size={14} className="text-ink-tertiary" />
-            <span className="text-[10px] uppercase font-bold tracking-wider text-ink-tertiary">Next Bill</span>
+            <Calendar size={14} className="text-text-muted" />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Next Bill</span>
           </div>
-          <p className="text-sm font-bold text-ink-primary mt-1 truncate">
+          <p className="text-sm font-bold text-text-primary mt-1 truncate">
             {nextPaymentDate !== 'No upcoming bills' ? new Date(nextPaymentDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : nextPaymentDate}
           </p>
         </div>

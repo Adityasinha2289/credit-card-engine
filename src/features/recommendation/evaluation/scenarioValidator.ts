@@ -40,7 +40,7 @@ export class ScenarioValidator {
         errors.push({
           scenarioId: scenario.id,
           field: 'id',
-          message: `Duplicate scenario ID "${scenario.id}" found`,
+          message: `Duplicate scenario ID"${scenario.id}" found`,
           severity: 'error',
         });
       } else {
@@ -91,7 +91,7 @@ export class ScenarioValidator {
           warnings.push({
             scenarioId: sId,
             field: 'expected.winningCard',
-            message: `Expected card "${scenario.expected.winningCard}" is not registered in Card Catalog`,
+            message: `Expected card"${scenario.expected.winningCard}" is not registered in Card Catalog`,
             severity: 'warning',
           });
         }
@@ -115,7 +115,7 @@ export class ScenarioValidator {
               warnings.push({
                 scenarioId: sId,
                 field: 'expected.acceptableAlternatives',
-                message: `Acceptable alternative card "${alt}" is not in Card Catalog`,
+                message: `Acceptable alternative card"${alt}" is not in Card Catalog`,
                 severity: 'warning',
               });
             }
@@ -141,7 +141,7 @@ export class ScenarioValidator {
             warnings.push({
               scenarioId: sId,
               field: 'userContext.ownedCards',
-              message: `Owned card "${cardId}" is unknown in Card Catalog`,
+              message: `Owned card"${cardId}" is unknown in Card Catalog`,
               severity: 'warning',
             });
           }

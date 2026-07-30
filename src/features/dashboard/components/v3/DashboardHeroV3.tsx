@@ -18,10 +18,10 @@ export function DashboardHeroV3({ profile, ledgerSummary }: DashboardHeroV3Props
 
   return (
     <div className="pt-6 pb-2">
-      <h1 className="text-3xl md:text-4xl font-display font-semibold tracking-tight text-ink-primary">
+      <h1 className="text-3xl md:text-4xl font-display font-semibold tracking-tight text-text-primary">
         {getGreeting()}, <span className="text-gradient-brand">{firstName}</span>.
       </h1>
-      <p className="text-sm md:text-base text-ink-secondary mt-2 font-medium">
+      <p className="text-sm md:text-base text-text-secondary mt-2 font-medium">
         {subtitle}
       </p>
     </div>

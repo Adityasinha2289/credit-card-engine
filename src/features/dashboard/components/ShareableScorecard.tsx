@@ -93,7 +93,7 @@ function ScorecardCanvas({ captureRef }: { captureRef: React.RefObject<HTMLDivEl
         background: 'linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 40%, #0a0f1a 100%)',
         borderRadius: '28px',
         padding: '36px',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+        fontFamily:"'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
         position: 'relative',
         overflow: 'hidden',
         boxShadow: '0 32px 80px rgba(0,0,0,0.8)',

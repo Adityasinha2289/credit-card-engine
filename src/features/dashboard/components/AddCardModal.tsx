@@ -60,15 +60,15 @@ export default function AddCardModal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="relative w-full max-w-md bg-canvas-50 dark:bg-canvas-200 rounded-[2rem] p-6 shadow-ag-glow-primary border border-canvas-200/60 dark:border-white/[0.04] overflow-hidden flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-md bg-surface-primary  rounded-[2rem] p-6 shadow-[0_0_20px_rgba(4,59,39,0.3)] border border-border-subtle  overflow-hidden flex flex-col max-h-[90vh]"
       >
         {!selectedTemplate ? (
           <>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-display font-bold text-ink-primary">Add Card to Wallet</h3>
+              <h3 className="text-lg font-display font-bold text-text-primary">Add Card to Wallet</h3>
               <button
                 onClick={handleCloseModal}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-ink-tertiary hover:text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04]"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.04]"
               >
                 <X size={16} />
               </button>
@@ -76,7 +76,7 @@ export default function AddCardModal({
 
             {/* Search Bar */}
             <div className="relative mb-4">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-tertiary" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
                 type="text"
                 placeholder="Search cards by bank or name..."
@@ -89,7 +89,7 @@ export default function AddCardModal({
             {/* Scrollable List */}
             <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2">
               {filteredCardsToAdd.length === 0 ? (
-                <p className="text-sm text-ink-tertiary text-center py-8">No cards found matching search</p>
+                <p className="text-sm text-text-muted text-center py-8">No cards found matching search</p>
               ) : (
                 filteredCardsToAdd.map((c) => (
                   <button
@@ -99,14 +99,14 @@ export default function AddCardModal({
                       setCardNameInput(profile?.name || '');
                       setCardLimitInput(c.minIncome ? String(Math.floor(c.minIncome * 0.5)) : '150000');
                     }}
-                    className="w-full p-3 rounded-2xl flex items-center gap-3 border border-canvas-200/40 dark:border-white/[0.03] hover:bg-canvas-200/50 dark:hover:bg-white/[0.02] text-left transition-all"
+                    className="w-full p-3 rounded-2xl flex items-center gap-3 border border-border-subtle dark:border-white/[0.03] hover:bg-surface-secondary dark:hover:bg-white/[0.02] text-left transition-all"
                   >
                     <BankLogo bank={c.bank} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-ink-primary truncate">{c.name}</p>
-                      <p className="text-xs text-ink-tertiary">{c.bank} · {c.network}</p>
+                      <p className="text-sm font-semibold text-text-primary truncate">{c.name}</p>
+                      <p className="text-xs text-text-muted">{c.bank} · {c.network}</p>
                     </div>
-                    <span className="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-500/10 px-2.5 py-1 rounded-full">
+                    <span className="text-xs font-bold text-brand-emerald bg-brand-50 dark:bg-brand-emerald-muted px-2.5 py-1 rounded-full">
                       Select
                     </span>
                   </button>
@@ -118,15 +118,15 @@ export default function AddCardModal({
           <div className="flex flex-col gap-4 text-left">
             <div className="flex items-center justify-between mb-2">
               <div>
-                <h3 className="text-base font-display font-bold text-ink-primary">Enter Card Details</h3>
-                <p className="text-xs text-ink-tertiary">{selectedTemplate.name}</p>
+                <h3 className="text-base font-display font-bold text-text-primary">Enter Card Details</h3>
+                <p className="text-xs text-text-muted">{selectedTemplate.name}</p>
               </div>
               <button
                 onClick={() => {
                   setSelectedTemplate(null);
                   setFormError('');
                 }}
-                className="text-xs font-bold text-brand-500 hover:text-brand-600 bg-brand-50 dark:bg-brand-500/10 px-3 py-1.5 rounded-full"
+                className="text-xs font-bold text-brand-emerald hover:text-brand-600 bg-brand-50 dark:bg-brand-emerald-muted px-3 py-1.5 rounded-full"
               >
                 Back
               </button>
@@ -155,7 +155,7 @@ export default function AddCardModal({
             {/* Form fields */}
             <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-1 text-left">
-                <label className="text-[11px] font-bold text-ink-secondary">Card Number (Last 4 Digits)</label>
+                <label className="text-[11px] font-bold text-text-secondary">Card Number (Last 4 Digits)</label>
                 <input
                   type="text"
                   maxLength={4}
@@ -167,7 +167,7 @@ export default function AddCardModal({
               </div>
 
               <div className="flex flex-col gap-1 text-left">
-                <label className="text-[11px] font-bold text-ink-secondary">Cardholder Name</label>
+                <label className="text-[11px] font-bold text-text-secondary">Cardholder Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Atharva Mishra"
@@ -179,7 +179,7 @@ export default function AddCardModal({
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1 text-left">
-                  <label className="text-[11px] font-bold text-ink-secondary">Expiry (MM/YY)</label>
+                  <label className="text-[11px] font-bold text-text-secondary">Expiry (MM/YY)</label>
                   <input
                     type="text"
                     maxLength={5}
@@ -214,9 +214,9 @@ export default function AddCardModal({
                 </div>
 
                 <div className="flex flex-col gap-1 text-left">
-                  <label className="text-[11px] font-bold text-ink-secondary">Credit Limit (INR)</label>
+                  <label className="text-[11px] font-bold text-text-secondary">Credit Limit (INR)</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-tertiary">₹</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">₹</span>
                     <input
                       type="number"
                       placeholder="e.g. 300000"
@@ -277,7 +277,7 @@ export default function AddCardModal({
                 });
                 handleCloseModal();
               }}
-              className="w-full mt-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm py-3 rounded-full flex items-center justify-center gap-2 shadow-ag-glow-primary transition-all active:scale-95"
+              className="w-full mt-2 bg-brand-emerald hover:bg-brand-600 text-white font-semibold text-sm py-3 rounded-full flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
             >
               Confirm & Link Card
             </button>

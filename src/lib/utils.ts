@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
  * Merge Tailwind classes safely — resolves conflicts via tailwind-merge
  * and handles conditional class names via clsx.
  *
- * @example cn('px-4 py-2', isActive && 'bg-brand-500', 'px-6')
+ * @example cn('px-4 py-2', isActive && 'bg-brand-emerald', 'px-6')
  *   → 'py-2 px-6' (px-4 is superseded by px-6)
  */
 export function cn(...inputs: ClassValue[]): string {

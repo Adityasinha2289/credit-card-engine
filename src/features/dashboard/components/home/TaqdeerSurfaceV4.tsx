@@ -4,13 +4,13 @@ import { Sparkles, CornerDownLeft } from 'lucide-react';
 import { cn } from '../../../../lib/utils';
 
 const PLACEHOLDERS = [
-  "What are you buying today?",
-  "Planning a holiday?",
-  "Need a new credit card?",
-  "Book flights",
-  "Amazon order",
-  "Fuel",
-  "Dining"
+"What are you buying today?",
+"Planning a holiday?",
+"Need a new credit card?",
+"Book flights",
+"Amazon order",
+"Fuel",
+"Dining"
 ];
 
 interface TaqdeerSurfaceV4Props {
@@ -48,8 +48,8 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
       <form 
         onSubmit={handleSubmit}
         className={cn(
-          "relative max-w-4xl transition-all duration-700 ease-out",
-          isFocused ? "scale-[1.01]" : "scale-100"
+"relative max-w-4xl transition-all duration-700 ease-out",
+          isFocused ?"scale-[1.01]" :"scale-100"
         )}
       >
         <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
@@ -58,8 +58,8 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
               rotate: isFocused ? 180 : 0,
               scale: isFocused ? 1.1 : 1
             }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-brand-500 bg-brand-500/10"
+            transition={{ duration: 0.7, ease:"easeOut" }}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-brand-emerald bg-brand-emerald-muted"
           >
             <Sparkles size={20} />
           </motion.div>
@@ -72,7 +72,7 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="w-full bg-transparent border-b border-canvas-200 dark:border-white/10 text-ink-primary text-2xl sm:text-3xl md:text-4xl font-display font-medium py-6 pl-14 pr-16 focus:outline-none focus:border-brand-500/50 transition-colors placeholder:text-transparent"
+          className="w-full bg-transparent border-b border-border-subtle  text-text-primary text-2xl sm:text-3xl md:text-4xl font-display font-medium py-6 pl-14 pr-16 focus:outline-none focus:border-brand-emerald/50 transition-colors placeholder:text-transparent"
         />
         
         {/* Animated Placeholder Layer */}
@@ -84,8 +84,8 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="text-2xl sm:text-3xl md:text-4xl font-display font-medium text-ink-tertiary"
+                transition={{ duration: 0.4, ease:"easeOut" }}
+                className="text-2xl sm:text-3xl md:text-4xl font-display font-medium text-text-muted"
               >
                 {PLACEHOLDERS[placeholderIdx]}
               </motion.span>
@@ -93,8 +93,8 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
             {/* Blinking Cursor */}
             <motion.span 
               animate={{ opacity: [1, 0] }}
-              transition={{ repeat: Infinity, duration: 0.8, ease: "steps(2)" }}
-              className="ml-[2px] w-[2px] h-8 sm:h-10 bg-brand-500 rounded-full inline-block"
+              transition={{ repeat: Infinity, duration: 0.8, ease:"steps(2)" }}
+              className="ml-[2px] w-[2px] h-8 sm:h-10 bg-brand-emerald rounded-full inline-block"
             />
           </div>
         )}
@@ -107,7 +107,7 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 type="submit"
-                className="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center hover:bg-brand-400 transition-colors"
+                className="w-10 h-10 rounded-full bg-brand-emerald text-white flex items-center justify-center hover:bg-brand-400 transition-colors"
               >
                 <CornerDownLeft size={18} strokeWidth={2.5} />
               </motion.button>

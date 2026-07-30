@@ -45,8 +45,8 @@ const MessageBubble = memo(function MessageBubble({ msg }: { msg: TaqdeerMessage
         className={cn(
           'max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap',
           isAi
-            ? 'bg-surface/90 dark:bg-surface-raised/50 border border-canvas-200/40 dark:border-white/[0.03] shadow-ag-base text-ink-primary rounded-tl-sm'
-            : 'bg-brand-500 text-white rounded-tr-sm',
+            ? 'bg-surface/90 dark:bg-surface-raised/50 border border-border-subtle dark:border-white/[0.03] shadow-ag-base text-text-primary rounded-tl-sm'
+            : 'bg-brand-emerald text-white rounded-tr-sm',
         )}
         style={{ overflowWrap: 'anywhere' }}
         // Render **bold** markdown
@@ -74,7 +74,7 @@ const TypingIndicator = () => (
     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-steel-500 flex items-center justify-center">
       <Bot size={14} className="text-white" />
     </div>
-    <div className="bg-surface/90 dark:bg-surface-raised/50 border border-canvas-200/40 dark:border-white/[0.03] shadow-ag-base rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">
+    <div className="bg-surface/90 dark:bg-surface-raised/50 border border-border-subtle dark:border-white/[0.03] shadow-ag-base rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5">
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
@@ -97,7 +97,7 @@ export function TaqdeerPanel() {
     {
       id: 'welcome',
       role: 'ai',
-      content: "Hey! I'm Taqdeer, your AI credit card advisor 🤖\n\nAsk me which card to use at any merchant, how to maximize rewards, or which new card to get!",
+      content:"Hey! I'm Taqdeer, your AI credit card advisor 🤖\n\nAsk me which card to use at any merchant, how to maximize rewards, or which new card to get!",
       timestamp: new Date(),
     },
   ]);
@@ -205,9 +205,9 @@ export function TaqdeerPanel() {
             className={cn(
               'fixed bottom-24 right-5 z-50',
               'w-[360px] max-w-[calc(100vw-2rem)]',
-              'bg-canvas-50/95 dark:bg-canvas-200/90 backdrop-blur-xl rounded-3xl shadow-ag-modal',
+              'bg-surface-primary/95 /90 backdrop-blur-xl rounded-3xl shadow-ag-modal',
               'flex flex-col overflow-hidden',
-              'border border-canvas-200/60 dark:border-white/[0.04]',
+              'border border-border-subtle ',
             )}
             style={{ height: '520px' }}
           >
@@ -259,7 +259,7 @@ export function TaqdeerPanel() {
                   <button
                     key={s}
                     onClick={() => sendMessage(s)}
-                    className="text-xs font-semibold text-brand-500 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10 hover:bg-brand-100 dark:hover:bg-brand-500/20 px-3 py-1.5 rounded-full transition-colors border border-brand-100 dark:border-brand-500/20"
+                    className="text-xs font-semibold text-brand-emerald dark:text-brand-400 bg-brand-50 dark:bg-brand-emerald-muted hover:bg-brand-100 dark:hover:bg-brand-emerald-muted px-3 py-1.5 rounded-full transition-colors border border-brand-100 dark:border-border-emerald"
                   >
                     {s}
                   </button>
@@ -270,7 +270,7 @@ export function TaqdeerPanel() {
             {/* Input */}
             <form
               onSubmit={handleSubmit}
-              className="px-4 py-3 flex items-center gap-2 border-t border-canvas-200/60 dark:border-white/[0.04] bg-surface/80 dark:bg-surface-muted/30 flex-shrink-0"
+              className="px-4 py-3 flex items-center gap-2 border-t border-border-subtle  bg-surface/80 dark:bg-surface-muted/30 flex-shrink-0"
             >
               <input
                 ref={inputRef}
@@ -289,8 +289,8 @@ export function TaqdeerPanel() {
                   'w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0',
                   'transition-all duration-150',
                   input.trim() && !isTyping
-                    ? 'bg-brand-500 text-white hover:bg-brand-600 shadow-ag-glow-primary active:scale-95'
-                    : 'bg-canvas-200 dark:bg-white/[0.03] text-ink-disabled',
+                    ? 'bg-brand-emerald text-white hover:bg-brand-600 shadow-[0_0_20px_rgba(4,59,39,0.3)] active:scale-95'
+                    : 'bg-surface-secondary dark:bg-white/[0.03] text-text-muted',
                 )}
               >
                 {isTyping ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}

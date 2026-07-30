@@ -225,14 +225,14 @@ export class EvaluationEngine {
     if (metrics.overRecommendedCards.length > 0) {
       const topOver = metrics.overRecommendedCards[0];
       recs.push(
-        `Card "${topOver.cardName}" is over-recommended (${topOver.recommendedCount} times vs ${topOver.expectedCount} expected). Review annual fee and composite score weighting.`
+        `Card"${topOver.cardName}" is over-recommended (${topOver.recommendedCount} times vs ${topOver.expectedCount} expected). Review annual fee and composite score weighting.`
       );
     }
 
     if (metrics.poorQualityMerchants.length > 0) {
       const topPoor = metrics.poorQualityMerchants[0];
       recs.push(
-        `Merchant "${topPoor.merchantName}" has poor recommendation quality (${topPoor.accuracy}% accuracy). Verify merchant category tags and active offers.`
+        `Merchant"${topPoor.merchantName}" has poor recommendation quality (${topPoor.accuracy}% accuracy). Verify merchant category tags and active offers.`
       );
     }
 

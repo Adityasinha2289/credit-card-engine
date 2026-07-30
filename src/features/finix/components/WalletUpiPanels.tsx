@@ -141,31 +141,31 @@ function WalletOptimizerTab() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center mb-1">
-        <p className="text-xs text-ink-tertiary">Get recommended cards from your wallet for each category</p>
+        <p className="text-xs text-text-muted">Get recommended cards from your wallet for each category</p>
         <button
           onClick={() => setShowAddModal(true)}
-          className="text-xs font-bold text-brand-500 hover:text-brand-650 bg-brand-50 dark:bg-brand-500/10 px-3 py-1.5 rounded-full flex items-center gap-1 transition-all active:scale-95 flex-shrink-0"
+          className="text-xs font-bold text-brand-emerald hover:text-brand-650 bg-brand-50 dark:bg-brand-emerald-muted px-3 py-1.5 rounded-full flex items-center gap-1 transition-all active:scale-95 flex-shrink-0"
         >
           <Plus size={12} /> Add Card
         </button>
       </div>
 
       {userCards.length === 0 ? (
-        <div className="text-center py-10 text-ink-tertiary border-2 border-dashed border-canvas-300 dark:border-white/[0.06] rounded-2xl bg-canvas-50/20 dark:bg-white/[0.01]">
-          <p className="text-sm font-bold text-ink-primary">Your Wallet is Empty</p>
-          <p className="text-xs text-ink-tertiary mt-1">Add cards to optimize your category spending.</p>
+        <div className="text-center py-10 text-text-muted border-2 border-dashed border-border-subtle  rounded-2xl bg-surface-primary/20 dark:bg-white/[0.01]">
+          <p className="text-sm font-bold text-text-primary">Your Wallet is Empty</p>
+          <p className="text-xs text-text-muted mt-1">Add cards to optimize your category spending.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
           <div className="mb-4">
-            <p className="text-sm font-bold text-ink-primary mb-3">Cards in Wallet</p>
+            <p className="text-sm font-bold text-text-primary mb-3">Cards in Wallet</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {userCards.map((c) => (
-                <div key={c.id} className="panel-glass rounded-2xl p-4 border border-canvas-200/50 dark:border-white/[0.04] shadow-sm flex items-center gap-3">
+                <div key={c.id} className="panel-glass rounded-2xl p-4 border border-border-subtle  shadow-sm flex items-center gap-3">
                   <BankLogo bank={c.bank || 'Unknown'} className="w-12 h-8" />
                   <div className="flex flex-col min-w-0">
-                    <p className="text-sm font-semibold text-ink-primary truncate">{c.label}</p>
-                    <p className="text-xs text-ink-tertiary">•• {c.pan.slice(-4)}</p>
+                    <p className="text-sm font-semibold text-text-primary truncate">{c.label}</p>
+                    <p className="text-xs text-text-muted">•• {c.pan.slice(-4)}</p>
                   </div>
                 </div>
               ))}
@@ -173,7 +173,7 @@ function WalletOptimizerTab() {
           </div>
 
           <div>
-            <p className="text-sm font-bold text-ink-primary mb-3">Category Recommendations</p>
+            <p className="text-sm font-bold text-text-primary mb-3">Category Recommendations</p>
             <div className="flex flex-col gap-3">
               {WALLET_CATEGORIES.map((cat) => {
                 const result = getBestCardForCategory(cat, userCards);
@@ -189,17 +189,17 @@ function WalletOptimizerTab() {
               className="flex items-center gap-3 panel-glass rounded-2xl shadow-ag-base p-4"
             >
               {/* Category icon */}
-              <div className="w-10 h-10 rounded-xl bg-canvas-100 dark:bg-canvas-200/50 flex items-center justify-center text-lg flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-surface-primary  flex items-center justify-center text-lg flex-shrink-0">
                 {CATEGORY_ICONS[cat]}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-ink-primary">{CATEGORY_LABELS[cat]}</p>
-                <p className="text-xs text-ink-tertiary truncate">{card.label || 'Credit Card'}</p>
+                <p className="text-sm font-semibold text-text-primary">{CATEGORY_LABELS[cat]}</p>
+                <p className="text-xs text-text-muted truncate">{card.label || 'Credit Card'}</p>
               </div>
 
               <div className="flex-shrink-0 text-right">
                 <p className="text-sm font-bold text-profit">{rate}%</p>
-                <p className="text-[10px] text-ink-disabled">rewards</p>
+                <p className="text-[10px] text-text-muted">rewards</p>
               </div>
             </motion.div>
               );
@@ -226,15 +226,15 @@ function WalletOptimizerTab() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-md bg-canvas-50 dark:bg-canvas-200 rounded-[2rem] p-6 shadow-ag-glow-primary border border-canvas-200/60 dark:border-white/[0.04] overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-md bg-surface-primary  rounded-[2rem] p-6 shadow-[0_0_20px_rgba(4,59,39,0.3)] border border-border-subtle  overflow-hidden flex flex-col max-h-[90vh]"
             >
               {!selectedTemplate ? (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-display font-bold text-ink-primary">Add Card to Wallet</h3>
+                    <h3 className="text-lg font-display font-bold text-text-primary">Add Card to Wallet</h3>
                     <button
                       onClick={handleCloseModal}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-ink-tertiary hover:text-ink-secondary hover:bg-canvas-200 dark:hover:bg-white/[0.04]"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.04]"
                     >
                       <X size={16} />
                     </button>
@@ -242,7 +242,7 @@ function WalletOptimizerTab() {
 
                   {/* Search Bar */}
                   <div className="relative mb-4">
-                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-tertiary" />
+                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
                     <input
                       type="text"
                       placeholder="Search cards by bank or name..."
@@ -255,7 +255,7 @@ function WalletOptimizerTab() {
                   {/* Scrollable List */}
                   <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2">
                     {filteredCardsToAdd.length === 0 ? (
-                      <p className="text-sm text-ink-tertiary text-center py-8">No cards found matching search</p>
+                      <p className="text-sm text-text-muted text-center py-8">No cards found matching search</p>
                     ) : (
                       filteredCardsToAdd.map((c) => (
                         <button
@@ -269,14 +269,14 @@ function WalletOptimizerTab() {
                               cardLimit: c.minIncome ? String(Math.floor(c.minIncome * 0.5)) : '150000',
                             });
                           }}
-                          className="w-full text-left p-3.5 rounded-2xl border border-canvas-200/40 dark:border-white/[0.03] hover:border-brand-500/20 bg-surface dark:bg-surface-muted/20 flex items-center gap-3 transition-all hover:scale-[1.01]"
+                          className="w-full text-left p-3.5 rounded-2xl border border-border-subtle dark:border-white/[0.03] hover:border-border-emerald bg-surface dark:bg-surface-muted/20 flex items-center gap-3 transition-all hover:scale-[1.01]"
                         >
                           <BankLogo bank={c.bank} />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-ink-primary truncate">{c.name}</p>
-                            <p className="text-xs text-ink-tertiary">{c.bank} · Fee: ₹{c.annualFee}</p>
+                            <p className="text-sm font-bold text-text-primary truncate">{c.name}</p>
+                            <p className="text-xs text-text-muted">{c.bank} · Fee: ₹{c.annualFee}</p>
                           </div>
-                          <span className="text-[10px] font-bold text-brand-500 bg-brand-50 dark:bg-brand-500/10 px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">
+                          <span className="text-[10px] font-bold text-brand-emerald bg-brand-50 dark:bg-brand-emerald-muted px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0">
                             Select
                           </span>
                         </button>
@@ -288,15 +288,15 @@ function WalletOptimizerTab() {
                 <div className="flex flex-col gap-4 text-left">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <h3 className="text-base font-display font-bold text-ink-primary">Enter Card Details</h3>
-                      <p className="text-xs text-ink-tertiary">{selectedTemplate.name}</p>
+                      <h3 className="text-base font-display font-bold text-text-primary">Enter Card Details</h3>
+                      <p className="text-xs text-text-muted">{selectedTemplate.name}</p>
                     </div>
                     <button
                       onClick={() => {
                         setSelectedTemplate(null);
                         setFormError('');
                       }}
-                      className="text-xs font-bold text-brand-500 hover:text-brand-650 bg-brand-50 dark:bg-brand-500/10 px-3 py-1.5 rounded-full"
+                      className="text-xs font-bold text-brand-emerald hover:text-brand-650 bg-brand-50 dark:bg-brand-emerald-muted px-3 py-1.5 rounded-full"
                     >
                       Back
                     </button>
@@ -325,7 +325,7 @@ function WalletOptimizerTab() {
                   {/* Form fields */}
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-1 text-left">
-                      <label className="text-[11px] font-bold text-ink-secondary">Card Number (Last 4 Digits)</label>
+                      <label className="text-[11px] font-bold text-text-secondary">Card Number (Last 4 Digits)</label>
                       <input
                         type="text"
                         maxLength={4}
@@ -337,7 +337,7 @@ function WalletOptimizerTab() {
                     </div>
 
                     <div className="flex flex-col gap-1 text-left">
-                      <label className="text-[11px] font-bold text-ink-secondary">Cardholder Name</label>
+                      <label className="text-[11px] font-bold text-text-secondary">Cardholder Name</label>
                       <input
                         type="text"
                         placeholder="e.g. Aditya Sinha"
@@ -349,7 +349,7 @@ function WalletOptimizerTab() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div className="flex flex-col gap-1 text-left">
-                        <label className="text-[11px] font-bold text-ink-secondary">Expiry (MM/YY)</label>
+                        <label className="text-[11px] font-bold text-text-secondary">Expiry (MM/YY)</label>
                         <input
                           type="text"
                           maxLength={5}
@@ -384,9 +384,9 @@ function WalletOptimizerTab() {
                       </div>
 
                       <div className="flex flex-col gap-1 text-left">
-                        <label className="text-[11px] font-bold text-ink-secondary">Credit Limit (INR)</label>
+                        <label className="text-[11px] font-bold text-text-secondary">Credit Limit (INR)</label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-ink-tertiary">₹</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-text-muted">₹</span>
                           <input
                             type="number"
                             placeholder="e.g. 300000"
@@ -442,7 +442,7 @@ function WalletOptimizerTab() {
                       });
                       handleCloseModal();
                     }}
-                    className="w-full mt-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm py-3 rounded-full flex items-center justify-center gap-2 shadow-ag-glow-primary transition-all active:scale-95"
+                    className="w-full mt-2 bg-brand-emerald hover:bg-brand-600 text-white font-semibold text-sm py-3 rounded-full flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
                   >
                     Confirm & Link Card
                   </button>
@@ -516,7 +516,7 @@ function UpiSimulatorTab() {
     <div className="flex flex-col gap-5">
       {/* Quick merchant buttons */}
       <div>
-        <p className="text-xs font-semibold tracking-widest uppercase text-ink-tertiary mb-2">Popular Merchants</p>
+        <p className="text-xs font-semibold tracking-widest uppercase text-text-muted mb-2">Popular Merchants</p>
         <div className="flex flex-wrap gap-1.5">
           {POPULAR_MERCHANTS.slice(0, 8).map((m) => (
             <button
@@ -526,8 +526,8 @@ function UpiSimulatorTab() {
               className={cn(
                 'text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-150',
                 merchant === m.name
-                  ? 'bg-brand-500 text-white'
-                  : 'bg-canvas-200/70 dark:bg-white/[0.04] text-ink-secondary hover:bg-canvas-300 dark:hover:bg-white/[0.08]'
+                  ? 'bg-brand-emerald text-white'
+                  : 'bg-surface-secondary/70 dark:bg-white/[0.04] text-text-secondary hover:bg-surface-elevated dark:hover:bg-white/[0.08]'
               )}
             >
               {m.name}
@@ -544,10 +544,10 @@ function UpiSimulatorTab() {
             placeholder="Merchant name"
             value={merchant}
             onChange={(e) => setMerchant(e.target.value)}
-            className="flex-1 px-4 py-3 bg-canvas-100 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="flex-1 px-4 py-3 bg-surface-primary dark:bg-white/[0.03] border border-black/[0.05]  rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald/20"
           />
           <div className="relative w-32">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-tertiary">₹</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-text-muted">₹</span>
             <input
               type="number"
               min="1"
@@ -555,7 +555,7 @@ function UpiSimulatorTab() {
               placeholder="Amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-3 pl-7 bg-canvas-100 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full px-4 py-3 pl-7 bg-surface-primary dark:bg-white/[0.03] border border-black/[0.05]  rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-emerald/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
           </div>
         </div>
@@ -565,8 +565,8 @@ function UpiSimulatorTab() {
           className={cn(
             'flex items-center justify-center gap-2 py-3 rounded-full font-semibold text-sm transition-all active:scale-95',
             merchant.trim() && amount
-              ? 'bg-brand-500 hover:bg-brand-600 text-white shadow-ag-glow-primary active:scale-95'
-              : 'bg-canvas-200 dark:bg-white/[0.03] text-ink-disabled cursor-not-allowed'
+              ? 'bg-brand-emerald hover:bg-brand-600 text-white shadow-[0_0_20px_rgba(4,59,39,0.3)] active:scale-95'
+              : 'bg-surface-secondary dark:bg-white/[0.03] text-text-muted cursor-not-allowed'
           )}
         >
           <Zap size={15} /> Find Best Card
@@ -589,23 +589,23 @@ function UpiSimulatorTab() {
                 style={{ background: `linear-gradient(135deg, ${result.gradientFrom}, ${result.gradientTo})` }}
               />
               <div className="flex-1">
-                <p className="text-xs text-ink-tertiary uppercase tracking-widest">Best card for {result.merchant}</p>
-                <p className="text-base font-bold text-ink-primary">{result.bestCardBank} {result.bestCardName}</p>
+                <p className="text-xs text-text-muted uppercase tracking-widest">Best card for {result.merchant}</p>
+                <p className="text-base font-bold text-text-primary">{result.bestCardBank} {result.bestCardName}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
-              <div className="text-center bg-canvas-100 dark:bg-canvas-200/50 rounded-xl p-3">
+              <div className="text-center bg-surface-primary  rounded-xl p-3">
                 <p className="text-base font-bold text-profit">{result.rewardRate}%</p>
-                <p className="text-[10px] text-ink-disabled">Reward Rate</p>
+                <p className="text-[10px] text-text-muted">Reward Rate</p>
               </div>
-              <div className="text-center bg-canvas-100 dark:bg-canvas-200/50 rounded-xl p-3">
-                <p className="text-base font-bold text-ink-primary">{result.rewardPoints.toLocaleString()}</p>
-                <p className="text-[10px] text-ink-disabled">Points Earned</p>
+              <div className="text-center bg-surface-primary  rounded-xl p-3">
+                <p className="text-base font-bold text-text-primary">{result.rewardPoints.toLocaleString()}</p>
+                <p className="text-[10px] text-text-muted">Points Earned</p>
               </div>
-              <div className="text-center bg-canvas-100 dark:bg-canvas-200/50 rounded-xl p-3">
-                <p className="text-base font-bold text-brand-500 dark:text-brand-400">₹{Math.floor(result.amount * result.rewardRate / 100)}</p>
-                <p className="text-[10px] text-ink-disabled">Saved</p>
+              <div className="text-center bg-surface-primary  rounded-xl p-3">
+                <p className="text-base font-bold text-brand-emerald dark:text-brand-400">₹{Math.floor(result.amount * result.rewardRate / 100)}</p>
+                <p className="text-[10px] text-text-muted">Saved</p>
               </div>
             </div>
 
@@ -626,9 +626,9 @@ function UpiSimulatorTab() {
             className="bg-profit/10 dark:bg-profit/5 border border-profit/20 rounded-2xl p-5 text-center flex flex-col items-center gap-2"
           >
             <CheckCircle2 size={32} className="text-profit" />
-            <p className="font-bold text-ink-primary">Payment simulated!</p>
-            <p className="text-sm text-ink-tertiary">
-              You earned <strong className="text-brand-500 dark:text-brand-400">{result?.rewardPoints.toLocaleString()} points</strong> on this transaction.
+            <p className="font-bold text-text-primary">Payment simulated!</p>
+            <p className="text-sm text-text-muted">
+              You earned <strong className="text-brand-emerald dark:text-brand-400">{result?.rewardPoints.toLocaleString()} points</strong> on this transaction.
             </p>
             <button
               onClick={() => {
@@ -637,7 +637,7 @@ function UpiSimulatorTab() {
                 setMerchant('');
                 setAmount('');
               }}
-              className="text-xs text-ink-tertiary hover:text-ink-secondary mt-2 transition-colors"
+              className="text-xs text-text-muted hover:text-text-secondary mt-2 transition-colors"
             >
               Simulate another
             </button>

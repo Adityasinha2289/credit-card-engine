@@ -107,7 +107,7 @@ export class ScoringEngine {
         rawScore: prefRaw,
         weight: weights.userPreferenceScore,
         weightedContribution: prefRaw * weights.userPreferenceScore,
-        description: `Aligned with primary goal "${userGoal}"`,
+        description: `Aligned with primary goal"${userGoal}"`,
       },
       {
         factorName: 'Spending Headroom',

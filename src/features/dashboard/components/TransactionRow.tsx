@@ -22,7 +22,7 @@ function formatDate(iso: string): string {
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  ROW ANIMATION VARIANTS
-//  Enhanced organic entrance with subtle rotateX for a "card flip" feel
+//  Enhanced organic entrance with subtle rotateX for a"card flip" feel
 // ─────────────────────────────────────────────────────────────────────────────
 
 const rowVariants = {
@@ -100,7 +100,7 @@ export const TransactionRow = memo(function TransactionRow({
         // Premium floating row with glass surface
         'group relative flex items-center gap-4 px-4 py-3.5',
         'bg-surface/80 dark:bg-surface/40 rounded-2xl',
-        'border border-canvas-200/60 dark:border-white/[0.04]',
+        'border border-border-subtle ',
         // Hover: lift + shadow upgrade + left accent reveal
         'hover:shadow-ag-card hover:-translate-y-[2px]',
         'transition-all duration-250 ease-ag-smooth',
@@ -142,7 +142,7 @@ export const TransactionRow = memo(function TransactionRow({
       {/* ── Merchant + meta ──────────────────────────────────────────── */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-ink-primary truncate leading-tight">
+          <p className="text-sm font-semibold text-text-primary truncate leading-tight">
             {merchant}
           </p>
           {pending && (
@@ -155,11 +155,11 @@ export const TransactionRow = memo(function TransactionRow({
           )}
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
-          <p className="text-xs text-ink-tertiary">
+          <p className="text-xs text-text-muted">
             {style.label}
           </p>
-          <span className="text-ink-disabled text-xs">·</span>
-          <p className="text-xs text-ink-tertiary">
+          <span className="text-text-muted text-xs">·</span>
+          <p className="text-xs text-text-muted">
             {formatDate(date)}
           </p>
         </div>
@@ -176,7 +176,7 @@ export const TransactionRow = memo(function TransactionRow({
           <span
             className={cn(
               'text-sm font-bold tabular-nums tracking-tight',
-              isCredit ? 'text-profit' : 'text-ink-primary',
+              isCredit ? 'text-profit' : 'text-text-primary',
             )}
           >
             {isCredit ? '+' : ''}{amountStr}
@@ -185,7 +185,7 @@ export const TransactionRow = memo(function TransactionRow({
 
         {/* Reward points — only show if earned */}
         {rewardPoints != null && rewardPoints > 0 && (
-          <span className="text-[10px] font-medium text-brand-500 dark:text-brand-400 tabular-nums">
+          <span className="text-[10px] font-medium text-brand-emerald dark:text-brand-400 tabular-nums">
             +{rewardPoints.toLocaleString()} pts
           </span>
         )}

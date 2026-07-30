@@ -15,7 +15,7 @@ export function FadeInView({ children, delay = 0, variants, viewport, ...props }
   const activeVariants = variants || fadeUpVariant;
   
   // If reduced motion is enabled, fallback to immediate show
-  const initial = shouldReduceMotion ? "show" : "hidden";
+  const initial = shouldReduceMotion ?"show" :"hidden";
 
   // If there's a custom delay, we need to create a custom variant
   const finalVariants = delay && !shouldReduceMotion ? {

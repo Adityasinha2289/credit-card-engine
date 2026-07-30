@@ -110,18 +110,18 @@ export function PerksDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Rewards Summary */}
         <motion.div variants={itemVariants} className="panel-glass rounded-3xl p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-150" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-emerald-muted rounded-full blur-2xl -mr-10 -mt-10 transition-transform group-hover:scale-150" />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-brand-500">
+              <div className="w-8 h-8 rounded-full bg-brand-50 dark:bg-brand-emerald-muted flex items-center justify-center text-brand-emerald">
                 <Star size={16} fill="currentColor" />
               </div>
-              <span className="text-xs font-bold text-ink-secondary uppercase tracking-wider">Total Rewards</span>
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Total Rewards</span>
             </div>
-            <p className="text-4xl font-display font-bold text-ink-primary tracking-tight">
+            <p className="text-4xl font-display font-bold text-text-primary tracking-tight">
               {availablePoints.toLocaleString()}
             </p>
-            <p className="text-sm font-medium text-ink-tertiary mt-1">Available points</p>
+            <p className="text-sm font-medium text-text-muted mt-1">Available points</p>
           </div>
         </motion.div>
 
@@ -133,12 +133,12 @@ export function PerksDashboard() {
               <div className="w-8 h-8 rounded-full bg-profit/10 flex items-center justify-center text-profit">
                 <Tag size={16} />
               </div>
-              <span className="text-xs font-bold text-ink-secondary uppercase tracking-wider">Active Deals</span>
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Active Deals</span>
             </div>
-            <p className="text-4xl font-display font-bold text-ink-primary tracking-tight">
+            <p className="text-4xl font-display font-bold text-text-primary tracking-tight">
               {offers.length}
             </p>
-            <p className="text-sm font-medium text-ink-tertiary mt-1">High-value merchant offers</p>
+            <p className="text-sm font-medium text-text-muted mt-1">High-value merchant offers</p>
           </div>
         </motion.div>
 
@@ -150,12 +150,12 @@ export function PerksDashboard() {
               <div className="w-8 h-8 rounded-full bg-copper-500/10 flex items-center justify-center text-copper-500">
                 <CreditCard size={16} />
               </div>
-              <span className="text-xs font-bold text-ink-secondary uppercase tracking-wider">Monthly Subs</span>
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Monthly Subs</span>
             </div>
-            <p className="text-4xl font-display font-bold text-ink-primary tracking-tight">
+            <p className="text-4xl font-display font-bold text-text-primary tracking-tight">
               {formatCents(monthlySubs)}
             </p>
-            <p className="text-sm font-medium text-ink-tertiary mt-1">Across all cards</p>
+            <p className="text-sm font-medium text-text-muted mt-1">Across all cards</p>
           </div>
         </motion.div>
       </div>
@@ -168,8 +168,8 @@ export function PerksDashboard() {
           
           {/* Active Milestones */}
           <motion.div variants={itemVariants} className="panel-glass rounded-3xl p-6 flex flex-col gap-4">
-            <h3 className="text-sm font-bold text-ink-primary flex items-center gap-2">
-              <Target size={16} className="text-brand-500" />
+            <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+              <Target size={16} className="text-brand-emerald" />
               Progress Milestones
             </h3>
             
@@ -189,39 +189,39 @@ export function PerksDashboard() {
                     key={m.id}
                     whileHover={{ scale: 1.02 }}
                     className={cn(
-                      "bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 p-4 rounded-2xl relative overflow-hidden transition-colors",
-                      isCompleted && "bg-brand-50/50 dark:bg-brand-500/5 border-brand-500/20"
+"bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  p-4 rounded-2xl relative overflow-hidden transition-colors",
+                      isCompleted &&"bg-brand-50/50 dark:bg-brand-emerald/5 border-border-emerald"
                     )}
                   >
                     {isCompleted && (
-                      <div className="absolute top-0 right-0 bg-brand-500 text-white text-[9px] font-bold px-2 py-1 rounded-bl-xl z-10 flex items-center gap-1">
+                      <div className="absolute top-0 right-0 bg-brand-emerald text-white text-[9px] font-bold px-2 py-1 rounded-bl-xl z-10 flex items-center gap-1">
                         <Sparkles size={10} />
                         ACHIEVED
                       </div>
                     )}
                     <div className="flex gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-canvas-200 dark:bg-canvas-300 flex items-center justify-center shrink-0 shadow-inner">
-                        {card ? <BankLogo bank={card.bank || ''} /> : <Gift size={18} className="text-brand-500"/>}
+                      <div className="w-10 h-10 rounded-xl bg-surface-secondary dark:bg-surface-elevated flex items-center justify-center shrink-0 shadow-inner">
+                        {card ? <BankLogo bank={card.bank || ''} /> : <Gift size={18} className="text-brand-emerald"/>}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-ink-primary leading-tight">{m.title}</p>
-                        <p className="text-xs font-semibold text-brand-500 mt-0.5">{m.rewardValue}</p>
+                        <p className="text-sm font-bold text-text-primary leading-tight">{m.title}</p>
+                        <p className="text-xs font-semibold text-brand-emerald mt-0.5">{m.rewardValue}</p>
                       </div>
                     </div>
                     
                     <div>
                       <div className="flex justify-between text-[11px] mb-1.5 font-bold uppercase tracking-wider">
-                        <span className="text-ink-secondary">{formatCents(dynamicAmount)}</span>
-                        <span className="text-ink-tertiary">{formatCents(m.targetAmount)}</span>
+                        <span className="text-text-secondary">{formatCents(dynamicAmount)}</span>
+                        <span className="text-text-muted">{formatCents(m.targetAmount)}</span>
                       </div>
-                      <div className="w-full h-2.5 bg-canvas-200 dark:bg-white/5 rounded-full overflow-hidden">
+                      <div className="w-full h-2.5 bg-surface-secondary dark:bg-white/5 rounded-full overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }}
                           animate={{ width: `${progress}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
+                          transition={{ duration: 1, ease:"easeOut" }}
                           className={cn(
-                            "h-full rounded-full relative",
-                            isCompleted ? "bg-brand-500" : "bg-gradient-to-r from-brand-400 to-brand-600"
+"h-full rounded-full relative",
+                            isCompleted ?"bg-brand-emerald" :"bg-gradient-to-r from-brand-400 to-brand-600"
                           )}
                         />
                       </div>
@@ -235,7 +235,7 @@ export function PerksDashboard() {
           {/* Hyper Local Offers */}
           <motion.div variants={itemVariants} className="panel-glass rounded-3xl p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-bold text-ink-primary flex items-center gap-2">
+              <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                 <Tag size={16} className="text-profit" />
                 Curated Card Offers
               </h3>
@@ -247,7 +247,7 @@ export function PerksDashboard() {
                   <motion.div
                     key={offer.id}
                     whileHover={{ y: -4 }}
-                    className="bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 rounded-2xl p-4 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+                    className="bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  rounded-2xl p-4 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
                   >
                     {offer.discountPercentage >= 15 && (
                       <div className="absolute top-0 right-0 bg-profit text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-xl z-10 flex items-center gap-1">
@@ -260,16 +260,16 @@ export function PerksDashboard() {
                         {offer.merchantName.substring(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-ink-primary leading-tight">{offer.merchantName}</p>
-                        <p className="text-[10px] text-ink-tertiary uppercase tracking-wider mt-0.5">{offer.category}</p>
+                        <p className="text-sm font-bold text-text-primary leading-tight">{offer.merchantName}</p>
+                        <p className="text-[10px] text-text-muted uppercase tracking-wider mt-0.5">{offer.category}</p>
                       </div>
                     </div>
-                    <p className="text-xs font-semibold text-ink-secondary leading-snug mb-3">
+                    <p className="text-xs font-semibold text-text-secondary leading-snug mb-3">
                       {offer.description}
                     </p>
-                    <div className="flex items-center justify-between text-[10px] font-bold text-ink-tertiary uppercase tracking-wider mt-auto pt-3 border-t border-canvas-200/50 dark:border-white/[0.04]">
+                    <div className="flex items-center justify-between text-[10px] font-bold text-text-muted uppercase tracking-wider mt-auto pt-3 border-t border-border-subtle">
                       <span className="flex items-center gap-1"><Calendar size={12}/> Ends {formatDate(offer.validUntil)}</span>
-                      <span className="flex items-center gap-1 text-brand-500">Redeem <ExternalLink size={10}/></span>
+                      <span className="flex items-center gap-1 text-brand-emerald">Redeem <ExternalLink size={10}/></span>
                     </div>
                   </motion.div>
                 );
@@ -284,7 +284,7 @@ export function PerksDashboard() {
           
           {/* Transfer Calculator */}
           <motion.div variants={itemVariants} className="panel-glass rounded-3xl p-6">
-            <h3 className="text-sm font-bold text-ink-primary mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
               <Plane size={16} className="text-blue-500" />
               Transfer Value
             </h3>
@@ -295,10 +295,10 @@ export function PerksDashboard() {
                   key={p.id}
                   onClick={() => setSelectedPartner(p)}
                   className={cn(
-                    "flex-1 px-2 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider whitespace-nowrap transition-all",
+"flex-1 px-2 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider whitespace-nowrap transition-all",
                     selectedPartner.id === p.id 
-                      ? "bg-brand-500 text-white shadow-md" 
-                      : "bg-canvas-100 dark:bg-canvas-300 text-ink-secondary hover:bg-canvas-200 dark:hover:bg-canvas-400"
+                      ?"bg-brand-emerald text-white shadow-md" 
+                      :"bg-surface-primary dark:bg-surface-elevated text-text-secondary hover:bg-surface-secondary dark:hover:bg-canvas-400"
                   )}
                 >
                   {p.name}
@@ -317,10 +317,10 @@ export function PerksDashboard() {
                 <div className={cn("w-12 h-12 rounded-full bg-white dark:bg-black/20 flex items-center justify-center mb-3 shadow-sm", selectedPartner.color)}>
                   <selectedPartner.icon size={20} />
                 </div>
-                <p className="text-3xl font-display font-bold text-ink-primary">
+                <p className="text-3xl font-display font-bold text-text-primary">
                   {Math.floor(availablePoints * selectedPartner.ratio).toLocaleString()}
                 </p>
-                <p className="text-xs font-bold uppercase tracking-wider text-ink-tertiary mt-1">
+                <p className="text-xs font-bold uppercase tracking-wider text-text-muted mt-1">
                   {selectedPartner.type === 'airline' ? 'Miles' : 'Points'}
                 </p>
               </motion.div>
@@ -330,7 +330,7 @@ export function PerksDashboard() {
           {/* Subscriptions Radar */}
           <motion.div variants={itemVariants} className="panel-glass rounded-3xl p-6 flex-1">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-ink-primary flex items-center gap-2">
+              <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                 <CreditCard size={16} className="text-copper-500" />
                 Upcoming Renewals
               </h3>
@@ -366,7 +366,7 @@ export function PerksDashboard() {
                 };
                 
                 return (
-                  <div key={sub.id} className="flex flex-col p-3 rounded-2xl bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5">
+                  <div key={sub.id} className="flex flex-col p-3 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-xs shrink-0">
@@ -374,21 +374,21 @@ export function PerksDashboard() {
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <p className="text-sm font-bold text-ink-primary">{sub.name}</p>
+                            <p className="text-sm font-bold text-text-primary">{sub.name}</p>
                             {sub.hasPriceHike && <ShieldAlert size={12} className="text-red-500" />}
                           </div>
-                          <p className="text-[10px] font-semibold text-ink-tertiary uppercase tracking-wider mt-0.5">
+                          <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mt-0.5">
                             {formatDate(sub.nextBillingDate)}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-ink-primary">{formatCents(sub.amount)}</p>
-                        <p className="text-[9px] font-bold text-ink-tertiary uppercase tracking-wider">{sub.billingCycle}</p>
+                        <p className="text-sm font-bold text-text-primary">{formatCents(sub.amount)}</p>
+                        <p className="text-[9px] font-bold text-text-muted uppercase tracking-wider">{sub.billingCycle}</p>
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-end border-t border-canvas-200/50 dark:border-white/5 pt-2 mt-1">
+                    <div className="flex items-center justify-end border-t border-border-subtle  pt-2 mt-1">
                       <button
                         onClick={handleCancel}
                         className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider flex items-center gap-1"
@@ -411,16 +411,16 @@ export function PerksDashboard() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="w-full max-w-md bg-canvas-50 dark:bg-canvas-200 rounded-[2rem] p-6 shadow-ag-modal border border-canvas-200/60 dark:border-white/[0.04]"
+            className="w-full max-w-md bg-surface-primary  rounded-[2rem] p-6 shadow-ag-modal border border-border-subtle"
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-display font-bold text-ink-primary">Add a Renewal</h3>
+              <h3 className="text-xl font-display font-bold text-text-primary">Add a Renewal</h3>
               <button 
                 onClick={() => {
                   setShowAddRenewal(false);
                   setIsCustomRenewal(false);
                 }} 
-                className="w-8 h-8 rounded-full bg-canvas-100 dark:bg-white/5 flex items-center justify-center text-ink-tertiary hover:text-ink-primary"
+                className="w-8 h-8 rounded-full bg-surface-primary dark:bg-white/5 flex items-center justify-center text-text-muted hover:text-text-primary"
               >
                 ✕
               </button>
@@ -429,19 +429,19 @@ export function PerksDashboard() {
             {isCustomRenewal ? (
               <form onSubmit={handleCustomSubmit} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-bold text-ink-primary">Subscription Name</label>
+                  <label className="text-sm font-bold text-text-primary">Subscription Name</label>
                   <input
                     type="text"
                     placeholder="e.g. Adobe Creative Cloud"
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     required
-                    className="w-full bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 rounded-xl px-4 py-3 text-ink-primary text-sm focus:outline-none focus:border-brand-500/50 transition-colors"
+                    className="w-full bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:border-brand-emerald/50 transition-colors"
                   />
                 </div>
                 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-bold text-ink-primary">Amount (₹)</label>
+                  <label className="text-sm font-bold text-text-primary">Amount (₹)</label>
                   <input
                     type="number"
                     min="1"
@@ -450,16 +450,16 @@ export function PerksDashboard() {
                     value={customAmountStr}
                     onChange={(e) => setCustomAmountStr(e.target.value)}
                     required
-                    className="w-full bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 rounded-xl px-4 py-3 text-ink-primary text-sm focus:outline-none focus:border-brand-500/50 transition-colors"
+                    className="w-full bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:border-brand-emerald/50 transition-colors"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-bold text-ink-primary">Billing Cycle</label>
+                  <label className="text-sm font-bold text-text-primary">Billing Cycle</label>
                   <select
                     value={customCycle}
                     onChange={(e) => setCustomCycle(e.target.value as 'monthly' | 'yearly')}
-                    className="w-full bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 rounded-xl px-4 py-3 text-ink-primary text-sm focus:outline-none focus:border-brand-500/50 transition-colors capitalize"
+                    className="w-full bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  rounded-xl px-4 py-3 text-text-primary text-sm focus:outline-none focus:border-brand-emerald/50 transition-colors capitalize"
                   >
                     <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
@@ -470,7 +470,7 @@ export function PerksDashboard() {
                   <button
                     type="button"
                     onClick={() => setIsCustomRenewal(false)}
-                    className="flex-1 px-4 py-3 rounded-xl font-bold text-ink-secondary bg-canvas-100 dark:bg-white/5 hover:bg-canvas-200 dark:hover:bg-white/10 transition-colors"
+                    className="flex-1 px-4 py-3 rounded-xl font-bold text-text-secondary bg-surface-primary dark:bg-white/5 hover:bg-surface-secondary dark:hover:bg-white/10 transition-colors"
                   >
                     Back
                   </button>
@@ -484,16 +484,16 @@ export function PerksDashboard() {
               </form>
             ) : (
               <div className="flex flex-col gap-3">
-                <p className="text-sm font-medium text-ink-secondary mb-2">Popular Subscriptions:</p>
+                <p className="text-sm font-medium text-text-secondary mb-2">Popular Subscriptions:</p>
               {PRESET_RENEWALS.map((preset) => (
                 <button
                   key={preset.name}
                   onClick={() => handleAddRenewal(preset)}
-                  className="flex items-center justify-between p-4 rounded-2xl bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 hover:border-copper-500/30 transition-all text-left"
+                  className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  hover:border-copper-500/30 transition-all text-left"
                 >
                   <div>
-                    <p className="text-sm font-bold text-ink-primary">{preset.name}</p>
-                    <p className="text-xs text-ink-tertiary">{formatCents(preset.amount)} / {preset.billingCycle}</p>
+                    <p className="text-sm font-bold text-text-primary">{preset.name}</p>
+                    <p className="text-xs text-text-muted">{formatCents(preset.amount)} / {preset.billingCycle}</p>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-copper-50 dark:bg-copper-500/10 flex items-center justify-center text-copper-500">
                     +
@@ -503,13 +503,13 @@ export function PerksDashboard() {
 
                 <button
                   onClick={() => setIsCustomRenewal(true)}
-                  className="flex items-center justify-between p-4 rounded-2xl bg-canvas-100 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/5 hover:border-copper-500/30 transition-all text-left mt-2"
+                  className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  hover:border-copper-500/30 transition-all text-left mt-2"
                 >
                   <div>
-                    <p className="text-sm font-bold text-ink-primary">Other (Custom)</p>
-                    <p className="text-xs text-ink-tertiary">Add your own subscription details</p>
+                    <p className="text-sm font-bold text-text-primary">Other (Custom)</p>
+                    <p className="text-xs text-text-muted">Add your own subscription details</p>
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-canvas-200 dark:bg-white/10 flex items-center justify-center text-ink-secondary">
+                  <div className="w-8 h-8 rounded-full bg-surface-secondary dark:bg-white/10 flex items-center justify-center text-text-secondary">
                     →
                   </div>
                 </button>

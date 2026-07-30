@@ -53,11 +53,11 @@ export function SpendingAnalytics() {
     if (active && payload && payload.length) {
       const pData = payload[0].payload;
       return (
-        <div className="bg-canvas-200/95 backdrop-blur-xl border border-white/10 rounded-xl p-3 shadow-2xl">
-          <p className="text-[11px] font-bold text-ink-secondary mb-1 tracking-wider uppercase">
+        <div className="bg-surface-secondary/95 backdrop-blur-xl border border-border-subtle rounded-xl p-3 shadow-2xl">
+          <p className="text-[11px] font-bold text-text-secondary mb-1 tracking-wider uppercase">
             {CATEGORY_LABELS[pData.name] || pData.name}
           </p>
-          <p className="text-sm font-semibold text-ink-primary">
+          <p className="text-sm font-semibold text-text-primary">
             ₹{pData.value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
           </p>
         </div>
@@ -69,8 +69,8 @@ export function SpendingAnalytics() {
   return (
     <div className="panel-glass rounded-3xl p-5 mb-6 flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-display font-bold text-ink-primary">Spending Analytics</h2>
-        <p className="text-xs text-ink-tertiary">Your category breakdown</p>
+        <h2 className="text-lg font-display font-bold text-text-primary">Spending Analytics</h2>
+        <p className="text-xs text-text-muted">Your category breakdown</p>
       </div>
       
       <div className="h-[220px] w-full relative">
@@ -113,10 +113,10 @@ export function SpendingAnalytics() {
               }}
             />
             <div className="flex flex-col min-w-0">
-              <span className="text-[10px] text-ink-tertiary uppercase tracking-widest font-bold truncate">
+              <span className="text-[10px] text-text-muted uppercase tracking-widest font-bold truncate">
                 {CATEGORY_LABELS[entry.name] || entry.name}
               </span>
-              <span className="text-xs font-semibold text-ink-primary truncate">
+              <span className="text-xs font-semibold text-text-primary truncate">
                 ₹{(entry.value).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
               </span>
             </div>

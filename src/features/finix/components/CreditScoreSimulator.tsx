@@ -108,13 +108,13 @@ function SimSlider({ label, value, onChange, min, max, step = 1, unit, icon: Ico
             <Icon size={14} style={{ color: c }} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-ink-primary">{label}</p>
-            {description && <p className="text-[10px] text-ink-tertiary mt-0.5">{description}</p>}
+            <p className="text-sm font-semibold text-text-primary">{label}</p>
+            {description && <p className="text-[10px] text-text-muted mt-0.5">{description}</p>}
           </div>
         </div>
         <div className="flex items-center gap-1.5 bg-white/[0.04] rounded-xl px-3 py-1.5">
-          <span className="text-sm font-bold text-ink-primary tabular-nums">{value}</span>
-          {unit && <span className="text-[10px] text-ink-tertiary">{unit}</span>}
+          <span className="text-sm font-bold text-text-primary tabular-nums">{value}</span>
+          {unit && <span className="text-[10px] text-text-muted">{unit}</span>}
         </div>
       </div>
       <div className="relative">
@@ -143,16 +143,16 @@ function ImpactChip({ label, impact }: { label: string; impact: number }) {
     <div className={cn(
       'flex items-center justify-between px-3 py-2.5 rounded-xl border transition-all',
       isPositive ? 'border-profit/15 bg-profit/[0.04]' :
-      isNeutral  ? 'border-white/[0.04] bg-white/[0.01]' :
+      isNeutral  ? 'border-border-subtle bg-white/[0.01]' :
                    'border-loss/15 bg-loss/[0.04]',
     )}>
-      <span className="text-xs font-semibold text-ink-secondary">{label}</span>
+      <span className="text-xs font-semibold text-text-secondary">{label}</span>
       <div className="flex items-center gap-1">
         {isPositive && <ArrowUpRight size={12} className="text-profit" />}
         {!isPositive && !isNeutral && <ArrowDownRight size={12} className="text-loss" />}
-        {isNeutral && <Minus size={12} className="text-ink-disabled" />}
+        {isNeutral && <Minus size={12} className="text-text-muted" />}
         <span className={cn('text-xs font-bold tabular-nums',
-          isPositive ? 'text-profit' : isNeutral ? 'text-ink-disabled' : 'text-loss')}>
+          isPositive ? 'text-profit' : isNeutral ? 'text-text-muted' : 'text-loss')}>
           {isPositive ? '+' : ''}{impact}
         </span>
       </div>
@@ -220,16 +220,16 @@ export function CreditScoreSimulator() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-brand-500/15 flex items-center justify-center">
-            <SlidersHorizontal size={18} className="text-brand-500" />
+          <div className="w-10 h-10 rounded-xl bg-brand-emerald/15 flex items-center justify-center">
+            <SlidersHorizontal size={18} className="text-brand-emerald" />
           </div>
           <div>
-            <h3 className="text-base font-display font-bold text-ink-primary">Credit Score Simulator</h3>
-            <p className="text-xs text-ink-tertiary">Adjust the sliders to see how actions affect your score</p>
+            <h3 className="text-base font-display font-bold text-text-primary">Credit Score Simulator</h3>
+            <p className="text-xs text-text-muted">Adjust the sliders to see how actions affect your score</p>
           </div>
         </div>
         <button onClick={handleReset}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-ink-tertiary hover:text-ink-primary bg-white/[0.04] hover:bg-white/[0.08] transition-all">
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-text-muted hover:text-text-primary bg-white/[0.04] hover:bg-white/[0.08] transition-all">
           <RotateCcw size={12} /> Reset
         </button>
       </div>
@@ -240,7 +240,7 @@ export function CreditScoreSimulator() {
 
           {/* Current Score */}
           <div className="flex flex-col items-center gap-2">
-            <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest">Current</p>
+            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Current</p>
             <CreditScoreDial score={baseScore} size={140} animate={false} />
             <div className="text-center">
               <p className="text-sm font-bold" style={{ color: baseLabel.color }}>{baseLabel.label}</p>
@@ -257,17 +257,17 @@ export function CreditScoreSimulator() {
             >
               {diff > 0 ? <TrendingUp size={20} className="text-profit" /> :
                diff < 0 ? <TrendingDown size={20} className="text-loss" /> :
-               <Minus size={20} className="text-ink-disabled" />}
+               <Minus size={20} className="text-text-muted" />}
             </motion.div>
             <p className={cn('text-lg font-bold tabular-nums',
-              diff > 0 ? 'text-profit' : diff < 0 ? 'text-loss' : 'text-ink-disabled')}>
+              diff > 0 ? 'text-profit' : diff < 0 ? 'text-loss' : 'text-text-muted')}>
               {diff > 0 ? '+' : ''}{diff}
             </p>
           </div>
 
           {/* Simulated Score */}
           <div className="flex flex-col items-center gap-2">
-            <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest">Simulated</p>
+            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest">Simulated</p>
             <CreditScoreDial score={simulated} size={140} />
             <div className="text-center">
               <p className="text-sm font-bold" style={{ color: simLabel.color }}>{simLabel.label}</p>
@@ -276,12 +276,12 @@ export function CreditScoreSimulator() {
         </div>
 
         {/* Mobile diff display */}
-        <div className="sm:hidden flex items-center justify-center gap-2 mt-4 pt-4 border-t border-white/[0.04]">
+        <div className="sm:hidden flex items-center justify-center gap-2 mt-4 pt-4 border-t border-border-subtle">
           {diff > 0 ? <TrendingUp size={16} className="text-profit" /> :
            diff < 0 ? <TrendingDown size={16} className="text-loss" /> :
-           <Minus size={16} className="text-ink-disabled" />}
+           <Minus size={16} className="text-text-muted" />}
           <p className={cn('text-lg font-bold tabular-nums',
-            diff > 0 ? 'text-profit' : diff < 0 ? 'text-loss' : 'text-ink-disabled')}>
+            diff > 0 ? 'text-profit' : diff < 0 ? 'text-loss' : 'text-text-muted')}>
             {diff > 0 ? '+' : ''}{diff} points
           </p>
         </div>
@@ -289,7 +289,7 @@ export function CreditScoreSimulator() {
 
       {/* Sliders */}
       <div className="panel-glass rounded-2xl p-5">
-        <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-3">Adjust Factors</p>
+        <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-3">Adjust Factors</p>
 
         <SimSlider
           label="Credit Utilization" value={params.utilization} onChange={(v) => set('utilization', v)}
@@ -337,19 +337,19 @@ export function CreditScoreSimulator() {
         {/* Loan toggle */}
         <div className="flex items-center justify-between py-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-brand-500/15">
-              <Landmark size={14} className="text-brand-500" />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-brand-emerald/15">
+              <Landmark size={14} className="text-brand-emerald" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-ink-primary">Active Loan</p>
-              <p className="text-[10px] text-ink-tertiary">Having a loan improves credit mix</p>
+              <p className="text-sm font-semibold text-text-primary">Active Loan</p>
+              <p className="text-[10px] text-text-muted">Having a loan improves credit mix</p>
             </div>
           </div>
           <button
             onClick={() => set('hasLoan', !params.hasLoan)}
             className={cn(
               'w-12 h-7 rounded-full p-0.5 transition-colors duration-200',
-              params.hasLoan ? 'bg-brand-500' : 'bg-white/[0.08]'
+              params.hasLoan ? 'bg-brand-emerald' : 'bg-white/[0.08]'
             )}
           >
             <motion.div
@@ -363,7 +363,7 @@ export function CreditScoreSimulator() {
 
       {/* Impact Summary */}
       <div className="panel-glass rounded-2xl p-5">
-        <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-3">Factor Impact</p>
+        <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-3">Factor Impact</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <ImpactChip label="Utilization"      impact={factorImpact.utilization}    />
           <ImpactChip label="Payment History"  impact={factorImpact.missedPayments} />
@@ -377,7 +377,7 @@ export function CreditScoreSimulator() {
 
       {/* Tips */}
       <div className="panel-glass rounded-2xl p-5">
-        <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-3">Quick Tips</p>
+        <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-3">Quick Tips</p>
         <div className="flex flex-col gap-2.5">
           {[
             { tip: 'Keep credit utilization below 30% for optimal scoring', show: params.utilization > 30 },
@@ -387,9 +387,9 @@ export function CreditScoreSimulator() {
             { tip: 'Having a mix of credit cards + loans improves your score', show: !params.hasLoan },
             { tip: 'Keep debt-to-income ratio below 40%', show: params.debtToIncome > 40 },
           ].filter((t) => t.show).map((t, i) => (
-            <div key={i} className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl bg-brand-500/[0.04] border border-brand-500/10">
-              <Info size={13} className="text-brand-500 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-ink-secondary leading-relaxed">{t.tip}</p>
+            <div key={i} className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl bg-brand-emerald/[0.04] border border-brand-emerald/10">
+              <Info size={13} className="text-brand-emerald mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-text-secondary leading-relaxed">{t.tip}</p>
             </div>
           ))}
           {[
@@ -402,14 +402,14 @@ export function CreditScoreSimulator() {
           ].every((t) => !t.show) && (
             <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl bg-profit/[0.04] border border-profit/10">
               <CheckCircle2 size={13} className="text-profit mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-ink-secondary leading-relaxed">Great job! Your current parameters are all in healthy ranges.</p>
+              <p className="text-xs text-text-secondary leading-relaxed">Great job! Your current parameters are all in healthy ranges.</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Disclaimer */}
-      <p className="text-[10px] text-ink-disabled text-center leading-relaxed px-4">
+      <p className="text-[10px] text-text-muted text-center leading-relaxed px-4">
         This is an educational simulator based on general CIBIL scoring factors. Actual scores depend on your full credit history and may differ from these estimates.
       </p>
     </div>

@@ -89,7 +89,7 @@ What can I optimize for you today?`,
     name: 'cibil_health',
     test: (lower) => /\b(cibil|credit score|improve score|credit rating|my score|utilization|usage)\b/i.test(lower),
     handler: (_query, userCards) => {
-      let utilizationMsg = "";
+      let utilizationMsg ="";
       if (userCards.length > 0) {
         const totalLimit = userCards.reduce((sum, c) => sum + c.creditLimit, 0) / 100;
         const totalAvail = userCards.reduce((sum, c) => sum + c.availableCredit, 0) / 100;
@@ -198,7 +198,7 @@ ${suggestions.length > 0 ? `🚀 **How to improve your score:**\nAdd one of thes
         .sort((a, b) => (b.loungeAccess ?? 0) - (a.loungeAccess ?? 0))
         .slice(0, 3);
 
-      let userCardsMsg = "";
+      let userCardsMsg ="";
       if (userLoungeCards.length > 0) {
         userCardsMsg = `💳 **Lounge access in your wallet:**\n${userLoungeCards.map((c) => `• **${c.label}**: ${c.visits} complimentary visits/year`).join('\n')}\n\n`;
       } else {
@@ -322,7 +322,7 @@ const getAiBackendUrl = (): string | null => {
 
   // Fallbacks
   if (import.meta.env.DEV) {
-    return "http://localhost:8000/chat"; // Sensible development fallback
+    return"http://localhost:8000/chat"; // Sensible development fallback
   }
 
   return null;
@@ -344,7 +344,7 @@ export async function generateTaqdeerResponse(
     ];
 
     const prompt = `You are Taqdeer, an expert AI credit card & wealth advisor for the Indian market at RenoCred.
-User query: "${query}"
+User query:"${query}"
 User's wallet cards: ${JSON.stringify(userCards.map(c => c.label || c.id))}
 
 Provide a short, direct, highly actionable response in 2-4 bullet points or paragraphs. Use emojis and markdown.`;
@@ -381,14 +381,14 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
   } else if (apiUrl) {
     try {
       const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method:"POST",
+        headers: {"Content-Type":"application/json" },
         body: JSON.stringify({ query, userCards })
       });
       
       if (response.ok) {
         const data = await response.json();
-        if (data.intent !== "unknown") {
+        if (data.intent !=="unknown") {
           return { content: data.content };
         }
       } else {
@@ -448,7 +448,7 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
 
   const merchantStr = merchant || displayCategory;
 
-  let walletAdvice = "";
+  let walletAdvice ="";
   if (userCards.length === 0) {
     walletAdvice = `💡 **Wallet Recommendation:** Add cards to your wallet to analyze which one is best for ${merchantStr}.`;
   } else if (bestUserCard) {

@@ -162,13 +162,13 @@ function StatCard({ icon: Icon, label, value, sub, color }: {
   return (
     <div className="panel-glass rounded-2xl p-4 flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <p className="text-[10px] font-bold text-ink-disabled uppercase tracking-wider">{label}</p>
+        <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">{label}</p>
         <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center')} style={{ background: `${color}18` }}>
           <Icon size={13} style={{ color }} />
         </div>
       </div>
-      <p className="text-xl font-display font-bold text-ink-primary tabular-nums">{value}</p>
-      {sub && <p className="text-[11px] text-ink-tertiary">{sub}</p>}
+      <p className="text-xl font-display font-bold text-text-primary tabular-nums">{value}</p>
+      {sub && <p className="text-[11px] text-text-muted">{sub}</p>}
     </div>
   );
 }
@@ -181,8 +181,8 @@ function CategoryBar({ name, pct, total, color, emoji }: {
       <span className="text-base flex-shrink-0 w-6 text-center">{emoji}</span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
-          <p className="text-xs font-semibold text-ink-primary capitalize truncate">{name}</p>
-          <p className="text-xs font-bold text-ink-primary tabular-nums flex-shrink-0 ml-2">{formatINRFull(total)}</p>
+          <p className="text-xs font-semibold text-text-primary capitalize truncate">{name}</p>
+          <p className="text-xs font-bold text-text-primary tabular-nums flex-shrink-0 ml-2">{formatINRFull(total)}</p>
         </div>
         <div className="w-full h-2 bg-white/[0.04] rounded-full overflow-hidden">
           <motion.div
@@ -194,7 +194,7 @@ function CategoryBar({ name, pct, total, color, emoji }: {
           />
         </div>
       </div>
-      <span className="text-[10px] font-bold text-ink-tertiary tabular-nums flex-shrink-0 w-10 text-right">{pct.toFixed(0)}%</span>
+      <span className="text-[10px] font-bold text-text-muted tabular-nums flex-shrink-0 w-10 text-right">{pct.toFixed(0)}%</span>
     </div>
   );
 }
@@ -259,7 +259,7 @@ export function MonthlyReport() {
     ? { Icon: ArrowUpRight, color: 'text-loss', label: `+${Math.abs(data.spendChange).toFixed(0)}% vs last month` }
     : data.spendChange < -2
     ? { Icon: ArrowDownRight, color: 'text-profit', label: `${Math.abs(data.spendChange).toFixed(0)}% less vs last month` }
-    : { Icon: Minus, color: 'text-ink-tertiary', label: 'No change vs last month' };
+    : { Icon: Minus, color: 'text-text-muted', label: 'No change vs last month' };
 
   return (
     <div className="flex flex-col gap-6">
@@ -267,16 +267,16 @@ export function MonthlyReport() {
       {/* ── Month Selector ────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button onClick={goPrev} className="w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-ink-tertiary hover:text-ink-primary transition-all">
+          <button onClick={goPrev} className="w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-text-muted hover:text-text-primary transition-all">
             <ChevronLeft size={16} />
           </button>
           <div className="text-center min-w-[160px]">
-            <p className="text-lg font-display font-bold text-ink-primary">{MONTHS[month]} {year}</p>
-            <p className="text-[10px] text-ink-tertiary uppercase tracking-wider">{isCurrentMonth ? 'Current Month' : 'Past Month'}</p>
+            <p className="text-lg font-display font-bold text-text-primary">{MONTHS[month]} {year}</p>
+            <p className="text-[10px] text-text-muted uppercase tracking-wider">{isCurrentMonth ? 'Current Month' : 'Past Month'}</p>
           </div>
           <button onClick={goNext} disabled={isCurrentMonth}
             className={cn('w-9 h-9 rounded-xl flex items-center justify-center transition-all',
-              isCurrentMonth ? 'bg-white/[0.02] text-ink-disabled cursor-not-allowed' : 'bg-white/[0.04] hover:bg-white/[0.08] text-ink-tertiary hover:text-ink-primary')}>
+              isCurrentMonth ? 'bg-white/[0.02] text-text-muted cursor-not-allowed' : 'bg-white/[0.04] hover:bg-white/[0.08] text-text-muted hover:text-text-primary')}>
             <ChevronRight size={16} />
           </button>
         </div>
@@ -292,13 +292,13 @@ export function MonthlyReport() {
       </div>
 
       {/* ── Report Content ────────────────────────────────────────── */}
-      <div ref={reportRef} className="flex flex-col gap-5 bg-canvas-100 dark:bg-canvas-100 rounded-3xl p-6">
+      <div ref={reportRef} className="flex flex-col gap-5 bg-surface-primary  rounded-3xl p-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/[0.04]">
+        <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
           <div>
-            <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-1">Monthly Spending Report</p>
-            <p className="text-xl font-display font-bold text-ink-primary">{MONTHS[month]} {year}</p>
+            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Monthly Spending Report</p>
+            <p className="text-xl font-display font-bold text-text-primary">{MONTHS[month]} {year}</p>
           </div>
           <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold', trendIcon.color,
             data.spendChange > 2 ? 'bg-loss/10' : data.spendChange < -2 ? 'bg-profit/10' : 'bg-white/[0.04]')}>
@@ -317,10 +317,10 @@ export function MonthlyReport() {
 
         {/* Category Breakdown */}
         <div className="panel-glass rounded-2xl p-5">
-          <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-4">Spending by Category</p>
+          <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-4">Spending by Category</p>
           <div className="flex flex-col gap-3.5">
             {data.categories.length === 0 ? (
-              <p className="text-sm text-ink-tertiary text-center py-6">No transactions this month</p>
+              <p className="text-sm text-text-muted text-center py-6">No transactions this month</p>
             ) : (
               data.categories.map((cat) => (
                 <CategoryBar key={cat.name} {...cat} />
@@ -334,17 +334,17 @@ export function MonthlyReport() {
 
           {/* Card Breakdown */}
           <div className="panel-glass rounded-2xl p-5">
-            <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-4">Spend by Card</p>
+            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-4">Spend by Card</p>
             <div className="flex flex-col gap-3">
               {data.cardBreakdown.length === 0 ? (
-                <p className="text-sm text-ink-tertiary text-center py-4">No card data</p>
+                <p className="text-sm text-text-muted text-center py-4">No card data</p>
               ) : (
                 data.cardBreakdown.map(({ cardId, label, total, dc }) => (
                   <div key={cardId} className="flex items-center gap-3">
                     <div className="w-8 h-5 rounded-md flex-shrink-0"
                       style={{ background: dc ? `linear-gradient(135deg, ${dc.gradientFrom}, ${dc.gradientTo})` : '#333' }} />
-                    <p className="text-xs font-semibold text-ink-primary truncate flex-1">{label}</p>
-                    <p className="text-xs font-bold text-ink-primary tabular-nums">{formatINRFull(total)}</p>
+                    <p className="text-xs font-semibold text-text-primary truncate flex-1">{label}</p>
+                    <p className="text-xs font-bold text-text-primary tabular-nums">{formatINRFull(total)}</p>
                   </div>
                 ))
               )}
@@ -353,19 +353,19 @@ export function MonthlyReport() {
 
           {/* Top Merchants */}
           <div className="panel-glass rounded-2xl p-5">
-            <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-4">Top Merchants</p>
+            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-4">Top Merchants</p>
             <div className="flex flex-col gap-3">
               {data.topMerchants.length === 0 ? (
-                <p className="text-sm text-ink-tertiary text-center py-4">No data</p>
+                <p className="text-sm text-text-muted text-center py-4">No data</p>
               ) : (
                 data.topMerchants.map((m, i) => (
                   <div key={m.name} className="flex items-center gap-3">
                     <span className={cn('w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-black flex-shrink-0',
-                      i === 0 ? 'bg-brand-500/15 text-brand-500' : 'bg-white/[0.04] text-ink-disabled')}>
+                      i === 0 ? 'bg-brand-emerald/15 text-brand-emerald' : 'bg-white/[0.04] text-text-muted')}>
                       {i + 1}
                     </span>
-                    <p className="text-xs font-semibold text-ink-primary truncate flex-1">{m.name}</p>
-                    <p className="text-xs font-bold text-ink-primary tabular-nums">{formatINRFull(m.total)}</p>
+                    <p className="text-xs font-semibold text-text-primary truncate flex-1">{m.name}</p>
+                    <p className="text-xs font-bold text-text-primary tabular-nums">{formatINRFull(m.total)}</p>
                   </div>
                 ))
               )}
@@ -375,13 +375,13 @@ export function MonthlyReport() {
 
         {/* Spending Heatmap by Day of Week */}
         <div className="panel-glass rounded-2xl p-5">
-          <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-4">Spending by Day of Week</p>
+          <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-4">Spending by Day of Week</p>
           <div className="flex items-end gap-2 h-24">
             {data.dayTotals.map((total, i) => {
               const pct = data.maxDayTotal > 0 ? (total / data.maxDayTotal) * 100 : 0;
               return (
                 <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                  <p className="text-[9px] font-bold text-ink-tertiary tabular-nums">{total > 0 ? formatINR(total) : '–'}</p>
+                  <p className="text-[9px] font-bold text-text-muted tabular-nums">{total > 0 ? formatINR(total) : '–'}</p>
                   <div className="w-full relative" style={{ height: 60 }}>
                     <motion.div
                       initial={{ height: 0 }}
@@ -391,7 +391,7 @@ export function MonthlyReport() {
                       style={{ background: pct > 70 ? '#6366f1' : pct > 40 ? '#8b5cf6' : 'rgba(99,102,241,0.3)' }}
                     />
                   </div>
-                  <p className="text-[10px] font-bold text-ink-tertiary">{DAY_LABELS[i]}</p>
+                  <p className="text-[10px] font-bold text-text-muted">{DAY_LABELS[i]}</p>
                 </div>
               );
             })}
@@ -401,15 +401,15 @@ export function MonthlyReport() {
         {/* Budget Status */}
         {data.budgetStatus.length > 0 && (
           <div className="panel-glass rounded-2xl p-5">
-            <p className="text-[10px] font-black text-ink-disabled uppercase tracking-widest mb-4">Budget Status</p>
+            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-4">Budget Status</p>
             <div className="flex flex-col gap-3">
               {data.budgetStatus.map((b) => (
                 <div key={b.category} className="flex items-center gap-3">
                   <span className="text-base flex-shrink-0 w-6 text-center">{CATEGORY_EMOJI[b.category] || '📦'}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-xs font-semibold text-ink-primary capitalize">{b.category}</p>
-                      <p className="text-[10px] font-bold text-ink-tertiary">{formatINRFull(b.spent)} / {formatINRFull(b.limit)}</p>
+                      <p className="text-xs font-semibold text-text-primary capitalize">{b.category}</p>
+                      <p className="text-[10px] font-bold text-text-muted">{formatINRFull(b.spent)} / {formatINRFull(b.limit)}</p>
                     </div>
                     <div className="w-full h-1.5 bg-white/[0.04] rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all" style={{
@@ -429,15 +429,15 @@ export function MonthlyReport() {
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
+        <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-md flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
               <span style={{ fontSize: 9, color: 'white', fontWeight: 900 }}>R</span>
             </div>
-            <span className="text-[11px] font-bold text-ink-disabled">RenoCred</span>
+            <span className="text-[11px] font-bold text-text-muted">RenoCred</span>
           </div>
-          <span className="text-[11px] text-ink-disabled">Generated {new Date().toLocaleDateString('en-IN')}</span>
+          <span className="text-[11px] text-text-muted">Generated {new Date().toLocaleDateString('en-IN')}</span>
         </div>
       </div>
     </div>

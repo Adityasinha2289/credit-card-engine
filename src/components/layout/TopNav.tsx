@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MotionButton, fadeUpVariant, springSmooth } from '../../motion';
 import { Bell } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import type { TabId } from './Sidebar';
@@ -61,9 +62,9 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
       <div className="flex-1 min-w-0">
         <motion.div
           key={activeTab}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+          variants={fadeUpVariant}
+          initial="hidden"
+          animate="show"
         >
           <h1 className="text-lg font-display font-bold text-ink-primary tracking-tight truncate">
             {title}
@@ -88,21 +89,22 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
 
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
-          <button
+          <MotionButton
+            intent="secondary"
             onClick={() => setShowNotifications(!showNotifications)}
             className={cn(
               'relative w-9 h-9 rounded-full flex items-center justify-center',
               'text-ink-tertiary hover:text-ink-secondary',
               'hover:bg-canvas-200/70 dark:hover:bg-white/[0.04]',
               showNotifications && 'bg-canvas-200/70 dark:bg-white/[0.04] text-ink-primary',
-              'transition-all duration-200',
+              'transition-colors duration-200',
             )}
             aria-label="Notifications"
           >
             <Bell size={17} strokeWidth={1.8} />
             {/* Badge dot */}
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-500 border-2 border-canvas-100 dark:border-canvas-50" />
-          </button>
+          </MotionButton>
 
           <AnimatePresence>
             {showNotifications && (

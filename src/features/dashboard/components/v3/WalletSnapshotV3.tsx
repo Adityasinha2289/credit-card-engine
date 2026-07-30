@@ -1,0 +1,117 @@
+import { motion } from 'framer-motion';
+import { Wallet as WalletIcon, CreditCard, PieChart, Calendar, Gift } from 'lucide-react';
+import { ActiveCard } from '../../../cards/components/ActiveCard';
+import type { FinixCard } from '../../../../features/finix/data/cardDataset';
+import type { CreditAccountData } from '../../types/dashboard.types';
+import { formatCents } from '../../../../lib/utils';
+import { EmptyWalletGuidance } from './EmptyWalletGuidance';
+
+interface WalletSnapshotV3Props {
+  userCards: FinixCard[];
+  creditAccounts: CreditAccountData[];
+  activeCardId: string | null;
+  setActiveCardId: (id: string) => void;
+  onAddCard: () => void;
+}
+
+export function WalletSnapshotV3({ 
+  userCards, 
+  creditAccounts, 
+  activeCardId, 
+  setActiveCardId,
+  onAddCard
+}: WalletSnapshotV3Props) {
+  
+  if (userCards.length === 0) {
+    return <EmptyWalletGuidance onAddCard={onAddCard} />;
+  }
+
+  // Calculate Wallet Metrics
+  let totalLimit = 0;
+  let totalBalance = 0;
+  
+  userCards.forEach(card => {
+    const acc = creditAccounts.find(a => a.cardId === card.id);
+    if (acc) {
+      totalLimit += acc.totalLimit;
+      totalBalance += acc.currentBalance;
+    } else {
+      totalLimit += card.creditLimit;
+    }
+  });
+
+  const utilization = totalLimit > 0 ? Math.round((totalBalance / totalLimit) * 100) : 0;
+  const nextPaymentDate = creditAccounts.length > 0 ? creditAccounts[0].dueDate : 'No upcoming bills';
+
+  const primaryCard = userCards.find(c => c.id === activeCardId) || userCards[0];
+  const primaryAccount = creditAccounts.find(a => a.cardId === primaryCard.id);
+  
+  const cardWithLiveCredit = {
+    ...primaryCard,
+    creditLimit: primaryAccount ? primaryAccount.totalLimit : primaryCard.creditLimit,
+    availableCredit: primaryAccount
+      ? Math.max(0, primaryAccount.totalLimit - primaryAccount.currentBalance)
+      : primaryCard.availableCredit,
+  };
+
+  return (
+    <div className="panel-glass rounded-[2rem] p-6 border border-canvas-200/50 dark:border-white/[0.05] shadow-xl">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-display font-bold text-ink-primary flex items-center gap-2">
+          <WalletIcon size={20} className="text-brand-500" />
+          Wallet Snapshot
+        </h3>
+        <span className="text-[10px] font-bold tracking-wider uppercase bg-canvas-200 dark:bg-white/5 px-2.5 py-1 rounded-full text-ink-secondary">
+          {userCards.length} Cards
+        </span>
+      </div>
+
+      <div className="relative h-[220px] mb-8 cursor-pointer group" onClick={onAddCard}>
+        {/* Stacked Cards Visual */}
+        {userCards.slice(0, 3).map((card, i) => {
+          const isPrimary = i === 0;
+          return (
+            <motion.div
+              key={card.id}
+              className="absolute inset-x-0 mx-auto transition-all duration-300 group-hover:-translate-y-2"
+              style={{
+                top: i * 20,
+                scale: 1 - i * 0.05,
+                zIndex: 10 - i,
+                opacity: 1 - i * 0.15,
+              }}
+            >
+              {isPrimary ? (
+                <ActiveCard card={cardWithLiveCredit} revealed={false} />
+              ) : (
+                <div 
+                  className="w-full h-[190px] rounded-2xl opacity-50 border border-white/10"
+                  style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}
+                />
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mt-4">
+        <div className="p-4 rounded-2xl bg-canvas-50 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/[0.04]">
+          <div className="flex items-center gap-2 mb-1">
+            <PieChart size={14} className="text-ink-tertiary" />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-ink-tertiary">Utilization</span>
+          </div>
+          <p className="text-lg font-bold text-ink-primary">{utilization}%</p>
+        </div>
+        <div className="p-4 rounded-2xl bg-canvas-50 dark:bg-white/[0.02] border border-canvas-200/50 dark:border-white/[0.04]">
+          <div className="flex items-center gap-2 mb-1">
+            <Calendar size={14} className="text-ink-tertiary" />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-ink-tertiary">Next Bill</span>
+          </div>
+          <p className="text-sm font-bold text-ink-primary mt-1 truncate">
+            {nextPaymentDate !== 'No upcoming bills' ? new Date(nextPaymentDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : nextPaymentDate}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -84,7 +84,7 @@ export function TaqdeerSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-[#00E599]/10 text-[#00E599] px-4 py-2 rounded-full font-medium text-sm mb-6"
+            className="inline-flex items-center gap-2 bg-brand-emerald-muted text-brand-emerald px-4 py-2 rounded-full font-medium text-sm mb-6"
           >
             <Sparkles className="w-4 h-4" /> Meet TAQDEER
           </motion.div>
@@ -131,20 +131,20 @@ export function TaqdeerSection() {
                     className="flex justify-start"
                   >
                     <div className="flex gap-4 max-w-[85%]">
-                      <div className="w-10 h-10 rounded-full bg-[#00E599]/10 flex items-center justify-center shrink-0 border border-[#00E599]/20">
-                        <Sparkles className="w-5 h-5 text-[#00E599]" />
+                      <div className="w-10 h-10 rounded-full bg-brand-emerald-muted flex items-center justify-center shrink-0 border border-brand-emerald/40">
+                        <Sparkles className="w-5 h-5 text-brand-emerald" />
                       </div>
-                      <div className="bg-gradient-to-br from-[#00E599]/10 to-transparent border border-[#00E599]/20 p-5 rounded-3xl rounded-tl-sm backdrop-blur-md">
+                      <div className="bg-gradient-to-br from-brand-emerald-muted to-transparent border border-brand-emerald/40 p-5 rounded-3xl rounded-tl-sm backdrop-blur-md">
                         <div className="flex items-center gap-3 mb-2">
                           <p className="text-white font-bold text-lg">{msg.card}</p>
-                          <span className="bg-[#00E599] text-[#0B0B0D] px-2 py-0.5 rounded text-xs font-bold">
+                          <span className="bg-brand-emerald text-white px-2 py-0.5 rounded text-xs font-bold">
                             {msg.save}
                           </span>
                         </div>
                         <div className="flex flex-col gap-1 text-sm text-gray-400">
                           {msg.details?.map((detail, idx) => (
                             <p key={idx} className="flex items-center gap-2">
-                              <span className="w-1 h-1 rounded-full bg-[#00E599]" />
+                              <span className="w-1 h-1 rounded-full bg-brand-emerald" />
                               {detail}
                             </p>
                           ))}
@@ -165,8 +165,8 @@ export function TaqdeerSection() {
                   exit={{ opacity: 0 }}
                   className="flex gap-4 mt-2"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#00E599]/5 flex items-center justify-center shrink-0 border border-[#00E599]/10">
-                    <Sparkles className="w-5 h-5 text-[#00E599]/50" />
+                  <div className="w-10 h-10 rounded-full bg-brand-emerald/10 flex items-center justify-center shrink-0 border border-brand-emerald/20">
+                    <Sparkles className="w-5 h-5 text-brand-emerald/60" />
                   </div>
                   <div className="bg-[#1A1A1A] px-6 py-4 rounded-3xl rounded-tl-sm flex items-center gap-1 border border-white/5">
                     <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '0ms' }} />

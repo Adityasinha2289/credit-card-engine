@@ -32,7 +32,7 @@ export function RecommendationCard({
       )}
     >
       {/* Top Banner */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00E599]/50 to-transparent" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-emerald/80 to-transparent" />
       
       <div className="p-6 pb-4 border-b border-white/[0.04]">
         <div className="flex items-center justify-between mb-4">
@@ -41,7 +41,7 @@ export function RecommendationCard({
               <CreditCard className="w-5 h-5 text-gray-400" />
             </div>
             <div>
-              <p className="text-[#00E599] text-[10px] font-bold uppercase tracking-wider mb-0.5">Recommended</p>
+              <p className="text-brand-emerald text-[10px] font-bold uppercase tracking-wider mb-0.5">Recommended</p>
               <h4 className="text-white font-bold">{cardName}</h4>
             </div>
           </div>
@@ -50,7 +50,7 @@ export function RecommendationCard({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Expected Savings</p>
-            <p className="text-[#00E599] text-xl font-bold">{expectedSavings}</p>
+            <p className="text-success-emerald text-xl font-bold">{expectedSavings}</p>
           </div>
           <div>
             <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider mb-1">Rewards</p>
@@ -65,7 +65,7 @@ export function RecommendationCard({
           <ul className="space-y-2">
             {reasons.map((reason, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                <Check className="w-4 h-4 text-[#00E599] shrink-0 mt-0.5" />
+                <Check className="w-4 h-4 text-success-emerald shrink-0 mt-0.5" />
                 <span className="leading-tight">{reason}</span>
               </li>
             ))}
@@ -75,14 +75,14 @@ export function RecommendationCard({
         <div className="flex flex-col gap-2 mt-auto">
           <div className="flex justify-between items-center text-xs font-semibold">
             <span className="text-gray-500 uppercase tracking-wider">Confidence</span>
-            <span className="text-[#00E599]">{confidence}%</span>
+            <span className="text-success-emerald">{confidence}%</span>
           </div>
           <div className="w-full h-1.5 bg-[#111111] rounded-full overflow-hidden border border-white/[0.04]">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${confidence}%` }}
               transition={{ duration: 1, delay: delay + 0.2, ease: "easeOut" }}
-              className="h-full bg-[#00E599] rounded-full shadow-[0_0_10px_rgba(0,229,153,0.5)]"
+              className="h-full bg-success-emerald shadow-[0_0_10px_rgba(0,229,153,0.5)] rounded-full"
             />
           </div>
         </div>

@@ -6,7 +6,7 @@ export function RealSavingsSection() {
       
       {/* Abstract Background Element */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none">
-        <div className="absolute inset-0 bg-[#00E599]/5 rounded-full blur-[100px]" />
+        <div className="absolute inset-0 bg-brand-emerald/10 rounded-full blur-[140px]" />
         <div className="absolute inset-20 border border-white/[0.02] rounded-full" />
         <div className="absolute inset-40 border border-white/[0.03] rounded-full" />
         <div className="absolute inset-60 border border-white/[0.04] rounded-full" />
@@ -18,7 +18,7 @@ export function RealSavingsSection() {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-[#00E599] font-bold tracking-widest text-sm uppercase mb-8"
+          className="text-brand-emerald font-bold tracking-widest text-sm uppercase mb-8"
         >
           The Real Outcome
         </motion.p>
@@ -30,7 +30,7 @@ export function RealSavingsSection() {
           transition={{ delay: 0.1 }}
           className="text-5xl md:text-7xl font-display font-bold mb-10 tracking-tight leading-tight"
         >
-          Don't leave <span className="text-gray-500 line-through decoration-[#00E599]/30">money</span> <br/> 
+          Don't leave <span className="text-gray-500 line-through decoration-brand-emerald/40">money</span> <br/> 
           <span className="italic font-light">memories</span> on the table.
         </motion.h2>
 

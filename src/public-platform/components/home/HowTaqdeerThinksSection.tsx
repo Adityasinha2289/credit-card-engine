@@ -53,9 +53,9 @@ export function HowTaqdeerThinksSection() {
             {/* Flowing lines animation */}
             <div className="absolute inset-0 flex flex-col justify-between py-12">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-full h-px bg-gradient-to-r from-transparent via-[#00E599]/20 to-transparent relative">
+                <div key={i} className="w-full h-px bg-gradient-to-r from-transparent via-brand-emerald/40 to-transparent relative">
                   <motion.div 
-                    className="absolute top-1/2 left-0 w-2 h-2 -translate-y-1/2 rounded-full bg-[#00E599] shadow-[0_0_10px_#00E599]"
+                    className="absolute top-1/2 left-0 w-2 h-2 -translate-y-1/2 rounded-full bg-brand-emerald shadow-[0_0_15px_rgba(4,59,39,0.5)]"
                     animate={{ left: ['0%', '100%'], opacity: [0, 1, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2, ease: "linear" }}
                   />
@@ -71,7 +71,7 @@ export function HowTaqdeerThinksSection() {
               className="relative z-10 flex flex-col items-center"
             >
               <div className="w-24 h-24 rounded-3xl bg-[#0B0B0D] border border-white/[0.1] flex items-center justify-center shadow-[0_0_50px_rgba(0,229,153,0.1)] relative overflow-hidden">
-                <div className="absolute inset-0 rounded-3xl border border-[#00E599]/20 animate-pulse" />
+                <div className="absolute inset-0 rounded-3xl border border-brand-emerald/40 animate-pulse" />
                 <img src="/logo.jpg" alt="RenoCred Logo" className="w-12 h-12 rounded-xl object-cover relative z-10" />
               </div>
               <p className="text-white font-display font-bold text-xl mt-4 tracking-tight">RenoCred</p>

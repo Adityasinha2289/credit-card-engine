@@ -183,6 +183,16 @@ export default {
           tertiary:  'rgb(var(--color-ink-tertiary) / <alpha-value>)',
           disabled:  'rgb(var(--color-ink-disabled) / <alpha-value>)',
         },
+
+        // New Premium Emerald Design Language
+        'brand-emerald': '#043B27', 
+        'brand-emerald-hover': '#054a31',
+        'brand-emerald-muted': 'rgba(4, 59, 39, 0.15)',
+        'brand-emerald-glow': 'rgba(4, 59, 39, 0.4)',
+        'success-emerald': '#00E599',
+        'success-glow': 'rgba(0, 229, 153, 0.15)',
+        'border-emerald': 'rgba(4, 59, 39, 0.4)',
+        'premium-highlight': '#076041',
       },
 
       // ─────────────────────────────────────────────────────────────────

@@ -69,7 +69,7 @@ export function PublicFooter() {
               <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Rewards Calculator</a></li>
               <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Savings Estimator</a></li>
               <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Eligibility Checker</a></li>
-              <li><Link to="/app" className="text-sm text-[#00E599] font-semibold hover:text-teal-400 transition-colors">Open RenoCred App →</Link></li>
+              <li><Link to="/app" className="text-sm text-brand-emerald font-semibold hover:text-brand-emerald-hover transition-colors">Open RenoCred App →</Link></li>
             </ul>
           </nav>
 

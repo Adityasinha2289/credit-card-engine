@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export function AboutPage() {
   return (
-    <div className="w-full min-h-screen relative overflow-hidden bg-[#0A0A0A] text-white selection:bg-[#00E599]/30">
+    <div className="w-full min-h-screen relative overflow-hidden bg-[#0A0A0A] text-white selection:bg-brand-emerald-glow">
       <SEO 
         title="About RenoCred | Optimizing Your Credit Card Strategy"
         description="Learn about RenoCred's mission to bring clarity and transparency to the Indian credit card ecosystem."
@@ -12,8 +12,8 @@ export function AboutPage() {
       />
       
       {/* Background Effects */}
-      <div className="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-[#00E599]/10 to-transparent pointer-events-none" />
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00E599]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-brand-emerald/5 to-transparent pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-brand-emerald/3 rounded-full blur-[160px] pointer-events-none" />
 
       {/* Hero Section */}
       <section className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 text-center z-10">
@@ -25,7 +25,7 @@ export function AboutPage() {
         >
           {/* RenoCred Logo Badge */}
           <div className="w-20 h-20 bg-gradient-to-br from-[#111] to-[#050505] border border-white/[0.08] rounded-[1.5rem] flex items-center justify-center shadow-[0_0_50px_rgba(0,229,153,0.15)] relative overflow-hidden group">
-             <div className="absolute inset-0 bg-[#00E599]/20 blur-xl group-hover:bg-[#00E599]/30 transition-colors" />
+             <div className="absolute inset-0 bg-brand-emerald/10 blur-2xl group-hover:bg-brand-emerald/20 transition-colors duration-700" />
              <img src="/logo.jpg" alt="RenoCred Logo" className="w-12 h-12 rounded-xl object-cover relative z-10" />
           </div>
         </motion.div>
@@ -36,7 +36,7 @@ export function AboutPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          About <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E599] to-teal-500">RenoCred</span>
+          About <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-emerald to-teal-800">RenoCred</span>
         </motion.h1>
         
         <motion.p 

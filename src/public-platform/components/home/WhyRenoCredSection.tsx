@@ -58,11 +58,11 @@ export function WhyRenoCredSection() {
                 className="group relative rounded-[2rem] bg-white/[0.02] border border-white/5 p-10 overflow-hidden hover:bg-white/[0.04] transition-colors"
               >
                 {/* Hover gradient flare */}
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#00E599]/20 blur-[60px] rounded-full group-hover:bg-[#00E599]/30 transition-colors duration-500 pointer-events-none" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-brand-emerald-muted blur-[80px] rounded-full group-hover:bg-brand-emerald/30 transition-colors duration-500 pointer-events-none" />
                 
                 <div className="relative z-10 flex flex-col h-full justify-between gap-12">
                   <div className="w-14 h-14 rounded-2xl bg-[#111111] border border-white/10 flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-white group-hover:text-[#00E599] transition-colors" />
+                    <Icon className="w-6 h-6 text-white group-hover:text-brand-emerald transition-colors" />
                   </div>
                   
                   <div>

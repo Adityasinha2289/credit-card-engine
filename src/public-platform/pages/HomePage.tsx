@@ -10,7 +10,7 @@ import { CtaSection } from '../components/home/CtaSection';
 
 export function HomePage() {
   return (
-    <div className="flex-1 flex flex-col relative w-full bg-[#0A0A0A] text-white selection:bg-[#00E599]/30 font-sans">
+    <div className="flex-1 flex flex-col relative w-full bg-[#0A0A0A] text-white selection:bg-brand-emerald-glow font-sans">
       <SEO 
         title="RenoCred | The Intelligent Financial Operating System"
         description="RenoCred analyzes your cards, rewards, merchant offers and spending patterns to recommend the smartest payment option before every purchase."

@@ -1,120 +1,89 @@
-import { motion } from 'framer-motion';
-import { Sparkles, ChevronRight } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
+import { Sparkles, ChevronRight, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { staggerContainer, fadeUpVariant, springSmooth, MotionButton, interactivePrimary, interactiveSecondary } from '../../../motion';
+import { HeroPhoneAnimation } from './HeroPhoneAnimation';
+
+// Soft SVG Grain for premium texture
+const grainSvg = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
 
 export function HeroSection() {
-  return (
-    <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0A0A0A] text-white pt-24 pb-16">
-      
+  const containerRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  
+  // Subtle parallax for the right product demo
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const yParallax = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const smoothY = useSpring(yParallax, { stiffness: 50, damping: 20 });
+  const activeY = shouldReduceMotion ? 0 : smoothY;
 
+  return (
+    <section ref={containerRef} className="relative w-full min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-[#050505] text-white pt-32 pb-24">
+      
+      {/* Background Lighting & Grain */}
+      <div 
+        className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay"
+        style={{ backgroundImage: grainSvg }}
+      />
+      {/* Subtle Radial Depth */}
+      <div className="absolute top-1/4 right-1/4 w-[800px] h-[800px] bg-brand-emerald rounded-full blur-[200px] opacity-[0.1] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-white rounded-full blur-[120px] opacity-[0.015] pointer-events-none" />
+      
       {/* Main Content Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center justify-between h-full gap-16 lg:gap-8">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-y-16 lg:gap-x-12 items-center min-h-[calc(100vh-8rem)]">
         
-        {/* Left Text */}
+        {/* Left Text - Editorial Typography */}
         <motion.div 
-          className="w-full lg:w-[55%] flex flex-col items-start z-20"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="col-span-1 lg:col-span-6 flex flex-col items-start text-left z-20 w-full min-w-0"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-gray-400 mb-8">
-            <Sparkles className="w-3.5 h-3.5 text-[#00E599]" />
-            <span className="text-white">TAQDEER Engine v2.0</span>
-          </div>
+          <motion.div variants={fadeUpVariant} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111111] border border-white/[0.04] text-[10px] uppercase tracking-[0.2em] font-semibold text-gray-400 mb-10 shadow-sm">
+            <Sparkles className="w-3 h-3 text-brand-emerald" />
+            <span className="text-gray-300">AI-Powered Orchestration</span>
+          </motion.div>
           
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-display font-bold mb-6 tracking-tighter leading-[1.05]">
-            Stop Guessing. <br/>
-            <span className="text-gray-500">Start Maximizing.</span>
-          </h1>
+          <motion.h1 variants={fadeUpVariant} className="text-[clamp(3rem,6vw,5.5rem)] font-display font-medium mb-6 md:mb-8 tracking-[-0.03em] leading-[1.05] text-white break-words w-full">
+            Absolute certainty. <br/>
+            <span className="text-gray-500">Every time you pay.</span>
+          </motion.h1>
           
-          <p className="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
-            The intelligent financial operating system that analyzes your cards, rewards, and merchant offers to recommend the exact right card before every purchase.
-          </p>
+          <motion.p variants={fadeUpVariant} className="text-[clamp(1rem,2vw,1.125rem)] text-gray-400 mb-10 md:mb-12 max-w-lg leading-[1.7] font-light">
+            We analyze your cards, current offers, and purchase history in milliseconds to guarantee maximum return on every transaction. You simply swipe.
+          </motion.p>
           
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            <button className="w-full sm:w-auto bg-[#00E599] text-[#0A0A0A] font-semibold px-8 py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-[#00c985] transition-colors">
-              Find My Best Card <ChevronRight className="w-4 h-4" />
-            </button>
-            <button className="w-full sm:w-auto bg-[#111111] text-white font-medium px-8 py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-[#1A1A1A] transition-colors border border-white/[0.08]">
-              View Methodology
-            </button>
-          </div>
+          <motion.div variants={fadeUpVariant} className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
+            <MotionButton intent="primary" className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-b from-brand-emerald to-[#022417] text-white font-medium px-10 py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-[0_2px_15px_rgba(4,59,39,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)] hover:shadow-[0_4px_30px_rgba(4,59,39,0.6),inset_0_1px_1px_rgba(255,255,255,0.3)] border border-brand-emerald/80 hover:-translate-y-0.5">
+              Analyze My Wallet
+            </MotionButton>
+            <MotionButton intent="secondary" className="w-full sm:w-auto bg-transparent text-gray-300 font-medium px-8 py-4 rounded-xl flex items-center justify-center gap-2 hover:text-white transition-colors">
+              See How It Works <ArrowRight className="w-4 h-4" />
+            </MotionButton>
+          </motion.div>
+
+          {/* Microcopy Trust Signals */}
+          <motion.div variants={fadeUpVariant} className="mt-8 flex items-center gap-4 text-xs font-medium text-gray-500">
+             <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> Setup takes 60 seconds.</span>
+             <span className="w-1 h-1 rounded-full bg-gray-800" />
+             <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5" /> Bank-level encryption.</span>
+          </motion.div>
+
         </motion.div>
 
-        {/* Right UI Element - Clean, immediately showing the recommendation */}
+        {/* Right UI Element - iPhone 17 Pro Demo */}
         <motion.div 
-          className="w-full lg:w-[45%] flex justify-center lg:justify-end items-center relative"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          className="col-span-1 lg:col-span-6 flex justify-center lg:justify-end items-center relative w-full min-w-0"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...springSmooth, delay: 0.2 }}
+          style={{ y: activeY }}
         >
-          {/* Main Interface Frame */}
-          <div className="w-full max-w-[420px] bg-[#111111] border border-white/[0.08] rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-            
-            {/* Context Header */}
-            <div className="flex justify-between items-center mb-8 border-b border-white/[0.04] pb-4">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Purchase Context</p>
-                <h3 className="text-xl font-bold text-white">Apple Store Online</h3>
-              </div>
-              <div className="text-right">
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Amount</p>
-                <h3 className="text-xl font-bold text-white">₹1,34,900</h3>
-              </div>
-            </div>
-
-            {/* The Analysis Pipeline (Visual only) */}
-            <div className="flex flex-col gap-3 mb-8">
-              <div className="flex items-center gap-3 text-sm text-gray-400">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#00E599]" /> Checking 12 connected cards
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-400">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#00E599]" /> Analyzing Apple partner offers
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-400">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#00E599]" /> Calculating reward point values
-              </div>
-            </div>
-
-            {/* Recommendation Card */}
-            <div className="bg-[#1A1A1A] border border-[#00E599]/20 rounded-2xl p-5 relative">
-              <div className="absolute top-0 left-0 w-1 h-full bg-[#00E599] rounded-l-2xl" />
-              
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <p className="text-[#00E599] text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <Sparkles className="w-3 h-3" /> Top Choice
-                  </p>
-                  <p className="text-lg font-bold text-white">HDFC Infinia Metal</p>
-                </div>
-                <div className="bg-[#00E599]/10 text-[#00E599] px-3 py-1 rounded-md text-sm font-bold border border-[#00E599]/20">
-                  Save ₹10,490
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Instant Discount</span>
-                  <span className="text-white font-medium">₹6,000</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Reward Points (3.3%)</span>
-                  <span className="text-white font-medium">₹4,490</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Secondary Option */}
-            <div className="mt-4 bg-[#0A0A0A] border border-white/[0.04] rounded-xl p-4 flex justify-between items-center opacity-70 grayscale">
-              <div>
-                <p className="text-sm font-bold text-white">SBI Cashback</p>
-                <p className="text-xs text-gray-500">Capped at ₹5,000/mo</p>
-              </div>
-              <div className="text-sm font-bold text-gray-400">
-                Save ₹5,000
-              </div>
-            </div>
-
-          </div>
+          <HeroPhoneAnimation />
         </motion.div>
       </div>
     </section>

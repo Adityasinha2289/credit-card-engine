@@ -30,8 +30,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Domestic lounge access', 'Low maintenance psu card', 'Upi enabled via rupay', 'Lounge access included'],
-    gradientFrom: '#004D40',
-    gradientTo: '#00796B',
   },
   {
     id: 'iob_classic',
@@ -53,8 +51,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Basic entry level', 'Low interest rate', 'Psu reliability'],
-    gradientFrom: '#004D40',
-    gradientTo: '#00796B',
   },
   {
     id: 'indian_bank_rupay_platinum',
@@ -76,8 +72,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Upi payments', 'Rupay platinum benefits', 'Basic everyday card', 'Lounge access included'],
-    gradientFrom: '#0D47A1',
-    gradientTo: '#1976D2',
   },
   {
     id: 'indian_bank_rupay_select',
@@ -99,8 +93,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Domestic lounge access', 'Rupay select wellness benefits', 'Low maintenance psu card', 'Lounge access included'],
-    gradientFrom: '#0D47A1',
-    gradientTo: '#1976D2',
   },
   {
     id: 'indusind_platinum_visa',
@@ -122,8 +114,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Entry level', 'Lifetime free', 'Basic rewards', 'Lifetime free card'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_platinum_aura_edge',
@@ -145,8 +135,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Departmental store multiplier', 'Flexible reward plans', 'Contactless payments', '₹500 joining bonus'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_tiger',
@@ -167,8 +155,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'travel', rate: 1.2 }
     ],
     highlights: ['Lifetime free', 'Milestone based rewards', 'Low forex markup', 'Lifetime free card'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_nexxt',
@@ -190,8 +176,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Interactive buttons', 'Emi on card', 'Movie offers', '₹2,000 joining bonus'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_eazydiner',
@@ -213,8 +197,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.8 }
     ],
     highlights: ['Eazydiner prime membership', 'High dining discount', 'Movie tickets', '₹2,000 joining bonus'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_iconia',
@@ -236,8 +218,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.3 }
     ],
     highlights: ['Weekend reward multipliers', 'Golf access', 'Milestone independent', 'Lounge access included'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_legend',
@@ -259,8 +239,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.1 }
     ],
     highlights: ['Often lifetime free', 'Weekend multipliers', 'Golf benefits', 'Lounge access included'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_pinnacle',
@@ -282,8 +260,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Online shopping multiplier', 'Golf privileges', 'Premium lifestyle', 'Lounge access included'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_avios_visa_infinite',
@@ -305,8 +281,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.4 }
     ],
     highlights: ['Qatar and ba avios', 'International travel multiplier', 'Airport meet and greet', 'Lounge access included'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_club_vistara_explorer',
@@ -328,8 +302,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Zero forex markup', 'Vistara gold tier', 'Business class vouchers', 'Lounge access included'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_pioneer_heritage_metal',
@@ -351,8 +323,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Invite only', 'Unlimited lounge access', 'Zero forex markup', 'Lounge access included'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'indusind_crest',
@@ -374,8 +344,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Ultra premium benefits', 'Medical concierge', 'Golf perks', 'Lounge access included'],
-    gradientFrom: '#1B5E20',
-    gradientTo: '#388E3C',
   },
   {
     id: 'canara_rupay_select',
@@ -397,8 +365,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Lifetime free', 'Domestic and international lounge access', 'Basic psu rewards', 'Lifetime free card'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'canara_rupay_platinum',
@@ -420,8 +386,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Upi payments', 'Entry level', 'Low income requirement', 'Lifetime free card'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'canara_visa_classic',
@@ -443,8 +407,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Basic everyday card', 'Offline spenders', 'Low maintenance'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'yes_prosperity_cashback',
@@ -466,8 +428,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 5 }
     ],
     highlights: ['5% utility cashback capped', 'Limited categories', 'Entry level'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'yes_byoc',
@@ -489,8 +449,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Customizable rewards', 'Not flat for all users', 'Eco-friendly plastic'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'yes_bank_rupay',
@@ -512,8 +470,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Upi payments', 'Virtual card', 'Low maintenance'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'yes_wellness_plus',
@@ -535,8 +491,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Pharmacy only rewards', 'Partner based multipliers', 'Health and wellness', '₹500 joining bonus'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'yes_select',
@@ -558,8 +512,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Online spenders', 'Basic lounge access', 'Low annual fee', 'Lounge access included'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'yes_premia',
@@ -581,8 +533,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Domestic travel', 'Golf privileges', 'Online shopping multipliers', 'Lounge access included'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'yes_reserv',
@@ -604,8 +554,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2 }
     ],
     highlights: ['Reward multipliers', 'Subscription benefits', 'Golf access', 'Lounge access included'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'yes_marquee',
@@ -627,8 +575,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2 }
     ],
     highlights: ['Super premium', 'Unlimited lounge', 'Bogo movie tickets', 'Lounge access included'],
-    gradientFrom: '#4A148C',
-    gradientTo: '#6A1B9A',
   },
   {
     id: 'bom_rupay_platinum',
@@ -650,8 +596,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Upi payments', 'Basic entry level', 'Psu reliability'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'bom_rupay_select',
@@ -673,8 +617,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Domestic lounge access', 'Rupay select wellness benefits', 'Upi enabled', 'Lounge access included'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'icici_platinum_chip',
@@ -696,8 +638,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['First time users', 'Lifetime free', 'Basic rewards', 'Lifetime free card'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_coral',
@@ -719,8 +659,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Entry lounge access', 'Dining offers', 'Upi payments', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_amazon_pay',
@@ -742,8 +680,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Amazon prime users', 'Unlimited cashback', 'Lifetime free', 'Lifetime free card'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_hpcl_super_saver',
@@ -766,8 +702,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Commuters', 'Hpcl fuel savings', 'Utility bills', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_manchester_united_platinum',
@@ -789,8 +723,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Football fans', 'Man utd merch discounts', '₹500 joining bonus'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_makemytrip_platinum',
@@ -812,8 +744,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Occasional travelers', 'Makemytrip bookings', 'Lifetime free card', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_adani_platinum',
@@ -835,8 +765,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Airport spends', 'Adani ecosystem', 'Lounge access included', '₹750 joining bonus'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_rubyx',
@@ -858,8 +786,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Lifestyle perks', 'Golf access', 'Dual network', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_makemytrip_signature',
@@ -881,8 +807,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.25 }
     ],
     highlights: ['Frequent domestic flyers', 'Makemytrip loyalists', 'Lifetime free card', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_sapphiro',
@@ -904,8 +828,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Premium lifestyle', 'International travel', 'Golf privileges', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_adani_signature',
@@ -927,8 +849,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2 }
     ],
     highlights: ['Premium airport services', 'High reward multiplier', 'Lounge access included', '₹5,000 joining bonus'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_emeralde',
@@ -950,8 +870,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Luxury benefits', 'Concierge', 'Insurance perks', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'icici_emeralde_private_metal',
@@ -973,8 +891,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2.5 }
     ],
     highlights: ['Invite only', 'Ultra premium', 'Flat return rate', 'Lounge access included'],
-    gradientFrom: '#8B0000',
-    gradientTo: '#C62828',
   },
   {
     id: 'csb_onecard',
@@ -996,8 +912,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Lifetime free metal card', '5x multiplier on top 2 categories', 'App driven ecosystem', 'Lifetime free card'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'csb_jupiter_edge',
@@ -1019,8 +933,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.4 }
     ],
     highlights: ['Upi payments', 'Customizable 2% cashback category', 'Jupiter app ecosystem', 'Lifetime free card'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'kotak_811',
@@ -1042,8 +954,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Entry level', 'Online spenders', 'Basic rewards', '₹500 joining bonus'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_upi_rupay',
@@ -1065,8 +975,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Upi payments', 'Virtual card', 'Low fee'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_indianoil',
@@ -1089,8 +997,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Commuters', 'Indianoil savings', 'Grocery discounts', '₹1,000 joining bonus'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_myntra',
@@ -1112,8 +1018,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.25 }
     ],
     highlights: ['5% on Myntra only', 'Capped rewards', 'Flat base cashback', 'Lounge access included'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_league_platinum',
@@ -1135,8 +1039,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.65 }
     ],
     highlights: ['Milestone points', 'Frequent shoppers', 'Basic rewards', '₹500 joining bonus'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_pvr_gold',
@@ -1158,8 +1060,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2.5 }
     ],
     highlights: ['Movie buffs', 'Pvr tickets', 'Milestone based rewards'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_pvr_platinum',
@@ -1181,8 +1081,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 3.5 }
     ],
     highlights: ['Movie buffs', 'Premium pvr tickets', 'Milestone based rewards'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_mojo_platinum',
@@ -1204,8 +1102,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Online spenders', 'Milestone bonuses', 'Domestic lounge', 'Lounge access included'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_royale_signature',
@@ -1227,8 +1123,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.6 }
     ],
     highlights: ['Dining and travel', 'Milestone heavy return', 'Lounge access', 'Lounge access included'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_zen_signature',
@@ -1250,8 +1144,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.25 }
     ],
     highlights: ['Apparel shopping', 'Zen points', 'Milestone dependent', 'Lounge access included'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_white',
@@ -1273,8 +1165,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.2 }
     ],
     highlights: ['White pass ecosystem', 'Premium ecosystem benefits', 'Premium lifestyle', 'Lounge access included'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'kotak_white_reserve',
@@ -1296,8 +1186,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Invite only', 'Premium ecosystem benefits', 'Unlimited lounge', 'Lounge access included'],
-    gradientFrom: '#C41E3A',
-    gradientTo: '#E53935',
   },
   {
     id: 'sib_onecard',
@@ -1319,8 +1207,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Lifetime free metal card', '5x multiplier on top 2 categories', 'App driven ecosystem', 'Lifetime free card'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'sib_onecard_secured',
@@ -1342,8 +1228,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.2 }
     ],
     highlights: ['Fd backed secured card', 'Lifetime free', 'Credit builder', 'Lifetime free card'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'central_bank_rupay_platinum',
@@ -1365,8 +1249,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Entry level psu card', '5% utility cashback capped at ₹50', 'Apollo pharmacy discount', '₹500 joining bonus'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'central_bank_rupay_select',
@@ -1388,8 +1270,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Domestic and international lounge access', '3x reward points', 'Rupay select wellness benefits', 'Lounge access included'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'au_lit',
@@ -1411,8 +1291,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Customizable benefits', 'Pay per feature', 'Lifetime free base card', 'Lifetime free card'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'au_altura_plus',
@@ -1434,8 +1312,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Milestone cashback', 'Entry-mid level', 'Railway lounge access', 'Lounge access included'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'au_ixigo',
@@ -1457,8 +1333,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Zero forex markup', 'Ixigo travel discounts', 'Railway and airport lounge', 'Lounge access included'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'au_vetta',
@@ -1480,8 +1354,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Accelerated utility rewards', 'Annual milestone bonus', 'Lifestyle benefits', 'Lounge access included'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'au_zenith',
@@ -1503,8 +1375,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.25 }
     ],
     highlights: ['High dining multiplier', 'Golf access', 'Premium brand vouchers', 'Lounge access included'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'au_zenith_plus',
@@ -1526,8 +1396,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Metal card', 'Milestone travel value', 'Taj epicure membership', 'Lounge access included'],
-    gradientFrom: '#006064',
-    gradientTo: '#00838F',
   },
   {
     id: 'axis_neo',
@@ -1549,8 +1417,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2.5 }
     ],
     highlights: ['First time users', 'Partner-capped discounts', 'Zomato offers', '₹250 joining bonus'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_my_zone',
@@ -1572,8 +1438,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.4 }
     ],
     highlights: ['Movie offers', 'Swiggy discounts', 'Basic lounge access', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_indianoil',
@@ -1596,8 +1460,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.2 }
     ],
     highlights: ['Commuters', 'Fuel savings', 'Upi payments', '₹500 joining bonus'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_flipkart',
@@ -1619,8 +1481,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Flipkart loyalists', 'Unlimited cashback', 'Solid all-rounder', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_ace',
@@ -1642,8 +1502,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 5 }
     ],
     highlights: ['5% via Google Pay', 'Capped utility rewards', 'High base cashback', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_airtel',
@@ -1665,8 +1523,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 8 }
     ],
     highlights: ['Capped conditional rewards', 'Airtel subscribers', 'Swiggy zomato offers', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_rewards',
@@ -1688,8 +1544,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.4 }
     ],
     highlights: ['Apparel shopping', 'Milestone benefits', 'Department stores', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_privilege',
@@ -1711,8 +1565,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Domestic travel', 'Shopping milestones', 'Yatra vouchers', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_vistara_signature',
@@ -1734,8 +1586,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2 }
     ],
     highlights: ['Frequent flyers', 'Milestone-heavy return', 'Premium economy tickets', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_select',
@@ -1757,8 +1607,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Lifestyle perks', 'Bigbasket offers', 'Swiggy dining', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_atlas',
@@ -1780,8 +1628,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2 }
     ],
     highlights: ['Frequent flyers', 'Hotel bookings', 'Highly flexible miles', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_magnus',
@@ -1803,8 +1649,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.2 }
     ],
     highlights: ['Travel edge portal', 'Luxury lifestyle', 'Milestone dependent', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'axis_reserve',
@@ -1826,8 +1670,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Ultra premium benefits', 'Airport transfers', 'Luxury hotel memberships', 'Lounge access included'],
-    gradientFrom: '#5C0F8B',
-    gradientTo: '#8B2FC9',
   },
   {
     id: 'bob_easy',
@@ -1849,8 +1691,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Entry level', '5x rewards on grocery', 'Movie discounts', '₹500 joining bonus'],
-    gradientFrom: '#880E4F',
-    gradientTo: '#AD1457',
   },
   {
     id: 'bob_select',
@@ -1872,8 +1712,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Utility multipliers', 'Online shopping rewards', 'Milestone bonus points', '₹1,000 joining bonus'],
-    gradientFrom: '#880E4F',
-    gradientTo: '#AD1457',
   },
   {
     id: 'bob_hpcl_energie',
@@ -1896,8 +1734,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.66 }
     ],
     highlights: ['Hpcl fuel savings', 'Upi on rupay', 'Utility cashback', '₹2,000 joining bonus'],
-    gradientFrom: '#880E4F',
-    gradientTo: '#AD1457',
   },
   {
     id: 'bob_premier',
@@ -1919,8 +1755,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Dining multipliers', 'Travel benefits', 'Complimentary lounge', 'Lounge access included'],
-    gradientFrom: '#880E4F',
-    gradientTo: '#AD1457',
   },
   {
     id: 'bob_eterna',
@@ -1942,8 +1776,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['High reward yield', 'Unlimited lounge access', 'Golf privileges', 'Lounge access included'],
-    gradientFrom: '#880E4F',
-    gradientTo: '#AD1457',
   },
   {
     id: 'bob_icai_exclusive',
@@ -1965,8 +1797,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Lifetime free for CAs', 'Professional exclusive', 'Domestic lounge', 'Lifetime free card'],
-    gradientFrom: '#880E4F',
-    gradientTo: '#AD1457',
   },
   {
     id: 'hdfc_freedom',
@@ -1988,8 +1818,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Entry level', 'Basic everyday rewards', '₹500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_indianoil',
@@ -2012,8 +1840,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Fuel savings', 'Commuters', '₹500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_moneyback_plus',
@@ -2035,8 +1861,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.33 }
     ],
     highlights: ['E-commerce spenders', 'Quarterly milestones', '₹500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_swiggy',
@@ -2058,8 +1882,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Heavy swiggy users', 'Direct cashback'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_tata_neu_plus',
@@ -2081,8 +1903,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Tata neu ecosystem', 'Upi payments', '₹499 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_irctc',
@@ -2104,8 +1924,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Frequent train travelers', 'Railway lounge', 'Lounge access included', '₹500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_millennia',
@@ -2127,8 +1945,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Versatile cashback', 'Popular online merchants', 'Lounge access included', '₹1,000 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_indigo_6e_rewards',
@@ -2150,8 +1966,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Indigo flyers', 'Airline rewards', '₹1,500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_marriott_bonvoy',
@@ -2173,8 +1987,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Hotel stays', 'Marriott loyalists', 'Lounge access included', '₹3,000 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_diners_privilege',
@@ -2196,8 +2008,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.3 }
     ],
     highlights: ['Lifestyle & dining', 'Milestone benefits', 'Lounge access included', '₹1,500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_shoppers_stop_black',
@@ -2219,8 +2029,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Apparel shopping', 'Shoppers stop loyalists', 'Lounge access included', '₹1,500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_regalia_gold',
@@ -2242,8 +2050,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.3 }
     ],
     highlights: ['Premium travel', 'Milestone flight tickets', 'Lounge access included', '₹2,500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_tata_neu_infinity',
@@ -2265,8 +2071,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Premium tata ecosystem', 'High upi rewards', 'Lounge access included', '₹1,499 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_indigo_6e_rewards_xl',
@@ -2288,8 +2092,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Frequent indigo flyers', 'Premium airline rewards', 'Lounge access included', '₹3,000 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_diners_club_black',
@@ -2311,8 +2113,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 3.3 }
     ],
     highlights: ['Luxury travel', 'Unlimited lounge access', 'Lounge access included', '₹10,000 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'hdfc_infinia',
@@ -2334,8 +2134,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 3.3 }
     ],
     highlights: ['Super premium', 'Highest reward multiplier', 'Lounge access included', '₹12,500 joining bonus'],
-    gradientFrom: '#003580',
-    gradientTo: '#005FA3',
   },
   {
     id: 'pnb_rupay_platinum',
@@ -2357,8 +2155,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Upi payments', 'Psu reliability', 'Basic everyday card'],
-    gradientFrom: '#1A237E',
-    gradientTo: '#283593',
   },
   {
     id: 'pnb_rupay_select',
@@ -2380,8 +2176,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Domestic lounge access', 'Rupay wellness benefits', 'Spa and gym access', 'Lounge access included'],
-    gradientFrom: '#1A237E',
-    gradientTo: '#283593',
   },
   {
     id: 'pnb_global_platinum',
@@ -2403,8 +2197,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Global acceptance', 'Offline spenders', 'Low maintenance'],
-    gradientFrom: '#1A237E',
-    gradientTo: '#283593',
   },
   {
     id: 'pnb_patanjali_platinum',
@@ -2426,8 +2218,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Patanjali store multipliers', 'Ayurvedic wellness', 'Upi payments'],
-    gradientFrom: '#1A237E',
-    gradientTo: '#283593',
   },
   {
     id: 'rbl_shoprite',
@@ -2449,8 +2239,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['5% value back on groceries', 'Grocery capped rewards', 'Entry level', '₹500 joining bonus'],
-    gradientFrom: '#4527A0',
-    gradientTo: '#5E35B1',
   },
   {
     id: 'rbl_play_bookmyshow',
@@ -2472,8 +2260,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Bookmyshow partner', 'Bogo movie tickets', 'Entertainment focus', '₹500 joining bonus'],
-    gradientFrom: '#4527A0',
-    gradientTo: '#5E35B1',
   },
   {
     id: 'rbl_bajaj_finserv_binge',
@@ -2495,8 +2281,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Bajaj emi network benefits', '12x points on online spends', 'Co-branded utility', 'Lounge access included'],
-    gradientFrom: '#4527A0',
-    gradientTo: '#5E35B1',
   },
   {
     id: 'rbl_platinum_delight',
@@ -2518,8 +2302,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Weekend reward multipliers', 'Milestone bonus points', 'Offline spenders', '₹1,000 joining bonus'],
-    gradientFrom: '#4527A0',
-    gradientTo: '#5E35B1',
   },
   {
     id: 'rbl_platinum_maxima',
@@ -2541,8 +2323,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2 }
     ],
     highlights: ['5x rewards on dining and utility', 'Milestone free movie tickets', 'Domestic lounge', 'Lounge access included'],
-    gradientFrom: '#4527A0',
-    gradientTo: '#5E35B1',
   },
   {
     id: 'rbl_world_safari',
@@ -2564,8 +2344,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Zero forex markup', 'Unlimited international lounge via priority pass', 'Travel milestones', 'Lounge access included'],
-    gradientFrom: '#4527A0',
-    gradientTo: '#5E35B1',
   },
   {
     id: 'rbl_icon',
@@ -2587,8 +2365,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Weekend dining multiplier', 'Golf access', 'Premium lifestyle concierge', 'Lounge access included'],
-    gradientFrom: '#4527A0',
-    gradientTo: '#5E35B1',
   },
   {
     id: 'sbi_simplyclick',
@@ -2610,8 +2386,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.25 }
     ],
     highlights: ['Entry level online card', '10x points on exclusive partners', 'Milestone e-vouchers', '₹500 joining bonus'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_simplysave',
@@ -2633,8 +2407,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['Offline spenders', '10x points on dining and grocery', 'Basic rewards', '₹500 joining bonus'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_cashback',
@@ -2655,8 +2427,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'travel', rate: 5 }
     ],
     highlights: ['5% flat online cashback', 'Capped at 5000 per month', 'No utility or rent cashback'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_bpcl_octane',
@@ -2679,8 +2449,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.25 }
     ],
     highlights: ['High fuel value back', 'Capped fuel rewards', 'Domestic lounge access', 'Lounge access included'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_pulse',
@@ -2702,8 +2470,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['Health and wellness focus', 'Fitpass membership', 'Pharmacy multipliers', 'Lounge access included'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_prime',
@@ -2725,8 +2491,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 2.5 }
     ],
     highlights: ['5% utility rewards capped', 'Milestone pizza vouchers', 'Mid-tier lifestyle', 'Lounge access included'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_irctc_premier',
@@ -2748,8 +2512,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.8 }
     ],
     highlights: ['10% value back on irctc ac tickets', 'Railway lounge access', 'Frequent train travelers', 'Lounge access included'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_elite',
@@ -2771,8 +2533,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Milestone-driven value', 'Free movie tickets', 'International lounge access', 'Lounge access included'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_air_india_signature',
@@ -2794,8 +2554,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.5 }
     ],
     highlights: ['High air india multipliers', 'Air india frequent flyer program', 'Milestone bonus miles', 'Lounge access included'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'sbi_aurum',
@@ -2817,8 +2575,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Invite only', 'Unlimited lounge access', 'Luxury benefits over raw cashback', 'Lounge access included'],
-    gradientFrom: '#003087',
-    gradientTo: '#0052CC',
   },
   {
     id: 'union_visa_platinum',
@@ -2840,8 +2596,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Basic psu card', 'Low maintenance', 'Offline spenders'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'union_uni_carbon',
@@ -2864,8 +2618,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Hpcl fuel savings', 'Upi payments', 'Capped fuel rewards', '₹500 joining bonus'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'union_rupay_select',
@@ -2887,8 +2639,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Domestic lounge access', 'Rupay select wellness benefits', 'Upi enabled', 'Lounge access included'],
-    gradientFrom: '#37474F',
-    gradientTo: '#546E7A',
   },
   {
     id: 'idfc_first_millennia',
@@ -2910,8 +2660,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Lifetime free', 'Online spenders', '10x milestone rewards', 'Lifetime free card'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'idfc_first_classic',
@@ -2933,8 +2681,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Lifetime free', 'Consistent base rate', 'Offline spenders', 'Lifetime free card'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'idfc_first_power_plus',
@@ -2957,8 +2703,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1.25 }
     ],
     highlights: ['Hpcl fuel savings', 'Fastag benefits', 'Upi payments', '₹500 joining bonus'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'idfc_first_swyp',
@@ -2980,8 +2724,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.5 }
     ],
     highlights: ['Gen-z focused', 'Emi merchant discounts', 'Milestone app rewards'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'idfc_first_wow',
@@ -3003,8 +2745,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Fd backed secured card', 'Zero forex markup', 'No cibil required', 'Lifetime free card'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'idfc_first_select',
@@ -3026,8 +2766,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Lifetime free', 'Domestic lounge', 'Bogo movie tickets', 'Lifetime free card'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'idfc_first_wealth',
@@ -3049,8 +2787,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 0.75 }
     ],
     highlights: ['Lifetime free premium', 'Low forex markup', 'Spa access', 'Lifetime free card'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'club_vistara_idfc_first',
@@ -3072,8 +2808,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       { category: 'utilities', rate: 1 }
     ],
     highlights: ['Vistara milestones', 'Premium economy tickets', 'Cancellation cover', 'Lounge access included'],
-    gradientFrom: '#1565C0',
-    gradientTo: '#1976D2',
   },
   {
     id: 'amex_smartearn',
@@ -3099,8 +2833,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'Low fee entry-level Amex card', 
       '₹500 milestone vouchers at ₹1.2L, ₹1.8L, and ₹2.4L'
     ],
-    gradientFrom: '#002663',
-    gradientTo: '#4B668F',
   },
   {
     id: 'amex_mrcc',
@@ -3126,8 +2858,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'Flexible Membership Rewards catalog', 
       '18K/24K Gold Collection redemptions'
     ],
-    gradientFrom: '#002663',
-    gradientTo: '#4B668F',
   },
   {
     id: 'amex_gold_charge',
@@ -3154,8 +2884,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'Rewards earned on Utility bill payments', 
       '5X points via Reward Multiplier portal'
     ],
-    gradientFrom: '#C6A451',
-    gradientTo: '#EAD38A',
   },
   {
     id: 'amex_platinum_travel',
@@ -3181,8 +2909,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       '2 complimentary domestic lounge visits per quarter', 
       'Zero rewards on fuel, insurance, and utilities'
     ],
-    gradientFrom: '#808285',
-    gradientTo: '#B1B3B6',
   },
   {
     id: 'amex_platinum_charge',
@@ -3208,8 +2934,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       '3X Membership Rewards points on international spends', 
       'Fine Hotels & Resorts benefits worth ₹44,300 per stay'
     ],
-    gradientFrom: '#808285',
-    gradientTo: '#B1B3B6',
   },
   {
     id: 'hsbc_live_plus',
@@ -3235,8 +2959,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'District by Zomato benefits including 10% off on dining and BOGO movie tickets', 
       '4 domestic lounge visits per year'
     ],
-    gradientFrom: '#DB0011',
-    gradientTo: '#FF4D4D',
   },
   {
     id: 'hsbc_visa_platinum',
@@ -3262,8 +2984,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'Up to 6X reward points on travel (hotels, flights, car rentals)', 
       'Savings on dining and movies via District by Zomato'
     ],
-    gradientFrom: '#DB0011',
-    gradientTo: '#FF4D4D',
   },
   {
     id: 'hsbc_rupay_platinum',
@@ -3289,8 +3009,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       '2 reward points per ₹150 spent', 
       'Miles conversion available against 15+ partners'
     ],
-    gradientFrom: '#DB0011',
-    gradientTo: '#FF4D4D',
   },
   {
     id: 'hsbc_travelone',
@@ -3316,8 +3034,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'Up to 15% off on top travel platforms', 
       'Travel focused reward multiplier'
     ],
-    gradientFrom: '#1E1E1E',
-    gradientTo: '#434343',
   },
   {
     id: 'hsbc_premier_mastercard',
@@ -3343,8 +3059,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'Up to 12X rewards on hotels & 6X on flights', 
       '3% reward rate across all generic spends'
     ],
-    gradientFrom: '#000000',
-    gradientTo: '#2C2C2C',
   },
   {
     id: 'hsbc_taj_premium',
@@ -3370,8 +3084,6 @@ export const MASTER_CARD_DATASET: FinixCard[] = [
       'Up to 5 reward points on every ₹100 spent at Taj', 
       'Unlimited airport lounge access in India and abroad'
     ],
-    gradientFrom: '#8E7345',
-    gradientTo: '#BFA873',
   }
 ];
 

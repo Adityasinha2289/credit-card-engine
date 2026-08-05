@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../data/cardDataset';
+import { getCardTheme } from '../config/cardThemeRegistry';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPERS
@@ -121,7 +122,7 @@ function CardPicker({ onSelect, onClose, excludeIds }: {
                 className="w-full p-3 rounded-2xl flex items-center gap-3 border border-white/[0.03] hover:border-border-emerald hover:bg-brand-emerald/[0.03] text-left transition-all group"
               >
                 <div className="w-10 h-7 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
-                  style={{ background: `linear-gradient(135deg, ${c.gradientFrom}, ${c.gradientTo})` }}>
+                  style={{ background: `linear-gradient(135deg, ${getCardTheme(c.id).gradientFrom}, ${getCardTheme(c.id).gradientTo})` }}>
                   <span className="text-[7px] font-black text-white/80 uppercase tracking-wide truncate px-1">{c.bank.slice(0, 4)}</span>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -256,7 +257,7 @@ export function CardComparisonPanel() {
                 className="relative rounded-2xl border border-brand-emerald/15 bg-brand-emerald/[0.03] flex flex-col gap-3 p-4 group overflow-hidden"
               >
                 <div className="w-full h-20 rounded-xl overflow-hidden relative shadow-lg"
-                  style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}>
+                  style={{ background: `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom}, ${getCardTheme(card.id).gradientTo})` }}>
                   <div className="absolute inset-0 flex flex-col items-start justify-between p-3">
                     <p className="text-[9px] font-black text-white/60 uppercase tracking-widest">{card.bank}</p>
                     <p className="text-[11px] font-bold text-white leading-tight truncate w-full">{card.name}</p>

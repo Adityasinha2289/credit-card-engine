@@ -6,6 +6,7 @@ import { CARD_DATASET } from '../../finix/data/cardDataset';
 import { useDashboardStore } from '../store/dashboardStore';
 import { BankLogo } from '../../cards/components/BankLogo';
 import { analytics } from '../../../lib/analytics';
+import { getCardTheme } from '../../finix/config/cardThemeRegistry';
 
 export default function AddCardModal({
   onClose,
@@ -135,7 +136,7 @@ export default function AddCardModal({
             {/* Visual Card Preview */}
             <div
               className="h-28 rounded-2xl p-4 flex flex-col justify-between text-white relative overflow-hidden"
-              style={{ background: `linear-gradient(135deg, ${selectedTemplate.gradientFrom}, ${selectedTemplate.gradientTo})` }}
+              style={{ background: `linear-gradient(135deg, ${getCardTheme(selectedTemplate.id).gradientFrom}, ${getCardTheme(selectedTemplate.id).gradientTo})` }}
             >
               <div className="flex justify-between items-start">
                 <p className="text-[10px] font-bold uppercase tracking-wider">{selectedTemplate.name}</p>
@@ -267,8 +268,8 @@ export default function AddCardModal({
                   availableCredit: limitNum * 100,
                   creditLimit: limitNum * 100,
                   label: selectedTemplate.name,
-                  gradientFrom: selectedTemplate.gradientFrom,
-                  gradientTo: selectedTemplate.gradientTo,
+                  gradientFrom: getCardTheme(selectedTemplate.id).gradientFrom,
+                  gradientTo: getCardTheme(selectedTemplate.id).gradientTo,
                 });
                 analytics.track('Card Added', {
                   bank: selectedTemplate.bank,

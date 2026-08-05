@@ -54,11 +54,12 @@ export interface FinixCard {
   /** Key selling points */
   highlights: string[];
   /** Gradient for card face */
-  gradientFrom: string;
-  gradientTo: string;
+  gradientFrom?: string;
+  gradientTo?: string;
   /** Overall match score — computed by recommendEngine */
   matchScore?: number;
 }
 
-// Re-export the master dataset (133 cards from the credit-card-engine repo)
-export { MASTER_CARD_DATASET as CARD_DATASET } from './masterDataset';
+import { CardRepository } from './repository/CardRepository';
+
+export const CARD_DATASET: FinixCard[] = CardRepository.getInstance().getCards();

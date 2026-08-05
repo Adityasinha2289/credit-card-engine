@@ -178,6 +178,7 @@ const BILL_STATUS_LABELS: Record<BillStatus, string> = {
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { X, Loader2, ShieldCheck, Check } from 'lucide-react';
+import { getCardTheme } from '../config/cardThemeRegistry';
 
 interface PayBillModalProps {
   bill: Bill;
@@ -267,7 +268,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
             {card && (
               <div
                 className="h-24 rounded-2xl p-4 flex flex-col justify-between text-white relative overflow-hidden"
-                style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}
+                style={{ background: `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom}, ${getCardTheme(card.id).gradientTo})` }}
               >
                 <div className="flex justify-between items-start">
                   <p className="text-[10px] font-bold uppercase tracking-wider">{card.label || 'Credit Card'}</p>

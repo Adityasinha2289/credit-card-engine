@@ -10,6 +10,7 @@ import { Wifi } from 'lucide-react';
 
 import { cn, formatCardNumber, clamp, mapRange } from '../../../lib/utils';
 import type { CardData } from '../types/card.types';
+import { getCardTheme } from '../../finix/config/cardThemeRegistry';
 import {
   VisaLogo,
   MastercardLogo,
@@ -123,9 +124,9 @@ export function ActiveCard({ card, revealed = false, className }: ActiveCardProp
   const NetworkLogo = NetworkLogoMap[card.network as keyof typeof NetworkLogoMap] || VisaLogo;
 
   const gradientStyle = {
-    background: card.gradientVia
-      ? `linear-gradient(135deg, ${card.gradientFrom} 0%, ${card.gradientVia} 50%, ${card.gradientTo} 100%)`
-      : `linear-gradient(135deg, ${card.gradientFrom} 0%, ${card.gradientTo} 100%)`,
+    background: (null as any)
+      ? `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom} 0%, ${(null as any)} 50%, ${getCardTheme(card.id).gradientTo} 100%)`
+      : `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom} 0%, ${getCardTheme(card.id).gradientTo} 100%)`,
   };
 
   const availablePct = card.creditLimit > 0
@@ -149,7 +150,7 @@ export function ActiveCard({ card, revealed = false, className }: ActiveCardProp
         aria-hidden="true"
         className="absolute inset-0 rounded-3xl pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 70% 55% at 50% 55%, ${card.gradientFrom}55, transparent 75%)`,
+          background: `radial-gradient(ellipse 70% 55% at 50% 55%, ${getCardTheme(card.id).gradientFrom}55, transparent 75%)`,
           opacity: glowOp,
           filter: 'blur(28px)',
           transform: 'translateY(24px) scale(0.92)',
@@ -203,8 +204,8 @@ export function ActiveCard({ card, revealed = false, className }: ActiveCardProp
           transition={{ duration: 3, ease: 'easeInOut' }}
           style={{
             backgroundSize: '200% 200%',
-            backgroundImage: `radial-gradient(ellipse 60% 50% at 30% 40%, ${card.gradientFrom}44, transparent 60%),
-                              radial-gradient(ellipse 50% 60% at 70% 60%, ${card.gradientTo}33, transparent 55%)`,
+            backgroundImage: `radial-gradient(ellipse 60% 50% at 30% 40%, ${getCardTheme(card.id).gradientFrom}44, transparent 60%),
+                              radial-gradient(ellipse 50% 60% at 70% 60%, ${getCardTheme(card.id).gradientTo}33, transparent 55%)`,
             mixBlendMode: 'soft-light',
           }}
         />

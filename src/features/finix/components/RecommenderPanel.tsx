@@ -30,6 +30,7 @@ import {
   type RecommendedCard,
 } from '../lib/recommendEngine';
 import type { SpendCategory } from '../data/cardDataset';
+import { getCardTheme } from '../config/cardThemeRegistry';
 
 function formatINR(val: number) {
   if (val >= 10000000) {
@@ -130,7 +131,7 @@ function ResultCard({
         <div
           className="w-12 h-9 rounded-xl flex-shrink-0 shadow-sm"
           style={{
-            background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})`,
+            background: `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom}, ${getCardTheme(card.id).gradientTo})`,
           }}
         />
         <div className="flex-1 min-w-0">

@@ -5,6 +5,7 @@ import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { CARD_DATASET, type SpendCategory } from '../data/cardDataset';
 import type { CardData } from '../../cards/types/card.types';
+import { getCardTheme } from '../config/cardThemeRegistry';
 
 function getRewardRateForCard(cardId: string, category: SpendCategory): number {
   if (cardId === 'card-001') {

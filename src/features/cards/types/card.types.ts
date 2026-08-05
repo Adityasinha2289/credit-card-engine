@@ -23,7 +23,7 @@ export interface CardData {
   /** Optional custom label */
   label?: string;
   /** Gradient stops for the card face — CSS color strings */
-  gradientFrom: string;
+  gradientFrom?: string;
   gradientVia?: string;
-  gradientTo: string;
+  gradientTo?: string;
 }

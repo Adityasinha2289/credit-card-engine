@@ -10,6 +10,7 @@ import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
 import { CARD_DATASET } from '../../finix/data/cardDataset';
 import { analytics } from '../../../lib/analytics';
+import { getCardTheme } from '../../finix/config/cardThemeRegistry';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTS
@@ -342,7 +343,7 @@ export function MonthlyReport() {
                 data.cardBreakdown.map(({ cardId, label, total, dc }) => (
                   <div key={cardId} className="flex items-center gap-3">
                     <div className="w-8 h-5 rounded-md flex-shrink-0"
-                      style={{ background: dc ? `linear-gradient(135deg, ${dc.gradientFrom}, ${dc.gradientTo})` : '#333' }} />
+                      style={{ background: dc ? `linear-gradient(135deg, ${getCardTheme(dc.id).gradientFrom}, ${getCardTheme(dc.id).gradientTo})` : '#333' }} />
                     <p className="text-xs font-semibold text-text-primary truncate flex-1">{label}</p>
                     <p className="text-xs font-bold text-text-primary tabular-nums">{formatINRFull(total)}</p>
                   </div>

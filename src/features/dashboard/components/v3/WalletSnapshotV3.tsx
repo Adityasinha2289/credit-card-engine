@@ -5,6 +5,7 @@ import type { FinixCard } from '../../../../features/finix/data/cardDataset';
 import type { CreditAccountData } from '../../types/dashboard.types';
 import { formatCents } from '../../../../lib/utils';
 import { EmptyWalletGuidance } from './EmptyWalletGuidance';
+import { getCardTheme } from '../../../finix/config/cardThemeRegistry';
 
 interface WalletSnapshotV3Props {
   userCards: FinixCard[];
@@ -86,7 +87,7 @@ export function WalletSnapshotV3({
               ) : (
                 <div 
                   className="w-full h-[190px] rounded-2xl opacity-50 border border-border-subtle"
-                  style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}
+                  style={{ background: `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom}, ${getCardTheme(card.id).gradientTo})` }}
                 />
               )}
             </motion.div>

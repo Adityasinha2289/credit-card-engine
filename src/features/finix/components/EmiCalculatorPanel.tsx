@@ -8,6 +8,7 @@ import {
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { CARD_DATASET } from '../data/cardDataset';
+import { getCardTheme } from '../config/cardThemeRegistry';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPERS
@@ -391,7 +392,7 @@ export function EmiCalculatorPanel() {
                   {/* Card face chip */}
                   <div
                     className="w-12 h-8 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden shadow-sm"
-                    style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}
+                    style={{ background: `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom}, ${getCardTheme(card.id).gradientTo})` }}
                   >
                     <span className="text-[7px] font-black text-white/80 uppercase tracking-wide truncate px-1">
                       {(bank || 'CARD').slice(0, 4)}

@@ -4,6 +4,7 @@ import { CARD_DATASET } from '../../finix/data/cardDataset';
 import { BankLogo } from './BankLogo';
 import { analytics } from '../../../lib/analytics';
 import { useEffect } from 'react';
+import { getCardTheme } from '../../finix/config/cardThemeRegistry';
 
 interface CardBenefitsSheetProps {
   cardId: string | null;
@@ -109,7 +110,7 @@ export function CardBenefitsSheet({ cardId, onClose }: CardBenefitsSheetProps) {
               <div
                 className="h-32 w-full rounded-2xl p-5 flex flex-col justify-between text-white relative overflow-hidden shadow-lg flex-shrink-0"
                 style={{
-                  background: `linear-gradient(135deg, ${cardData.gradientFrom}, ${cardData.gradientTo})`,
+                  background: `linear-gradient(135deg, ${getCardTheme(cardData.id).gradientFrom}, ${getCardTheme(cardData.id).gradientTo})`,
                 }}
               >
                 {/* Frosted shine element */}

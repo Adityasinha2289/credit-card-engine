@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, LayoutGroup } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import type { CardData } from '../../types/dashboard.types';
+import { getCardTheme } from '../../../finix/config/cardThemeRegistry';
 
 
 interface AICuratedWalletProps {
@@ -50,7 +51,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
               layoutId={`card-container-${activeCardId}`}
               className="relative w-full max-w-2xl aspect-[1.58] md:aspect-[1.8] rounded-[2rem] p-6 md:p-10 flex flex-col justify-between border border-border-subtle overflow-hidden cursor-pointer group shadow-2xl"
               style={{
-                background: `linear-gradient(135deg, ${activeCard.gradientFrom}, ${activeCard.gradientTo})`,
+                background: `linear-gradient(135deg, ${getCardTheme(activeCard.id).gradientFrom}, ${getCardTheme(activeCard.id).gradientTo})`,
               }}
               whileHover={{ 
                 y: -5,
@@ -170,7 +171,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
                   onMouseEnter={() => setActiveCardId(card.id)}
                   className="snap-start shrink-0 w-[180px] md:w-[220px] aspect-[1.58] rounded-2xl p-4 flex flex-col justify-between border border-border-subtle cursor-pointer overflow-hidden shadow-lg"
                   style={{
-                    background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})`,
+                    background: `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom}, ${getCardTheme(card.id).gradientTo})`,
                   }}
                   whileHover={{ y: -4, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)' }}
                 >

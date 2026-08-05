@@ -8,6 +8,7 @@ import {
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
 import { CARD_DATASET } from '../../finix/data/cardDataset';
+import { getCardTheme } from '../../finix/config/cardThemeRegistry';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPERS
@@ -193,7 +194,7 @@ function ScorecardCanvas({ captureRef }: { captureRef: React.RefObject<HTMLDivEl
                 }}>
                   <div style={{
                     width: 32, height: 22, borderRadius: 6,
-                    background: dc ? `linear-gradient(135deg, ${dc.gradientFrom}, ${dc.gradientTo})` : '#333',
+                    background: dc ? `linear-gradient(135deg, ${getCardTheme(dc.id).gradientFrom}, ${getCardTheme(dc.id).gradientTo})` : '#333',
                     flexShrink: 0,
                   }} />
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#f8f8ff', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{card.label}</span>

@@ -1,0 +1,142 @@
+{
+  "id": {
+    "type": "string",
+    "nullable": false,
+    "required": true
+  },
+  "card_title": {
+    "type": "string",
+    "nullable": false,
+    "required": true
+  },
+  "overview": {
+    "type": [],
+    "nullable": true,
+    "required": true
+  },
+  "best_suited_for": {
+    "type": [
+      "array[string]",
+      "array"
+    ],
+    "nullable": false,
+    "required": true
+  },
+  "fees": {
+    "type": "object",
+    "nullable": false,
+    "required": true
+  },
+  "source_id": {
+    "type": "string",
+    "nullable": false,
+    "required": true
+  },
+  "extraction_timestamp": {
+    "type": "string",
+    "nullable": false,
+    "required": true
+  },
+  "schema_version": {
+    "type": "string",
+    "nullable": false,
+    "required": true
+  },
+  "rewards": {
+    "type": [
+      "array",
+      "array[object]"
+    ],
+    "nullable": false,
+    "required": true
+  },
+  "benefits": {
+    "type": "array",
+    "nullable": false,
+    "required": true
+  },
+  "lounge": {
+    "type": [
+      "array",
+      "array[object]"
+    ],
+    "nullable": false,
+    "required": true
+  },
+  "milestones": {
+    "type": [
+      "array",
+      "array[object]"
+    ],
+    "nullable": false,
+    "required": true
+  },
+  "redemption": {
+    "type": "array[object]",
+    "nullable": false,
+    "required": true
+  },
+  "eligibility": {
+    "type": "array",
+    "nullable": false,
+    "required": true
+  },
+  "issuer": {
+    "type": "string",
+    "nullable": false,
+    "required": true
+  },
+  "network": {
+    "type": "string",
+    "nullable": true,
+    "required": true
+  },
+  "card_categories": {
+    "type": [
+      "array[string]",
+      "array"
+    ],
+    "nullable": false,
+    "required": true
+  },
+  "minimum_income": {
+    "type": "integer",
+    "nullable": true,
+    "required": true
+  },
+  "minimum_income_type": {
+    "type": [],
+    "nullable": true,
+    "required": true
+  },
+  "minimum_cibil": {
+    "type": "integer",
+    "nullable": true,
+    "required": true
+  },
+  "card_tier": {
+    "type": "string",
+    "nullable": true,
+    "required": true
+  },
+  "data_confidence": {
+    "type": "object",
+    "nullable": false,
+    "required": true
+  },
+  "annual_fee": {
+    "type": "integer",
+    "nullable": false,
+    "required": true
+  },
+  "fee_waiver_spend": {
+    "type": "integer",
+    "nullable": false,
+    "required": true
+  },
+  "welcome_bonus": {
+    "type": "string",
+    "nullable": false,
+    "required": true
+  }
+}

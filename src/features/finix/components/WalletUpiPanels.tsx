@@ -9,6 +9,7 @@ import { BankLogo } from '../../cards/components/BankLogo';
 import { POPULAR_MERCHANTS, detectCategory } from '../data/merchantMap';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import type { CardData } from '../../cards/types/card.types';
+import { getCardTheme } from '../config/cardThemeRegistry';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPERS
@@ -305,7 +306,7 @@ function WalletOptimizerTab() {
                   {/* Visual Card Preview */}
                   <div
                     className="h-28 rounded-2xl p-4 flex flex-col justify-between text-white relative overflow-hidden"
-                    style={{ background: `linear-gradient(135deg, ${selectedTemplate.gradientFrom}, ${selectedTemplate.gradientTo})` }}
+                    style={{ background: `linear-gradient(135deg, ${getCardTheme(selectedTemplate.id).gradientFrom}, ${getCardTheme(selectedTemplate.id).gradientTo})` }}
                   >
                     <div className="flex justify-between items-start">
                       <p className="text-[10px] font-bold uppercase tracking-wider">{selectedTemplate.name}</p>
@@ -437,8 +438,8 @@ function WalletOptimizerTab() {
                         availableCredit: limitNum * 100,
                         creditLimit: limitNum * 100,
                         label: selectedTemplate.name,
-                        gradientFrom: selectedTemplate.gradientFrom,
-                        gradientTo: selectedTemplate.gradientTo,
+                        gradientFrom: getCardTheme(selectedTemplate.id).gradientFrom,
+                        gradientTo: getCardTheme(selectedTemplate.id).gradientTo,
                       });
                       handleCloseModal();
                     }}
@@ -506,8 +507,8 @@ function UpiSimulatorTab() {
       rewardRate: rate,
       rewardPoints,
       rewardValue: rewardPoints,
-      gradientFrom: card.gradientFrom,
-      gradientTo: card.gradientTo,
+      gradientFrom: getCardTheme(card.id).gradientFrom,
+      gradientTo: getCardTheme(card.id).gradientTo,
     });
     setPaid(false);
   }
@@ -586,7 +587,7 @@ function UpiSimulatorTab() {
             <div className="flex items-center gap-3">
               <div
                 className="w-14 h-10 rounded-xl shadow-sm flex-shrink-0"
-                style={{ background: `linear-gradient(135deg, ${result.gradientFrom}, ${result.gradientTo})` }}
+                style={{ background: `linear-gradient(135deg, ${getCardTheme(result.id).gradientFrom}, ${getCardTheme(result.id).gradientTo})` }}
               />
               <div className="flex-1">
                 <p className="text-xs text-text-muted uppercase tracking-widest">Best card for {result.merchant}</p>

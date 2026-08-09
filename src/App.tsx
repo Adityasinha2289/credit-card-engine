@@ -33,7 +33,9 @@ const PartnerDetailPage = lazy(() => import('./pages/app/lifestyle/PartnerDetail
 // Admin (Phase 6.1)
 const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
 const PartnerManagement = lazy(() => import('./pages/admin/PartnerManagement'));
+const PartnerForm = lazy(() => import('./pages/admin/PartnerForm'));
 const EntityManagement = lazy(() => import('./pages/admin/EntityManagement'));
+const EntityForm = lazy(() => import('./pages/admin/EntityForm'));
 const OfferManagement = lazy(() => import('./pages/admin/OfferManagement'));
 const AffiliateManagement = lazy(() => import('./pages/admin/AffiliateManagement'));
 
@@ -151,7 +153,9 @@ export default function App() {
         }>
           <Route index element={<AdminOverview />} />
           <Route path="partners" element={<PartnerManagement />} />
+          <Route path="partners/:id" element={<PartnerForm />} />
           <Route path="entities" element={<EntityManagement />} />
+          <Route path="entities/:id" element={<EntityForm />} />
           <Route path="offers" element={<OfferManagement />} />
           <Route path="affiliate" element={<AffiliateManagement />} />
         </Route>

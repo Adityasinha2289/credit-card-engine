@@ -101,9 +101,13 @@
   }
 
   .input-premium {
-    @apply bg-surface-elevated border border-border-subtle text-text-primary rounded-xl outline-none focus-visible:border-brand-emerald focus-visible:ring-1 focus-visible:ring-brand-emerald transition-all placeholder:text-text-tertiary;
+    @apply bg-surface-elevated border border-border-subtle text-text-primary rounded-xl outline-none focus-visible:border-brand-emerald focus-visible:ring-1 focus-visible:ring-brand-emerald transition-all;
     -webkit-appearance: none;
     appearance: none;
+  }
+  
+  .input-premium::placeholder {
+    color: #737C77;
   }
 
   /* Legacy components mapping to V3 (temporarily maintained until removed) */

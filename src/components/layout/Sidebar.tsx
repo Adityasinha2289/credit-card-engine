@@ -53,8 +53,8 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   return (
     <motion.aside
       className={cn(
-        'fixed top-4 left-4 h-[calc(100vh-32px)] z-40 flex flex-col',
-        'glass-panel',
+        'fixed top-0 left-0 h-screen z-40 flex flex-col',
+        'bg-obsidian border-r border-border-subtle',
         'transition-[width] duration-300 ease-ag-smooth',
       )}
       style={{ width: collapsed ? 72 : 272 }}
@@ -65,7 +65,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         'flex items-center gap-3 px-5 h-[72px] flex-shrink-0',
         'border-b border-border-subtle ',
       )}>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(4,59,39,0.3)] flex-shrink-0 overflow-hidden bg-black">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-black border border-border-subtle">
           <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />
         </div>
         <AnimatePresence>
@@ -112,25 +112,24 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
               aria-current={isActive ? 'page' : undefined}
               onClick={() => navigate(item.path)}
               className={cn(
-                'relative flex items-center gap-3 rounded-xl transition-all duration-200',
+                'relative flex items-center gap-3 rounded-lg transition-all duration-200',
                 collapsed ? 'px-0 py-3 justify-center' : 'px-3 py-2.5',
                 isActive
-                  ? 'text-brand-emerald'
-                  : 'text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.03]',
+                  ? 'text-text-primary'
+                  : 'text-text-muted hover:text-text-secondary hover:bg-surface-secondary',
               )}
             >
-              {/* Active background indicator */}
               {isActive && (
                 <motion.div
                   layoutId="activeNav"
-                  className="absolute inset-0 rounded-xl bg-brand-50 dark:bg-brand-emerald-muted border-y border-r border-brand-200/50 dark:border-border-emerald border-l-[3px] border-l-brand-500 dark:border-l-brand-400"
+                  className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r bg-brand-emerald"
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />
               )}
 
               <item.Icon
                 size={20}
-                strokeWidth={isActive ? 2.2 : 1.7}
+                strokeWidth={isActive ? 2 : 1.5}
                 className={cn(
                   'relative z-10 flex-shrink-0 transition-colors duration-200',
                   isActive ? 'text-brand-emerald' : '',
@@ -148,13 +147,13 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                   >
                     <p className={cn(
                       'text-sm font-semibold whitespace-nowrap',
-                      isActive ? 'text-brand-600 dark:text-brand-emerald' : '',
+                      isActive ? 'text-text-primary' : '',
                     )}>
                       {item.label}
                     </p>
                     <p className={cn(
                       'text-[10px] text-text-muted whitespace-nowrap',
-                      isActive ? 'text-brand-400 dark:text-brand-600' : '',
+                      isActive ? 'text-text-secondary' : '',
                     )}>
                       {item.description}
                     </p>
@@ -173,16 +172,15 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         'flex flex-col gap-3 px-3 py-4 border-t border-border-subtle ',
         'flex-shrink-0',
       )}>
-        {/* User card */}
         <div 
           onClick={() => navigate('/app/profile')}
           className={cn(
-            'flex items-center gap-3 rounded-xl cursor-pointer group',
-            'transition-all duration-200 hover:bg-surface-secondary dark:hover:bg-white/[0.03]',
+            'flex items-center gap-3 rounded-lg cursor-pointer group',
+            'transition-all duration-200 hover:bg-surface-secondary',
             collapsed ? 'px-0 py-2 justify-center' : 'px-3 py-2.5',
           )}
         >
-          <div className="w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0 ring-2 ring-brand-emerald/20 group-hover:ring-brand-emerald/40 transition-all duration-200">
+          <div className="w-8 h-8 rounded-full bg-surface-elevated overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-border-subtle group-hover:ring-brand-emerald/40 transition-all duration-200">
             <img
               src={profile?.avatar ||"https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
               alt="Profile"
@@ -228,7 +226,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
           className={cn(
             'flex items-center justify-center w-full rounded-lg py-2',
             'text-text-muted hover:text-text-secondary',
-            'hover:bg-surface-secondary dark:hover:bg-white/[0.03]',
+            'hover:bg-surface-secondary',
             'transition-all duration-200',
           )}
         >

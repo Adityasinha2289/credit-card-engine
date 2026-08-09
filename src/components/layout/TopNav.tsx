@@ -56,7 +56,7 @@ export function TopNav({ isDark: _isDark, onToggleTheme: _onToggleTheme }: TopNa
       className={cn(
         'sticky top-0 z-30 flex items-center justify-between gap-4',
         'px-6 lg:px-8 h-16',
-        'topnav-glass',
+        'bg-obsidian/90 backdrop-blur-md border-b border-border-subtle',
       )}
     >
       {/* ── Page Title ──────────────────────────────────────────────────── */}
@@ -105,8 +105,8 @@ export function TopNav({ isDark: _isDark, onToggleTheme: _onToggleTheme }: TopNa
             className={cn(
               'relative w-9 h-9 rounded-full flex items-center justify-center',
               'text-text-muted hover:text-text-secondary',
-              'hover:bg-surface-secondary/70 dark:hover:bg-white/[0.04]',
-              showNotifications && 'bg-surface-secondary/70 dark:bg-white/[0.04] text-text-primary',
+              'hover:bg-surface-elevated',
+              showNotifications && 'bg-surface-elevated text-text-primary',
               'transition-colors duration-200',
             )}
             aria-label="Notifications"
@@ -123,15 +123,15 @@ export function TopNav({ isDark: _isDark, onToggleTheme: _onToggleTheme }: TopNa
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
                 transition={{ duration: 0.15, ease:"easeOut" }}
-                className="absolute right-0 top-full mt-2 w-80 panel-glass bg-surface-primary/95 dark:bg-surface-elevated/95 rounded-2xl shadow-ag-modal border border-border-subtle  overflow-hidden z-50"
+                className="absolute right-0 top-full mt-2 w-80 bg-surface-elevated rounded-2xl shadow-ag-modal border border-border-subtle overflow-hidden z-50"
               >
-                <div className="p-4 border-b border-border-subtle  flex justify-between items-center bg-surface-primary/50 dark:bg-black/10">
+                <div className="p-4 border-b border-border-subtle flex justify-between items-center bg-surface-primary">
                   <h3 className="font-bold text-text-primary text-sm">Notifications</h3>
                   <button className="text-xs font-semibold text-brand-emerald hover:text-brand-600">Mark all as read</button>
                 </div>
                 <div className="flex flex-col max-h-[300px] overflow-y-auto">
                   {NOTIFICATIONS.map(notif => (
-                    <button key={notif.id} className="text-left p-4 hover:bg-surface-primary dark:hover:bg-white/[0.02] transition-colors border-b border-border-subtle  last:border-0 relative">
+                    <button key={notif.id} className="text-left p-4 hover:bg-surface-secondary transition-colors border-b border-border-subtle last:border-0 relative">
                       {notif.unread && <span className="absolute left-3 top-5 w-1.5 h-1.5 rounded-full bg-brand-emerald" />}
                       <div className={cn("pl-4", !notif.unread &&"opacity-70")}>
                         <h4 className="text-sm font-bold text-text-primary mb-1">{notif.title}</h4>

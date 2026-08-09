@@ -59,7 +59,7 @@ export function SmartSpendCard({ title, originalPrice, recommendation, optimizat
   };
 
   return (
-    <div className={cn("glass-panel overflow-hidden flex flex-col group relative transition-all duration-300 hover:border-brand-emerald/30", className)}>
+    <div className={cn("surface-card overflow-hidden flex flex-col group relative", className)}>
       {isNavigating ? (
         <div className="absolute inset-0 z-20 bg-obsidian/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
           <motion.div
@@ -74,7 +74,7 @@ export function SmartSpendCard({ title, originalPrice, recommendation, optimizat
       ) : null}
 
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border-subtle bg-surface-elevated flex items-center justify-between">
+      <div className="px-5 py-4 border-b border-border-subtle bg-surface-primary flex items-center justify-between">
         <h3 className="font-semibold text-text-primary text-lg tracking-tight group-hover:text-brand-emerald transition-colors">
           {title}
         </h3>
@@ -106,10 +106,10 @@ export function SmartSpendCard({ title, originalPrice, recommendation, optimizat
         <div>
           <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Effective Cost</p>
           <div className="flex items-end gap-3">
-            <p className="text-3xl font-display font-bold text-text-primary tracking-tight">
+            <p className="text-3xl font-financial font-bold text-text-primary tracking-tight">
               ₹{effectiveCost.toLocaleString('en-IN')}
             </p>
-            <div className="bg-brand-emerald/10 text-brand-emerald px-2 py-1 rounded text-xs font-bold mb-1 border border-brand-emerald/20 flex items-center gap-1">
+            <div className="text-brand-emerald px-2 py-1 rounded text-xs font-bold mb-1 border border-border-emerald flex items-center gap-1 bg-brand-emerald/10">
               <TrendingDown size={12} />
               YOU SAVE ₹{totalSavings.toLocaleString('en-IN')}
             </div>
@@ -147,7 +147,7 @@ export function SmartSpendCard({ title, originalPrice, recommendation, optimizat
         <div className="p-4 pt-0">
           <button 
             onClick={handleAction}
-            className="w-full flex items-center justify-center gap-2 bg-text-primary text-obsidian hover:bg-white py-3 rounded-xl font-bold transition-colors shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+            className="w-full flex items-center justify-center gap-2 bg-brand-emerald text-obsidian hover:bg-brand-600 py-3 rounded-xl font-bold transition-colors shadow-ag-glow-primary hover:shadow-ag-glow-primary"
           >
             <span>Shop with RenoCred</span>
             <ArrowRight size={16} />

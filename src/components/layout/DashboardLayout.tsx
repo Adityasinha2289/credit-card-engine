@@ -101,7 +101,7 @@ export function DashboardLayout({
       >
         {/* Top Nav */}
         {isMobile ? (
-          <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 h-14 topnav-glass">
+          <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 h-14 bg-surface-shell border-b border-[#1B1F1D]">
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="w-9 h-9 rounded-full flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-secondary/70 dark:hover:bg-white/[0.04] transition-all"

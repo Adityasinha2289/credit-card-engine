@@ -110,14 +110,6 @@
   .glass-panel, .panel-glass, .glass-surface {
     @apply surface-card;
   }
-  
-  .sidebar-glass {
-    @apply bg-surface-shell border-r border-[#1B1F1D];
-  }
-
-  .topnav-glass {
-    @apply bg-surface-shell border-b border-[#1B1F1D];
-  }
 }
 
 @layer utilities {

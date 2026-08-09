@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { SmartSpendCard } from '../../../components/shared/SmartSpendCard';
 import { MOCK_PRODUCTS } from '../../../features/lifestyle/mock/products';
 import { useNavigate } from 'react-router-dom';
+import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
+import { adaptUserCardsToPaymentMethods } from '../../../features/optimization/adapters/cardAdapter';
+import { OptimizationEngine } from '../../../features/optimization/engine/optimizationEngine';
+import { MOCK_OFFERS } from '../../../features/optimization/mock/offers';
+import type { SpendingOpportunity } from '../../../features/optimization/types';
 
 export default function ShopPage() {
   const [query, setQuery] = useState('Black sneakers');
   const navigate = useNavigate();
+  const userCards = useDashboardStore(state => state.userCards);
 
   // Filter out non-retail products (simulated search)
   const results = MOCK_PRODUCTS.filter(p => p.name.toLowerCase().includes('nike'));
+
+  const paymentMethods = useMemo(() => adaptUserCardsToPaymentMethods(userCards), [userCards]);
 
   return (
     <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-screen pt-8">
@@ -44,15 +52,35 @@ export default function ShopPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((product) => (
-            <SmartSpendCard
-              key={product.id}
-              title={product.name}
-              originalPrice={product.originalPrice}
-              recommendation={product.recommendation}
-              onViewDeal={() => navigate(`/app/lifestyle/partner/${product.partnerId}`)}
-            />
-          ))}
+          {results.map((product) => {
+            const opportunity: SpendingOpportunity = {
+              id: `opp-${product.id}`,
+              partnerId: product.partnerId,
+              category: 'shopping',
+              baseAmount: product.originalPrice,
+              currency: 'INR',
+            };
+
+            let optimizationResult;
+            try {
+              if (paymentMethods.length > 0) {
+                optimizationResult = OptimizationEngine.optimizeSpending(opportunity, paymentMethods, MOCK_OFFERS);
+              }
+            } catch (err) {
+              console.error("Optimization error", err);
+            }
+
+            return (
+              <SmartSpendCard
+                key={product.id}
+                title={product.name}
+                originalPrice={product.originalPrice}
+                optimizationResult={optimizationResult}
+                recommendation={product.recommendation}
+                onViewDeal={() => navigate(`/app/lifestyle/partner/${product.partnerId}`)}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

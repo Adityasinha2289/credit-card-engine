@@ -2,11 +2,34 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, Users, Heart, ArrowRight, Utensils, Music, Car } from 'lucide-react';
 import { MOCK_DATE_ITINERARY } from '../../../features/lifestyle/mock/datePlans';
+import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
+import { adaptUserCardsToPaymentMethods } from '../../../features/optimization/adapters/cardAdapter';
+import { OptimizationOrchestrator } from '../../../features/optimization/orchestrator';
+import { MOCK_OFFERS } from '../../../features/optimization/mock/offers';
+import type { SpendingOpportunity } from '../../../features/optimization/types';
+import { useMemo } from 'react';
 
 export default function PlanDatePage() {
   const [step, setStep] = useState<'input' | 'itinerary'>('input');
   
   const itinerary = MOCK_DATE_ITINERARY;
+  
+  const userCards = useDashboardStore(state => state.userCards);
+  const paymentMethods = useMemo(() => adaptUserCardsToPaymentMethods(userCards), [userCards]);
+
+  const optimizationResult = useMemo(() => {
+    if (paymentMethods.length === 0) return { totalBaseAmount: 0, totalEffectiveCost: 0, totalSavings: 0, items: [] };
+
+    const opportunities: SpendingOpportunity[] = itinerary.venues.map(v => ({
+      id: v.id,
+      partnerId: v.partnerName.toLowerCase().replace(' ', '-'), // Rough match for mock partners
+      category: v.type === 'Dinner' ? 'dining' : 'entertainment',
+      baseAmount: v.originalCost,
+      currency: 'INR',
+    }));
+
+    return OptimizationOrchestrator.optimizeItinerary(opportunities, paymentMethods, MOCK_OFFERS);
+  }, [itinerary, paymentMethods]);
   
   return (
     <div className="max-w-3xl mx-auto pb-32 text-text-primary min-h-screen pt-8">
@@ -118,18 +141,23 @@ export default function PlanDatePage() {
                   <Heart size={14} /> Smart Payment Plan
                 </h2>
                 <div className="space-y-4">
-                  {itinerary.venues.map(venue => (
-                    <div key={venue.id} className="flex justify-between items-center glass-panel p-4 rounded-2xl border-border-subtle">
-                      <div>
-                        <p className="text-sm font-medium text-text-primary mb-1">{venue.partnerName}</p>
-                        <p className="text-xs text-text-muted">{venue.recommendation.bestCard.bankName} {venue.recommendation.bestCard.cardName}</p>
+                  {optimizationResult.items.map((optItem, idx) => {
+                    const venue = itinerary.venues[idx];
+                    return (
+                      <div key={venue.id} className="flex justify-between items-center glass-panel p-4 rounded-2xl border-border-subtle">
+                        <div>
+                          <p className="text-sm font-medium text-text-primary mb-1">{venue.partnerName}</p>
+                          <p className="text-xs text-text-muted">
+                            {optItem.recommendedPaymentMethod.paymentMethodName}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">Save</p>
+                          <p className="text-brand-emerald font-semibold">-₹{optItem.savings.toLocaleString('en-IN')}</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">Save</p>
-                        <p className="text-brand-emerald font-semibold">-₹{venue.recommendation.totalSavings.toLocaleString('en-IN')}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   
                   <div className="glass-panel p-6 rounded-2xl mt-6 border-brand-emerald/20 relative overflow-hidden">
                     <div className="absolute inset-0 bg-brand-emerald/5 pointer-events-none" />
@@ -138,25 +166,25 @@ export default function PlanDatePage() {
                       <div>
                         <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Total Cost</p>
                         <p className="text-sm font-medium text-text-secondary line-through decoration-text-muted/50">
-                          ₹4,800
+                          ₹{optimizationResult.totalBaseAmount.toLocaleString('en-IN')}
                         </p>
                       </div>
                       <div>
                         <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Date Value</p>
                         <p className="text-sm font-medium text-brand-emerald">
-                          -₹650
+                          -₹{optimizationResult.totalSavings.toLocaleString('en-IN')}
                         </p>
                       </div>
                     </div>
                     
                     <div className="relative z-10 pt-4 border-t border-brand-emerald/10">
                       <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Effective Cost</p>
-                      <p className="text-3xl font-display font-bold text-white tracking-tight">₹4,150</p>
+                      <p className="text-3xl font-display font-bold text-white tracking-tight">₹{optimizationResult.totalEffectiveCost.toLocaleString('en-IN')}</p>
                     </div>
                   </div>
                   
                   <div className="pt-4 text-center">
-                    <p className="text-[10px] text-text-muted uppercase tracking-wider mb-3">Prototype Mode: Demo Data Only</p>
+                    <p className="text-[10px] text-text-muted uppercase tracking-wider mb-3">Powered by Optimization Engine V2</p>
                     <button className="w-full bg-text-primary hover:bg-white text-black py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors">
                       Continue to Bookings <ArrowRight size={18} />
                     </button>

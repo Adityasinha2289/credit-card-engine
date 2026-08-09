@@ -1,4 +1,4 @@
-import { Offer, PaymentMethod, SpendingOpportunity } from '../types';
+import type { Offer, PaymentMethod, SpendingOpportunity } from '../types';
 
 export class EligibilityEngine {
   /**

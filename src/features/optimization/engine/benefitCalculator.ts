@@ -1,4 +1,4 @@
-import { BenefitBreakdown, Offer, SpendingOpportunity } from '../types';
+import type { BenefitBreakdown, Offer, SpendingOpportunity } from '../types';
 
 export class BenefitCalculator {
   /**

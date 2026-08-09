@@ -1,4 +1,4 @@
-import { Offer } from '../types';
+import type { Offer } from '../types';
 
 export const MOCK_OFFERS: Offer[] = [
   // 1. Merchant Offer: Nike 10% off (up to ₹500), minimum spend ₹3000

@@ -1,4 +1,4 @@
-import { Offer, OptimizationResult, PaymentMethod, SpendingOpportunity } from '../types';
+import type { Offer, OptimizationResult, PaymentMethod, SpendingOpportunity } from '../types';
 import { RankingEngine } from './ranking';
 import { ExplanationEngine } from './explain';
 
@@ -28,6 +28,15 @@ export class OptimizationEngine {
       recommended.benefit,
       recommended.savings
     );
+
+    // internal debug trace
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[OptimizationEngine] OPPORTUNITY: ${opportunity.id} — ₹${opportunity.baseAmount}`);
+      console.log(`[OptimizationEngine] RECOMMENDED: ${recommended.paymentMethodName}`);
+      console.log(`[OptimizationEngine] APPLIED OFFERS: ${recommended.appliedOffers.map(o => o.name).join(', ') || 'None'}`);
+      console.log(`[OptimizationEngine] SAVINGS: ₹${recommended.savings}`);
+      console.log(`[OptimizationEngine] EFFECTIVE COST: ₹${recommended.effectiveCost}`);
+    }
 
     return {
       opportunityId: opportunity.id,

@@ -4,7 +4,7 @@ import { BenefitCalculator } from '../engine/benefitCalculator';
 import { EligibilityEngine } from '../engine/eligibility';
 import { MOCK_PAYMENT_METHODS } from '../mock/paymentMethods';
 import { MOCK_OFFERS } from '../mock/offers';
-import { Offer, SpendingOpportunity } from '../types';
+import type { Offer, SpendingOpportunity } from '../types';
 
 describe('Optimization Engine - Pure Domain', () => {
 

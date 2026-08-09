@@ -7,6 +7,9 @@ import { SmartSpendCard } from '../../components/shared/SmartSpendCard';
 import { getGreeting } from '../../lib/greeting';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { MOCK_PRODUCTS } from '../../features/lifestyle/mock/products';
+import { adaptUserCardsToPaymentMethods } from '../../features/optimization/adapters/cardAdapter';
+import { OptimizationEngine } from '../../features/optimization/engine/optimizationEngine';
+import { MOCK_OFFERS } from '../../features/optimization/mock/offers';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -103,15 +106,36 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MOCK_PRODUCTS.slice(0, 3).map((product) => (
-            <SmartSpendCard
-              key={product.id}
-              title={product.name}
-              originalPrice={product.originalPrice}
-              recommendation={product.recommendation}
-              onViewDeal={() => navigate(`/app/lifestyle/partner/${product.partnerId}`)}
-            />
-          ))}
+          {MOCK_PRODUCTS.slice(0, 3).map((product) => {
+            const opportunity = {
+              id: `opp-${product.id}`,
+              partnerId: product.partnerId,
+              category: 'shopping' as const,
+              baseAmount: product.originalPrice,
+              currency: 'INR' as const,
+            };
+
+            let optimizationResult;
+            try {
+              const paymentMethods = adaptUserCardsToPaymentMethods(userCards);
+              if (paymentMethods.length > 0) {
+                optimizationResult = OptimizationEngine.optimizeSpending(opportunity, paymentMethods, MOCK_OFFERS);
+              }
+            } catch (err) {
+              console.error("Optimization error", err);
+            }
+
+            return (
+              <SmartSpendCard
+                key={product.id}
+                title={product.name}
+                originalPrice={product.originalPrice}
+                optimizationResult={optimizationResult}
+                recommendation={product.recommendation}
+                onViewDeal={() => navigate(`/app/lifestyle/partner/${product.partnerId}`)}
+              />
+            );
+          })}
         </div>
       </section>
 

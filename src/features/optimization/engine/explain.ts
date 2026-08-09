@@ -1,4 +1,4 @@
-import { BenefitBreakdown, Offer, PaymentMethod, RecommendationReason } from '../types';
+import type { BenefitBreakdown, Offer, PaymentMethod, RecommendationReason } from '../types';
 
 export class ExplanationEngine {
   /**

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { CreditCard, Tag, TrendingDown, ArrowRight, Zap } from 'lucide-react';
 import type { MockRecommendation } from '../../features/lifestyle/types';
+import type { OptimizationResult } from '../../features/optimization/types';
 import { cn } from '../../lib/utils';
 import { useState, useEffect } from 'react';
 import { RecommendationReason } from './RecommendationReason';
@@ -8,13 +9,14 @@ import { RecommendationReason } from './RecommendationReason';
 interface SmartSpendCardProps {
   title: string;
   originalPrice: number;
-  recommendation: MockRecommendation;
+  recommendation?: MockRecommendation;
+  optimizationResult?: OptimizationResult;
   onViewDeal?: () => void;
   className?: string;
   hideAction?: boolean;
 }
 
-export function SmartSpendCard({ title, originalPrice, recommendation, onViewDeal, className, hideAction }: SmartSpendCardProps) {
+export function SmartSpendCard({ title, originalPrice, recommendation, optimizationResult, onViewDeal, className, hideAction }: SmartSpendCardProps) {
   const [isCalculating, setIsCalculating] = useState(true);
 
   // Simulate intelligence engine calculation
@@ -24,6 +26,22 @@ export function SmartSpendCard({ title, originalPrice, recommendation, onViewDea
     }, 1200);
     return () => clearTimeout(timer);
   }, []);
+
+  const totalSavings = optimizationResult?.savings ?? recommendation?.totalSavings ?? 0;
+  const effectiveCost = optimizationResult?.effectiveCost ?? recommendation?.effectiveCost ?? originalPrice;
+  const reasonData = optimizationResult?.reason ?? recommendation?.reason;
+
+  const merchantOfferText = optimizationResult 
+    ? optimizationResult.recommendedPaymentMethod.appliedOffers.filter(o => o.source === 'merchant').map(o => o.description).join(', ')
+    : recommendation?.merchantOffer?.description;
+
+  const cardRewardText = optimizationResult
+    ? optimizationResult.recommendedPaymentMethod.appliedOffers.filter(o => o.source === 'bank').map(o => o.description).join(', ')
+    : recommendation?.cardReward?.description;
+
+  const paymentMethodName = optimizationResult
+    ? optimizationResult.recommendedPaymentMethod.paymentMethodName
+    : `${recommendation?.bestCard?.bankName} ${recommendation?.bestCard?.cardName}`;
 
   return (
     <div className={cn("glass-panel overflow-hidden flex flex-col group relative", className)}>
@@ -61,7 +79,7 @@ export function SmartSpendCard({ title, originalPrice, recommendation, onViewDea
           <div>
             <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">RenoCred Value</p>
             <p className="text-sm font-medium text-brand-emerald">
-              -₹{recommendation.totalSavings.toLocaleString('en-IN')}
+              -₹{totalSavings.toLocaleString('en-IN')}
             </p>
           </div>
         </div>
@@ -70,11 +88,11 @@ export function SmartSpendCard({ title, originalPrice, recommendation, onViewDea
           <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Effective Cost</p>
           <div className="flex items-end gap-3">
             <p className="text-3xl font-display font-bold text-text-primary tracking-tight">
-              ₹{recommendation.effectiveCost.toLocaleString('en-IN')}
+              ₹{effectiveCost.toLocaleString('en-IN')}
             </p>
             <div className="bg-brand-emerald/10 text-brand-emerald px-2 py-1 rounded text-xs font-bold mb-1 border border-brand-emerald/20 flex items-center gap-1">
               <TrendingDown size={12} />
-              YOU SAVE ₹{recommendation.totalSavings.toLocaleString('en-IN')}
+              YOU SAVE ₹{totalSavings.toLocaleString('en-IN')}
             </div>
           </div>
         </div>
@@ -82,22 +100,27 @@ export function SmartSpendCard({ title, originalPrice, recommendation, onViewDea
         {/* Breakdown Context */}
         <div className="space-y-2 pt-4 border-t border-border-subtle">
           <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-2">Smart Payment Plan</p>
-          {recommendation.merchantOffer && (
+          {merchantOfferText && (
             <div className="flex items-center gap-2 text-sm text-text-secondary">
               <Tag size={14} className="text-text-muted" />
-              <span>{recommendation.merchantOffer.description}</span>
+              <span>{merchantOfferText}</span>
             </div>
           )}
-          {recommendation.cardReward && (
+          {cardRewardText ? (
             <div className="flex items-center gap-2 text-sm text-text-secondary">
               <CreditCard size={14} className="text-text-muted" />
-              <span>{recommendation.cardReward.description} on {recommendation.bestCard.bankName} {recommendation.bestCard.cardName}</span>
+              <span>{cardRewardText} on {paymentMethodName}</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <CreditCard size={14} className="text-text-muted" />
+              <span>Pay using {paymentMethodName}</span>
             </div>
           )}
         </div>
 
         <div className="mt-auto pt-2">
-          <RecommendationReason reason={recommendation.reason} />
+          {reasonData && <RecommendationReason reason={reasonData} />}
         </div>
       </div>
 

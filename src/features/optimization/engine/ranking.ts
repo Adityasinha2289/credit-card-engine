@@ -1,4 +1,4 @@
-import { Offer, PaymentMethod, PaymentRecommendation, SpendingOpportunity } from '../types';
+import type { Offer, PaymentMethod, PaymentRecommendation, SpendingOpportunity } from '../types';
 import { BenefitCalculator } from './benefitCalculator';
 import { EligibilityEngine } from './eligibility';
 import { ExplanationEngine } from './explain';

@@ -1,4 +1,4 @@
-import { PaymentMethod } from '../types';
+import type { PaymentMethod } from '../types';
 
 export const MOCK_PAYMENT_METHODS: PaymentMethod[] = [
   {

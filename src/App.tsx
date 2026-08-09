@@ -93,7 +93,7 @@ export default function App() {
   }
 
   // 1. If not signed in AND not using the demo, show LoginScreen (Clerk Auth View)
-  const isDemo = import.meta.env.VITE_USE_DEMO_DATA === 'true';
+  const isDemo = profile?.id === 'demo-user-id' || import.meta.env.VITE_USE_DEMO_DATA === 'true';
   if (!isSignedIn && !isDemo) {
     return <LoginScreen />;
   }

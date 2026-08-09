@@ -424,7 +424,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
           // SYNC TO SUPABASE
           const { supabaseClient, profile, creditAccounts } = get();
-          if (supabaseClient && profile) {
+          if (supabaseClient && profile && profile.id !== 'demo-user-id') {
             await safeDbWrite(
               (supabaseClient as any).from('transactions').insert({
                 id: newTx.id,
@@ -489,7 +489,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           });
 
           const { supabaseClient, profile, creditAccounts } = get();
-          if (supabaseClient && profile) {
+          if (supabaseClient && profile && profile.id !== 'demo-user-id') {
             const updatedAccount = creditAccounts.find(a => a.cardId === cardId);
             const effectivePayment = Math.min(amount, (updatedAccount?.currentBalance ?? 0) + amount);
             
@@ -537,7 +537,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
           // SYNC TO SUPABASE
           const { supabaseClient } = get();
-          if (supabaseClient) {
+          if (supabaseClient && profile.id !== 'demo-user-id') {
              const result = await safeDbWrite(
                (supabaseClient as any).from('users').upsert({
                   id: profile.id,
@@ -581,7 +581,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
           // SYNC TO SUPABASE
           const { supabaseClient } = get();
-          if (supabaseClient) {
+          if (supabaseClient && profile.id !== 'demo-user-id') {
              await safeDbWrite(
                (supabaseClient as any).from('users').upsert({
                   id: profile.id,
@@ -629,7 +629,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
           // SYNC TO SUPABASE
           const { supabaseClient, profile } = get();
-          if (supabaseClient && profile) {
+          if (supabaseClient && profile && profile.id !== 'demo-user-id') {
             const data = await safeDbWrite(
               (supabaseClient as any).from('user_cards').insert({
                 user_id: profile.id,
@@ -688,7 +688,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             state.rewards.redeemedPoints += toRedeem;
           });
           const { supabaseClient, profile, rewards } = get();
-          if (supabaseClient && profile) {
+          if (supabaseClient && profile && profile.id !== 'demo-user-id') {
             await safeDbWrite(
               (supabaseClient as any).from('users').update({
                 redeemed_reward_points: rewards.redeemedPoints
@@ -704,7 +704,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             state.budgets.push(budget);
           });
           const { supabaseClient, profile } = get();
-          if (supabaseClient && profile) {
+          if (supabaseClient && profile && profile.id !== 'demo-user-id') {
             await safeDbWrite(
               (supabaseClient as any).from('budgets').insert({
                 id: budget.id,
@@ -756,7 +756,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             state.subscriptions.push(subscription);
           });
           const { supabaseClient, profile } = get();
-          if (supabaseClient && profile) {
+          if (supabaseClient && profile && profile.id !== 'demo-user-id') {
             await safeDbWrite(
               (supabaseClient as any).from('subscriptions').insert({
                 id: subscription.id,

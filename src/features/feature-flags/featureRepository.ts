@@ -49,6 +49,14 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlag[] = [
     environments: ['development', 'staging'],
     description: 'Enables user referral and reward invite links',
   },
+  {
+    id: 'ff-7',
+    key: 'commerce_production_data',
+    enabled: false,
+    rolloutPercentage: 0,
+    environments: ['development', 'staging', 'production'],
+    description: 'Enables real Supabase commerce data instead of local mocks',
+  },
 ];
 
 export class FeatureRepository implements FeatureFlagDataSource {

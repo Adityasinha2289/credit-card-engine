@@ -125,7 +125,7 @@ export default function HomePage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-64 rounded-2xl bg-surface-elevated animate-pulse border border-border-subtle" />
+              <div key={i} className="h-[400px] rounded-3xl bg-surface-elevated animate-pulse border border-border-subtle" />
             ))}
           </div>
         ) : (
@@ -142,8 +142,16 @@ export default function HomePage() {
                   badge: result.savings > 0 ? 'Best Value' : undefined
                 }}
                 onViewDeal={() => navigate(`/app/lifestyle/partner/${entity.partnerId}`)}
+                entityId={entity.id}
+                placement="home"
+                isSponsored={false}
               />
             ))}
+            {results.length === 0 && (
+              <div className="col-span-full text-center py-12 bg-surface-elevated/30 border border-border-subtle rounded-3xl">
+                <p className="text-text-muted">No items available at this time.</p>
+              </div>
+            )}
           </div>
         )}
       </section>

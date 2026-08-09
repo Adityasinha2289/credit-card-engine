@@ -8,7 +8,7 @@ import type { CommerceEntity } from '../../../features/commerce/types';
 import type { OptimizationResult } from '../../../features/optimization/types';
 
 export default function ShopPage() {
-  const [query, setQuery] = useState('Black sneakers');
+  const [query, setQuery] = useState('');
   const navigate = useNavigate();
   const profile = useDashboardStore(state => state.profile);
   
@@ -21,11 +21,7 @@ export default function ShopPage() {
       try {
         const userId = profile?.id || 'demo-user-id';
         const data = await CommerceOptimizationService.optimizeCollection(userId);
-        // Basic frontend filter simulation
-        setResults(data.filter(d => 
-          d.entity.name.toLowerCase().includes('nike') || 
-          d.entity.entityType === 'product'
-        ));
+        setResults(data);
       } catch (err) {
         console.error("Failed to load commerce data", err);
       } finally {
@@ -68,12 +64,15 @@ export default function ShopPage() {
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="animate-spin text-brand-emerald w-8 h-8" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="h-[400px] rounded-3xl bg-surface-elevated animate-pulse border border-border-subtle" />
+            ))}
           </div>
+
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {results.map(({ entity, result }) => (
+            {results.filter(r => r.entity.name.toLowerCase().includes(query.toLowerCase())).map(({ entity, result }) => (
               <SmartSpendCard
                 key={entity.id}
                 title={entity.name}
@@ -85,11 +84,15 @@ export default function ShopPage() {
                   badge: result.savings > 0 ? 'Best Value' : undefined
                 }}
                 onViewDeal={() => navigate(`/app/lifestyle/partner/${entity.partnerId}`)}
+                entityId={entity.id}
+                placement="shop"
+                isSponsored={false}
               />
             ))}
-            {results.length === 0 && (
-              <div className="col-span-full text-center py-10 text-text-muted">
-                No matching products found.
+            {results.filter(r => r.entity.name.toLowerCase().includes(query.toLowerCase())).length === 0 && (
+              <div className="col-span-full text-center py-16 px-4 bg-surface-elevated/30 border border-border-subtle rounded-3xl">
+                <p className="text-text-primary font-medium text-lg mb-2">No matching items found</p>
+                <p className="text-text-muted">Try adjusting your search query.</p>
               </div>
             )}
           </div>

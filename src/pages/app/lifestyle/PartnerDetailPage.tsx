@@ -1,16 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ArrowLeft } from 'lucide-react';
-import { MOCK_PARTNERS } from '../../../features/lifestyle/mock/partners';
-import { MOCK_PRODUCTS } from '../../../features/lifestyle/mock/products';
+import { ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react';
+import { CommerceRepository } from '../../../features/commerce/repositories';
+import { CommerceOptimizationService } from '../../../features/commerce';
+import type { CommercePartner, CommerceEntity } from '../../../features/commerce/types';
+import type { OptimizationResult } from '../../../features/optimization/types';
+import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
 import { SmartSpendCard } from '../../../components/shared/SmartSpendCard';
 
 export default function PartnerDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const profile = useDashboardStore(state => state.profile);
 
-  const partner = MOCK_PARTNERS.find(p => p.id === id);
-  const partnerProducts = MOCK_PRODUCTS.filter(p => p.partnerId === id);
+  const [partner, setPartner] = useState<CommercePartner | null>(null);
+  const [results, setResults] = useState<{entity: CommerceEntity, result: OptimizationResult}[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchPartnerData() {
+      if (!id) return;
+      setIsLoading(true);
+      try {
+        const p = await CommerceRepository.getPartnerById(id);
+        setPartner(p);
+
+        if (p) {
+          const userId = profile?.id || 'demo-user-id';
+          const data = await CommerceOptimizationService.optimizeCollection(userId, p.id);
+          setResults(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch partner data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchPartnerData();
+  }, [id, profile?.id]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-40 min-h-screen text-brand-emerald">
+        <Loader2 className="animate-spin w-8 h-8" />
+      </div>
+    );
+  }
 
   if (!partner) {
     return <div className="text-white p-8">Partner not found.</div>;
@@ -20,8 +55,8 @@ export default function PartnerDetailPage() {
     <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-screen">
       
       {/* Hero */}
-      <div className="relative h-64 md:h-80 w-full overflow-hidden mb-8 rounded-b-3xl -mx-4 sm:mx-0 sm:mt-4">
-        <img src={partner.imageUrl} alt={partner.name} className="absolute inset-0 w-full h-full object-cover" />
+      <div className="relative h-64 md:h-80 w-full overflow-hidden mb-8 rounded-b-3xl -mx-4 sm:mx-0 sm:mt-4 shadow-ag-base">
+        <img src={partner.logoUrl || "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=2000"} alt={partner.name} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         
         <div className="absolute bottom-6 left-6 right-6">
@@ -45,19 +80,24 @@ export default function PartnerDetailPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {partnerProducts.map(product => (
+            {results.map(({ entity, result }) => (
               <SmartSpendCard
-                key={product.id}
-                title={product.name}
-                originalPrice={product.originalPrice}
-                recommendation={product.recommendation}
-                onViewDeal={() => {}}
-                hideAction
+                key={entity.id}
+                title={entity.name}
+                originalPrice={entity.basePrice}
+                optimizationResult={result}
+                recommendation={{
+                  reason: result.reason.primary || 'Best overall value',
+                  features: result.reason.supportingFactors || [],
+                  badge: result.savings > 0 ? 'Best Value' : undefined
+                }}
+                entityId={entity.id}
+                placement="partner_detail"
               />
             ))}
-            {partnerProducts.length === 0 && (
-              <div className="glass-panel p-8 text-center border-dashed">
-                <p className="text-text-muted">No specific products loaded for this partner in prototype mode.</p>
+            {results.length === 0 && (
+              <div className="glass-panel p-12 text-center col-span-full border-dashed">
+                <p className="text-text-muted text-lg">No specific products currently available for optimization.</p>
               </div>
             )}
           </div>
@@ -74,10 +114,7 @@ export default function PartnerDetailPage() {
             </p>
           </div>
         </div>
-        
-        <button className="w-full mt-6 bg-text-primary text-black hover:bg-white py-4 rounded-xl font-bold transition-colors">
-          View all deals at {partner.name}
-        </button>
+
       </div>
 
     </div>

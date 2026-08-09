@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
-import { CreditCard, Tag, TrendingDown, ArrowRight, Zap } from 'lucide-react';
+import { CreditCard, Tag, TrendingDown, ArrowRight, Zap, ShieldCheck } from 'lucide-react';
 import type { MockRecommendation } from '../../features/lifestyle/types';
 import type { OptimizationResult } from '../../features/optimization/types';
 import { cn } from '../../lib/utils';
-import { useState, useEffect } from 'react';
 import { RecommendationReason } from './RecommendationReason';
+import { useState } from 'react';
+import { OutboundService } from '../../features/commerce/outboundApi';
 
 interface SmartSpendCardProps {
   title: string;
@@ -14,18 +15,13 @@ interface SmartSpendCardProps {
   onViewDeal?: () => void;
   className?: string;
   hideAction?: boolean;
+  entityId?: string;
+  placement?: string;
+  isSponsored?: boolean;
 }
 
-export function SmartSpendCard({ title, originalPrice, recommendation, optimizationResult, onViewDeal, className, hideAction }: SmartSpendCardProps) {
-  const [isCalculating, setIsCalculating] = useState(true);
-
-  // Simulate intelligence engine calculation
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsCalculating(false);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, []);
+export function SmartSpendCard({ title, originalPrice, recommendation, optimizationResult, onViewDeal, className, hideAction, entityId, placement, isSponsored }: SmartSpendCardProps) {
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const totalSavings = optimizationResult?.savings ?? recommendation?.totalSavings ?? 0;
   const effectiveCost = optimizationResult?.effectiveCost ?? recommendation?.effectiveCost ?? originalPrice;
@@ -43,10 +39,29 @@ export function SmartSpendCard({ title, originalPrice, recommendation, optimizat
     ? optimizationResult.recommendedPaymentMethod.paymentMethodName
     : `${recommendation?.bestCard?.bankName} ${recommendation?.bestCard?.cardName}`;
 
+  const handleAction = async () => {
+    if (entityId && placement) {
+      try {
+        setIsNavigating(true);
+        await OutboundService.navigateToPartner({
+          commerceEntityId: entityId,
+          placement,
+          recommendationSnapshot: optimizationResult
+        });
+      } catch (err) {
+        setIsNavigating(false);
+        // Fallback to onViewDeal if provided
+        if (onViewDeal) onViewDeal();
+      }
+    } else if (onViewDeal) {
+      onViewDeal();
+    }
+  };
+
   return (
-    <div className={cn("glass-panel overflow-hidden flex flex-col group relative", className)}>
-      {isCalculating ? (
-        <div className="absolute inset-0 z-20 bg-surface-base/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+    <div className={cn("glass-panel overflow-hidden flex flex-col group relative transition-all duration-300 hover:border-brand-emerald/30", className)}>
+      {isNavigating ? (
+        <div className="absolute inset-0 z-20 bg-obsidian/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
@@ -54,16 +69,20 @@ export function SmartSpendCard({ title, originalPrice, recommendation, optimizat
           >
             <Zap size={28} className="fill-brand-emerald/20" />
           </motion.div>
-          <p className="text-sm font-medium text-text-primary mb-1">Finding the smartest option...</p>
-          <p className="text-xs text-text-muted">Comparing rewards & offers</p>
+          <p className="text-sm font-medium text-text-primary mb-1">Redirecting securely...</p>
         </div>
       ) : null}
 
       {/* Header */}
-      <div className="px-5 py-4 border-b border-border-subtle bg-surface-elevated/30">
+      <div className="px-5 py-4 border-b border-border-subtle bg-surface-elevated flex items-center justify-between">
         <h3 className="font-semibold text-text-primary text-lg tracking-tight group-hover:text-brand-emerald transition-colors">
           {title}
         </h3>
+        {isSponsored && (
+          <span className="text-[10px] font-bold tracking-wider uppercase bg-surface-secondary text-text-muted px-2 py-1 rounded-md border border-border-subtle">
+            Featured
+          </span>
+        )}
       </div>
 
       <div className="p-5 flex-1 flex flex-col gap-6">
@@ -127,10 +146,10 @@ export function SmartSpendCard({ title, originalPrice, recommendation, optimizat
       {!hideAction && (
         <div className="p-4 pt-0">
           <button 
-            onClick={onViewDeal}
-            className="w-full flex items-center justify-center gap-2 bg-text-primary text-surface-base hover:bg-white py-3 rounded-xl font-medium transition-colors"
+            onClick={handleAction}
+            className="w-full flex items-center justify-center gap-2 bg-text-primary text-obsidian hover:bg-white py-3 rounded-xl font-bold transition-colors shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
           >
-            <span>View Deal</span>
+            <span>Shop with RenoCred</span>
             <ArrowRight size={16} />
           </button>
         </div>

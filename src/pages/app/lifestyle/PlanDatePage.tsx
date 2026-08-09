@@ -103,7 +103,7 @@ export default function PlanDatePage() {
               
               <button 
                 onClick={() => setStep('itinerary')}
-                className="w-full mt-6 bg-brand-emerald hover:bg-brand-400 text-black py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+                className="w-full mt-6 bg-brand-emerald hover:bg-brand-400 text-obsidian py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-ag-glow-primary hover:shadow-ag-hover"
               >
                 Generate Itinerary <SparklesIcon />
               </button>
@@ -209,8 +209,8 @@ export default function PlanDatePage() {
                   
                   <div className="pt-4 text-center">
                     <p className="text-[10px] text-text-muted uppercase tracking-wider mb-3">Powered by Optimization Engine V2</p>
-                    <button className="w-full bg-text-primary hover:bg-white text-black py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors">
-                      Continue to Bookings <ArrowRight size={18} />
+                    <button className="w-full bg-text-primary hover:bg-white text-obsidian py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors shadow-ag-base hover:shadow-ag-hover">
+                      Save Itinerary & Review Booking <ArrowRight size={18} />
                     </button>
                   </div>
                 </div>

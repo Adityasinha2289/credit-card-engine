@@ -2,7 +2,7 @@ import { analytics } from './lib/analytics';
 import './index.css';
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { DashboardSkeleton } from './components/layout/DashboardSkeleton';
@@ -11,6 +11,10 @@ import { useSupabase } from './hooks/useSupabase';
 
 // Finix features (Lazy Loaded)
 import { LoginScreen } from './features/dashboard/components/LoginScreen';
+
+// Admin imports
+import { AdminGuard } from './components/auth/AdminGuard';
+import { AdminLayout } from './components/layout/AdminLayout';
 
 const HomePage = lazy(() => import('./pages/app/HomePage'));
 const WalletPage = lazy(() => import('./pages/app/WalletPage'));
@@ -26,12 +30,18 @@ const InvestPage = lazy(() => import('./pages/app/lifestyle/InvestPage'));
 const ShopPage = lazy(() => import('./pages/app/lifestyle/ShopPage'));
 const PartnerDetailPage = lazy(() => import('./pages/app/lifestyle/PartnerDetailPage'));
 
+// Admin (Phase 6.1)
+const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
+const PartnerManagement = lazy(() => import('./pages/admin/PartnerManagement'));
+const EntityManagement = lazy(() => import('./pages/admin/EntityManagement'));
+const OfferManagement = lazy(() => import('./pages/admin/OfferManagement'));
+const AffiliateManagement = lazy(() => import('./pages/admin/AffiliateManagement'));
+
 export default function App() {
   const { isLoaded, isSignedIn, user } = useUser();
   const supabase = useSupabase();
   const [hasAttemptedHydration, setHasAttemptedHydration] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
-  const resetStore = useDashboardStore((s) => s._reset);
   const isHydrated = useHydration();
   const hydrateFromSupabase = useDashboardStore((s) => s.hydrateFromSupabase);
   const [isHydratingFromSupabase, setIsHydratingFromSupabase] = useState(false);
@@ -104,12 +114,18 @@ export default function App() {
   }
 
   return (
-    <DashboardLayout
-      isDark={true}
-      onToggleTheme={() => {}}
-    >
-      <Suspense fallback={<DashboardSkeleton />}>
-        <Routes>
+    <Suspense fallback={
+      <div className="flex h-screen w-full items-center justify-center bg-[#0a0a0a]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+      </div>
+    }>
+      <Routes>
+        {/* Customer App Routes */}
+        <Route element={
+          <DashboardLayout isDark={true} onToggleTheme={() => {}}>
+            <Outlet />
+          </DashboardLayout>
+        }>
           <Route path="/" element={<HomePage />} />
           <Route path="/wallet" element={<WalletPage />} />
           <Route path="/taqdeer" element={<TaqdeerPage />} />
@@ -123,10 +139,26 @@ export default function App() {
           <Route path="/lifestyle/invest" element={<InvestPage />} />
           <Route path="/lifestyle/shop" element={<ShopPage />} />
           <Route path="/lifestyle/partner/:id" element={<PartnerDetailPage />} />
-          
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
-    </DashboardLayout>
+        </Route>
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={
+          <AdminGuard>
+            <AdminLayout>
+              <Outlet />
+            </AdminLayout>
+          </AdminGuard>
+        }>
+          <Route index element={<AdminOverview />} />
+          <Route path="partners" element={<PartnerManagement />} />
+          <Route path="entities" element={<EntityManagement />} />
+          <Route path="offers" element={<OfferManagement />} />
+          <Route path="affiliate" element={<AffiliateManagement />} />
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }

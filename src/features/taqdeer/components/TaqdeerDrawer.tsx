@@ -16,22 +16,19 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
 
   // Set contextual prompt when drawer opens or location changes
   useEffect(() => {
-    let prompt = "Hello! I'm Taqdeer. What are we planning today?";
+    let prompt = "Good evening, Demo.\n\nWhat are we optimizing today?";
     const path = location.pathname;
     
-    if (path === '/app') {
-      prompt = "Looking at your financial overview. What would you like to optimize?";
-    } else if (path.startsWith('/app/wallet/emi')) {
-      prompt = "I can help you decide whether financing this purchase makes sense.";
+    if (path.startsWith('/app/wallet/emi')) {
+      prompt = "Good evening, Demo.\n\nI can help you decide whether financing this purchase makes sense.";
     } else if (path.startsWith('/app/wallet')) {
-      prompt = "I can help you choose the best card for a purchase.";
+      prompt = "Good evening, Demo.\n\nI can help you choose the best card for a purchase.";
     } else if (path.startsWith('/app/lifestyle')) {
-      prompt = "I can help turn your plans into a smarter spending strategy.";
+      prompt = "Good evening, Demo.\n\nI can help turn your plans into a smarter spending strategy.";
     }
 
     if (messages.length === 0 || (isOpen && messages[messages.length - 1].content !== prompt)) {
       setMessages(prev => {
-        // Avoid adding the same prompt twice in a row
         if (prev.length > 0 && prev[prev.length - 1].content === prompt) {
           return prev;
         }
@@ -59,26 +56,19 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px] lg:bg-transparent lg:backdrop-blur-none"
-            onClick={onClose}
-          />
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className={cn(
-              "fixed top-0 right-0 h-screen z-50 flex flex-col",
-              "w-full sm:w-[420px]",
-              "bg-obsidian border-l border-border-subtle shadow-ag-modal"
-            )}
-          >
-            {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 12 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className={cn(
+            "fixed bottom-[88px] right-6 z-50 flex flex-col origin-bottom-right",
+            "w-[calc(100vw-48px)] sm:w-[380px]",
+            "h-[500px] max-h-[calc(100vh-120px)]",
+            "bg-obsidian border border-border-subtle rounded-[22px] shadow-ag-modal overflow-hidden"
+          )}
+        >
+          {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-border-subtle bg-surface-primary shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-brand-emerald/10 text-brand-emerald flex items-center justify-center">
@@ -98,44 +88,56 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-6 hide-scrollbar bg-bg-page">
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 hide-scrollbar bg-bg-page">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'ai' ? 'bg-brand-emerald/10 text-brand-emerald' : 'bg-surface-elevated border border-border-subtle text-text-muted'}`}>
-                    {msg.role === 'ai' ? <Sparkles size={14} /> : <User size={14} />}
+                  <div className={`w-6 h-6 mt-0.5 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'ai' ? 'bg-brand-emerald/10 text-brand-emerald' : 'bg-surface-elevated border border-border-subtle text-text-muted'}`}>
+                    {msg.role === 'ai' ? <Sparkles size={12} /> : <User size={12} />}
                   </div>
                   <div className={cn(
-                    "max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed",
+                    "max-w-[85%] p-3 rounded-2xl text-[13px] leading-relaxed whitespace-pre-wrap",
                     msg.role === 'user' 
                       ? "bg-surface-elevated text-text-primary rounded-tr-sm border border-border-subtle" 
                       : "bg-surface-primary border border-border-subtle text-text-primary rounded-tl-sm"
                   )}>
                     {msg.content}
+                    {msg.role === 'ai' && i === 0 && (
+                      <div className="flex flex-col gap-2 mt-4">
+                        {['Optimize my cards', 'Plan a ₹5,000 purchase', 'Review my spending'].map(chip => (
+                          <button
+                            key={chip}
+                            onClick={() => { setQuery(chip); }}
+                            className="text-left px-3 py-2 rounded-xl text-xs font-medium bg-surface-elevated border border-border-subtle text-text-secondary hover:text-text-primary hover:border-brand-emerald/30 transition-colors"
+                          >
+                            {chip}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-border-subtle bg-surface-primary shrink-0">
+            <div className="p-3 border-t border-border-subtle bg-surface-primary shrink-0">
               <form onSubmit={handleSubmit} className="relative">
                 <input 
                   type="text" 
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="Ask Taqdeer anything..." 
-                  className="w-full bg-surface-elevated border border-border-subtle rounded-xl py-3.5 pl-4 pr-12 text-sm text-text-primary focus:outline-none focus:border-brand-emerald/50 transition-colors"
+                  className="w-full bg-surface-elevated border border-border-subtle rounded-xl py-2.5 pl-4 pr-11 text-[13px] text-text-primary focus:outline-none focus:border-brand-emerald/50 transition-colors h-[48px]"
                 />
                 <button 
                   type="submit" 
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg bg-surface-secondary text-text-secondary hover:text-brand-emerald hover:bg-brand-emerald/10 flex items-center justify-center transition-colors"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-surface-secondary text-text-secondary hover:text-brand-emerald hover:bg-brand-emerald/10 flex items-center justify-center transition-colors"
                 >
-                  <ArrowRight size={16} />
+                  <ArrowRight size={14} />
                 </button>
               </form>
             </div>
-          </motion.div>
-        </>
+        </motion.div>
       )}
     </AnimatePresence>
   );

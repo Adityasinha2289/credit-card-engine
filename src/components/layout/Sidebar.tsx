@@ -29,11 +29,10 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'home',     path: '/app',          label: 'Dashboard', Icon: LayoutDashboard, description: 'Overview & cards'      },
-  { id: 'wallet',   path: '/app/wallet',   label: 'Wallet',    Icon: Wallet,          description: 'Optimizer & payments'   },
+  { id: 'home',     path: '/app',          label: 'Dashboard', Icon: LayoutDashboard, description: 'Overview & savings'      },
+  { id: 'wallet',   path: '/app/wallet',   label: 'Credit',    Icon: Wallet,          description: 'Cards, insights & perks' },
+  { id: 'lifestyle',path: '/app/lifestyle',label: 'Lifestyle', Icon: Gift,            description: 'Plan, invest & shop'    },
   { id: 'taqdeer',  path: '/app/taqdeer',  label: 'Taqdeer',   Icon: Search,          description: 'AI Financial Copilot'   },
-  { id: 'explore',  path: '/app/explore',  label: 'Explore',   Icon: Gift,            description: 'Recommendations & Perks'},
-  { id: 'insights', path: '/app/insights', label: 'Insights',  Icon: BarChart3,       description: 'Spend analysis & CIBIL' },
   { id: 'profile',  path: '/app/profile',  label: 'Profile',   Icon: User,            description: 'Settings & details'     },
 ];
 

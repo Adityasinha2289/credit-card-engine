@@ -19,6 +19,13 @@ const InsightsPage = lazy(() => import('./pages/app/InsightsPage'));
 const TaqdeerPage = lazy(() => import('./pages/app/TaqdeerPage'));
 const ProfilePage = lazy(() => import('./pages/app/ProfilePage'));
 
+// Lifestyle (Phase 5A Prototype)
+const LifestyleHub = lazy(() => import('./pages/app/lifestyle/LifestyleHub'));
+const PlanDatePage = lazy(() => import('./pages/app/lifestyle/PlanDatePage'));
+const InvestPage = lazy(() => import('./pages/app/lifestyle/InvestPage'));
+const ShopPage = lazy(() => import('./pages/app/lifestyle/ShopPage'));
+const PartnerDetailPage = lazy(() => import('./pages/app/lifestyle/PartnerDetailPage'));
+
 export default function App() {
   const { isLoaded, isSignedIn, user } = useUser();
   const supabase = useSupabase();
@@ -108,6 +115,14 @@ export default function App() {
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/insights" element={<InsightsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          
+          <Route path="/lifestyle" element={<LifestyleHub />} />
+          <Route path="/lifestyle/plan" element={<LifestyleHub />} />
+          <Route path="/lifestyle/plan/date" element={<PlanDatePage />} />
+          <Route path="/lifestyle/invest" element={<InvestPage />} />
+          <Route path="/lifestyle/shop" element={<ShopPage />} />
+          <Route path="/lifestyle/partner/:id" element={<PartnerDetailPage />} />
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

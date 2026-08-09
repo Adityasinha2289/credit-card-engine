@@ -14,8 +14,7 @@ export function SavingsMetricDisplay({ amount, period = "This month", className 
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "glass-panel p-5 relative overflow-hidden group",
-        "border-brand-emerald/20 bg-brand-emerald/5",
+        "bg-surface-intelligence border border-border-intelligence rounded-3xl p-5 relative overflow-hidden group",
         className
       )}
     >

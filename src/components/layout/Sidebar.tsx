@@ -53,7 +53,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
     <motion.aside
       className={cn(
         'fixed top-0 left-0 h-screen z-40 flex flex-col',
-        'bg-obsidian border-r border-border-subtle',
+        'bg-surface-shell border-r border-[#1B1F1D]',
         'transition-[width] duration-300 ease-ag-smooth',
       )}
       style={{ width: collapsed ? 72 : 272 }}
@@ -62,7 +62,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
       {/* ── Logo ───────────────────────────────────────────────────────── */}
       <div className={cn(
         'flex items-center gap-3 px-5 h-[72px] flex-shrink-0',
-        'border-b border-border-subtle ',
+        'border-b border-[#1B1F1D] ',
       )}>
         <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-black border border-border-subtle">
           <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />

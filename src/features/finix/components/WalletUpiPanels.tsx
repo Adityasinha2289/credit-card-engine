@@ -162,7 +162,7 @@ function WalletOptimizerTab() {
             <p className="text-sm font-bold text-text-primary mb-3">Cards in Wallet</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {userCards.map((c) => (
-                <div key={c.id} className="panel-glass rounded-2xl p-4 border border-border-subtle  shadow-sm flex items-center gap-3">
+                <div key={c.id} className="bg-surface-primary rounded-2xl p-4 border border-border-subtle shadow-sm flex items-center gap-3">
                   <BankLogo bank={c.bank || 'Unknown'} className="w-12 h-8" />
                   <div className="flex flex-col min-w-0">
                     <p className="text-sm font-semibold text-text-primary truncate">{c.label}</p>
@@ -187,10 +187,10 @@ function WalletOptimizerTab() {
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex items-center gap-3 panel-glass rounded-2xl shadow-ag-base p-4"
+              className="flex items-center gap-3 bg-surface-primary rounded-2xl border border-border-subtle shadow-ag-base p-4"
             >
               {/* Category icon */}
-              <div className="w-10 h-10 rounded-xl bg-surface-primary  flex items-center justify-center text-lg flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-surface-elevated flex items-center justify-center text-lg flex-shrink-0">
                 {CATEGORY_ICONS[cat]}
               </div>
               <div className="flex-1 min-w-0">

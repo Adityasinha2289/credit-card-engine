@@ -12,14 +12,14 @@
 @layer base {
   :root {
     --bg-page: #050505;
-    --bg-surface: #0A0A0A;
-    --bg-elevated: #111111;
-    --bg-hover: #1A1A1A;
-    --border-subtle: rgba(255, 255, 255, 0.05);
+    --bg-surface: #0C100E;
+    --bg-elevated: #171A1A;
+    --bg-hover: #171A1A;
+    --border-subtle: #222625;
     
-    --text-primary: #F6F6F6;
-    --text-secondary: rgba(255, 255, 255, 0.68);
-    --text-muted: rgba(255, 255, 255, 0.42);
+    --text-primary: #F3F4F3;
+    --text-secondary: #8A918E;
+    --text-muted: #5F6663;
   }
 
   *, *::before, *::after {
@@ -100,17 +100,23 @@
     @apply border-brand-emerald/30 shadow-ag-hover;
   }
 
+  .input-premium {
+    @apply bg-surface-elevated border border-border-subtle text-text-primary rounded-xl outline-none focus-visible:border-brand-emerald focus-visible:ring-1 focus-visible:ring-brand-emerald transition-all placeholder:text-text-muted;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
   /* Legacy components mapping to V3 (temporarily maintained until removed) */
   .glass-panel, .panel-glass, .glass-surface {
     @apply surface-card;
   }
   
   .sidebar-glass {
-    @apply bg-obsidian border-r border-border-subtle;
+    @apply bg-surface-shell border-r border-[#1B1F1D];
   }
 
   .topnav-glass {
-    @apply bg-obsidian/90 backdrop-blur-md border-b border-border-subtle;
+    @apply bg-surface-shell border-b border-[#1B1F1D];
   }
 }
 

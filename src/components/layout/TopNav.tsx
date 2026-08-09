@@ -56,7 +56,7 @@ export function TopNav({ isDark: _isDark, onToggleTheme: _onToggleTheme }: TopNa
       className={cn(
         'sticky top-0 z-30 flex items-center justify-between gap-4',
         'px-6 lg:px-8 h-16',
-        'bg-obsidian/90 backdrop-blur-md border-b border-border-subtle',
+        'bg-surface-shell border-b border-[#1B1F1D]',
       )}
     >
       {/* ── Page Title ──────────────────────────────────────────────────── */}

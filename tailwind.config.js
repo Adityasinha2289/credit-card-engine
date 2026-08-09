@@ -25,10 +25,12 @@ export default {
           300: '#111111',
         },
         surface: {
-          primary: '#0A0A0A', // Base panels
-          elevated: '#111111', // Floating elements, dropdowns, hovered items
-          card: '#141414', // Explicit boundaries
-          secondary: '#1A1A1A', // Hover on elevated
+          shell: '#090B0B',
+          primary: '#0C100E', 
+          card: '#111416', 
+          elevated: '#171A1A', 
+          intelligence: '#091610',
+          secondary: '#0C100E', // Legacy mapping
         },
         // V3 SEMANTIC EMERALD (Only for savings/value)
         brand: {
@@ -51,14 +53,16 @@ export default {
         
         // V3 TYPOGRAPHY COLORS
         text: {
-          primary: '#F6F6F6',
-          secondary: 'rgba(255, 255, 255, 0.68)',
-          muted: 'rgba(255, 255, 255, 0.42)',
+          primary: '#F3F4F3',
+          secondary: '#8A918E',
+          tertiary: '#5F6663',
+          muted: '#5F6663',
           disabled: 'rgba(255, 255, 255, 0.20)',
         },
         border: {
-          subtle: 'rgba(255, 255, 255, 0.05)',
-          strong: 'rgba(255, 255, 255, 0.10)',
+          subtle: '#222625',
+          strong: '#222625',
+          intelligence: '#123226',
           emerald: 'rgba(0, 229, 153, 0.3)',
         }
       },

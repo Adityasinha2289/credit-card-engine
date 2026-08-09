@@ -33,7 +33,7 @@ export default function WalletPage() {
       title={WALLET_TAB_INFO[activeTab].title}
       subtitle={WALLET_TAB_INFO[activeTab].subtitle}
     >
-      <div className="flex gap-1 bg-surface-secondary/60 dark:bg-surface-elevated/30 rounded-2xl p-1 backdrop-blur-sm">
+      <div className="flex gap-1 bg-surface-primary rounded-2xl p-1.5 border border-border-subtle">
         {WALLET_TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -48,7 +48,7 @@ export default function WalletPage() {
             {activeTab === id && (
               <motion.div
                 layoutId="wallet-tab-bg"
-                className="absolute inset-0 bg-surface dark:bg-surface-raised shadow-ag-base rounded-xl"
+                className="absolute inset-0 bg-surface-card border border-border-subtle shadow-ag-base rounded-xl"
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
             )}

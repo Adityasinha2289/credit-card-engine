@@ -3,33 +3,49 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, Users, Heart, ArrowRight, Utensils, Music, Car } from 'lucide-react';
 import { MOCK_DATE_ITINERARY } from '../../../features/lifestyle/mock/datePlans';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
-import { adaptUserCardsToPaymentMethods } from '../../../features/optimization/adapters/cardAdapter';
-import { OptimizationOrchestrator } from '../../../features/optimization/orchestrator';
-import { MOCK_OFFERS } from '../../../features/optimization/mock/offers';
-import type { SpendingOpportunity } from '../../../features/optimization/types';
-import { useMemo } from 'react';
+import { CommerceOptimizationService } from '../../../features/commerce';
+import type { SpendingOpportunity, ItineraryOptimizationResult } from '../../../features/optimization/types';
+import { useEffect } from 'react';
 
 export default function PlanDatePage() {
   const [step, setStep] = useState<'input' | 'itinerary'>('input');
   
   const itinerary = MOCK_DATE_ITINERARY;
   
-  const userCards = useDashboardStore(state => state.userCards);
-  const paymentMethods = useMemo(() => adaptUserCardsToPaymentMethods(userCards), [userCards]);
+  const profile = useDashboardStore(state => state.profile);
 
-  const optimizationResult = useMemo(() => {
-    if (paymentMethods.length === 0) return { totalBaseAmount: 0, totalEffectiveCost: 0, totalSavings: 0, items: [] };
+  const [optimizationResult, setOptimizationResult] = useState<ItineraryOptimizationResult>({ 
+    totalBaseAmount: 0, 
+    totalEffectiveCost: 0, 
+    totalSavings: 0, 
+    items: [] 
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
-    const opportunities: SpendingOpportunity[] = itinerary.venues.map(v => ({
-      id: v.id,
-      partnerId: v.partnerName.toLowerCase().replace(' ', '-'), // Rough match for mock partners
-      category: v.type === 'Dinner' ? 'dining' : 'entertainment',
-      baseAmount: v.originalCost,
-      currency: 'INR',
-    }));
-
-    return OptimizationOrchestrator.optimizeItinerary(opportunities, paymentMethods, MOCK_OFFERS);
-  }, [itinerary, paymentMethods]);
+  useEffect(() => {
+    if (step === 'itinerary') {
+      async function fetchOptimization() {
+        setIsLoading(true);
+        try {
+          const opportunities: SpendingOpportunity[] = itinerary.venues.map(v => ({
+            id: v.id,
+            partnerId: v.partnerName.toLowerCase().replace(' ', '-'), // Rough match for mock partners
+            category: v.type === 'Dinner' ? 'dining' : 'entertainment',
+            baseAmount: v.originalCost,
+            currency: 'INR',
+          }));
+          const userId = profile?.id || 'demo-user-id';
+          const result = await CommerceOptimizationService.optimizeItinerary(opportunities, userId);
+          setOptimizationResult(result);
+        } catch (err) {
+          console.error("Failed to optimize itinerary", err);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      fetchOptimization();
+    }
+  }, [step, itinerary, profile?.id]);
   
   return (
     <div className="max-w-3xl mx-auto pb-32 text-text-primary min-h-screen pt-8">
@@ -141,23 +157,31 @@ export default function PlanDatePage() {
                   <Heart size={14} /> Smart Payment Plan
                 </h2>
                 <div className="space-y-4">
-                  {optimizationResult.items.map((optItem, idx) => {
-                    const venue = itinerary.venues[idx];
-                    return (
-                      <div key={venue.id} className="flex justify-between items-center glass-panel p-4 rounded-2xl border-border-subtle">
-                        <div>
-                          <p className="text-sm font-medium text-text-primary mb-1">{venue.partnerName}</p>
-                          <p className="text-xs text-text-muted">
-                            {optItem.recommendedPaymentMethod.paymentMethodName}
-                          </p>
+                  {isLoading ? (
+                    <div className="flex justify-center py-10">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-emerald"></div>
+                    </div>
+                  ) : optimizationResult.items.length > 0 ? (
+                    optimizationResult.items.map((optItem, idx) => {
+                      const venue = itinerary.venues[idx];
+                      return (
+                        <div key={venue.id} className="flex justify-between items-center glass-panel p-4 rounded-2xl border-border-subtle">
+                          <div>
+                            <p className="text-sm font-medium text-text-primary mb-1">{venue.partnerName}</p>
+                            <p className="text-xs text-text-muted">
+                              {optItem.recommendedPaymentMethod.paymentMethodName}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">Save</p>
+                            <p className="text-brand-emerald font-semibold">-₹{optItem.savings.toLocaleString('en-IN')}</p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">Save</p>
-                          <p className="text-brand-emerald font-semibold">-₹{optItem.savings.toLocaleString('en-IN')}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  ) : (
+                    <div className="text-sm text-text-muted py-4">No optimal plan found.</div>
+                  )}
                   
                   <div className="glass-panel p-6 rounded-2xl mt-6 border-brand-emerald/20 relative overflow-hidden">
                     <div className="absolute inset-0 bg-brand-emerald/5 pointer-events-none" />

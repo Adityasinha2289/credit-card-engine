@@ -1,23 +1,39 @@
-import React, { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Loader2 } from 'lucide-react';
 import { SmartSpendCard } from '../../../components/shared/SmartSpendCard';
-import { MOCK_PRODUCTS } from '../../../features/lifestyle/mock/products';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
-import { adaptUserCardsToPaymentMethods } from '../../../features/optimization/adapters/cardAdapter';
-import { OptimizationEngine } from '../../../features/optimization/engine/optimizationEngine';
-import { MOCK_OFFERS } from '../../../features/optimization/mock/offers';
-import type { SpendingOpportunity } from '../../../features/optimization/types';
+import { CommerceOptimizationService } from '../../../features/commerce';
+import type { CommerceEntity } from '../../../features/commerce/types';
+import type { OptimizationResult } from '../../../features/optimization/types';
 
 export default function ShopPage() {
   const [query, setQuery] = useState('Black sneakers');
   const navigate = useNavigate();
-  const userCards = useDashboardStore(state => state.userCards);
+  const profile = useDashboardStore(state => state.profile);
+  
+  const [results, setResults] = useState<{entity: CommerceEntity, result: OptimizationResult}[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Filter out non-retail products (simulated search)
-  const results = MOCK_PRODUCTS.filter(p => p.name.toLowerCase().includes('nike'));
-
-  const paymentMethods = useMemo(() => adaptUserCardsToPaymentMethods(userCards), [userCards]);
+  useEffect(() => {
+    async function fetchResults() {
+      setIsLoading(true);
+      try {
+        const userId = profile?.id || 'demo-user-id';
+        const data = await CommerceOptimizationService.optimizeCollection(userId);
+        // Basic frontend filter simulation
+        setResults(data.filter(d => 
+          d.entity.name.toLowerCase().includes('nike') || 
+          d.entity.entityType === 'product'
+        ));
+      } catch (err) {
+        console.error("Failed to load commerce data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchResults();
+  }, [profile?.id]);
 
   return (
     <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-screen pt-8">
@@ -51,37 +67,33 @@ export default function ShopPage() {
           <span className="text-xs text-text-muted">{results.length} items</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((product) => {
-            const opportunity: SpendingOpportunity = {
-              id: `opp-${product.id}`,
-              partnerId: product.partnerId,
-              category: 'shopping',
-              baseAmount: product.originalPrice,
-              currency: 'INR',
-            };
-
-            let optimizationResult;
-            try {
-              if (paymentMethods.length > 0) {
-                optimizationResult = OptimizationEngine.optimizeSpending(opportunity, paymentMethods, MOCK_OFFERS);
-              }
-            } catch (err) {
-              console.error("Optimization error", err);
-            }
-
-            return (
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="animate-spin text-brand-emerald w-8 h-8" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {results.map(({ entity, result }) => (
               <SmartSpendCard
-                key={product.id}
-                title={product.name}
-                originalPrice={product.originalPrice}
-                optimizationResult={optimizationResult}
-                recommendation={product.recommendation}
-                onViewDeal={() => navigate(`/app/lifestyle/partner/${product.partnerId}`)}
+                key={entity.id}
+                title={entity.name}
+                originalPrice={entity.basePrice}
+                optimizationResult={result}
+                recommendation={{
+                  reason: result.reason.primary || 'Best overall value',
+                  features: result.reason.supportingFactors || [],
+                  badge: result.savings > 0 ? 'Best Value' : undefined
+                }}
+                onViewDeal={() => navigate(`/app/lifestyle/partner/${entity.partnerId}`)}
               />
-            );
-          })}
-        </div>
+            ))}
+            {results.length === 0 && (
+              <div className="col-span-full text-center py-10 text-text-muted">
+                No matching products found.
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

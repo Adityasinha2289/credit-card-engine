@@ -6,10 +6,9 @@ import { SavingsMetricDisplay } from '../../components/shared/SavingsMetricDispl
 import { SmartSpendCard } from '../../components/shared/SmartSpendCard';
 import { getGreeting } from '../../lib/greeting';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
-import { MOCK_PRODUCTS } from '../../features/lifestyle/mock/products';
-import { adaptUserCardsToPaymentMethods } from '../../features/optimization/adapters/cardAdapter';
-import { OptimizationEngine } from '../../features/optimization/engine/optimizationEngine';
-import { MOCK_OFFERS } from '../../features/optimization/mock/offers';
+import { CommerceOptimizationService } from '../../features/commerce';
+import type { CommerceEntity } from '../../features/commerce/types';
+import type { OptimizationResult } from '../../features/optimization/types';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -22,6 +21,24 @@ export default function HomePage() {
     { id: 'shop', label: 'Shop Smarter', icon: ShoppingBag, path: '/app/lifestyle/shop', color: 'from-brand-500/20 to-emerald-500/5' },
     { id: 'invest', label: 'Invest in Yourself', icon: Book, path: '/app/lifestyle/invest', color: 'from-purple-500/20 to-indigo-500/5' },
   ];
+
+  const [results, setResults] = React.useState<{entity: CommerceEntity, result: OptimizationResult}[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchResults() {
+      try {
+        const userId = profile?.id || 'demo-user-id';
+        const data = await CommerceOptimizationService.optimizeCollection(userId);
+        setResults(data.slice(0, 3));
+      } catch (err) {
+        console.error("Failed to load commerce data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchResults();
+  }, [profile?.id]);
 
   return (
     <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-screen">
@@ -105,38 +122,30 @@ export default function HomePage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MOCK_PRODUCTS.slice(0, 3).map((product) => {
-            const opportunity = {
-              id: `opp-${product.id}`,
-              partnerId: product.partnerId,
-              category: 'shopping' as const,
-              baseAmount: product.originalPrice,
-              currency: 'INR' as const,
-            };
-
-            let optimizationResult;
-            try {
-              const paymentMethods = adaptUserCardsToPaymentMethods(userCards);
-              if (paymentMethods.length > 0) {
-                optimizationResult = OptimizationEngine.optimizeSpending(opportunity, paymentMethods, MOCK_OFFERS);
-              }
-            } catch (err) {
-              console.error("Optimization error", err);
-            }
-
-            return (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-64 rounded-2xl bg-surface-elevated animate-pulse border border-border-subtle" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {results.map(({ entity, result }) => (
               <SmartSpendCard
-                key={product.id}
-                title={product.name}
-                originalPrice={product.originalPrice}
-                optimizationResult={optimizationResult}
-                recommendation={product.recommendation}
-                onViewDeal={() => navigate(`/app/lifestyle/partner/${product.partnerId}`)}
+                key={entity.id}
+                title={entity.name}
+                originalPrice={entity.basePrice}
+                optimizationResult={result}
+                recommendation={{
+                  reason: result.reason.primary || 'Best overall value',
+                  features: result.reason.supportingFactors || [],
+                  badge: result.savings > 0 ? 'Best Value' : undefined
+                }}
+                onViewDeal={() => navigate(`/app/lifestyle/partner/${entity.partnerId}`)}
               />
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
     </div>

@@ -32,7 +32,8 @@ export default function App() {
   const [hasAttemptedHydration, setHasAttemptedHydration] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
   const resetStore = useDashboardStore((s) => s._reset);
-  const { isHydrated, hydrateFromSupabase } = useHydration();
+  const isHydrated = useHydration();
+  const hydrateFromSupabase = useDashboardStore((s) => s.hydrateFromSupabase);
   const [isHydratingFromSupabase, setIsHydratingFromSupabase] = useState(false);
 
   // Authentication & Hydration flow

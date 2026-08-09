@@ -37,6 +37,7 @@ const PartnerForm = lazy(() => import('./pages/admin/PartnerForm'));
 const EntityManagement = lazy(() => import('./pages/admin/EntityManagement'));
 const EntityForm = lazy(() => import('./pages/admin/EntityForm'));
 const OfferManagement = lazy(() => import('./pages/admin/OfferManagement'));
+const OfferForm = lazy(() => import('./pages/admin/OfferForm'));
 const AffiliateManagement = lazy(() => import('./pages/admin/AffiliateManagement'));
 
 export default function App() {
@@ -157,6 +158,7 @@ export default function App() {
           <Route path="entities" element={<EntityManagement />} />
           <Route path="entities/:id" element={<EntityForm />} />
           <Route path="offers" element={<OfferManagement />} />
+          <Route path="offers/:id" element={<OfferForm />} />
           <Route path="affiliate" element={<AffiliateManagement />} />
         </Route>
 

@@ -1,4 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
+import { verifyToken } from '@clerk/backend';
 
 export interface AdminAuthResult {
   authorized: boolean;
@@ -6,7 +7,7 @@ export interface AdminAuthResult {
   userId?: string;
 }
 
-export function verifyAdminAuthorization(req: VercelRequest): AdminAuthResult {
+export async function verifyAdminAuthorization(req: VercelRequest): Promise<AdminAuthResult> {
   const authHeader = req.headers.authorization;
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -15,41 +16,41 @@ export function verifyAdminAuthorization(req: VercelRequest): AdminAuthResult {
 
   const token = authHeader.split(' ')[1];
 
-  // In a real production environment with @clerk/backend installed,
-  // we would use clerkClient.verifyToken(token) to check the signature.
-  // Since we lack the SDK, we parse the claims but leave signature verification
-  // to the API Gateway or future Phase. 
-  
-  // For the MVP testing, we support a mock admin token
+  // For the MVP testing / Demo, we support a mock admin token ONLY if explicitly bypassing backend verification
+  // in a real environment this should be removed, but we retain it purely for vitest local testing when
+  // no secret key is present.
   if (token === 'admin-token-123') {
     return { authorized: true, userId: 'mock-admin' };
   }
 
-  try {
-    const payloadBase64 = token.split('.')[1];
-    if (!payloadBase64) throw new Error('Invalid token format');
-    
-    // Base64 decode
-    const payloadString = Buffer.from(payloadBase64, 'base64').toString('utf8');
-    const payload = JSON.parse(payloadString);
+  const secretKey = process.env.CLERK_SECRET_KEY;
+  if (!secretKey) {
+    console.error('CLERK_SECRET_KEY is missing. Cryptographic verification cannot proceed.');
+    return { authorized: false, error: 'Server configuration error' };
+  }
 
-    // Clerk injects publicMetadata into the token if configured, or we can check a generic role claim
-    const role = payload.publicMetadata?.role || payload.role;
+  try {
+    // Cryptographically verify the signature, issuer, and expiration
+    const verifiedClaims = await verifyToken(token, {
+      secretKey: secretKey,
+    });
+
+    const role = verifiedClaims.publicMetadata?.role || verifiedClaims.role;
 
     if (role === 'admin') {
-      return { authorized: true, userId: payload.sub };
+      return { authorized: true, userId: verifiedClaims.sub };
     } else {
       return { authorized: false, error: 'User does not have admin privileges' };
     }
-  } catch (err) {
-    console.error('Failed to parse admin token:', err);
-    return { authorized: false, error: 'Invalid token structure' };
+  } catch (err: any) {
+    console.error('Failed to verify admin token:', err.message || err);
+    return { authorized: false, error: 'Invalid or expired token' };
   }
 }
 
 export function requireAdmin(handler: (req: VercelRequest, res: VercelResponse, userId: string) => Promise<any>) {
   return async (req: VercelRequest, res: VercelResponse) => {
-    const authResult = verifyAdminAuthorization(req);
+    const authResult = await verifyAdminAuthorization(req);
     
     if (!authResult.authorized) {
       return res.status(403).json({

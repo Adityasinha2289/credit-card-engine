@@ -3,6 +3,7 @@ import './index.css';
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import {
   TrendingUp,
   Gift,
@@ -791,10 +792,34 @@ function DashboardSkeleton() {
   );
 }
 
+function ExplorePageWrapper() {
+  return (
+    <div className="space-y-12">
+      <AnalyzeTab />
+      <hr className="border-border-subtle my-8" />
+      <PerksTab />
+    </div>
+  );
+}
+
+function TaqdeerPageWrapper() {
+  return (
+    <PageContainer title="Taqdeer AI" subtitle="Your AI Financial Copilot">
+      <div className="panel-glass rounded-3xl p-8 min-h-[50vh] flex flex-col items-center justify-center text-center border border-brand-emerald/20">
+        <div className="w-16 h-16 rounded-full bg-brand-emerald/10 flex items-center justify-center mb-6">
+          <Sparkles className="text-brand-emerald" size={24} />
+        </div>
+        <h2 className="text-2xl font-display font-medium text-text-primary mb-2">Taqdeer is ready</h2>
+        <p className="text-text-muted mb-8 max-w-md">Interact with the orb on the bottom right to start your AI-powered financial consultation.</p>
+      </div>
+      <Suspense fallback={null}><TaqdeerPanel /></Suspense>
+    </PageContainer>
+  );
+}
+
 export default function App() {
   const { isLoaded, isSignedIn, user } = useUser();
   const supabase = useSupabase();
-  const [activeTab, setActiveTab] = useState<TabId>('home');
   const [hasAttemptedHydration, setHasAttemptedHydration] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
   const resetStore = useDashboardStore((s) => s._reset);
@@ -849,8 +874,6 @@ export default function App() {
   if (!isHydrated || (!isLoaded && !isTestKey) || isHydratingFromSupabase) {
     return (
       <DashboardLayout
-        activeTab={activeTab}
-        onTabChange={() => {}}
         isDark={true}
         onToggleTheme={() => {}}
       >
@@ -871,20 +894,18 @@ export default function App() {
 
   return (
     <DashboardLayout
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
       isDark={true}
       onToggleTheme={() => {}}
     >
-      {activeTab === 'home'     && <HomeTab />}
-      {activeTab === 'analyze'  && <AnalyzeTab />}
-      {activeTab === 'wallet'   && <WalletTab />}
-      {activeTab === 'perks'    && <PerksTab />}
-      {activeTab === 'insights' && <InsightsTab />}
-      {activeTab === 'profile'  && <ProfileTab />}
-
-      {/* ── Taqdeer AI Floating Chat ─────────────────────────────────── */}
-      <Suspense fallback={null}><TaqdeerPanel /></Suspense>
+      <Routes>
+        <Route path="/" element={<HomeTab />} />
+        <Route path="/wallet" element={<WalletTab />} />
+        <Route path="/taqdeer" element={<TaqdeerPageWrapper />} />
+        <Route path="/explore" element={<ExplorePageWrapper />} />
+        <Route path="/insights" element={<InsightsTab />} />
+        <Route path="/profile" element={<ProfileTab />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </DashboardLayout>
   );
 }

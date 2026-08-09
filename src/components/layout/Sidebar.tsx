@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  SIDEBAR — Premium fixed navigation
@@ -20,34 +21,35 @@ import { useDashboardStore } from '../../features/dashboard/store/dashboardStore
 export type TabId = 'home' | 'analyze' | 'wallet' | 'perks' | 'insights' | 'profile';
 
 interface NavItem {
-  id: TabId;
+  id: string;
+  path: string;
   label: string;
   Icon: typeof LayoutDashboard;
   description: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'home',     label: 'Dashboard', Icon: LayoutDashboard, description: 'Overview & cards'      },
-  { id: 'analyze',  label: 'Analyzer',  Icon: Search,          description: 'Card recommendations'  },
-  { id: 'wallet',   label: 'Wallet',    Icon: Wallet,          description: 'Optimizer & payments'   },
-  { id: 'perks',    label: 'Perks',     Icon: Gift,            description: 'Rewards & subscriptions'},
-  { id: 'insights', label: 'Insights',  Icon: BarChart3,       description: 'Spend analysis & CIBIL' },
-  { id: 'profile',  label: 'Profile',   Icon: User,            description: 'Settings & details'     },
+  { id: 'home',     path: '/app',          label: 'Dashboard', Icon: LayoutDashboard, description: 'Overview & cards'      },
+  { id: 'wallet',   path: '/app/wallet',   label: 'Wallet',    Icon: Wallet,          description: 'Optimizer & payments'   },
+  { id: 'taqdeer',  path: '/app/taqdeer',  label: 'Taqdeer',   Icon: Search,          description: 'AI Financial Copilot'   },
+  { id: 'explore',  path: '/app/explore',  label: 'Explore',   Icon: Gift,            description: 'Recommendations & Perks'},
+  { id: 'insights', path: '/app/insights', label: 'Insights',  Icon: BarChart3,       description: 'Spend analysis & CIBIL' },
+  { id: 'profile',  path: '/app/profile',  label: 'Profile',   Icon: User,            description: 'Settings & details'     },
 ];
 
 interface SidebarProps {
-  activeTab: TabId;
-  onTabChange: (tab: TabId) => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
 }
 
 import { useClerk } from '@clerk/clerk-react';
 
-export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }: SidebarProps) {
+export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
   const profile = useDashboardStore((s) => s.profile);
   const logout = useDashboardStore((s) => s.logout);
   const { signOut } = useClerk();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <motion.aside
@@ -98,14 +100,18 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
         </p>
 
         {NAV_ITEMS.map((item) => {
-          const isActive = activeTab === item.id;
+          // Exact match for /app, startsWith for others
+          const isActive = item.path === '/app' 
+            ? location.pathname === '/app' || location.pathname === '/app/'
+            : location.pathname.startsWith(item.path);
+          
           return (
             <button
               key={item.id}
               id={`nav-${item.id}`}
               aria-label={`Navigate to ${item.label}`}
               aria-current={isActive ? 'page' : undefined}
-              onClick={() => onTabChange(item.id)}
+              onClick={() => navigate(item.path)}
               className={cn(
                 'relative flex items-center gap-3 rounded-xl transition-all duration-200',
                 collapsed ? 'px-0 py-3 justify-center' : 'px-3 py-2.5',
@@ -170,7 +176,7 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
       )}>
         {/* User card */}
         <div 
-          onClick={() => onTabChange('profile')}
+          onClick={() => navigate('/app/profile')}
           className={cn(
             'flex items-center gap-3 rounded-xl cursor-pointer group',
             'transition-all duration-200 hover:bg-surface-secondary dark:hover:bg-white/[0.03]',

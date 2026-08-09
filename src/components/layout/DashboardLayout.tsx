@@ -1,8 +1,9 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
-import { Sidebar, type TabId } from './Sidebar';
+import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 
@@ -11,16 +12,12 @@ import { useDashboardStore } from '../../features/dashboard/store/dashboardStore
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface DashboardLayoutProps {
-  activeTab: TabId;
-  onTabChange: (tab: TabId) => void;
   isDark: boolean;
   onToggleTheme: () => void;
   children: ReactNode;
 }
 
 export function DashboardLayout({
-  activeTab,
-  onTabChange,
   isDark,
   onToggleTheme,
   children,
@@ -29,6 +26,8 @@ export function DashboardLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // ── Responsive detection ──────────────────────────────────────────────
   useEffect(() => {
@@ -42,10 +41,10 @@ export function DashboardLayout({
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  // Close mobile menu when tab changes
+  // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false);
-  }, [activeTab]);
+  }, [location.pathname]);
 
   return (
     <div className="bg-obsidian min-h-screen w-full relative overflow-hidden">
@@ -54,8 +53,6 @@ export function DashboardLayout({
       {/* ── Desktop Sidebar ────────────────────────────────────────────── */}
       {!isMobile && (
         <Sidebar
-          activeTab={activeTab}
-          onTabChange={onTabChange}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
         />
@@ -84,11 +81,6 @@ export function DashboardLayout({
               className="fixed top-0 left-0 z-50 h-screen"
             >
               <Sidebar
-                activeTab={activeTab}
-                onTabChange={(tab) => {
-                  onTabChange(tab);
-                  setMobileMenuOpen(false);
-                }}
                 collapsed={false}
                 onToggleCollapse={() => setMobileMenuOpen(false)}
               />
@@ -117,7 +109,7 @@ export function DashboardLayout({
               <Menu size={20} strokeWidth={1.8} />
             </button>
             <motion.p
-              key={activeTab}
+              key={location.pathname}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-base font-display font-bold text-text-primary"
@@ -125,7 +117,7 @@ export function DashboardLayout({
               renocred
             </motion.p>
             <button 
-              onClick={() => onTabChange('profile')}
+              onClick={() => navigate('/app/profile')}
               className="w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-emerald-glow transition-all cursor-pointer"
             >
               <img
@@ -137,10 +129,8 @@ export function DashboardLayout({
           </header>
         ) : (
           <TopNav
-            activeTab={activeTab}
             isDark={isDark}
             onToggleTheme={onToggleTheme}
-            onTabChange={onTabChange}
           />
         )}
 
@@ -148,7 +138,7 @@ export function DashboardLayout({
         <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeTab}
+              key={location.pathname}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}

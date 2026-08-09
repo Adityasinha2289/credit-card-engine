@@ -3,31 +3,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MotionButton, fadeUpVariant, springSmooth } from '../../motion';
 import { Bell } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import type { TabId } from './Sidebar';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  TOP NAV — Sticky header for main content area
 // ─────────────────────────────────────────────────────────────────────────────
 
-const TAB_TITLES: Record<TabId, { title: string; subtitle: string }> = {
-  home:     { title: 'Dashboard',      subtitle: 'Your financial overview at a glance'      },
-  analyze:  { title: 'Card Analyzer',  subtitle: 'Personalized credit card recommendations' },
-  wallet:   { title: 'Wallet',         subtitle: 'Optimize payments & track bills'           },
-  insights: { title: 'Insights',       subtitle: 'Spend analysis & credit health'            },
-  perks:    { title: 'Perks & Rewards',subtitle: 'Milestone tracking & card benefits'        },
-  profile:  { title: 'Profile Settings', subtitle: 'Manage your credit profile and preferences' },
+const ROUTE_TITLES: Record<string, { title: string; subtitle: string }> = {
+  '/app':          { title: 'Dashboard',      subtitle: 'Your financial overview at a glance'      },
+  '/app/explore':  { title: 'Explore',        subtitle: 'Recommendations & Perks'                  },
+  '/app/wallet':   { title: 'Wallet',         subtitle: 'Optimize payments & track bills'          },
+  '/app/taqdeer':  { title: 'Taqdeer AI',     subtitle: 'Your AI Financial Copilot'                },
+  '/app/insights': { title: 'Insights',       subtitle: 'Spend analysis & credit health'           },
+  '/app/profile':  { title: 'Profile Settings', subtitle: 'Manage your credit profile and preferences' },
 };
 
 interface TopNavProps {
-  activeTab: TabId;
   isDark: boolean;
   onToggleTheme: () => void;
-  onTabChange?: (tab: TabId) => void;
 }
 
-export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleTheme, onTabChange }: TopNavProps) {
-  const { title, subtitle } = TAB_TITLES[activeTab];
+export function TopNav({ isDark: _isDark, onToggleTheme: _onToggleTheme }: TopNavProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentRoute = ROUTE_TITLES[location.pathname] || { title: 'Dashboard', subtitle: '' };
+  const { title, subtitle } = currentRoute;
   const profile = useDashboardStore((s) => s.profile);
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -61,7 +62,7 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
       {/* ── Page Title ──────────────────────────────────────────────────── */}
       <div className="flex-1 min-w-0">
         <motion.div
-          key={activeTab}
+          key={location.pathname}
           variants={fadeUpVariant}
           initial="hidden"
           animate="show"
@@ -77,7 +78,7 @@ export function TopNav({ activeTab, isDark: _isDark, onToggleTheme: _onToggleThe
       <div className="flex items-center gap-2">
         {/* Mobile-only profile avatar (visible < lg) */}
         <button
-          onClick={() => onTabChange && onTabChange('profile')}
+          onClick={() => navigate('/app/profile')}
           className="lg:hidden w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-emerald-glow transition-all cursor-pointer"
         >
           <img

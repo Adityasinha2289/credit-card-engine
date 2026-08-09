@@ -66,7 +66,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Store tracking event
       await supabase.from('tracking_events').insert({
-        click_id: clickId,
+        id: clickId,
         user_id: userId,
         partner_id: partner.id,
         commerce_entity_id: entity.id,

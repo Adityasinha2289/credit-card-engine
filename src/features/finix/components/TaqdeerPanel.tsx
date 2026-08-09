@@ -175,22 +175,29 @@ export function TaqdeerPanel() {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
+        animate={{ 
+          scale: [1, 1.05, 1],
+          boxShadow: [
+            "0px 0px 0px 0px rgba(0, 229, 153, 0.3)",
+            "0px 0px 25px 8px rgba(0, 229, 153, 0.5)",
+            "0px 0px 0px 0px rgba(0, 229, 153, 0.3)"
+          ]
+        }}
+        transition={{ 
+          duration: 2, 
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
         className={cn(
           'fixed bottom-24 right-5 z-40',
-          'w-14 h-14 rounded-full shadow-ag-float',
-          'bg-gradient-to-br from-brand-500 to-steel-500',
-          'flex items-center justify-center text-white',
+          'w-14 h-14 rounded-full',
+          'glass-panel',
+          'flex items-center justify-center text-[#00E599]',
           'transition-all duration-200',
           isOpen && 'opacity-0 pointer-events-none',
         )}
       >
         <Bot size={22} />
-        {/* Pulse ring */}
-        <motion.div
-          className="absolute inset-0 rounded-full bg-brand-400 -z-10"
-          animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0, 0.5] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
       </motion.button>
 
       {/* ── Chat Panel ─────────────────────────────────────────────────── */}

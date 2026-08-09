@@ -218,6 +218,11 @@ export default {
         'border-default': 'var(--border-default)',
         'border-hover': 'var(--border-hover)',
         'border-selected': 'var(--border-selected)',
+        
+        obsidian: '#050706',
+        'glass-surface': 'rgba(255, 255, 255, 0.02)',
+        'glass-border': 'rgba(255, 255, 255, 0.08)',
+        'emerald-neon': '#00E599',
       },
 
       // ─────────────────────────────────────────────────────────────────

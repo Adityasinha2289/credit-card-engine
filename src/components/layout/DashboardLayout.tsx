@@ -48,7 +48,9 @@ export function DashboardLayout({
   }, [activeTab]);
 
   return (
-    <div className="bg-mesh min-h-screen w-full">
+    <div className="bg-obsidian min-h-screen w-full relative overflow-hidden">
+      <div className="ambient-spotlight w-[600px] h-[600px] top-[-200px] left-[-200px]" />
+      <div className="ambient-spotlight w-[600px] h-[600px] bottom-[-200px] right-[-200px]" />
       {/* ── Desktop Sidebar ────────────────────────────────────────────── */}
       {!isMobile && (
         <Sidebar
@@ -101,7 +103,7 @@ export function DashboardLayout({
           'flex flex-col min-h-screen transition-[margin-left] duration-300 ease-ag-smooth',
         )}
         style={{
-          marginLeft: isMobile ? 0 : sidebarCollapsed ? 72 : 272,
+          marginLeft: isMobile ? 0 : sidebarCollapsed ? 72 + 32 : 272 + 32,
         }}
       >
         {/* Top Nav */}

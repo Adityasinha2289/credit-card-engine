@@ -544,6 +544,22 @@
 ───────────────────────────────────────────────────────────────────────────── */
 
 @layer utilities {
+  .glass-panel {
+    @apply bg-white/[0.02] backdrop-blur-2xl border border-white/[0.08] rounded-3xl;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.36);
+  }
+
+  .text-gradient-emerald {
+    background: linear-gradient(to bottom right, white, #00E599, theme('colors.teal.500'));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .ambient-spotlight {
+    @apply absolute rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none;
+  }
+
   /* GPU-accelerated transform layer for Framer Motion cards */
   .transform-gpu {
     transform: translateZ(0);

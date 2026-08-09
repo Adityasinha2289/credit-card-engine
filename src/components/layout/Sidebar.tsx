@@ -52,8 +52,8 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
   return (
     <motion.aside
       className={cn(
-        'fixed top-0 left-0 h-screen z-40 flex flex-col',
-        'sidebar-glass shadow-ag-sidebar',
+        'fixed top-4 left-4 h-[calc(100vh-32px)] z-40 flex flex-col',
+        'glass-panel',
         'transition-[width] duration-300 ease-ag-smooth',
       )}
       style={{ width: collapsed ? 72 : 272 }}
@@ -117,7 +117,7 @@ export function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }:
               {/* Active background indicator */}
               {isActive && (
                 <motion.div
-                  layoutId="sidebar-active-bg"
+                  layoutId="activeNav"
                   className="absolute inset-0 rounded-xl bg-brand-50 dark:bg-brand-emerald-muted border-y border-r border-brand-200/50 dark:border-border-emerald border-l-[3px] border-l-brand-500 dark:border-l-brand-400"
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />

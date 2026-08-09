@@ -254,7 +254,7 @@ function HomeTab() {
           <p className="text-[#5D8F74] text-[10px] font-bold tracking-[0.2em] uppercase mb-2 flex items-center gap-2">
             <Sparkles size={12} /> Executive Briefing
           </p>
-          <h1 className="text-4xl sm:text-5xl font-display font-medium tracking-tight text-white mb-3 leading-tight">
+          <h1 className="text-5xl font-medium tracking-tight text-white mb-3 leading-tight">
             {getGreeting()}, {profile?.name?.split(' ')[0] || 'there'}.
           </h1>
           <p className="text-lg text-zinc-400 font-light max-w-2xl leading-relaxed mb-8">

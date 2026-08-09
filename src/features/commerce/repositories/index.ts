@@ -140,3 +140,4 @@ export class CommerceRepository {
     return data.map(CommerceMapper.toOffer);
   }
 }
+export * from './PaymentMethodRepository';

@@ -26,8 +26,11 @@ describe('CardAdapter', () => {
     expect(paymentMethod.metadata).toEqual({
       network: 'visa',
       panLast4: '4444',
-      status: 'active',
+      legacy_card_id: 'card-123',
+      status_raw: 'active',
     });
+    expect((paymentMethod as any).status).toBe('active');
+    expect((paymentMethod as any).userId).toBe('demo-user-id');
   });
 
   it('provides fallbacks when optional fields are missing', () => {

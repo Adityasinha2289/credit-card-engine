@@ -29,10 +29,21 @@ export type PaymentMethodType =
 
 export interface PaymentMethod {
   id: string;
-  type: PaymentMethodType;
+  userId: string;
+  
+  // User-Controlled Data
   name: string;
+  status: 'active' | 'inactive';
+  
+  // System-Verified Data
+  type: PaymentMethodType;
   provider: string; // e.g. "HDFC", "Google Pay"
-  metadata: Record<string, unknown>;
+  metadata: {
+    network?: string;
+    panLast4?: string;
+    legacy_card_id?: string;
+    [key: string]: any;
+  };
 }
 
 export type OfferType =

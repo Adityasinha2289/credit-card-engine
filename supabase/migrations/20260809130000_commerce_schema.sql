@@ -14,7 +14,7 @@ CREATE TABLE categories (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 2. PARTNERS
 CREATE TABLE partners (
@@ -30,7 +30,7 @@ CREATE TABLE partners (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_partners_status ON partners(status);
-CREATE TRIGGER update_partners_updated_at BEFORE UPDATE ON partners FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_partners_updated_at BEFORE UPDATE ON partners FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 3. COMMERCE ENTITIES
 CREATE TABLE commerce_entities (
@@ -52,7 +52,7 @@ CREATE TABLE commerce_entities (
     last_verified_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_commerce_entities_partner ON commerce_entities(partner_id);
-CREATE TRIGGER update_commerce_entities_updated_at BEFORE UPDATE ON commerce_entities FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_commerce_entities_updated_at BEFORE UPDATE ON commerce_entities FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 4. OFFERS
 CREATE TABLE offers (
@@ -74,12 +74,12 @@ CREATE TABLE offers (
 );
 CREATE INDEX idx_offers_status_dates ON offers(status, valid_from, valid_until);
 CREATE INDEX idx_offers_eligibility ON offers USING GIN (eligibility_rules);
-CREATE TRIGGER update_offers_updated_at BEFORE UPDATE ON offers FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_offers_updated_at BEFORE UPDATE ON offers FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 5. PAYMENT METHODS (User Wallet)
 CREATE TABLE payment_methods (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     type VARCHAR(50) NOT NULL CHECK (type IN ('credit_card', 'upi', 'wallet', 'reward_points')),
     name VARCHAR(255) NOT NULL,
     provider VARCHAR(100) NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE payment_methods (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_payment_methods_user ON payment_methods(user_id);
-CREATE TRIGGER update_payment_methods_updated_at BEFORE UPDATE ON payment_methods FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_payment_methods_updated_at BEFORE UPDATE ON payment_methods FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 6. AFFILIATE RELATIONSHIPS (Server Only)
 CREATE TABLE affiliate_relationships (
@@ -103,12 +103,12 @@ CREATE TABLE affiliate_relationships (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-CREATE TRIGGER update_affiliate_relationships_updated_at BEFORE UPDATE ON affiliate_relationships FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_affiliate_relationships_updated_at BEFORE UPDATE ON affiliate_relationships FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 7. TRACKING EVENTS (Clicks - Server Only Write)
 CREATE TABLE tracking_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     commerce_entity_id UUID REFERENCES commerce_entities(id) ON DELETE SET NULL,
     partner_id UUID NOT NULL REFERENCES partners(id) ON DELETE CASCADE,
     offer_id UUID REFERENCES offers(id) ON DELETE SET NULL,
@@ -131,7 +131,7 @@ CREATE TABLE conversions (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-CREATE TRIGGER update_conversions_updated_at BEFORE UPDATE ON conversions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_conversions_updated_at BEFORE UPDATE ON conversions FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- 9. COMMISSIONS (Server Only)
 CREATE TABLE commissions (
@@ -144,7 +144,7 @@ CREATE TABLE commissions (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-CREATE TRIGGER update_commissions_updated_at BEFORE UPDATE ON commissions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_commissions_updated_at BEFORE UPDATE ON commissions FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- RLS Configuration
 

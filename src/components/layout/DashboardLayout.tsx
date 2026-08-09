@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu } from 'lucide-react';
+import { Menu, Sparkles } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -117,6 +117,14 @@ export function DashboardLayout({
             >
               renocred
             </motion.p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate('/app/taqdeer')}
+                className="h-9 px-3 rounded-full bg-brand-emerald/10 border border-brand-emerald/20 text-brand-emerald flex items-center gap-1.5 hover:bg-brand-emerald/20 transition-colors"
+              >
+                <Sparkles size={14} />
+                <span className="text-[10px] font-bold tracking-wider uppercase hidden sm:inline">Ask RenoCred</span>
+              </button>
             <button 
               onClick={() => navigate('/app/profile')}
               className="w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-emerald-glow transition-all cursor-pointer"
@@ -127,6 +135,7 @@ export function DashboardLayout({
                 className="w-full h-full object-cover"
               />
             </button>
+            </div>
           </header>
         ) : (
           <TopNav

@@ -3,6 +3,7 @@ import { CreditCard, Tag, TrendingDown, ArrowRight, Zap } from 'lucide-react';
 import type { MockRecommendation } from '../../features/lifestyle/types';
 import { cn } from '../../lib/utils';
 import { useState, useEffect } from 'react';
+import { RecommendationReason } from './RecommendationReason';
 
 interface SmartSpendCardProps {
   title: string;
@@ -25,84 +26,78 @@ export function SmartSpendCard({ title, originalPrice, recommendation, onViewDea
   }, []);
 
   return (
-    <div className={cn("glass-panel overflow-hidden flex flex-col group", className)}>
-      {/* Header */}
-      <div className="px-5 py-4 border-b border-border-subtle bg-surface-elevated/30 flex justify-between items-start">
-        <div>
-          <h3 className="font-semibold text-text-primary text-lg tracking-tight group-hover:text-brand-emerald transition-colors">
-            {title}
-          </h3>
-          <p className="text-text-muted text-sm mt-0.5 line-through decoration-text-muted/50">
-            ₹{originalPrice.toLocaleString('en-IN')}
-          </p>
-        </div>
-        {!isCalculating && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-emerald/10 border border-brand-emerald/20 text-brand-emerald"
+    <div className={cn("glass-panel overflow-hidden flex flex-col group relative", className)}>
+      {isCalculating ? (
+        <div className="absolute inset-0 z-20 bg-surface-base/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+            className="text-brand-emerald mb-4"
           >
-            <TrendingDown size={14} />
-            <span className="text-xs font-bold tracking-wide">Save ₹{recommendation.totalSavings.toLocaleString('en-IN')}</span>
+            <Zap size={28} className="fill-brand-emerald/20" />
           </motion.div>
-        )}
+          <p className="text-sm font-medium text-text-primary mb-1">Finding the smartest option...</p>
+          <p className="text-xs text-text-muted">Comparing rewards & offers</p>
+        </div>
+      ) : null}
+
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-border-subtle bg-surface-elevated/30">
+        <h3 className="font-semibold text-text-primary text-lg tracking-tight group-hover:text-brand-emerald transition-colors">
+          {title}
+        </h3>
       </div>
 
-      <div className="p-5 flex-1 flex flex-col gap-5 relative">
-        {isCalculating ? (
-          <div className="absolute inset-0 z-10 bg-surface-base/80 backdrop-blur-sm flex flex-col items-center justify-center">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              className="text-brand-emerald mb-3"
-            >
-              <Zap size={24} className="fill-brand-emerald/20" />
-            </motion.div>
-            <p className="text-sm font-medium text-text-primary">Optimizing payment...</p>
+      <div className="p-5 flex-1 flex flex-col gap-6">
+        
+        {/* Core Value Prop */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Price</p>
+            <p className="text-sm font-medium text-text-secondary line-through decoration-text-muted/50">
+              ₹{originalPrice.toLocaleString('en-IN')}
+            </p>
           </div>
-        ) : null}
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">RenoCred Value</p>
+            <p className="text-sm font-medium text-brand-emerald">
+              -₹{recommendation.totalSavings.toLocaleString('en-IN')}
+            </p>
+          </div>
+        </div>
 
-        {/* Breakdown */}
-        <div className="space-y-3">
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Effective Cost</p>
+          <div className="flex items-end gap-3">
+            <p className="text-3xl font-display font-bold text-text-primary tracking-tight">
+              ₹{recommendation.effectiveCost.toLocaleString('en-IN')}
+            </p>
+            <div className="bg-brand-emerald/10 text-brand-emerald px-2 py-1 rounded text-xs font-bold mb-1 border border-brand-emerald/20 flex items-center gap-1">
+              <TrendingDown size={12} />
+              YOU SAVE ₹{recommendation.totalSavings.toLocaleString('en-IN')}
+            </div>
+          </div>
+        </div>
+
+        {/* Breakdown Context */}
+        <div className="space-y-2 pt-4 border-t border-border-subtle">
+          <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-2">Smart Payment Plan</p>
           {recommendation.merchantOffer && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-text-secondary">
-                <Tag size={14} className="text-brand-400" />
-                <span>{recommendation.merchantOffer.description}</span>
-              </div>
-              <span className="font-medium text-brand-emerald">-₹{recommendation.merchantOffer.value.toLocaleString('en-IN')}</span>
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <Tag size={14} className="text-text-muted" />
+              <span>{recommendation.merchantOffer.description}</span>
             </div>
           )}
           {recommendation.cardReward && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-text-secondary">
-                <CreditCard size={14} className="text-brand-400" />
-                <span>{recommendation.cardReward.description}</span>
-              </div>
-              <span className="font-medium text-brand-emerald">-₹{recommendation.cardReward.value.toLocaleString('en-IN')}</span>
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <CreditCard size={14} className="text-text-muted" />
+              <span>{recommendation.cardReward.description} on {recommendation.bestCard.bankName} {recommendation.bestCard.cardName}</span>
             </div>
           )}
         </div>
 
-        {/* Best Card */}
-        <div className="bg-surface-secondary/50 rounded-xl p-3 border border-border-subtle flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-surface-elevated border border-border-subtle flex items-center justify-center shrink-0">
-            <CreditCard size={18} className="text-text-primary" />
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-0.5">Best Card</p>
-            <p className="text-sm font-medium text-text-primary">{recommendation.bestCard.bankName} {recommendation.bestCard.cardName}</p>
-          </div>
-        </div>
-
-        <div className="mt-auto">
-          <p className="text-text-muted text-xs mb-1">Effective Cost</p>
-          <p className="text-2xl font-display font-bold text-text-primary tracking-tight">
-            ₹{recommendation.effectiveCost.toLocaleString('en-IN')}
-          </p>
-          <p className="text-xs text-text-muted mt-2 border-t border-border-subtle pt-3">
-            <span className="font-medium text-text-secondary">Why:</span> {recommendation.reason}
-          </p>
+        <div className="mt-auto pt-2">
+          <RecommendationReason reason={recommendation.reason} />
         </div>
       </div>
 
@@ -120,3 +115,4 @@ export function SmartSpendCard({ title, originalPrice, recommendation, onViewDea
     </div>
   );
 }
+

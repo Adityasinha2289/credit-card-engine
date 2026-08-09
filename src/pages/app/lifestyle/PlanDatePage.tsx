@@ -119,31 +119,39 @@ export default function PlanDatePage() {
                 </h2>
                 <div className="space-y-4">
                   {itinerary.venues.map(venue => (
-                    <div key={venue.id} className="glass-panel p-4 rounded-2xl border-brand-emerald/10">
-                      <p className="text-sm font-medium text-text-primary mb-3">{venue.partnerName}</p>
-                      <div className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-text-muted">Best Card:</span>
-                        <span className="text-white font-medium">{venue.recommendation.bestCard.bankName} {venue.recommendation.bestCard.cardName}</span>
+                    <div key={venue.id} className="flex justify-between items-center glass-panel p-4 rounded-2xl border-border-subtle">
+                      <div>
+                        <p className="text-sm font-medium text-text-primary mb-1">{venue.partnerName}</p>
+                        <p className="text-xs text-text-muted">{venue.recommendation.bestCard.bankName} {venue.recommendation.bestCard.cardName}</p>
                       </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-text-muted">Savings:</span>
-                        <span className="text-brand-emerald font-semibold">-₹{venue.recommendation.totalSavings.toLocaleString('en-IN')}</span>
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">Save</p>
+                        <p className="text-brand-emerald font-semibold">-₹{venue.recommendation.totalSavings.toLocaleString('en-IN')}</p>
                       </div>
                     </div>
                   ))}
                   
-                  <div className="glass-panel p-6 rounded-2xl mt-6 border border-brand-emerald/20 bg-brand-emerald/5">
-                    <div className="flex justify-between items-center mb-3 text-text-muted">
-                      <span>Total Date Cost</span>
-                      <span className="line-through">₹4,800</span>
+                  <div className="glass-panel p-6 rounded-2xl mt-6 border-brand-emerald/20 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-brand-emerald/5 pointer-events-none" />
+                    
+                    <div className="relative z-10 grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Total Cost</p>
+                        <p className="text-sm font-medium text-text-secondary line-through decoration-text-muted/50">
+                          ₹4,800
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Date Value</p>
+                        <p className="text-sm font-medium text-brand-emerald">
+                          -₹650
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center mb-4 text-brand-emerald text-sm font-medium">
-                      <span>RenoCred Optimized Value</span>
-                      <span>-₹650</span>
-                    </div>
-                    <div className="flex justify-between items-center pt-4 border-t border-brand-emerald/10">
-                      <span className="text-text-secondary font-medium">Effective Cost</span>
-                      <span className="text-3xl font-display font-bold text-white">₹4,150</span>
+                    
+                    <div className="relative z-10 pt-4 border-t border-brand-emerald/10">
+                      <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Effective Cost</p>
+                      <p className="text-3xl font-display font-bold text-white tracking-tight">₹4,150</p>
                     </div>
                   </div>
                   

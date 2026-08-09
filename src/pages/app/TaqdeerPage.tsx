@@ -29,10 +29,10 @@ export default function TaqdeerPage() {
 
   return (
     <PageContainer title="Taqdeer AI" subtitle="Your Intelligent Financial Copilot">
-      <div className="flex flex-col lg:flex-row gap-6 min-h-[75vh]">
+      <div className="flex flex-col-reverse lg:flex-row gap-6 min-h-[75vh]">
         
         {/* Left Side: Chat Interface */}
-        <div className="flex-1 flex flex-col glass-panel rounded-3xl overflow-hidden border-border-subtle">
+        <div className="w-full lg:w-1/3 flex flex-col glass-panel rounded-3xl overflow-hidden border-border-subtle shrink-0 max-h-[75vh]">
           <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
             {messages.map((msg, i) => (
               <div key={i} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -62,7 +62,7 @@ export default function TaqdeerPage() {
         </div>
 
         {/* Right Side: Visual Canvas Prototype */}
-        <div className={`flex-1 glass-panel rounded-3xl p-6 border-brand-emerald/20 transition-all duration-700 ${showCanvas ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}>
+        <div className={`w-full lg:w-2/3 glass-panel rounded-3xl p-6 border-brand-emerald/20 transition-all duration-700 ${showCanvas ? 'opacity-100 lg:translate-x-0' : 'opacity-0 lg:translate-x-8 pointer-events-none hidden lg:block'}`}>
           <div className="h-full overflow-y-auto hide-scrollbar">
             {showCanvas && (
               <div className="space-y-6">

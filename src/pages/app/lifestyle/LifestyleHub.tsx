@@ -57,7 +57,7 @@ export default function LifestyleHub() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className={`glass-panel p-6 flex flex-col items-start relative group cursor-pointer hover:border-brand-emerald/40 transition-colors shadow-ag-base hover:shadow-ag-hover`}
+            className={`surface-card p-8 flex flex-col items-start relative group cursor-pointer hover:border-brand-emerald/40 transition-colors shadow-ag-base hover:shadow-ag-hover`}
             onClick={() => navigate(hub.path)}
           >
             <div className={`w-12 h-12 rounded-xl border flex items-center justify-center mb-6 ${hub.bg}`}>

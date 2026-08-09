@@ -76,15 +76,6 @@ export function TopNav({ isDark: _isDark, onToggleTheme: _onToggleTheme }: TopNa
 
       {/* ── Actions ─────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-2">
-        {/* Mobile-only Ask RenoCred */}
-        <button
-          onClick={() => navigate('/app/taqdeer')}
-          className="lg:hidden h-9 px-3 rounded-full bg-brand-emerald/10 border border-brand-emerald/20 text-brand-emerald flex items-center gap-1.5 hover:bg-brand-emerald/20 transition-colors"
-        >
-          <Sparkles size={14} />
-          <span className="text-[10px] font-bold tracking-wider uppercase hidden sm:inline">Ask RenoCred</span>
-        </button>
-
         {/* Mobile-only profile avatar (visible < lg) */}
         <button
           onClick={() => navigate('/app/profile')}

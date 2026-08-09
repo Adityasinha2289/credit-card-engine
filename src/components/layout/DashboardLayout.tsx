@@ -6,7 +6,8 @@ import { TopNav } from './TopNav';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
-import { CommandCenter } from '../shared/CommandCenter';
+import { GlobalTaqdeerButton } from '../../features/taqdeer/components/GlobalTaqdeerButton';
+import { TaqdeerDrawer } from '../../features/taqdeer/components/TaqdeerDrawer';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DASHBOARD LAYOUT — Root wrapper with Sidebar + TopNav + Content
@@ -26,6 +27,7 @@ export function DashboardLayout({
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTaqdeerOpen, setIsTaqdeerOpen] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
   const location = useLocation();
   const navigate = useNavigate();
@@ -116,13 +118,7 @@ export function DashboardLayout({
               renocred
             </motion.p>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigate('/app/taqdeer')}
-                className="h-9 px-3 rounded-full bg-brand-emerald/10 border border-brand-emerald/20 text-brand-emerald flex items-center gap-1.5 hover:bg-brand-emerald/20 transition-colors"
-              >
-                <Sparkles size={14} />
-                <span className="text-[10px] font-bold tracking-wider uppercase hidden sm:inline">Ask RenoCred</span>
-              </button>
+
             <button 
               onClick={() => navigate('/app/profile')}
               className="w-9 h-9 rounded-full bg-surface-secondary dark:bg-surface-elevated overflow-hidden ring-1 ring-canvas-300 dark:ring-white/[0.06] hover:ring-brand-emerald-glow transition-all cursor-pointer"
@@ -157,6 +153,16 @@ export function DashboardLayout({
           </AnimatePresence>
         </main>
       </div>
+
+      {/* Global Taqdeer Layer */}
+      <GlobalTaqdeerButton 
+        isOpen={isTaqdeerOpen} 
+        onClick={() => setIsTaqdeerOpen(!isTaqdeerOpen)} 
+      />
+      <TaqdeerDrawer 
+        isOpen={isTaqdeerOpen} 
+        onClose={() => setIsTaqdeerOpen(false)} 
+      />
     </div>
   );
 }

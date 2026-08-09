@@ -150,7 +150,7 @@ export function ProfileTab() {
         )}
       </AnimatePresence>
 
-      <form onSubmit={handleSave} className="panel-glass rounded-[2rem] p-6 lg:p-8 flex flex-col gap-6 shadow-2xl relative overflow-hidden">
+      <form onSubmit={handleSave} className="surface-card p-6 lg:p-8 flex flex-col gap-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-36 h-36 bg-brand-emerald/5 rounded-full blur-2xl pointer-events-none" />
 
         {/* Name & Contact */}
@@ -216,8 +216,8 @@ export function ProfileTab() {
                   className={cn(
                     'w-9 h-9 rounded-full border flex-shrink-0 text-xs font-semibold flex items-center justify-center transition-all overflow-hidden',
                     avatarSeed === seed
-                      ? 'border-brand-emerald scale-110 shadow-sm ring-2 ring-brand-emerald/20'
-                      : 'border-border-subtle hover:border-brand-300 bg-surface'
+                      ? 'border-brand-emerald shadow-ag-glow-primary ring-1 ring-brand-emerald/30'
+                      : 'border-border-subtle hover:border-text-muted bg-surface-primary'
                   )}
                 >
                   <img
@@ -257,7 +257,12 @@ export function ProfileTab() {
             step={50000}
             value={salary}
             onChange={handleSalarySliderChange}
-            className="w-full accent-brand-500 cursor-pointer h-1.5 bg-surface-secondary rounded-lg appearance-none mt-1"
+            className="w-full h-1.5 appearance-none rounded-lg outline-none cursor-pointer mt-1 bg-surface-elevated border border-border-subtle focus-visible:ring-2 focus-visible:ring-brand-emerald/50 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-brand-emerald [&::-webkit-slider-thumb]:shadow-ag-glow-primary hover:[&::-webkit-slider-thumb]:scale-110 transition-all"
+            style={{ 
+              backgroundImage: 'linear-gradient(#00E599, #00E599)', 
+              backgroundSize: `${((salary - 100000) * 100) / (10000000 - 100000)}% 100%`, 
+              backgroundRepeat: 'no-repeat' 
+            }}
           />
         </div>
 
@@ -285,7 +290,12 @@ export function ProfileTab() {
             step={1}
             value={creditScore}
             onChange={handleCreditSliderChange}
-            className="w-full accent-brand-500 cursor-pointer h-1.5 bg-surface-secondary rounded-lg appearance-none mt-1"
+            className="w-full h-1.5 appearance-none rounded-lg outline-none cursor-pointer mt-1 bg-surface-elevated border border-border-subtle focus-visible:ring-2 focus-visible:ring-brand-emerald/50 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-brand-emerald [&::-webkit-slider-thumb]:shadow-ag-glow-primary hover:[&::-webkit-slider-thumb]:scale-110 transition-all"
+            style={{ 
+              backgroundImage: 'linear-gradient(#00E599, #00E599)', 
+              backgroundSize: `${((creditScore - 300) * 100) / (900 - 300)}% 100%`, 
+              backgroundRepeat: 'no-repeat' 
+            }}
           />
         </div>
 

@@ -66,7 +66,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className={`relative overflow-hidden glass-panel p-6 flex flex-col items-start text-left group hover:border-brand-emerald/30 transition-colors`}
+              className={`relative overflow-hidden surface-card p-6 flex flex-col items-start text-left group hover:border-brand-emerald/30 transition-colors`}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
               
@@ -88,7 +88,7 @@ export default function HomePage() {
           <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-text-muted mb-6">
             Your Wallet
           </h2>
-          <div className="glass-panel p-6 flex items-center justify-between">
+          <div className="surface-card p-6 flex items-center justify-between">
             <div>
               <p className="text-3xl font-display font-bold text-text-primary tracking-tight">
                 {userCards.length}

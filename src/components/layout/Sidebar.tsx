@@ -32,7 +32,6 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'home',     path: '/app',          label: 'Dashboard', Icon: LayoutDashboard, description: 'Overview & savings'      },
   { id: 'wallet',   path: '/app/wallet',   label: 'Credit',    Icon: Wallet,          description: 'Cards, insights & perks' },
   { id: 'lifestyle',path: '/app/lifestyle',label: 'Lifestyle', Icon: Gift,            description: 'Plan, invest & shop'    },
-  { id: 'taqdeer',  path: '/app/taqdeer',  label: 'Taqdeer',   Icon: Search,          description: 'AI Financial Copilot'   },
   { id: 'profile',  path: '/app/profile',  label: 'Profile',   Icon: User,            description: 'Settings & details'     },
 ];
 

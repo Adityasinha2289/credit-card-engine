@@ -60,7 +60,7 @@ export default function WalletPage() {
         ))}
       </div>
 
-      <div className="surface-card rounded-3xl p-6 md:p-8">
+      <div className="bg-surface-primary border border-border-subtle rounded-3xl p-6 md:p-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

@@ -11,15 +11,15 @@
 
 @layer base {
   :root {
-    --bg-page: #050505;
-    --bg-surface: #0C100E;
-    --bg-elevated: #171A1A;
-    --bg-hover: #171A1A;
-    --border-subtle: #222625;
+    --bg-page: #070A08;
+    --bg-surface: #0F1412;
+    --bg-elevated: #181F1C;
+    --bg-hover: #181F1C;
+    --border-subtle: #242D29;
     
-    --text-primary: #F3F4F3;
-    --text-secondary: #8A918E;
-    --text-muted: #5F6663;
+    --text-primary: #F2F4F2;
+    --text-secondary: #A0AAA5;
+    --text-muted: #59615D;
   }
 
   *, *::before, *::after {
@@ -97,11 +97,11 @@
   }
 
   .surface-card:hover {
-    @apply border-brand-emerald/30 shadow-ag-hover;
+    @apply border-border-hover bg-surface-elevated shadow-ag-hover;
   }
 
   .input-premium {
-    @apply bg-surface-elevated border border-border-subtle text-text-primary rounded-xl outline-none focus-visible:border-brand-emerald focus-visible:ring-1 focus-visible:ring-brand-emerald transition-all placeholder:text-text-muted;
+    @apply bg-surface-elevated border border-border-subtle text-text-primary rounded-xl outline-none focus-visible:border-brand-emerald focus-visible:ring-1 focus-visible:ring-brand-emerald transition-all placeholder:text-text-tertiary;
     -webkit-appearance: none;
     appearance: none;
   }

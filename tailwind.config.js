@@ -17,20 +17,21 @@ export default {
       },
       colors: {
         // V3 OBSIDIAN FOUNDATION
-        obsidian: '#050505',
+        obsidian: '#070A08',
         canvas: {
-          50: '#030303',
-          100: '#050505', // Root background
+          50: '#030504',
+          100: '#070A08', // Root background
           200: '#0A0A0A',
           300: '#111111',
         },
         surface: {
-          shell: '#090B0B',
-          primary: '#0C100E', 
-          card: '#111416', 
-          elevated: '#171A1A', 
-          intelligence: '#091610',
-          secondary: '#0C100E', // Legacy mapping
+          shell: '#0B0F0D',
+          primary: '#0F1412', 
+          card: '#131917', 
+          elevated: '#181F1C', 
+          intelligence: '#0A2117',
+          'intelligence-elevated': '#0E2C1E',
+          secondary: '#0F1412', // Legacy mapping
         },
         // V3 SEMANTIC EMERALD (Only for savings/value)
         brand: {
@@ -53,16 +54,17 @@ export default {
         
         // V3 TYPOGRAPHY COLORS
         text: {
-          primary: '#F3F4F3',
-          secondary: '#8A918E',
-          tertiary: '#5F6663',
-          muted: '#5F6663',
-          disabled: 'rgba(255, 255, 255, 0.20)',
+          primary: '#F2F4F2',
+          secondary: '#A0AAA5',
+          tertiary: '#737C77',
+          muted: '#59615D',
+          disabled: 'rgba(242, 244, 242, 0.20)',
         },
         border: {
-          subtle: '#222625',
-          strong: '#222625',
-          intelligence: '#123226',
+          subtle: '#242D29',
+          strong: '#242D29',
+          intelligence: '#164534',
+          hover: '#1E6549',
           emerald: 'rgba(0, 229, 153, 0.3)',
         }
       },

@@ -1,35 +1,57 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Compass, MapPin, ShoppingBag, Book, Sparkles, Wallet, TrendingUp, ShieldCheck, ArrowRight, Bot, CreditCard, Clock, Plane, Coffee } from 'lucide-react';
-import { SmartSpendCard } from '../../components/shared/SmartSpendCard';
+import { MapPin, Compass, ShoppingBag, Book, ArrowRight, Wallet, CreditCard, Clock, TrendingUp } from 'lucide-react';
 import { getGreeting } from '../../lib/greeting';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { CommerceOptimizationService } from '../../features/commerce';
 import type { CommerceEntity } from '../../features/commerce/types';
 import type { OptimizationResult } from '../../features/optimization/types';
 
+// ─────────────────────────────────────────────────────────────────────────────
+//  HOME V2 — Financial Intelligence Command Center
+//  Hierarchy: Context → Intent → Intelligence → Action → Discovery
+// ─────────────────────────────────────────────────────────────────────────────
+
+const INTENTS = [
+  { id: 'travel',    label: 'Travel',        path: '/app/lifestyle/plan',       Icon: Compass },
+  { id: 'dining',    label: 'Dining',         path: '/app/lifestyle/plan/date',  Icon: MapPin },
+  { id: 'shopping',  label: 'Shopping',       path: '/app/lifestyle/shop',       Icon: ShoppingBag },
+  { id: 'learning',  label: 'Learning',       path: '/app/lifestyle/invest',     Icon: Book },
+];
+
 export default function HomePage() {
   const navigate = useNavigate();
   const profile = useDashboardStore((s) => s.profile);
   const userCards = useDashboardStore((s) => s.userCards);
-  
-  const actions = [
-    { id: 'date', label: 'Plan a Date', icon: MapPin, path: '/app/lifestyle/plan/date' },
-    { id: 'trip', label: 'Plan a Trip', icon: Compass, path: '/app/lifestyle/plan' },
-    { id: 'shop', label: 'Shop Smarter', icon: ShoppingBag, path: '/app/lifestyle/shop' },
-    { id: 'invest', label: 'Invest in Yourself', icon: Book, path: '/app/lifestyle/invest' },
-  ];
+  const transactions = useDashboardStore((s) => s.transactions);
 
-  const [results, setResults] = React.useState<{entity: CommerceEntity, result: OptimizationResult}[]>([]);
+  const [selectedIntent, setSelectedIntent] = React.useState<string | null>(null);
+  const [commerceResults, setCommerceResults] = React.useState<{entity: CommerceEntity, result: OptimizationResult}[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+
+  // Derive real financial data from the store
+  const totalSpend = React.useMemo(() => {
+    return transactions
+      .filter(t => t.type === 'debit')
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions]);
+
+  const topCategory = React.useMemo(() => {
+    const cats: Record<string, number> = {};
+    transactions.filter(t => t.type === 'debit').forEach(t => {
+      cats[t.category] = (cats[t.category] || 0) + t.amount;
+    });
+    const sorted = Object.entries(cats).sort(([, a], [, b]) => b - a);
+    return sorted[0] ? { name: sorted[0][0], amount: sorted[0][1] } : null;
+  }, [transactions]);
 
   React.useEffect(() => {
     async function fetchResults() {
       try {
         const userId = profile?.id || 'demo-user-id';
         const data = await CommerceOptimizationService.optimizeCollection(userId);
-        setResults(data.slice(0, 3));
+        setCommerceResults(data.slice(0, 3));
       } catch (err) {
         console.error("Failed to load commerce data", err);
       } finally {
@@ -39,234 +61,377 @@ export default function HomePage() {
     fetchResults();
   }, [profile?.id]);
 
+  // Calculate total potential savings from commerce results
+  const totalPotentialSavings = React.useMemo(() => {
+    return commerceResults.reduce((sum, { result }) => sum + result.savings, 0);
+  }, [commerceResults]);
+
+  const firstName = profile?.name?.split(' ')[0] || 'there';
+  const creditScore = profile?.creditScore || 810;
+
   return (
-    <div className="max-w-5xl mx-auto pb-24 text-text-primary min-h-screen px-4 md:px-0">
-      
-      {/* ── 1. COMMAND / INTENT ────────────────────────────────────── */}
-      <section className="mb-12 pt-8">
-        <header className="mb-8">
-          <p className="text-text-secondary text-[10px] font-bold tracking-[0.2em] uppercase mb-3 flex items-center gap-2">
-            <Sparkles size={12} className="text-brand-emerald" /> {getGreeting()}, {profile?.name?.split(' ')[0] || 'there'}
+    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10 pb-28 lg:pb-10">
+
+      {/* ── 1. CONTEXT / HERO ──────────────────────────────────────────── */}
+      <section className="mb-10 lg:mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          <p className="text-semantic-text-muted text-xs font-medium tracking-wide mb-2">
+            {getGreeting()}, {firstName}
           </p>
-          <h1 className="text-4xl md:text-5xl font-display font-light tracking-tight text-white mb-4 leading-tight">
-            What are you planning?
+          <h1 className="text-3xl lg:text-[2.5rem] font-display font-semibold text-semantic-text-primary tracking-tight leading-tight mb-3">
+            Your money, working smarter.
           </h1>
-          <p className="text-lg text-text-muted font-light max-w-2xl leading-relaxed">
-            Tell RenoCred what you're trying to do. We'll figure out the smartest way to pay for it.
+          {totalPotentialSavings > 0 && (
+            <div className="flex items-baseline gap-3 mt-4">
+              <span className="text-4xl lg:text-5xl font-mono font-bold text-semantic-brand tracking-tight">
+                ₹{totalPotentialSavings.toLocaleString('en-IN')}
+              </span>
+              <span className="text-sm text-semantic-text-muted font-medium">
+                potential optimization available
+              </span>
+            </div>
+          )}
+        </motion.div>
+      </section>
+
+      {/* ── 2. PRIMARY INTENT SURFACE ──────────────────────────────────── */}
+      <section className="mb-10 lg:mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.08 }}
+          className="bg-semantic-surface-primary rounded-2xl p-5 lg:p-7 border border-semantic-border-subtle"
+        >
+          <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-semantic-text-muted mb-5">
+            What are you planning?
           </p>
-        </header>
-
-        <div className="bg-surface-primary border border-border-subtle rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
-          {/* Decorative hint */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-emerald/5 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
-            {actions.map((action, idx) => (
-              <motion.button
-                key={action.id}
-                onClick={() => navigate(action.path)}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="flex flex-col items-start p-5 rounded-2xl bg-surface-elevated border border-border-subtle hover:border-brand-emerald/30 hover:bg-surface-elevated/80 transition-all text-left group"
+          <div className="flex flex-wrap gap-2 lg:gap-3 mb-5">
+            {INTENTS.map((intent) => {
+              const isSelected = selectedIntent === intent.id;
+              return (
+                <button
+                  key={intent.id}
+                  onClick={() => setSelectedIntent(isSelected ? null : intent.id)}
+                  className={`
+                    flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-150
+                    ${isSelected
+                      ? 'bg-semantic-surface-intelligence text-semantic-brand border border-semantic-border-intelligence'
+                      : 'bg-semantic-surface-card text-semantic-text-secondary border border-semantic-border-subtle hover:text-semantic-text-primary hover:border-semantic-border-strong'
+                    }
+                  `}
+                >
+                  <intent.Icon size={15} strokeWidth={isSelected ? 2 : 1.5} />
+                  {intent.label}
+                </button>
+              );
+            })}
+          </div>
+          {selectedIntent && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              transition={{ duration: 0.2 }}
+            >
+              <button
+                onClick={() => {
+                  const intent = INTENTS.find(i => i.id === selectedIntent);
+                  if (intent) navigate(intent.path);
+                }}
+                className="flex items-center gap-2 text-sm font-medium text-semantic-brand hover:text-semantic-brand-strong transition-colors"
               >
-                <action.icon size={20} className="text-text-muted mb-4 group-hover:text-brand-emerald transition-colors" />
-                <h3 className="font-medium text-text-primary text-sm">{action.label}</h3>
-              </motion.button>
-            ))}
-          </div>
-        </div>
+                Continue to {INTENTS.find(i => i.id === selectedIntent)?.label}
+                <ArrowRight size={14} />
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
       </section>
 
-      {/* ── 2. FINANCIAL SNAPSHOT ────────────────────────────────────── */}
-      <section className="mb-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Wallet */}
-          <div className="surface-card p-6 flex flex-col justify-between h-32 relative overflow-hidden group cursor-pointer" onClick={() => navigate('/app/wallet')}>
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity"><Wallet size={48} /></div>
-            <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-text-muted mb-2">Wallet</h3>
-            <div>
-              <p className="text-3xl font-display font-medium text-text-primary">{userCards.length}</p>
-              <p className="text-sm text-text-secondary">Active Cards</p>
+      {/* ── 3. FINANCIAL POSITION STRIP ────────────────────────────────── */}
+      <section className="mb-10 lg:mb-14">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.14 }}
+          className="bg-semantic-surface-primary rounded-2xl border border-semantic-border-subtle overflow-hidden"
+        >
+          <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-semantic-text-muted px-5 lg:px-7 pt-5 lg:pt-6 pb-3">
+            Your financial position
+          </p>
+          <div className="grid grid-cols-3 divide-x divide-semantic-border-subtle">
+            {/* Wallet */}
+            <button
+              onClick={() => navigate('/app/wallet')}
+              className="px-5 lg:px-7 pb-5 lg:pb-6 text-left hover:bg-semantic-surface-card transition-colors group"
+            >
+              <p className="text-2xl lg:text-3xl font-display font-semibold text-semantic-text-primary tracking-tight">
+                {userCards.length}
+              </p>
+              <p className="text-xs text-semantic-text-muted mt-0.5 group-hover:text-semantic-text-secondary transition-colors">
+                {userCards.length === 1 ? 'card' : 'cards'} in wallet
+              </p>
+            </button>
+
+            {/* Credit Health */}
+            <button
+              onClick={() => navigate('/app/credit')}
+              className="px-5 lg:px-7 pb-5 lg:pb-6 text-left hover:bg-semantic-surface-card transition-colors group"
+            >
+              <p className="text-2xl lg:text-3xl font-mono font-bold text-semantic-brand tracking-tight">
+                {creditScore}
+              </p>
+              <p className="text-xs text-semantic-text-muted mt-0.5 group-hover:text-semantic-text-secondary transition-colors">
+                CIBIL
+              </p>
+            </button>
+
+            {/* Spend this cycle */}
+            <div className="px-5 lg:px-7 pb-5 lg:pb-6 text-left">
+              <p className="text-2xl lg:text-3xl font-mono font-semibold text-semantic-text-primary tracking-tight">
+                ₹{(totalSpend / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+              </p>
+              <p className="text-xs text-semantic-text-muted mt-0.5">
+                spent this cycle
+              </p>
             </div>
           </div>
-          {/* CIBIL */}
-          <div className="surface-card p-6 flex flex-col justify-between h-32 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5"><ShieldCheck size={48} /></div>
-            <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-text-muted mb-2">CIBIL Score</h3>
-            <div>
-              <p className="text-3xl font-display font-medium text-brand-emerald">810</p>
-              <p className="text-sm text-text-secondary">Excellent</p>
-            </div>
-          </div>
-          {/* Savings */}
-          <div className="surface-card p-6 flex flex-col justify-between h-32 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5"><TrendingUp size={48} /></div>
-            <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-text-muted mb-2">Total Savings</h3>
-            <div>
-              <p className="text-3xl font-display font-medium text-text-primary">₹4,820</p>
-              <p className="text-sm text-text-secondary">This month</p>
-            </div>
-          </div>
-        </div>
+        </motion.div>
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        
-        {/* LEFT COLUMN: Intelligence & Discovery */}
-        <div className="lg:col-span-8 space-y-16">
-          
-          {/* ── 3. INTELLIGENCE ────────────────────────────────────── */}
-          <section>
-            <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-text-muted mb-6">
-              Your Money, Optimized
-            </h2>
-            
-            <div className="bg-surface-intelligence border border-border-intelligence rounded-[2rem] p-6 md:p-8 relative overflow-hidden group">
-              <div className="flex flex-col md:flex-row items-start gap-6">
-                <div className="w-12 h-12 rounded-full bg-brand-900/20 border border-brand-emerald/30 flex items-center justify-center shrink-0">
-                  <Bot size={24} className="text-brand-emerald" />
-                </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-medium text-white mb-3 leading-snug">
-                    You could save ₹1,240 this month by switching your travel spend to Platinum Travel.
-                  </h3>
-                  <p className="text-text-secondary text-sm mb-6 max-w-lg leading-relaxed">
-                    Your dining spend is 18% higher than last month, but your SBI Signature card is currently your strongest rewards card for dining.
-                  </p>
-                  <button className="flex items-center gap-2 text-sm font-medium text-brand-emerald hover:text-brand-400 transition-colors">
-                    Let Taqdeer optimize this <ArrowRight size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
+      {/* ── MAIN GRID: Intelligence (8 cols) + Actions (4 cols) ─────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
 
-          {/* ── 5. DISCOVERY ────────────────────────────────────── */}
+        {/* ── LEFT: Intelligence + Discovery ──────────────────────────── */}
+        <div className="lg:col-span-8 flex flex-col gap-10 lg:gap-14">
+
+          {/* ── 4. INTELLIGENCE MODULE ──────────────────────────────── */}
           <section>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-text-muted">
-                Smarter Purchases For You
-              </h2>
-            </div>
-            
-            {isLoading ? (
-              <div className="space-y-6">
-                {[1, 2].map(i => <div key={i} className="h-64 surface-card animate-pulse" />)}
-              </div>
-            ) : (
-              <div className="space-y-8">
-                {results.map(({ entity, result }, idx) => {
-                  const theme = idx === 0 ? { label: "TRAVEL", msg: "Get more from your next flight.", icon: Plane } :
-                                idx === 1 ? { label: "LIFESTYLE", msg: "3 ways to spend smarter on your goals.", icon: Coffee } :
-                                { label: "SHOPPING", msg: "Before you buy, check your wallet.", icon: ShoppingBag };
-                  
-                  return (
-                    <motion.div 
-                      key={entity.id} 
-                      className="relative group"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <theme.icon size={14} className="text-text-muted" />
-                        <h3 className="text-xs font-bold tracking-[0.1em] text-text-primary">{theme.label}</h3>
-                        <span className="text-text-muted text-sm italic hidden md:inline-block">— {theme.msg}</span>
+            <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-semantic-text-muted mb-4">
+              Your money, optimized
+            </p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative rounded-2xl overflow-hidden"
+            >
+              {/* Intelligence background — deep forest with subtle emerald glow */}
+              <div className="absolute inset-0 bg-semantic-surface-intelligence" />
+              <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(ellipse_at_top_right,_rgba(0,229,153,0.06)_0%,_transparent_60%)]" />
+
+              <div className="relative p-6 lg:p-8">
+                {/* Primary insight */}
+                {topCategory ? (
+                  <>
+                    <p className="text-sm text-semantic-text-secondary leading-relaxed mb-4 max-w-lg">
+                      Your highest spending this cycle is <span className="text-semantic-text-primary font-medium">{topCategory.name}</span> at{' '}
+                      <span className="font-mono font-semibold text-semantic-text-primary">
+                        ₹{(topCategory.amount / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                      </span>.
+                      {userCards.length > 1
+                        ? ' RenoCred can identify the optimal card for each category.'
+                        : ' Add more cards to unlock cross-wallet optimization.'}
+                    </p>
+
+                    {totalPotentialSavings > 0 && (
+                      <div className="flex items-baseline gap-3 mb-6">
+                        <span className="text-3xl lg:text-4xl font-mono font-bold text-semantic-brand tracking-tight">
+                          ₹{totalPotentialSavings.toLocaleString('en-IN')}
+                        </span>
+                        <span className="text-xs text-semantic-text-muted font-medium">
+                          potential optimization
+                        </span>
                       </div>
-                      <SmartSpendCard
-                        title={entity.name}
-                        originalPrice={entity.basePrice}
-                        optimizationResult={result}
-                        recommendation={{
-                          reason: result.reason.primary || 'Best overall value',
-                          features: result.reason.supportingFactors || [],
-                          badge: result.savings > 0 ? 'Best Value' : undefined
-                        }}
-                        onViewDeal={() => navigate(`/app/lifestyle/partner/${entity.partnerId}`)}
-                        entityId={entity.id}
-                        placement="home"
-                        isSponsored={false}
-                      />
-                    </motion.div>
-                  )
-                })}
-                {results.length === 0 && (
-                  <div className="text-center py-12 surface-card rounded-[2rem]">
-                    <p className="text-text-muted">No items available at this time.</p>
+                    )}
+
+                    {/* Category breakdown from commerce results */}
+                    {commerceResults.length > 0 && (
+                      <div className="border-t border-white/[0.04] pt-5 mt-2 space-y-3">
+                        {commerceResults.map(({ entity, result }) => (
+                          <div key={entity.id} className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <span className="text-semantic-text-secondary truncate">{entity.name}</span>
+                              <span className="text-semantic-text-muted text-xs hidden sm:inline">
+                                via {result.recommendedPaymentMethod.paymentMethodName}
+                              </span>
+                            </div>
+                            {result.savings > 0 && (
+                              <span className="font-mono text-semantic-brand font-semibold text-xs shrink-0 ml-3">
+                                +₹{result.savings.toLocaleString('en-IN')}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => navigate('/app/lifestyle/shop')}
+                      className="flex items-center gap-2 text-sm font-medium text-semantic-brand hover:text-semantic-brand-strong transition-colors mt-6"
+                    >
+                      View all optimizations <ArrowRight size={14} />
+                    </button>
+                  </>
+                ) : (
+                  <div className="py-4">
+                    <p className="text-sm text-semantic-text-secondary">
+                      Start spending to unlock optimization insights.
+                    </p>
                   </div>
                 )}
+              </div>
+            </motion.div>
+
+            {/* ── WHY THIS MATTERS ──────────────────────────────────── */}
+            {topCategory && userCards.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="mt-4 bg-semantic-surface-card rounded-xl p-5 border border-semantic-border-subtle"
+              >
+                <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-semantic-text-muted mb-2">
+                  Why this matters
+                </p>
+                <p className="text-sm text-semantic-text-secondary leading-relaxed">
+                  Your current wallet gives you the strongest return on{' '}
+                  <span className="text-semantic-text-primary font-medium">{topCategory.name}</span>{' '}
+                  transactions with your{' '}
+                  <span className="text-semantic-text-primary font-medium">{userCards[0]?.bank} {userCards[0]?.label}</span>.
+                  {totalPotentialSavings > 0 && (
+                    <span className="inline-flex items-center gap-1.5 ml-2 font-mono text-semantic-brand font-semibold text-xs">
+                      Potential upside +₹{totalPotentialSavings.toLocaleString('en-IN')}/mo
+                    </span>
+                  )}
+                </p>
+              </motion.div>
+            )}
+          </section>
+
+          {/* ── 6. DISCOVERY / COMMERCE ─────────────────────────────── */}
+          <section>
+            <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-semantic-text-muted mb-5">
+              Smarter purchases
+            </p>
+
+            {isLoading ? (
+              <div className="space-y-4">
+                {[1, 2].map(i => (
+                  <div key={i} className="h-32 bg-semantic-surface-primary rounded-2xl animate-pulse border border-semantic-border-subtle" />
+                ))}
+              </div>
+            ) : commerceResults.length > 0 ? (
+              <div className="space-y-3">
+                {commerceResults.map(({ entity, result }, idx) => (
+                  <motion.button
+                    key={entity.id}
+                    onClick={() => navigate(`/app/lifestyle/partner/${entity.partnerId}`)}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * idx }}
+                    className="w-full text-left bg-semantic-surface-primary rounded-xl p-5 border border-semantic-border-subtle hover:border-semantic-border-strong hover:bg-semantic-surface-card transition-all duration-150 group"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-semibold text-semantic-text-primary mb-1 group-hover:text-semantic-brand transition-colors truncate">
+                          {entity.name}
+                        </h3>
+                        <p className="text-xs text-semantic-text-muted">
+                          Best via {result.recommendedPaymentMethod.paymentMethodName}
+                        </p>
+                        {result.reason.primary && (
+                          <p className="text-xs text-semantic-text-muted mt-1.5 line-clamp-1">
+                            {result.reason.primary}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-lg font-mono font-bold text-semantic-text-primary tracking-tight">
+                          ₹{result.effectiveCost.toLocaleString('en-IN')}
+                        </p>
+                        {result.savings > 0 && (
+                          <p className="text-xs font-mono font-semibold text-semantic-brand mt-0.5">
+                            Save ₹{result.savings.toLocaleString('en-IN')}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-semantic-surface-primary rounded-xl p-8 text-center border border-semantic-border-subtle">
+                <p className="text-sm text-semantic-text-muted">No purchase optimizations available right now.</p>
               </div>
             )}
           </section>
         </div>
 
-        {/* RIGHT COLUMN: Actions */}
+        {/* ── RIGHT: Worth Doing ──────────────────────────────────────── */}
         <div className="lg:col-span-4">
-          
-          {/* ── 4. ACTIONS ────────────────────────────────────── */}
-          <section className="sticky top-24">
-            <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-text-muted mb-6">
-              Things worth doing
-            </h2>
-            
-            <div className="bg-surface-card border border-border-subtle rounded-[2rem] overflow-hidden">
-              
-              <div 
-                className="p-5 border-b border-border-subtle hover:bg-surface-elevated cursor-pointer transition-colors flex items-center gap-4 group"
-                onClick={() => navigate('/app/wallet')}
-              >
-                <div className="w-10 h-10 rounded-full bg-surface-primary flex items-center justify-center shrink-0 border border-border-subtle group-hover:border-brand-emerald/20 transition-colors">
-                  <CreditCard size={18} className="text-text-secondary group-hover:text-brand-emerald transition-colors" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-text-primary">Optimize my cards</h4>
-                  <p className="text-xs text-text-muted mt-0.5">Review 2 active cards</p>
-                </div>
-              </div>
-              
-              <div 
-                className="p-5 border-b border-border-subtle hover:bg-surface-elevated cursor-pointer transition-colors flex items-center gap-4 group"
-              >
-                <div className="w-10 h-10 rounded-full bg-surface-primary flex items-center justify-center shrink-0 border border-border-subtle group-hover:border-brand-caution/20 transition-colors">
-                  <Clock size={18} className="text-brand-caution/80 group-hover:text-brand-caution transition-colors" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-text-primary">Review upcoming bills</h4>
-                  <p className="text-xs text-text-muted mt-0.5">₹8,400 due in 4 days</p>
-                </div>
-              </div>
-              
-              <div 
-                className="p-5 border-b border-border-subtle hover:bg-surface-elevated cursor-pointer transition-colors flex items-center gap-4 group"
-                onClick={() => navigate('/app/lifestyle/shop')}
-              >
-                <div className="w-10 h-10 rounded-full bg-surface-primary flex items-center justify-center shrink-0 border border-border-subtle group-hover:border-brand-emerald/20 transition-colors">
-                  <ShoppingBag size={18} className="text-text-secondary group-hover:text-text-primary transition-colors" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-text-primary">Plan a purchase</h4>
-                  <p className="text-xs text-text-muted mt-0.5">Find the smartest payment</p>
-                </div>
-              </div>
-              
-              <div 
-                className="p-5 hover:bg-surface-elevated cursor-pointer transition-colors flex items-center gap-4 group"
-                onClick={() => navigate('/app/wallet')}
-              >
-                <div className="w-10 h-10 rounded-full bg-surface-primary flex items-center justify-center shrink-0 border border-border-subtle group-hover:border-brand-emerald/20 transition-colors">
-                  <TrendingUp size={18} className="text-text-secondary group-hover:text-brand-emerald transition-colors" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-text-primary">Check my rewards</h4>
-                  <p className="text-xs text-text-muted mt-0.5">You earned ₹1,240 this month</p>
-                </div>
-              </div>
-              
+          <section className="lg:sticky lg:top-24">
+            <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-semantic-text-muted mb-4">
+              Worth doing
+            </p>
+            <div className="bg-semantic-surface-primary rounded-2xl border border-semantic-border-subtle overflow-hidden">
+              {[
+                {
+                  icon: CreditCard,
+                  title: 'Optimize my cards',
+                  subtitle: `Review ${userCards.length} active ${userCards.length === 1 ? 'card' : 'cards'}`,
+                  path: '/app/wallet',
+                },
+                {
+                  icon: Clock,
+                  title: 'Review upcoming bills',
+                  subtitle: 'Check statement cycles',
+                  path: '/app/wallet',
+                },
+                {
+                  icon: TrendingUp,
+                  title: 'Compare a new card',
+                  subtitle: 'Your wallet may have gaps',
+                  path: '/app/credit',
+                },
+                {
+                  icon: Wallet,
+                  title: 'Check rewards balance',
+                  subtitle: 'Points you can redeem',
+                  path: '/app/wallet',
+                },
+              ].map((action, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => navigate(action.path)}
+                  className="w-full flex items-center gap-4 p-4 text-left border-b border-semantic-border-subtle last:border-b-0 hover:bg-semantic-surface-card transition-colors group"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-semantic-surface-card border border-semantic-border-subtle flex items-center justify-center shrink-0 group-hover:border-semantic-border-strong transition-colors">
+                    <action.icon size={16} className="text-semantic-text-muted group-hover:text-semantic-text-secondary transition-colors" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-medium text-semantic-text-primary">{action.title}</h4>
+                    <p className="text-xs text-semantic-text-muted mt-0.5 truncate">{action.subtitle}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* ── Small Taqdeer contextual hint ──────────────────── */}
+            <div className="mt-4 bg-semantic-surface-card rounded-xl p-4 border border-semantic-border-subtle">
+              <p className="text-[10px] font-semibold tracking-[0.15em] uppercase text-semantic-text-muted mb-2">
+                Taqdeer
+              </p>
+              <p className="text-xs text-semantic-text-secondary leading-relaxed">
+                "Planning a purchase? I can optimize the cards you should use before you buy."
+              </p>
             </div>
           </section>
         </div>
-
       </div>
     </div>
   );

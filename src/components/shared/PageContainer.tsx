@@ -1,20 +1,25 @@
 import React from 'react';
+import { cn } from '../../lib/utils';
 
 export function PageContainer({
   title,
   subtitle,
   children,
+  className,
 }: {
-  title: string;
+  title?: string;
   subtitle?: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full">
-      <div>
-        <h1 className="text-3xl font-display font-bold text-text-primary tracking-tight">{title}</h1>
-        {subtitle && <p className="text-sm text-text-muted mt-1">{subtitle}</p>}
-      </div>
+    <div className={cn("flex flex-col w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 flex-1", className)}>
+      {(title || subtitle) && (
+        <div className="mb-6 lg:mb-8">
+          {title && <h1 className="text-2xl lg:text-3xl font-display font-bold text-semantic-text-primary tracking-tight">{title}</h1>}
+          {subtitle && <p className="text-sm text-semantic-text-muted mt-1 font-medium tracking-wide">{subtitle}</p>}
+        </div>
+      )}
       {children}
     </div>
   );

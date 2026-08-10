@@ -1,246 +1,171 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
-  Search,
   Wallet,
-  BarChart3,
-  ChevronLeft,
-  ChevronRight,
-  LogOut,
-  User,
+  CreditCard,
   Gift,
+  User,
+  LogOut,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  SIDEBAR — Premium fixed navigation
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type TabId = 'home' | 'analyze' | 'wallet' | 'perks' | 'insights' | 'profile';
-
-interface NavItem {
-  id: string;
-  path: string;
-  label: string;
-  Icon: typeof LayoutDashboard;
-  description: string;
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { id: 'home',     path: '/app',          label: 'Dashboard', Icon: LayoutDashboard, description: 'Overview & savings'      },
-  { id: 'credit',   path: '/app/credit',   label: 'Credit',    Icon: Wallet,          description: 'Cards, insights & perks' },
-  { id: 'lifestyle',path: '/app/lifestyle',label: 'Lifestyle', Icon: Gift,            description: 'Plan, invest & shop'    },
-  { id: 'profile',  path: '/app/profile',  label: 'Profile',   Icon: User,            description: 'Settings & details'     },
-];
-
-interface SidebarProps {
-  collapsed: boolean;
-  onToggleCollapse: () => void;
-}
-
 import { useClerk } from '@clerk/clerk-react';
 
-export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
+const PRIMARY_NAV = [
+  { id: 'home',      path: '/app',          label: 'Home',      Icon: LayoutDashboard },
+  { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCard },
+  { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: Wallet },
+  { id: 'lifestyle', path: '/app/lifestyle',label: 'Lifestyle', Icon: Gift },
+];
+
+const UTILITY_NAV = [
+  { id: 'profile',   path: '/app/profile',  label: 'Profile',   Icon: User },
+];
+
+export function Sidebar() {
   const profile = useDashboardStore((s) => s.profile);
   const logout = useDashboardStore((s) => s.logout);
   const { signOut } = useClerk();
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isRouteActive = (itemPath: string, exact: boolean = false) => {
+    if (exact) {
+      return location.pathname === itemPath || location.pathname === `${itemPath}/`;
+    }
+    return location.pathname.startsWith(itemPath);
+  };
+
   return (
-    <motion.aside
-      className={cn(
-        'fixed top-0 left-0 h-screen z-40 flex flex-col',
-        'bg-surface-shell border-r border-[#1C2521]',
-        'transition-[width] duration-300 ease-ag-smooth',
-      )}
-      style={{ width: collapsed ? 72 : 272 }}
+    <aside
+      className="hidden lg:flex fixed top-0 left-0 h-screen w-[240px] z-40 flex-col bg-semantic-shell border-r border-semantic-border-subtle"
       aria-label="Main navigation"
     >
-      {/* ── Logo ───────────────────────────────────────────────────────── */}
-      <div className={cn(
-        'flex items-center gap-3 px-5 h-[72px] flex-shrink-0',
-        'border-b border-[#1C2521] ',
-      )}>
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden bg-black border border-border-subtle">
-          <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />
-        </div>
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
-              <p className="text-lg font-display font-bold text-text-primary tracking-tight whitespace-nowrap">
-                renocred
-              </p>
-              <p className="text-[10px] font-medium text-text-muted tracking-widest uppercase whitespace-nowrap">
-                credit intelligence
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* ── Brand Area ───────────────────────────────────────────────────────── */}
+      <div className="flex flex-col justify-center px-6 h-[72px] shrink-0 border-b border-semantic-border-subtle">
+        <h1 className="text-xl font-display font-bold text-semantic-text-primary tracking-tight">
+          renocred
+        </h1>
+        <p className="text-[9px] font-medium text-semantic-text-muted tracking-widest uppercase mt-0.5">
+          Financial Intelligence
+        </p>
       </div>
 
       {/* ── Navigation ─────────────────────────────────────────────────── */}
-      <nav className="flex-1 flex flex-col gap-1 px-3 py-4 overflow-y-auto">
-        <p className={cn(
-          'text-[10px] font-semibold tracking-[0.2em] uppercase text-text-muted px-3 mb-2',
-          'transition-opacity duration-200',
-          collapsed ? 'opacity-0 h-0 mb-0' : 'opacity-100',
-        )}>
-          Navigation
-        </p>
-
-        {NAV_ITEMS.map((item) => {
-          // Exact match for /app, startsWith for others
-          // Credit nav also highlights when on /app/wallet (wallet is under Credit)
-          const isActive = item.path === '/app' 
-            ? location.pathname === '/app' || location.pathname === '/app/'
-            : item.id === 'credit'
-              ? location.pathname.startsWith('/app/credit') || location.pathname.startsWith('/app/wallet')
-              : location.pathname.startsWith(item.path);
-          
-          return (
-            <button
-              key={item.id}
-              id={`nav-${item.id}`}
-              aria-label={`Navigate to ${item.label}`}
-              aria-current={isActive ? 'page' : undefined}
-              onClick={() => navigate(item.path)}
-              className={cn(
-                'relative flex items-center gap-3 rounded-lg transition-all duration-200',
-                collapsed ? 'px-0 py-3 justify-center' : 'px-3 py-2.5',
-                isActive
-                  ? 'text-text-primary bg-surface-intelligence'
-                  : 'text-text-muted hover:text-text-secondary hover:bg-surface-secondary',
-              )}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r bg-brand-emerald"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                />
-              )}
-
-              <item.Icon
-                size={20}
-                strokeWidth={isActive ? 2 : 1.5}
+      <div className="flex-1 overflow-y-auto py-6 flex flex-col gap-8">
+        
+        {/* Primary */}
+        <nav className="flex flex-col gap-1">
+          <p className="px-6 text-[10px] font-semibold tracking-widest uppercase text-semantic-text-muted mb-2">
+            Workspace
+          </p>
+          {PRIMARY_NAV.map((item) => {
+            const isActive = isRouteActive(item.path, item.id === 'home');
+            return (
+              <button
+                key={item.id}
+                onClick={() => navigate(item.path)}
                 className={cn(
-                  'relative z-10 flex-shrink-0 transition-colors duration-200',
-                  isActive ? 'text-brand-emerald' : '',
+                  'group relative flex items-center gap-3 px-6 py-2.5 transition-all duration-150',
+                  isActive
+                    ? 'bg-semantic-surface-intelligence text-semantic-text-primary'
+                    : 'text-semantic-text-muted hover:text-semantic-text-primary hover:bg-semantic-surface-primary'
                 )}
-              />
-
-              <AnimatePresence>
-                {!collapsed && (
+              >
+                {isActive && (
                   <motion.div
-                    initial={{ opacity: 0, x: -4 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="relative z-10 text-left overflow-hidden"
-                  >
-                    <p className={cn(
-                      'text-sm font-semibold whitespace-nowrap',
-                      isActive ? 'text-text-primary' : '',
-                    )}>
-                      {item.label}
-                    </p>
-                    <p className={cn(
-                      'text-[10px] text-text-muted whitespace-nowrap',
-                      isActive ? 'text-text-secondary' : '',
-                    )}>
-                      {item.description}
-                    </p>
-                  </motion.div>
+                    layoutId="activeSidebarNav"
+                    className="absolute left-0 top-0 bottom-0 w-[3px] bg-semantic-brand"
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                  />
                 )}
-              </AnimatePresence>
+                <item.Icon
+                  size={18}
+                  strokeWidth={isActive ? 2 : 1.5}
+                  className={cn(
+                    'transition-colors duration-150',
+                    isActive ? 'text-semantic-brand drop-shadow-[0_0_8px_rgba(0,229,153,0.3)]' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
+                  )}
+                />
+                <span className={cn('text-sm font-medium tracking-wide', isActive && 'font-semibold')}>
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
 
+        {/* Utility */}
+        <nav className="flex flex-col gap-1">
+          <p className="px-6 text-[10px] font-semibold tracking-widest uppercase text-semantic-text-muted mb-2">
+            System
+          </p>
+          {UTILITY_NAV.map((item) => {
+            const isActive = isRouteActive(item.path);
+            return (
+              <button
+                key={item.id}
+                onClick={() => navigate(item.path)}
+                className={cn(
+                  'group relative flex items-center gap-3 px-6 py-2.5 transition-all duration-150',
+                  isActive
+                    ? 'bg-semantic-surface-intelligence text-semantic-text-primary'
+                    : 'text-semantic-text-muted hover:text-semantic-text-primary hover:bg-semantic-surface-primary'
+                )}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeSidebarNav"
+                    className="absolute left-0 top-0 bottom-0 w-[3px] bg-semantic-brand"
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                  />
+                )}
+                <item.Icon
+                  size={18}
+                  strokeWidth={isActive ? 2 : 1.5}
+                  className={cn(
+                    'transition-colors duration-150',
+                    isActive ? 'text-semantic-brand drop-shadow-[0_0_8px_rgba(0,229,153,0.3)]' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
+                  )}
+                />
+                <span className={cn('text-sm font-medium tracking-wide', isActive && 'font-semibold')}>
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
 
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* ── User Profile + Collapse Toggle ──────────────────────────────── */}
-      <div className={cn(
-        'flex flex-col gap-3 px-3 py-4 border-t border-border-subtle ',
-        'flex-shrink-0',
-      )}>
-        <div 
-          onClick={() => navigate('/app/profile')}
-          className={cn(
-            'flex items-center gap-3 rounded-lg cursor-pointer group',
-            'transition-all duration-200 hover:bg-surface-secondary',
-            collapsed ? 'px-0 py-2 justify-center' : 'px-3 py-2.5',
-          )}
-        >
-          <div className="w-8 h-8 rounded-full bg-surface-elevated overflow-hidden flex items-center justify-center flex-shrink-0 ring-1 ring-border-subtle group-hover:ring-brand-emerald/40 transition-all duration-200">
+      {/* ── User Profile ──────────────────────────────── */}
+      <div className="p-4 border-t border-semantic-border-subtle shrink-0 bg-semantic-shell">
+        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-semantic-surface-primary transition-colors cursor-pointer group">
+          <div className="w-8 h-8 rounded-full bg-semantic-surface-elevated overflow-hidden shrink-0 border border-semantic-border-subtle group-hover:border-semantic-brand transition-colors">
             <img
-              src={profile?.avatar ||"https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
+              src={profile?.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
               alt="Profile"
               className="w-full h-full object-cover"
             />
           </div>
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.div
-                initial={{ opacity: 0, x: -4 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -4 }}
-                transition={{ duration: 0.15 }}
-                className="overflow-hidden flex-1 min-w-0"
-              >
-                <div className="flex items-center justify-between gap-1">
-                  <p className="text-sm font-semibold text-text-primary truncate group-hover:text-brand-emerald transition-colors">
-                    {profile?.name ||"Atharva Kulkarni"}
-                  </p>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); logout(); signOut(); }} 
-                    className="text-text-muted hover:text-loss transition-colors p-1 rounded-lg"
-                    title="Logout"
-                  >
-                    <LogOut size={13} />
-                  </button>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-profit animate-ag-glow-pulse" />
-                  <p className="text-[10px] font-medium text-text-muted">
-                    {profile ? `CIBIL: ${profile.creditScore}` :"Premium Member"}
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-semibold text-semantic-text-primary truncate">
+              {profile?.name || "Atharva Kulkarni"}
+            </p>
+            <p className="text-[10px] font-medium text-semantic-text-muted uppercase tracking-widest truncate">
+              {profile ? `Score: ${profile.creditScore}` : "Premium Member"}
+            </p>
+          </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); logout(); signOut(); }}
+            className="text-semantic-text-muted hover:text-red-400 p-1 transition-colors"
+          >
+            <LogOut size={14} />
+          </button>
         </div>
-
-        {/* Collapse toggle */}
-        <button
-          onClick={onToggleCollapse}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className={cn(
-            'flex items-center justify-center w-full rounded-lg py-2',
-            'text-text-muted hover:text-text-secondary',
-            'hover:bg-surface-secondary',
-            'transition-all duration-200',
-          )}
-        >
-          {collapsed
-            ? <ChevronRight size={16} strokeWidth={2} />
-            : <ChevronLeft size={16} strokeWidth={2} />
-          }
-        </button>
       </div>
-    </motion.aside>
+    </aside>
   );
 }
 
 export default Sidebar;
-

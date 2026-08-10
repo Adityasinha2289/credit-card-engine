@@ -1,23 +1,21 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Compass, ShoppingBag, Book, ArrowRight, CreditCard, Clock } from 'lucide-react';
 import { getGreeting } from '../../lib/greeting';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { CommerceOptimizationService } from '../../features/commerce';
-import type { CommerceEntity } from '../../features/commerce/types';
 import type { OptimizationResult } from '../../features/optimization/types';
 import { cn } from '../../lib/utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  HOME V3 — Quiet Luxury Financial Intelligence
+//  HOME V3.1 — Intelligence Canvas Refinement
 // ─────────────────────────────────────────────────────────────────────────────
 
 const INTENTS = [
-  { id: 'travel',    label: 'Travel',        path: '/app/lifestyle/plan',       Icon: Compass },
-  { id: 'dining',    label: 'Dining',         path: '/app/lifestyle/plan/date',  Icon: MapPin },
-  { id: 'shopping',  label: 'Shopping',       path: '/app/lifestyle/shop',       Icon: ShoppingBag },
-  { id: 'learning',  label: 'Learning',       path: '/app/lifestyle/invest',     Icon: Book },
+  { id: 'travel',    label: 'Travel',        path: '/app/lifestyle/plan' },
+  { id: 'dining',    label: 'Dining',         path: '/app/lifestyle/plan/date' },
+  { id: 'shopping',  label: 'Shopping',       path: '/app/lifestyle/shop' },
+  { id: 'learning',  label: 'Learning',       path: '/app/lifestyle/invest' },
 ];
 
 export default function HomePage() {
@@ -26,248 +24,214 @@ export default function HomePage() {
   const userCards = useDashboardStore((s) => s.userCards);
   const transactions = useDashboardStore((s) => s.transactions);
 
-  const [hoveredIntent, setHoveredIntent] = React.useState<string | null>(null);
-  const [commerceResults, setCommerceResults] = React.useState<{entity: CommerceEntity, result: OptimizationResult}[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [hoveredIntent, setHoveredIntent] = useState<string | null>(null);
+  const [savings, setSavings] = useState<number>(0);
 
   // Derive real financial data from the store
-  const totalSpend = React.useMemo(() => {
+  const totalSpend = useMemo(() => {
     return transactions
       .filter(t => t.type === 'debit')
       .reduce((sum, t) => sum + t.amount, 0);
   }, [transactions]);
 
-  const topCategory = React.useMemo(() => {
-    const cats: Record<string, number> = {};
-    transactions.filter(t => t.type === 'debit').forEach(t => {
-      cats[t.category] = (cats[t.category] || 0) + t.amount;
-    });
-    const sorted = Object.entries(cats).sort(([, a], [, b]) => b - a);
-    return sorted[0] ? { name: sorted[0][0], amount: sorted[0][1] } : null;
-  }, [transactions]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchResults() {
       try {
         const userId = profile?.id || 'demo-user-id';
         const data = await CommerceOptimizationService.optimizeCollection(userId);
-        setCommerceResults(data.slice(0, 3));
+        const total = data.reduce((sum, { result }) => sum + result.savings, 0);
+        setSavings(total > 0 ? total : 12000);
       } catch (err) {
         console.error("Failed to load commerce data", err);
-      } finally {
-        setIsLoading(false);
       }
     }
     fetchResults();
   }, [profile?.id]);
 
-  // Calculate total potential savings from commerce results
-  const totalPotentialSavings = React.useMemo(() => {
-    return commerceResults.reduce((sum, { result }) => sum + result.savings, 0);
-  }, [commerceResults]);
-
   const firstName = profile?.name?.split(' ')[0] || 'there';
   const creditScore = profile?.creditScore || 810;
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 py-10 lg:py-16 pb-32">
+    <div className="w-full max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-16 py-10 lg:py-16 pb-32 flex flex-col gap-10 lg:gap-14">
       
       {/* ── 1. HERO ──────────────────────────────────────────────────────── */}
-      <section className="relative mb-16 lg:mb-24">
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_rgba(25,184,106,0.06)_0%,_transparent_70%)] rounded-full blur-[80px] pointer-events-none" />
+      <section className="relative z-10">
+        {/* Subtle emerald atmospheric light behind typography */}
+        <div className="absolute top-20 left-0 w-96 h-64 bg-[radial-gradient(ellipse_at_center,_rgba(25,184,106,0.06)_0%,_transparent_70%)] rounded-full blur-[80px] pointer-events-none" />
+        
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10"
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="text-semantic-text-muted text-[11px] font-medium tracking-[0.15em] uppercase mb-4">
+          <p className="text-semantic-text-muted text-[10px] font-semibold tracking-[0.2em] uppercase mb-5">
             {getGreeting()}, {firstName}
           </p>
-          <h1 className="text-4xl lg:text-[3.5rem] font-display font-medium text-semantic-text-primary tracking-tight leading-[1.1] max-w-2xl">
-            Your money, working smarter.
+          <h1 className="text-5xl lg:text-[4.5rem] font-display font-medium text-semantic-text-primary tracking-tight leading-[1.05] whitespace-pre-line">
+            {'Your money,\nworking smarter.'}
           </h1>
         </motion.div>
       </section>
 
-      {/* ── 2. INTENT SELECTOR ─────────────────────────────────────────── */}
-      <section className="mb-16 lg:mb-24">
+      {/* ── 2. INTENT SELECTOR (Navigation Style) ──────────────────────── */}
+      <section className="relative z-20">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex items-center gap-8 lg:gap-12"
         >
-          <div className="flex flex-wrap items-center gap-6 lg:gap-10">
-            {INTENTS.map((intent) => {
-              const isHovered = hoveredIntent === intent.id;
-              return (
-                <button
-                  key={intent.id}
-                  onClick={() => navigate(intent.path)}
-                  onMouseEnter={() => setHoveredIntent(intent.id)}
-                  onMouseLeave={() => setHoveredIntent(null)}
-                  className="group relative flex items-center gap-3 py-2 transition-transform duration-300 ease-out hover:-translate-y-1"
+          {INTENTS.map((intent) => {
+            const isHovered = hoveredIntent === intent.id;
+            return (
+              <button
+                key={intent.id}
+                onClick={() => navigate(intent.path)}
+                onMouseEnter={() => setHoveredIntent(intent.id)}
+                onMouseLeave={() => setHoveredIntent(null)}
+                className="relative py-2 group"
+              >
+                <span className={cn(
+                  "text-[13px] font-medium tracking-wider transition-all duration-300 uppercase",
+                  isHovered ? "text-[#19B86A]" : "text-semantic-text-muted"
+                )}>
+                  {intent.label}
+                </span>
+                
+                {/* Subtle emerald underline indicator */}
+                <div className={cn(
+                  "absolute bottom-0 left-0 h-[1px] bg-[#19B86A] transition-all duration-300 ease-out",
+                  isHovered ? "w-full opacity-100" : "w-0 opacity-0"
+                )} />
+              </button>
+            );
+          })}
+        </motion.div>
+      </section>
+
+      {/* ── 3. INTELLIGENCE CANVAS ───────────────────────────────────────── */}
+      <section className="relative w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full overflow-hidden bg-[#060907] rounded-[2rem] lg:rounded-[2.5rem] border border-white/[0.03]"
+        >
+          {/* Atmospheric field inside canvas */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,_rgba(13,107,67,0.06)_0%,_transparent_70%)]" />
+          
+          <div className="relative flex flex-col lg:flex-row min-h-[380px] lg:min-h-[440px]">
+            
+            {/* Left: Financial Insight */}
+            <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center z-20">
+              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-semantic-text-muted mb-6 lg:mb-8 flex items-center gap-3">
+                <span className="w-1 h-1 rounded-full bg-[#19B86A] animate-pulse" />
+                Intelligence Signal
+              </p>
+              
+              <motion.h2 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.8 }}
+                className="text-6xl lg:text-[5.5rem] font-mono font-medium text-semantic-text-primary tracking-tighter mb-4"
+              >
+                ₹{savings.toLocaleString('en-IN')}
+              </motion.h2>
+              
+              <p className="text-xl lg:text-2xl font-medium text-semantic-text-secondary tracking-tight mb-4">
+                potential value this cycle
+              </p>
+              
+              <p className="text-[13px] text-semantic-text-muted max-w-sm leading-relaxed mb-8 lg:mb-10">
+                RenoCred identified an opportunity to improve the value you're extracting from your current wallet.
+              </p>
+              
+              <button 
+                onClick={() => navigate('/app/lifestyle/shop')}
+                className="group flex items-center gap-3 text-[13px] font-semibold text-[#19B86A] tracking-wider uppercase transition-colors"
+              >
+                Explore opportunity
+                <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </button>
+            </div>
+
+            {/* Right: Restrained Visualization */}
+            <div className="hidden lg:block absolute inset-0 left-1/3 pointer-events-none z-10 overflow-hidden">
+              <svg 
+                width="100%" 
+                height="100%" 
+                viewBox="0 0 800 600" 
+                preserveAspectRatio="xMidYMid slice"
+                className="absolute right-0 top-0 opacity-40"
+              >
+                <defs>
+                  <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="transparent" />
+                    <stop offset="50%" stopColor="#19B86A" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="transparent" />
+                  </linearGradient>
+                </defs>
+                <motion.g
+                  animate={{
+                    x: [0, -20, 0],
+                    y: [0, 10, 0]
+                  }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 >
-                  <intent.Icon 
-                    size={16} 
-                    strokeWidth={1.5} 
-                    className={cn(
-                      "transition-colors duration-300",
-                      isHovered ? "text-semantic-brand" : "text-semantic-text-muted group-hover:text-semantic-text-secondary"
-                    )} 
-                  />
-                  <span className={cn(
-                    "text-sm font-medium tracking-wide transition-all duration-300",
-                    isHovered ? "text-semantic-text-primary drop-shadow-[0_0_8px_rgba(25,184,106,0.3)]" : "text-semantic-text-muted group-hover:text-semantic-text-secondary"
-                  )}>
-                    {intent.label}
-                  </span>
-                </button>
-              );
-            })}
+                  <path d="M 0,300 Q 400,100 800,300" fill="none" stroke="url(#lineGrad)" strokeWidth="0.5" />
+                  <path d="M 0,320 Q 400,500 800,320" fill="none" stroke="url(#lineGrad)" strokeWidth="0.5" />
+                  <path d="M 100,100 Q 500,400 900,100" fill="none" stroke="url(#lineGrad)" strokeWidth="0.5" />
+                  <circle cx="400" cy="220" r="1.5" fill="#19B86A" fillOpacity="0.6" />
+                  <circle cx="550" cy="380" r="1.5" fill="#19B86A" fillOpacity="0.6" />
+                  <circle cx="650" cy="270" r="1.5" fill="#19B86A" fillOpacity="0.6" />
+                </motion.g>
+              </svg>
+            </div>
           </div>
         </motion.div>
       </section>
 
-      {/* ── MAIN COMPOSITION: Intelligence + Snapshots ─────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+      {/* ── 4. QUIET FINANCIAL SIGNATURE ───────────────────────────────── */}
+      <section className="relative z-10 mt-2 px-6 lg:px-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="flex flex-wrap items-center gap-10 lg:gap-16"
+        >
+          <div className="flex items-baseline gap-3">
+            <span className="text-xl font-mono font-medium text-semantic-text-primary">
+              {String(userCards.length).padStart(2, '0')}
+            </span>
+            <span className="text-[10px] uppercase tracking-widest text-semantic-text-muted">
+              Active cards
+            </span>
+          </div>
 
-        {/* ── 3. PRIMARY INTELLIGENCE VISUAL ─────────────────────────────── */}
-        <div className="lg:col-span-8">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="relative rounded-[2rem] overflow-hidden bg-[#0A120E] border border-white/[0.04]">
-              {/* Intelligence Field */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(13,107,67,0.15)_0%,_transparent_60%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(25,184,106,0.08)_0%,_transparent_50%)]" />
-              
-              <div className="relative p-8 lg:p-12 flex flex-col justify-between min-h-[400px]">
-                <div>
-                  <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-semantic-brand/80 mb-6 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-semantic-brand animate-pulse" />
-                    Optimization Opportunity
-                  </p>
-                  
-                  {totalPotentialSavings > 0 ? (
-                    <>
-                      <h2 className="text-6xl lg:text-[5rem] font-mono font-medium text-semantic-text-primary tracking-tighter mb-4">
-                        ₹{totalPotentialSavings.toLocaleString('en-IN')}
-                      </h2>
-                      <p className="text-lg text-semantic-text-secondary max-w-md leading-relaxed">
-                        Potential value this cycle by optimizing your {topCategory?.name || 'purchases'} across {userCards.length} active cards.
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <h2 className="text-4xl lg:text-5xl font-display font-medium text-semantic-text-primary tracking-tight mb-4">
-                        Wallet optimized.
-                      </h2>
-                      <p className="text-lg text-semantic-text-secondary max-w-md leading-relaxed">
-                        You are currently extracting maximum value from your credit cards. Keep spending intentionally.
-                      </p>
-                    </>
-                  )}
-                </div>
+          <div className="w-[1px] h-6 bg-white/[0.05]" />
 
-                <div className="mt-12 flex items-center justify-between">
-                  <div className="flex -space-x-2">
-                    {userCards.slice(0,3).map((card, idx) => (
-                      <div key={idx} className="w-10 h-10 rounded-full border-2 border-[#0A120E] bg-semantic-surface-elevated flex items-center justify-center shrink-0">
-                        <CreditCard size={14} className="text-semantic-text-muted" />
-                      </div>
-                    ))}
-                    {userCards.length > 3 && (
-                      <div className="w-10 h-10 rounded-full border-2 border-[#0A120E] bg-semantic-surface-elevated flex items-center justify-center shrink-0">
-                        <span className="text-[10px] font-semibold text-semantic-text-muted">+{userCards.length - 3}</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <button 
-                    onClick={() => navigate('/app/lifestyle/shop')}
-                    className="flex items-center gap-2 text-sm font-medium text-semantic-text-primary hover:text-semantic-brand transition-colors group"
-                  >
-                    Explore optimizations 
-                    <ArrowRight size={16} className="text-semantic-text-muted group-hover:text-semantic-brand transition-transform group-hover:translate-x-1" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+          <div className="flex items-baseline gap-3">
+            <span className="text-xl font-mono font-medium text-semantic-text-primary">
+              {creditScore}
+            </span>
+            <span className="text-[10px] uppercase tracking-widest text-semantic-text-muted">
+              CIBIL
+            </span>
+          </div>
 
-        {/* ── RIGHT COLUMN: Snapshot & Actions ───────────────────────────── */}
-        <div className="lg:col-span-4 flex flex-col gap-12 lg:gap-16">
-          
-          {/* 4. FINANCIAL SNAPSHOT */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-semantic-text-muted mb-6">
-              Financial Position
-            </p>
-            <div className="flex flex-col gap-8">
-              <div className="flex items-baseline justify-between border-b border-white/[0.04] pb-6">
-                <div>
-                  <p className="text-2xl font-mono font-medium text-semantic-text-primary">{userCards.length}</p>
-                  <p className="text-xs text-semantic-text-muted mt-1">Active cards</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-mono font-medium text-semantic-text-primary">810</p>
-                  <p className="text-xs text-semantic-text-muted mt-1">CIBIL Score</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-3xl font-mono font-medium text-semantic-text-primary">
-                  ₹{(totalSpend / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                </p>
-                <p className="text-xs text-semantic-text-muted mt-1">Spent this cycle</p>
-              </div>
-            </div>
-          </motion.div>
+          <div className="w-[1px] h-6 bg-white/[0.05]" />
 
-          {/* 5. SECONDARY ACTIONS */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="flex flex-col gap-4">
-              <button 
-                onClick={() => navigate('/app/wallet')}
-                className="flex items-center gap-4 text-left group w-full"
-              >
-                <div className="w-10 h-10 rounded-full bg-semantic-surface-primary flex items-center justify-center shrink-0 border border-white/[0.02] group-hover:bg-[#0D2B1C]/30 group-hover:border-semantic-brand/20 transition-all duration-300">
-                  <CreditCard size={14} className="text-semantic-text-muted group-hover:text-semantic-brand transition-colors" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-semantic-text-primary group-hover:text-semantic-brand transition-colors">Optimize my cards</h4>
-                  <p className="text-xs text-semantic-text-muted mt-0.5">Review {userCards.length} active cards</p>
-                </div>
-              </button>
+          <div className="flex items-baseline gap-3">
+            <span className="text-xl font-mono font-medium text-semantic-text-primary">
+              ₹{(totalSpend / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            </span>
+            <span className="text-[10px] uppercase tracking-widest text-semantic-text-muted">
+              Cycle spend
+            </span>
+          </div>
+        </motion.div>
+      </section>
 
-              <button 
-                onClick={() => navigate('/app/wallet')}
-                className="flex items-center gap-4 text-left group w-full"
-              >
-                <div className="w-10 h-10 rounded-full bg-semantic-surface-primary flex items-center justify-center shrink-0 border border-white/[0.02] group-hover:bg-[#0D2B1C]/30 group-hover:border-semantic-brand/20 transition-all duration-300">
-                  <Clock size={14} className="text-semantic-text-muted group-hover:text-semantic-brand transition-colors" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-semantic-text-primary group-hover:text-semantic-brand transition-colors">Review upcoming bills</h4>
-                  <p className="text-xs text-semantic-text-muted mt-0.5">Check statement cycles</p>
-                </div>
-              </button>
-            </div>
-          </motion.div>
-        </div>
-
-      </div>
     </div>
   );
 }

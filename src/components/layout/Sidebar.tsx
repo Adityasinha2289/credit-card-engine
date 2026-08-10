@@ -30,7 +30,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'home',     path: '/app',          label: 'Dashboard', Icon: LayoutDashboard, description: 'Overview & savings'      },
-  { id: 'wallet',   path: '/app/wallet',   label: 'Credit',    Icon: Wallet,          description: 'Cards, insights & perks' },
+  { id: 'credit',   path: '/app/credit',   label: 'Credit',    Icon: Wallet,          description: 'Cards, insights & perks' },
   { id: 'lifestyle',path: '/app/lifestyle',label: 'Lifestyle', Icon: Gift,            description: 'Plan, invest & shop'    },
   { id: 'profile',  path: '/app/profile',  label: 'Profile',   Icon: User,            description: 'Settings & details'     },
 ];
@@ -99,9 +99,12 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
 
         {NAV_ITEMS.map((item) => {
           // Exact match for /app, startsWith for others
+          // Credit nav also highlights when on /app/wallet (wallet is under Credit)
           const isActive = item.path === '/app' 
             ? location.pathname === '/app' || location.pathname === '/app/'
-            : location.pathname.startsWith(item.path);
+            : item.id === 'credit'
+              ? location.pathname.startsWith('/app/credit') || location.pathname.startsWith('/app/wallet')
+              : location.pathname.startsWith(item.path);
           
           return (
             <button

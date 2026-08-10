@@ -11,15 +11,34 @@
 
 @layer base {
   :root {
-    --bg-page: #070A08;
-    --bg-surface: #0F1412;
-    --bg-elevated: #181F1C;
-    --bg-hover: #181F1C;
-    --border-subtle: #242D29;
+    /* V2 Color System */
+    --color-canvas: #070A08;
+    --color-shell: #0B0F0D;
+    --color-surface-primary: #0F1412;
+    --color-surface-card: #131917;
+    --color-surface-elevated: #181F1C;
+    --color-surface-intelligence: #0A2117;
     
-    --text-primary: #F2F4F2;
-    --text-secondary: #A0AAA5;
-    --text-muted: #59615D;
+    --color-brand: #0AB377;
+    --color-brand-strong: #00E599;
+    
+    --color-text-primary: #F2F4F2;
+    --color-text-secondary: #A0AAA5;
+    --color-text-muted: #59615D;
+    
+    --color-border-subtle: #242D29;
+    --color-border-strong: #384640;
+    --color-border-intelligence: rgba(0, 229, 153, 0.2);
+
+    /* Semantic Aliases for backward compatibility */
+    --bg-page: var(--color-canvas);
+    --bg-surface: var(--color-surface-primary);
+    --bg-elevated: var(--color-surface-elevated);
+    --bg-hover: var(--color-surface-elevated);
+    --text-primary: var(--color-text-primary);
+    --text-secondary: var(--color-text-secondary);
+    --text-muted: var(--color-text-muted);
+    --border-subtle: var(--color-border-subtle);
   }
 
   *, *::before, *::after {

@@ -18,6 +18,7 @@ import { AdminLayout } from './components/layout/AdminLayout';
 
 const HomePage = lazy(() => import('./pages/app/HomePage'));
 const WalletPage = lazy(() => import('./pages/app/WalletPage'));
+const CreditPage = lazy(() => import('./pages/app/CreditPage'));
 const ExplorePage = lazy(() => import('./pages/app/ExplorePage'));
 const InsightsPage = lazy(() => import('./pages/app/InsightsPage'));
 const TaqdeerPage = lazy(() => import('./pages/app/TaqdeerPage'));
@@ -130,6 +131,7 @@ export default function App() {
           </DashboardLayout>
         }>
           <Route path="/" element={<HomePage />} />
+          <Route path="/credit" element={<CreditPage />} />
           <Route path="/wallet" element={<WalletPage />} />
           <Route path="/taqdeer" element={<TaqdeerPage />} />
           <Route path="/explore" element={<ExplorePage />} />

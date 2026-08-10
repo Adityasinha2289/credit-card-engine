@@ -16,7 +16,29 @@ export default {
         'ag-glow-primary': '0 4px 16px 0 rgba(0, 229, 153, 0.10), 0 8px 32px 0 rgba(0, 229, 153, 0.05)',
       },
       colors: {
-        // V3 OBSIDIAN FOUNDATION
+        // V2 SEMANTIC SYSTEM
+        semantic: {
+          canvas: 'var(--color-canvas)',
+          shell: 'var(--color-shell)',
+          'surface-primary': 'var(--color-surface-primary)',
+          'surface-card': 'var(--color-surface-card)',
+          'surface-elevated': 'var(--color-surface-elevated)',
+          'surface-intelligence': 'var(--color-surface-intelligence)',
+          brand: 'var(--color-brand)',
+          'brand-strong': 'var(--color-brand-strong)',
+        },
+        'semantic-text': {
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          muted: 'var(--color-text-muted)',
+        },
+        'semantic-border': {
+          subtle: 'var(--color-border-subtle)',
+          strong: 'var(--color-border-strong)',
+          intelligence: 'var(--color-border-intelligence)',
+        },
+        
+        // V3 OBSIDIAN FOUNDATION (Legacy)
         obsidian: '#070A08',
         canvas: {
           50: '#030504',

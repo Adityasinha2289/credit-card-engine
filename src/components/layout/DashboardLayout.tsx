@@ -45,6 +45,12 @@ export function DashboardLayout({
 
   return (
     <div className="bg-semantic-canvas min-h-[100dvh] w-full relative flex flex-col">
+      {/* ── Atmospheric Background ─────────────────────────────────────── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_center,_rgba(0,229,153,0.03)_0%,_transparent_70%)] rounded-full blur-[100px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[radial-gradient(ellipse_at_center,_rgba(4,77,51,0.08)_0%,_transparent_70%)] rounded-full blur-[120px]" />
+      </div>
+
       {/* ── Desktop Sidebar ────────────────────────────────────────────── */}
       <Sidebar />
 

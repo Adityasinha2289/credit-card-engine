@@ -11,23 +11,23 @@
 
 @layer base {
   :root {
-    /* V2 Color System */
-    --color-canvas: #070A08;
-    --color-shell: #0B0F0D;
-    --color-surface-primary: #0F1412;
-    --color-surface-card: #131917;
-    --color-surface-elevated: #181F1C;
-    --color-surface-intelligence: #0A2117;
+    /* V2 Color System - Obsidian Forest */
+    --color-canvas: #030806;
+    --color-shell: #060D0A;
+    --color-surface-primary: #09120E;
+    --color-surface-card: #0D1712;
+    --color-surface-elevated: #121F18;
+    --color-surface-intelligence: #0D2B1C;
     
     --color-brand: #0AB377;
     --color-brand-strong: #00E599;
     
     --color-text-primary: #F2F4F2;
-    --color-text-secondary: #A0AAA5;
-    --color-text-muted: #59615D;
+    --color-text-secondary: #90A096; /* Cooler graphite tone */
+    --color-text-muted: #5E6962; /* Brighter, sharper muted tone */
     
-    --color-border-subtle: #242D29;
-    --color-border-strong: #384640;
+    --color-border-subtle: rgba(255, 255, 255, 0.04);
+    --color-border-strong: rgba(255, 255, 255, 0.08);
     --color-border-intelligence: rgba(0, 229, 153, 0.2);
 
     /* Semantic Aliases for backward compatibility */

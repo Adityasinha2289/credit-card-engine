@@ -53,7 +53,7 @@ export function TopNav() {
   ];
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-6 lg:px-8 h-16 bg-semantic-canvas border-b border-semantic-border-subtle shrink-0">
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-6 lg:px-8 h-16 bg-semantic-canvas/80 backdrop-blur-md border-b border-semantic-border-subtle shrink-0">
       {/* ── Context Identity ──────────────────────────────────────────────── */}
       <div className="flex-1 min-w-0">
         <motion.div

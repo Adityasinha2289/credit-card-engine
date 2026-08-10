@@ -3,30 +3,28 @@ import {
   LayoutDashboard,
   Wallet,
   CreditCard,
-  Gift,
+  Compass,
   User,
-  LogOut,
+  Settings,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useClerk } from '@clerk/clerk-react';
 
 const PRIMARY_NAV = [
   { id: 'home',      path: '/app',          label: 'Home',      Icon: LayoutDashboard },
   { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCard },
   { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: Wallet },
-  { id: 'lifestyle', path: '/app/lifestyle',label: 'Lifestyle', Icon: Gift },
+  { id: 'lifestyle', path: '/app/lifestyle',label: 'Lifestyle', Icon: Compass },
 ];
 
 const UTILITY_NAV = [
   { id: 'profile',   path: '/app/profile',  label: 'Profile',   Icon: User },
+  { id: 'settings',  path: '/app/settings', label: 'Settings',  Icon: Settings },
 ];
 
 export function Sidebar() {
   const profile = useDashboardStore((s) => s.profile);
-  const logout = useDashboardStore((s) => s.logout);
-  const { signOut } = useClerk();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -37,29 +35,36 @@ export function Sidebar() {
     return location.pathname.startsWith(itemPath);
   };
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  const userName = profile?.name || "Aditya Sinha";
+  const userInitials = getInitials(userName);
+
   return (
     <aside
-      className="hidden lg:flex fixed top-0 left-0 h-screen w-[240px] z-40 flex-col bg-semantic-shell border-r border-semantic-border-subtle"
+      className="hidden lg:flex fixed top-0 left-0 h-screen w-[240px] z-40 flex-col bg-[#060A08]"
       aria-label="Main navigation"
     >
       {/* ── Brand Area ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-col justify-center px-6 h-[72px] shrink-0 border-b border-semantic-border-subtle">
-        <h1 className="text-xl font-display font-bold text-semantic-text-primary tracking-tight">
-          renocred
+      <div className="flex items-center gap-3 px-6 h-[88px] shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-semantic-brand/10 border border-semantic-brand/20 flex items-center justify-center shrink-0">
+          <span className="text-semantic-brand font-display font-bold text-xl">R</span>
+        </div>
+        <h1 className="text-xl font-display font-medium text-semantic-text-primary tracking-tight">
+          RenoCred
         </h1>
-        <p className="text-[9px] font-medium text-semantic-text-muted tracking-widest uppercase mt-0.5">
-          Financial Intelligence
-        </p>
       </div>
 
       {/* ── Navigation ─────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto py-6 flex flex-col gap-8">
-        
-        {/* Primary */}
-        <nav className="flex flex-col gap-1">
-          <p className="px-6 text-[10px] font-semibold tracking-widest uppercase text-semantic-text-muted mb-2">
-            Workspace
-          </p>
+      <div className="flex-1 overflow-y-auto py-2 flex flex-col justify-between">
+        <nav className="flex flex-col gap-1 w-full px-2">
           {PRIMARY_NAV.map((item) => {
             const isActive = isRouteActive(item.path, item.id === 'home');
             return (
@@ -67,28 +72,28 @@ export function Sidebar() {
                 key={item.id}
                 onClick={() => navigate(item.path)}
                 className={cn(
-                  'group relative flex items-center gap-3 px-6 py-2.5 transition-all duration-150',
+                  'group relative flex items-center gap-4 px-4 py-3 transition-all duration-150 w-full rounded-xl',
                   isActive
-                    ? 'bg-semantic-surface-intelligence text-semantic-text-primary'
+                    ? 'bg-[#0D6B43]/15 text-semantic-text-primary'
                     : 'text-semantic-text-muted hover:text-semantic-text-primary hover:bg-semantic-surface-primary'
                 )}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeSidebarNav"
-                    className="absolute left-0 top-0 bottom-0 w-[3px] bg-semantic-brand"
+                    className="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-semantic-brand"
                     transition={{ duration: 0.15, ease: 'easeOut' }}
                   />
                 )}
                 <item.Icon
                   size={18}
-                  strokeWidth={isActive ? 2 : 1.5}
+                  strokeWidth={1.5}
                   className={cn(
                     'transition-colors duration-150',
-                    isActive ? 'text-semantic-brand drop-shadow-[0_0_8px_rgba(0,229,153,0.3)]' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
+                    isActive ? 'text-semantic-brand' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
                   )}
                 />
-                <span className={cn('text-sm font-medium tracking-wide', isActive && 'font-semibold')}>
+                <span className={cn('text-[13px] font-medium tracking-wide', isActive && 'font-medium')}>
                   {item.label}
                 </span>
               </button>
@@ -96,11 +101,7 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Utility */}
-        <nav className="flex flex-col gap-1">
-          <p className="px-6 text-[10px] font-semibold tracking-widest uppercase text-semantic-text-muted mb-2">
-            System
-          </p>
+        <nav className="flex flex-col gap-1 w-full px-2 pb-6">
           {UTILITY_NAV.map((item) => {
             const isActive = isRouteActive(item.path);
             return (
@@ -108,28 +109,28 @@ export function Sidebar() {
                 key={item.id}
                 onClick={() => navigate(item.path)}
                 className={cn(
-                  'group relative flex items-center gap-3 px-6 py-2.5 transition-all duration-150',
+                  'group relative flex items-center gap-4 px-4 py-3 transition-all duration-150 w-full rounded-xl',
                   isActive
-                    ? 'bg-semantic-surface-intelligence text-semantic-text-primary'
+                    ? 'bg-[#0D6B43]/15 text-semantic-text-primary'
                     : 'text-semantic-text-muted hover:text-semantic-text-primary hover:bg-semantic-surface-primary'
                 )}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeSidebarNav"
-                    className="absolute left-0 top-0 bottom-0 w-[3px] bg-semantic-brand"
+                    className="absolute left-0 top-2 bottom-2 w-1 rounded-full bg-semantic-brand"
                     transition={{ duration: 0.15, ease: 'easeOut' }}
                   />
                 )}
                 <item.Icon
                   size={18}
-                  strokeWidth={isActive ? 2 : 1.5}
+                  strokeWidth={1.5}
                   className={cn(
                     'transition-colors duration-150',
-                    isActive ? 'text-semantic-brand drop-shadow-[0_0_8px_rgba(0,229,153,0.3)]' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
+                    isActive ? 'text-semantic-brand' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
                   )}
                 />
-                <span className={cn('text-sm font-medium tracking-wide', isActive && 'font-semibold')}>
+                <span className={cn('text-[13px] font-medium tracking-wide', isActive && 'font-medium')}>
                   {item.label}
                 </span>
               </button>
@@ -139,30 +140,24 @@ export function Sidebar() {
       </div>
 
       {/* ── User Profile ──────────────────────────────── */}
-      <div className="p-4 border-t border-semantic-border-subtle shrink-0 bg-semantic-shell">
-        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-semantic-surface-primary transition-colors cursor-pointer group">
-          <div className="w-8 h-8 rounded-full bg-semantic-surface-elevated overflow-hidden shrink-0 border border-semantic-border-subtle group-hover:border-semantic-brand transition-colors">
-            <img
-              src={profile?.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Atharva&backgroundColor=f8f9fa"}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+      <div className="px-4 pb-6 shrink-0 flex flex-col gap-2">
+        {/* User Profile Block */}
+        <button 
+          onClick={() => navigate('/app/profile')}
+          className="flex items-center gap-3 p-3 rounded-2xl hover:bg-semantic-surface-primary transition-colors text-left group"
+        >
+          <div className="w-9 h-9 rounded-full bg-[#10241A] text-semantic-brand flex items-center justify-center shrink-0 border border-semantic-brand/20 font-semibold text-xs tracking-wider">
+            {userInitials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-semibold text-semantic-text-primary truncate">
-              {profile?.name || "Atharva Kulkarni"}
+            <p className="text-[13px] font-medium text-semantic-text-primary truncate mb-0.5">
+              {userName}
             </p>
-            <p className="text-[10px] font-medium text-semantic-text-muted uppercase tracking-widest truncate">
-              {profile ? `Score: ${profile.creditScore}` : "Premium Member"}
+            <p className="text-[10px] font-medium text-semantic-text-muted truncate group-hover:text-semantic-text-secondary transition-colors">
+              View Profile →
             </p>
           </div>
-          <button
-            onClick={(e) => { e.stopPropagation(); logout(); signOut(); }}
-            className="text-semantic-text-muted hover:text-red-400 p-1 transition-colors"
-          >
-            <LogOut size={14} />
-          </button>
-        </div>
+        </button>
       </div>
     </aside>
   );

@@ -11,24 +11,28 @@
 
 @layer base {
   :root {
-    /* V2 Color System - Obsidian Forest */
-    --color-canvas: #030806;
-    --color-shell: #060D0A;
-    --color-surface-primary: #09120E;
-    --color-surface-card: #0D1712;
-    --color-surface-elevated: #121F18;
-    --color-surface-intelligence: #0D2B1C;
+    /* V3 Color System - Quiet Luxury Obsidian + Emerald */
+    --color-canvas: #050806;
+    --color-shell: #050806; /* Same as canvas for unified feel */
+    --color-surface-secondary: #07100B;
+    --color-surface-primary: #0A1510;
+    --color-surface-card: #0A1510;
+    --color-surface-elevated: #0E1B15;
+    --color-surface-intelligence: #0B2418;
     
-    --color-brand: #0AB377;
-    --color-brand-strong: #00E599;
+    --color-brand: #19B86A;
+    --color-brand-strong: #2CCF7A;
+    --color-brand-dark: #0D6B43;
+    --color-brand-muted: #4B8F70;
     
-    --color-text-primary: #F2F4F2;
-    --color-text-secondary: #90A096; /* Cooler graphite tone */
-    --color-text-muted: #5E6962; /* Brighter, sharper muted tone */
+    --color-text-primary: #F4F7F4;
+    --color-text-secondary: #A6B0AA;
+    --color-text-muted: #66716B;
+    --color-text-very-muted: #465049;
     
-    --color-border-subtle: rgba(255, 255, 255, 0.04);
+    --color-border-subtle: rgba(255, 255, 255, 0.055);
     --color-border-strong: rgba(255, 255, 255, 0.08);
-    --color-border-intelligence: rgba(0, 229, 153, 0.2);
+    --color-border-intelligence: rgba(25, 184, 106, 0.2);
 
     /* Semantic Aliases for backward compatibility */
     --bg-page: var(--color-canvas);

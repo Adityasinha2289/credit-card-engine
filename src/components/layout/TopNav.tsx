@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell } from 'lucide-react';
+import { Bell, Search, Command, CheckCircle2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
@@ -10,27 +10,7 @@ import { Button } from '../ui/Button';
 //  TOP NAV — Contextual Command Bar
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ROUTE_CONTEXT: Record<string, { title: string; directive: string }> = {
-  '/app/explore':  { title: 'Explore',        directive: 'Discover recommendations and perks.' },
-  '/app/credit':   { title: 'Credit',         directive: 'Find the right card.'                },
-  '/app/wallet':   { title: 'Wallet',         directive: 'Optimize every transaction.'         },
-  '/app/lifestyle':{ title: 'Lifestyle',      directive: 'Plan smarter spending.'              },
-  '/app/insights': { title: 'Insights',       directive: 'Analyze your financial health.'      },
-  '/app/profile':  { title: 'Profile',        directive: 'Manage your identity.'               },
-  '/app':          { title: 'Dashboard',      directive: 'Your financial command center.'      },
-};
-
 export function TopNav() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  
-  // Find closest matching route
-  const currentRoute = Object.keys(ROUTE_CONTEXT)
-    .sort((a, b) => b.length - a.length)
-    .find(route => location.pathname.startsWith(route)) || '/app';
-    
-  const { title, directive } = ROUTE_CONTEXT[currentRoute] || ROUTE_CONTEXT['/app'];
-  
   const profile = useDashboardStore((s) => s.profile);
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -52,38 +32,49 @@ export function TopNav() {
     { id: 2, title: 'Bill Reminder', desc: 'Amex Platinum bill of ₹12,450 is due in 3 days.', time: '5h ago', unread: true },
   ];
 
+  const firstName = profile?.name?.split(' ')[0] || 'Aditya';
+
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-6 lg:px-8 h-16 bg-semantic-canvas/80 backdrop-blur-md border-b border-semantic-border-subtle shrink-0">
-      {/* ── Context Identity ──────────────────────────────────────────────── */}
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-8 h-[88px] bg-transparent shrink-0">
+      {/* ── Context Identity / Greeting ─────────────────────────────────── */}
       <div className="flex-1 min-w-0">
         <motion.div
-          key={title}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="flex flex-col"
+          className="flex items-center gap-2"
         >
-          <h1 className="text-lg font-display font-semibold text-semantic-text-primary tracking-tight truncate">
-            {title}
+          <CheckCircle2 size={16} strokeWidth={2} className="text-semantic-brand" />
+          <h1 className="text-sm font-medium text-semantic-text-secondary tracking-wide truncate">
+            Good evening, {firstName}
           </h1>
-          <p className="text-xs text-semantic-text-muted hidden sm:block font-medium tracking-wide">
-            {directive}
-          </p>
         </motion.div>
       </div>
 
       {/* ── Actions ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-6">
+        {/* Search Bar / Taqdeer Trigger */}
+        <button className="hidden md:flex items-center gap-3 group px-4 py-2 rounded-full hover:bg-[#0D2B1C]/30 transition-all duration-300">
+          <Search size={14} className="text-semantic-text-muted group-hover:text-semantic-brand transition-colors" strokeWidth={2} />
+          <span className="text-[13px] font-medium text-semantic-text-muted group-hover:text-semantic-text-primary transition-colors tracking-wide">
+            Ask Taqdeer anything...
+          </span>
+          <div className="flex items-center gap-0.5 ml-6 opacity-40 group-hover:opacity-100 transition-opacity">
+            <Command size={10} className="text-semantic-text-muted group-hover:text-semantic-brand" strokeWidth={2} />
+            <span className="text-[10px] font-bold text-semantic-text-muted group-hover:text-semantic-brand leading-none mt-0.5">K</span>
+          </div>
+        </button>
+
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative w-9 h-9 p-0 rounded-full"
+            className="relative w-10 h-10 p-0 rounded-full hover:bg-transparent"
             aria-label="Notifications"
           >
-            <Bell size={18} strokeWidth={1.8} className={showNotifications ? 'text-semantic-text-primary' : 'text-semantic-text-muted'} />
+            <Bell size={20} strokeWidth={1.5} className={showNotifications ? 'text-semantic-text-primary' : 'text-semantic-text-muted'} />
             <span className="absolute top-[8px] right-[8px] w-2 h-2 rounded-full bg-semantic-brand border-2 border-semantic-canvas" />
           </Button>
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { verifyAdminAuthorization } from '../admin/utils/auth';
+import { verifyAdminAuthorization } from '../admin/_utils/auth';
 import * as clerkBackend from '@clerk/backend';
 
 vi.mock('@clerk/backend', () => ({

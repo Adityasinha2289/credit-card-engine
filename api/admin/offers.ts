@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from './utils/auth';
-import { supabaseAdmin } from './utils/supabaseAdmin';
+import { requireAdmin } from './_utils/auth';
+import { supabaseAdmin } from './_utils/supabaseAdmin';
 
 export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
   if (!supabaseAdmin) {

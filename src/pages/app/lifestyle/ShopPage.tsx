@@ -19,7 +19,8 @@ export default function ShopPage() {
     async function fetchResults() {
       setIsLoading(true);
       try {
-        const userId = profile?.id || 'demo-user-id';
+        const userId = profile?.id;
+        if (!userId) return;
         const data = await CommerceOptimizationService.optimizeCollection(userId);
         setResults(data);
       } catch (err) {

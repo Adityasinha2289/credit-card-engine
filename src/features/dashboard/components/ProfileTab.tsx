@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, ShieldCheck, Coins, Mail, Phone, CheckCircle2, UserCheck, Sparkles, Target, Briefcase, MapPin } from 'lucide-react';
+import { CheckCircle2, Sparkles } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
 import type { UserSegment, PrimaryGoal, Occupation } from '../types/dashboard.types';
+import { PageContainer } from '../../../components/shared/PageContainer';
 import { ShareableScorecard } from './ShareableScorecard';
 
 const AVATAR_SEEDS = ['Atharva', 'Aria', 'Kabir', 'Zoe', 'Rohan', 'Elena'];
@@ -38,7 +39,6 @@ export function ProfileTab() {
   const profile = useDashboardStore((s) => s.profile);
   const updateProfile = useDashboardStore((s) => s.updateProfile);
 
-  // Initial form values from store
   const [name, setName] = useState(profile?.name || '');
   const [email, setEmail] = useState(profile?.email || '');
   const [phone, setPhone] = useState(profile?.phone || '');
@@ -48,18 +48,16 @@ export function ProfileTab() {
     return match ? match[1] : AVATAR_SEEDS[0];
   });
 
-  // Salary state (manual + slider)
   const [salary, setSalary] = useState(profile?.salary || 1500000);
   const [salaryInput, setSalaryInput] = useState(() => (profile?.salary || 1500000).toString());
 
-  // Credit Score state (manual + slider)
   const [creditScore, setCreditScore] = useState(profile?.creditScore || 750);
   const [creditInput, setCreditInput] = useState(() => (profile?.creditScore || 750).toString());
 
-  // User Segment & Personalization state
   const [userSegment, setUserSegment] = useState<UserSegment>(profile?.userSegment || 'adult');
   const [primaryGoal, setPrimaryGoal] = useState<PrimaryGoal>(profile?.primaryGoal || 'Maximise Cashback');
   const [occupation, setOccupation] = useState<Occupation | undefined>(profile?.occupation);
+  const [isOccupationDropdownOpen, setIsOccupationDropdownOpen] = useState(false);
   const [city, setCity] = useState(profile?.city || '');
 
   const [error, setError] = useState('');
@@ -126,286 +124,394 @@ export function ProfileTab() {
   };
 
   return (
-    <div className="flex flex-col gap-6 text-left max-w-2xl mx-auto py-4">
-      <div>
-        <h1 className="text-3xl font-display font-extrabold text-text-primary tracking-tight">
-          Profile Settings
-        </h1>
-        <p className="text-sm text-text-muted mt-1">
-          Review and update your financial goals, income details, and personal contacts.
-        </p>
-      </div>
+    <PageContainer
+      eyebrow="Profile"
+      title="Your financial identity."
+      subtitle="Keep your profile and financial context up to date so RenoCred can make better decisions for you."
+      className="text-[#F2F4F2] font-body selection:bg-[#237E45]/30 selection:text-white"
+    >
+      {/* Global Background Atmosphere */}
+      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
 
-      <AnimatePresence>
-        {success && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-3 p-4 bg-profit/10 border border-profit/25 rounded-2xl text-profit shadow-ag-glow-profit"
-          >
-            <CheckCircle2 size={18} />
-            <p className="text-sm font-bold">Profile updated successfully!</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 relative">
+        <div className="lg:col-span-8">
+          <form onSubmit={handleSave} className="space-y-12">
+            
+            {/* IDENTITY SECTION */}
+            <section className="space-y-8">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Identity</span>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-8 items-start">
+                <div className="flex-shrink-0 flex flex-col gap-4">
+                  <div className="w-24 h-24 rounded-full overflow-hidden border border-white/[0.08] bg-white/[0.02] shadow-xl">
+                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto max-w-[12rem] p-1.5 pb-2.5 -ml-1.5 hide-scrollbar">
+                    {AVATAR_SEEDS.map(seed => (
+                      <button
+                        key={seed}
+                        type="button"
+                        onClick={() => setAvatarSeed(seed)}
+                        className={cn(
+                          'w-8 h-8 aspect-square rounded-full flex-shrink-0 transition-all overflow-hidden',
+                          avatarSeed === seed
+                            ? 'ring-2 ring-offset-2 ring-offset-[#050806] ring-[#237E45]'
+                            : 'border border-white/[0.08] hover:border-white/30 opacity-70 hover:opacity-100'
+                        )}
+                      >
+                        <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${seed}&backgroundColor=f8f9fa`} alt={seed} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-      <form onSubmit={handleSave} className="surface-card p-6 lg:p-8 flex flex-col gap-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-36 h-36 bg-brand-emerald/5 rounded-full blur-2xl pointer-events-none" />
+                <div className="flex-1 space-y-8 w-full">
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Full Name</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-transparent border-b border-white/[0.08] focus:border-[#237E45] pb-2 text-white/90 text-lg outline-none transition-colors"
+                      placeholder="Your Name"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                    <div className="space-y-2 sm:col-span-2">
+                      <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Email Address</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full bg-transparent border-b border-white/[0.08] focus:border-[#237E45] pb-2 text-white/90 text-sm outline-none transition-colors"
+                        placeholder="email@example.com"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-1">
+                      <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Phone Number</label>
+                      <input
+                        type="tel"
+                        maxLength={10}
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                        className="w-full bg-transparent border-b border-white/[0.08] focus:border-[#237E45] pb-2 text-white/90 outline-none transition-colors"
+                        placeholder="+91 XXXXX XXXXX"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-        {/* Name & Contact */}
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-text-secondary flex items-center gap-2">
-              <User size={13} className="text-brand-emerald" /> Full Name
-            </label>
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="input-premium w-full text-sm"
-              required
-            />
-          </div>
+            <hr className="border-white/[0.04]" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-text-secondary flex items-center gap-2">
-                <Mail size={13} className="text-brand-emerald" /> Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-premium w-full text-sm"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-text-secondary flex items-center gap-2">
-                <Phone size={13} className="text-brand-emerald" /> Phone Number
-              </label>
-              <input
-                type="tel"
-                placeholder="10-digit number"
-                maxLength={10}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
-                className="input-premium w-full text-sm"
-                required
-              />
-            </div>
-          </div>
-        </div>
+            {/* FINANCIAL PROFILE SECTION */}
+            <section className="space-y-8">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Financial Profile</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 {/* Income */}
+                 <div className="bg-[#07120D] border border-white/[0.04] p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-[#081A12] hover:border-[#237E45]/20 transition-all">
+                    <div>
+                      <h4 className="text-sm font-medium text-white/50 mb-1">Annual income</h4>
+                      <div className="flex items-baseline gap-2">
+                         <span className="text-2xl font-display text-white">{formatINR(salary)}</span>
+                         <span className="text-sm text-white/40">/ year</span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                       <div className="flex justify-between items-center relative">
+                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">₹</span>
+                         <input
+                           type="text"
+                           value={salaryInput}
+                           onChange={handleSalaryInputChange}
+                           className="w-full bg-[#050806] border border-white/[0.04] rounded-[12px] py-2 pl-7 pr-3 text-white/90 text-sm outline-none focus:border-[#237E45]/50 transition-colors"
+                         />
+                       </div>
+                       <input
+                          type="range"
+                          min={100000}
+                          max={10000000}
+                          step={50000}
+                          value={salary}
+                          onChange={handleSalarySliderChange}
+                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-white/[0.04] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#237E45] transition-all"
+                          style={{ 
+                            backgroundImage: 'linear-gradient(#237E45, #237E45)', 
+                            backgroundSize: `${((salary - 100000) * 100) / (10000000 - 100000)}% 100%`, 
+                            backgroundRepeat: 'no-repeat' 
+                          }}
+                        />
+                    </div>
+                 </div>
 
-        {/* Avatar Select */}
-        <div className="flex flex-col gap-1.5 border-t border-border-subtle  pt-4">
-          <label className="text-xs font-bold text-text-secondary">Select Profile Avatar</label>
-          <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-brand-emerald bg-surface-secondary flex-shrink-0 shadow-ag-base">
-              <img src={avatarUrl} alt="Preview Avatar" className="w-full h-full object-cover" />
-            </div>
-            <div className="flex gap-1.5 overflow-x-auto pb-1 max-w-md">
-              {AVATAR_SEEDS.map((seed) => (
-                <button
-                  key={seed}
-                  type="button"
-                  onClick={() => setAvatarSeed(seed)}
-                  className={cn(
-                    'w-9 h-9 rounded-full border flex-shrink-0 text-xs font-semibold flex items-center justify-center transition-all overflow-hidden',
-                    avatarSeed === seed
-                      ? 'border-brand-emerald shadow-ag-glow-primary ring-1 ring-brand-emerald/30'
-                      : 'border-border-subtle hover:border-text-muted bg-surface-primary'
+                 {/* CIBIL */}
+                 <div className="bg-[#07120D] border border-white/[0.04] p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-[#081A12] hover:border-[#237E45]/20 transition-all">
+                    <div>
+                      <h4 className="text-sm font-medium text-white/50 mb-1">CIBIL score</h4>
+                      <div className="flex items-center gap-3">
+                         <span className="text-2xl font-display text-white">{creditScore}</span>
+                         <span className="text-sm font-medium text-[#237E45]">
+                           {creditScore >= 750 ? '· Excellent' : creditScore >= 700 ? '· Good' : creditScore >= 650 ? '· Fair' : '· Poor'}
+                         </span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                       <input
+                         type="text"
+                         maxLength={3}
+                         value={creditInput}
+                         onChange={handleCreditInputChange}
+                         className="w-full bg-[#050806] border border-white/[0.04] rounded-[12px] py-2 px-3 text-white/90 text-sm outline-none focus:border-[#237E45]/50 transition-colors"
+                       />
+                       <input
+                          type="range"
+                          min={300}
+                          max={900}
+                          step={1}
+                          value={creditScore}
+                          onChange={handleCreditSliderChange}
+                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-white/[0.04] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#237E45] transition-all"
+                          style={{ 
+                            backgroundImage: 'linear-gradient(#237E45, #237E45)', 
+                            backgroundSize: `${((creditScore - 300) * 100) / (900 - 300)}% 100%`, 
+                            backgroundRepeat: 'no-repeat' 
+                          }}
+                        />
+                    </div>
+                 </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                <div className="space-y-3">
+                  <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Financial Stage</label>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setUserSegment('youth')}
+                      className={cn(
+                        "flex-1 p-4 rounded-[20px] border text-left transition-all",
+                        userSegment === 'youth'
+                          ? "bg-[#237E45]/5 border-[#237E45]/30"
+                          : "bg-[#07120D] border-white/[0.04] hover:bg-white/[0.02]"
+                      )}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className={cn("font-medium", userSegment === 'youth' ? "text-[#237E45]" : "text-white/90")}>Youth</div>
+                          <div className="text-xs text-white/50 mt-1">18–22</div>
+                        </div>
+                        {userSegment === 'youth' && <CheckCircle2 size={16} className="text-[#237E45]" />}
+                      </div>
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setUserSegment('adult')}
+                      className={cn(
+                        "flex-1 p-4 rounded-[20px] border text-left transition-all",
+                        userSegment === 'adult'
+                          ? "bg-[#237E45]/5 border-[#237E45]/30"
+                          : "bg-[#07120D] border-white/[0.04] hover:bg-white/[0.02]"
+                      )}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className={cn("font-medium", userSegment === 'adult' ? "text-[#237E45]" : "text-white/90")}>Adult</div>
+                          <div className="text-xs text-white/50 mt-1">22+</div>
+                        </div>
+                        {userSegment === 'adult' && <CheckCircle2 size={16} className="text-[#237E45]" />}
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Occupation</label>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setIsOccupationDropdownOpen(!isOccupationDropdownOpen)}
+                        className={cn(
+                          "w-full bg-[#07120D] border rounded-[16px] py-3.5 px-4 text-sm text-left transition-colors flex items-center justify-between",
+                          isOccupationDropdownOpen ? "border-[#237E45]/50" : "border-white/[0.04]",
+                          occupation ? "text-white/90" : "text-white/50"
+                        )}
+                      >
+                        <span>{occupation || "Select Occupation (Optional)"}</span>
+                        <div className={cn("opacity-50 transition-transform", isOccupationDropdownOpen && "rotate-180")}>
+                          ▼
+                        </div>
+                      </button>
+                      
+                      <AnimatePresence>
+                        {isOccupationDropdownOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute top-full left-0 right-0 mt-2 bg-[#07120D] border border-white/[0.04] rounded-[16px] overflow-hidden shadow-2xl z-50 py-2"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => { setOccupation(undefined); setIsOccupationDropdownOpen(false); }}
+                              className="w-full text-left px-4 py-2.5 text-sm text-white/50 hover:bg-white/[0.04] transition-colors"
+                            >
+                              Select Occupation (Optional)
+                            </button>
+                            {OCCUPATION_LIST.map((occ) => (
+                              <button
+                                key={occ}
+                                type="button"
+                                onClick={() => { setOccupation(occ); setIsOccupationDropdownOpen(false); }}
+                                className={cn(
+                                  "w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between",
+                                  occupation === occ ? "text-[#237E45] bg-[#237E45]/5" : "text-white/90 hover:bg-white/[0.04]"
+                                )}
+                              >
+                                <span>{occ}</span>
+                                {occupation === occ && <CheckCircle2 size={14} />}
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">City</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Mumbai, Bengaluru"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="w-full bg-[#07120D] border border-white/[0.04] rounded-[16px] py-3.5 px-4 text-white/90 text-sm outline-none focus:border-[#237E45]/50 transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <hr className="border-white/[0.04]" />
+
+            {/* FINANCIAL GOALS SECTION */}
+            <section className="space-y-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Financial Goals</span>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-white/90">What are you optimizing for?</h3>
+                <p className="text-sm text-white/50">This helps RenoCred prioritize recommendations around what matters most to you.</p>
+              </div>
+              
+              <div className="flex flex-wrap gap-3">
+                {GOAL_LIST.map((goal) => (
+                  <button
+                    key={goal}
+                    type="button"
+                    onClick={() => setPrimaryGoal(goal)}
+                    className={cn(
+                      "py-2.5 px-5 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
+                      primaryGoal === goal
+                        ? "bg-[#237E45]/10 border-[#237E45]/30 text-[#237E45]"
+                        : "bg-[#07120D] border-white/[0.04] text-white/60 hover:text-white/90 hover:bg-white/[0.02]"
+                    )}
+                  >
+                    {primaryGoal === goal && <CheckCircle2 size={14} className="text-[#237E45]" />}
+                    {goal}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <hr className="border-white/[0.04]" />
+
+            {/* SHARE SECTION */}
+            <section className="space-y-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Share</span>
+              </div>
+              <ShareableScorecard />
+            </section>
+
+            <hr className="border-white/[0.04]" />
+
+            {/* SAVE ACTION */}
+            <section className="pt-4 pb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="flex-1">
+                <AnimatePresence>
+                  {success && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-sm font-medium text-[#237E45] flex items-center gap-2"
+                    >
+                      <CheckCircle2 size={16} /> Profile updated successfully!
+                    </motion.div>
                   )}
-                >
-                  <img
-                    src={`https://api.dicebear.com/7.x/notionists/svg?seed=${seed}&backgroundColor=f8f9fa`}
-                    alt={seed}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Salary: Manual + Slider */}
-        <div className="flex flex-col gap-1.5 pt-4 border-t border-border-subtle">
-          <div className="flex justify-between items-center">
-            <label className="text-xs font-bold text-text-secondary flex items-center gap-1.5">
-              <Coins size={13} className="text-caution" /> Annual Income
-            </label>
-            <div className="relative w-36">
-              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted">₹</span>
-              <input
-                type="text"
-                value={salaryInput}
-                onChange={handleSalaryInputChange}
-                className="w-full input-premium py-1 pl-6 pr-2 text-right text-xs font-semibold"
-              />
-            </div>
-          </div>
-          <p className="text-[10px] text-brand-emerald font-bold self-end mt-0.5">
-            Formatted: {formatINR(salary)} / year
-          </p>
-          <input
-            type="range"
-            min={100000}
-            max={10000000}
-            step={50000}
-            value={salary}
-            onChange={handleSalarySliderChange}
-            className="w-full h-1.5 appearance-none rounded-lg outline-none cursor-pointer mt-1 bg-surface-elevated border border-border-subtle focus-visible:ring-2 focus-visible:ring-brand-emerald/50 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-brand-emerald [&::-webkit-slider-thumb]:shadow-ag-glow-primary hover:[&::-webkit-slider-thumb]:scale-110 transition-all"
-            style={{ 
-              backgroundImage: 'linear-gradient(#00E599, #00E599)', 
-              backgroundSize: `${((salary - 100000) * 100) / (10000000 - 100000)}% 100%`, 
-              backgroundRepeat: 'no-repeat' 
-            }}
-          />
-        </div>
-
-        {/* Credit Score: Manual + Slider */}
-        <div className="flex flex-col gap-1.5 pt-4 border-t border-border-subtle">
-          <div className="flex justify-between items-center">
-            <label className="text-xs font-bold text-text-secondary flex items-center gap-1.5">
-              <ShieldCheck size={13} className="text-profit" /> Credit Score (CIBIL)
-            </label>
-            <input
-              type="text"
-              maxLength={3}
-              value={creditInput}
-              onChange={handleCreditInputChange}
-              className="w-20 input-premium py-1 px-2 text-right text-xs font-semibold"
-            />
-          </div>
-          <p className="text-[10px] text-profit font-bold self-end mt-0.5">
-            Rating: {creditScore >= 750 ? 'Excellent' : creditScore >= 700 ? 'Good' : creditScore >= 650 ? 'Fair' : 'Poor'}
-          </p>
-          <input
-            type="range"
-            min={300}
-            max={900}
-            step={1}
-            value={creditScore}
-            onChange={handleCreditSliderChange}
-            className="w-full h-1.5 appearance-none rounded-lg outline-none cursor-pointer mt-1 bg-surface-elevated border border-border-subtle focus-visible:ring-2 focus-visible:ring-brand-emerald/50 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-brand-emerald [&::-webkit-slider-thumb]:shadow-ag-glow-primary hover:[&::-webkit-slider-thumb]:scale-110 transition-all"
-            style={{ 
-              backgroundImage: 'linear-gradient(#00E599, #00E599)', 
-              backgroundSize: `${((creditScore - 300) * 100) / (900 - 300)}% 100%`, 
-              backgroundRepeat: 'no-repeat' 
-            }}
-          />
-        </div>
-
-        {/* User Stage / Segment Selector */}
-        <div className="flex flex-col gap-2 pt-4 border-t border-border-subtle">
-          <label className="text-xs font-bold text-text-secondary flex items-center gap-1.5">
-            <Sparkles size={13} className="text-brand-emerald" /> Financial Stage Segment
-          </label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setUserSegment('youth')}
-              className={cn(
-"flex-1 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-between cursor-pointer",
-                userSegment === 'youth'
-                  ?"bg-brand-emerald-muted border-brand-emerald text-brand-emerald shadow-[0_0_20px_rgba(4,59,39,0.3)]"
-                  :"bg-surface border-border-subtle  text-text-muted hover:text-text-secondary"
-              )}
-            >
-              <span>Youth (18–22)</span>
-              {userSegment === 'youth' && <CheckCircle2 size={14} className="text-brand-emerald" />}
-            </button>
-            <button
-              type="button"
-              onClick={() => setUserSegment('adult')}
-              className={cn(
-"flex-1 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-between cursor-pointer",
-                userSegment === 'adult'
-                  ?"bg-brand-emerald-muted border-brand-emerald text-brand-emerald shadow-[0_0_20px_rgba(4,59,39,0.3)]"
-                  :"bg-surface border-border-subtle  text-text-muted hover:text-text-secondary"
-              )}
-            >
-              <span>Adult (22+)</span>
-              {userSegment === 'adult' && <CheckCircle2 size={14} className="text-brand-emerald" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Primary Goal Selector */}
-        <div className="flex flex-col gap-2 pt-4 border-t border-border-subtle">
-          <label className="text-xs font-bold text-text-secondary flex items-center gap-1.5">
-            <Target size={13} className="text-brand-emerald" /> Primary Financial Goal
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {GOAL_LIST.map((goal) => (
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-sm font-medium text-red-400"
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              
               <button
-                key={goal}
-                type="button"
-                onClick={() => setPrimaryGoal(goal)}
-                className={cn(
-"py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5",
-                  primaryGoal === goal
-                    ?"bg-brand-emerald-muted border-brand-emerald text-brand-emerald ring-1 ring-brand-emerald-glow shadow-[0_0_20px_rgba(4,59,39,0.3)]"
-                    :"bg-surface border-border-subtle  text-text-muted hover:text-text-secondary"
-                )}
+                type="submit"
+                className="w-full sm:w-auto bg-[#237E45] text-[#050806] hover:bg-[#128a4f] py-3.5 px-8 rounded-full font-semibold text-sm transition-colors flex items-center justify-center gap-2"
               >
-                <span>{goal}</span>
-                {primaryGoal === goal && <CheckCircle2 size={12} className="text-brand-emerald" />}
+                SAVE CHANGES →
               </button>
-            ))}
+            </section>
+          </form>
+        </div>
+        
+        {/* RIGHT PANEL - INTELLIGENCE OVERVIEW */}
+        <div className="lg:col-span-4 relative hidden lg:block">
+          <div className="sticky top-24 bg-[#07120D] border border-white/[0.04] rounded-[32px] p-8 space-y-6">
+            <div className="flex items-center gap-2 text-[#237E45]">
+              <Sparkles size={16} />
+              <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase">Your RenoCred Profile</span>
+            </div>
+            <p className="text-white/60 text-sm leading-relaxed">
+              Your profile helps RenoCred understand:
+            </p>
+            <ul className="space-y-4 text-sm text-white/80">
+              <li className="flex items-start gap-3">
+                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#237E45]/60 shrink-0" />
+                <span>which cards fit your spending</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#237E45]/60 shrink-0" />
+                <span>which rewards matter most</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#237E45]/60 shrink-0" />
+                <span>which financial opportunities are relevant</span>
+              </li>
+            </ul>
           </div>
         </div>
-
-        {/* Occupation & City */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-border-subtle">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-text-secondary flex items-center gap-1.5">
-              <Briefcase size={13} className="text-brand-emerald" /> Occupation
-            </label>
-            <select
-              value={occupation || ''}
-              onChange={(e) => setOccupation((e.target.value as Occupation) || undefined)}
-              className="input-premium w-full text-xs py-2 bg-surface-primary"
-            >
-              <option value="">Select Occupation (Optional)</option>
-              {OCCUPATION_LIST.map((occ) => (
-                <option key={occ} value={occ}>{occ}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-text-secondary flex items-center gap-1.5">
-              <MapPin size={13} className="text-brand-emerald" /> City
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Mumbai, Bengaluru"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="input-premium w-full text-xs py-2 bg-surface-primary"
-            />
-          </div>
-        </div>
-
-        {error && <p className="text-xs font-bold text-loss mt-1">{error}</p>}
-
-        <button
-          type="submit"
-          className="mt-4 w-full btn-primary py-3 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(4,59,39,0.3)] active:scale-[0.98]"
-        >
-          <UserCheck size={16} /> Save Changes
-        </button>
-      </form>
-
-      {/* ── Shareable Scorecard ─────────────────────────────────── */}
-      <div className="mt-2 pt-5 border-t border-border-subtle">
-        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Share</p>
-        <ShareableScorecard />
       </div>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Wallet as WalletIcon, CreditCard, PieChart, Calendar, Gift } from 'lucide-react';
-import { ActiveCard } from '../../../cards/components/ActiveCard';
+import { CreditCard as PhysicalCard } from '../../../cards/components/CreditCard';
 import type { FinixCard } from '../../../../features/finix/data/cardDataset';
 import type { CreditAccountData } from '../../types/dashboard.types';
 import { formatCents } from '../../../../lib/utils';
@@ -83,7 +83,7 @@ export function WalletSnapshotV3({
               }}
             >
               {isPrimary ? (
-                <ActiveCard card={cardWithLiveCredit} revealed={false} />
+                <PhysicalCard card={cardWithLiveCredit} revealed={false} variant="featured" />
               ) : (
                 <div 
                   className="w-full h-[190px] rounded-2xl opacity-50 border border-border-subtle"

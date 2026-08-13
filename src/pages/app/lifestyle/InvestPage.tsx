@@ -18,7 +18,8 @@ export default function InvestPage() {
     async function fetchResults() {
       setIsLoading(true);
       try {
-        const userId = profile?.id || 'demo-user-id';
+        const userId = profile?.id;
+        if (!userId) return;
         const data = await CommerceOptimizationService.optimizeCollection(userId);
         // Basic fallback filtering for prototype categories
         setResults(data);

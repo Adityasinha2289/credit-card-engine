@@ -34,7 +34,8 @@ export default function PlanDatePage() {
             baseAmount: v.originalCost,
             currency: 'INR',
           }));
-          const userId = profile?.id || 'demo-user-id';
+          const userId = profile?.id;
+          if (!userId) return;
           const result = await CommerceOptimizationService.optimizeItinerary(opportunities, userId);
           setOptimizationResult(result);
         } catch (err) {

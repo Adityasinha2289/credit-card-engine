@@ -15,7 +15,7 @@ const PRIMARY_NAV = [
   { id: 'home',      path: '/app',          label: 'Home',      Icon: LayoutDashboard },
   { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCard },
   { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: Wallet },
-  { id: 'lifestyle', path: '/app/lifestyle',label: 'Lifestyle', Icon: Compass },
+  { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: Compass },
 ];
 
 const UTILITY_NAV = [
@@ -54,8 +54,8 @@ export function Sidebar() {
     >
       {/* ── Brand Area ───────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-3 px-6 h-[88px] shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-semantic-brand/10 border border-semantic-brand/20 flex items-center justify-center shrink-0">
-          <span className="text-semantic-brand font-display font-bold text-xl">R</span>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden shadow-lg border border-white/[0.05]">
+          <img src="/logo.jpg" alt="RenoCred" className="w-full h-full object-cover" />
         </div>
         <h1 className="text-xl font-display font-medium text-semantic-text-primary tracking-tight">
           RenoCred

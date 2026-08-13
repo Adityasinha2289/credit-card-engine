@@ -66,21 +66,7 @@ export function LoginScreen() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
-  const handleDemoLogin = () => {
-    resetStore();
-    login({
-      id: 'demo-user-id',
-      name: 'Demo User',
-      email: 'demo@renocred.com',
-      phone: '+91 98765 43210',
-      avatar: 'https://ui-avatars.com/api/?name=Demo+User&background=1F5247&color=fff',
-      salary: 2500000,
-      creditScore: 810,
-      userSegment: 'adult',
-      primaryGoal: 'Maximise Cashback',
-      onboardingCompleted: false,
-    });
-  };
+
 
   // Mirror whatever is typed into Clerk's first-name field onto the card preview
   useEffect(() => {
@@ -136,8 +122,8 @@ export function LoginScreen() {
       email: user?.primaryEmailAddress?.emailAddress || '',
       phone: user?.primaryPhoneNumber?.phoneNumber || 'XXXXXXXXXX',
       avatar: user?.imageUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=User&backgroundColor=f8f9fa`,
-      salary,
-      creditScore,
+      salary: state.salary || 1500000,
+      creditScore: state.creditScore || 750,
       userSegment: calculatedSegment,
       primaryGoal: (state.goal as PrimaryGoal) || 'Maximise Cashback',
       spendCategories: state.priorities,
@@ -161,7 +147,7 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-surface-primary p-4 lg:p-8">
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#0a0a0a] p-4 lg:p-8">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] max-w-5xl w-full gap-8 items-center">
         {/* Left Side: Branding & Premium Dashboard Teaser */}
         <div className="flex flex-col gap-6 text-left hidden lg:flex">
@@ -170,20 +156,20 @@ export function LoginScreen() {
               <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />
             </div>
             <div>
-              <p className="text-2xl font-display font-bold text-text-primary tracking-tight">
+              <p className="text-2xl font-display font-bold text-white tracking-tight">
                 renocred
               </p>
-              <p className="text-[10px] font-semibold text-text-muted tracking-[0.2em] uppercase">
+              <p className="text-[10px] font-semibold text-white/50 tracking-[0.2em] uppercase">
                 credit intelligence
               </p>
             </div>
           </div>
 
           <div>
-            <h1 className="text-4xl xl:text-5xl font-display font-extrabold text-text-primary tracking-tight leading-tight">
-              Unlock the power of your <span className="bg-gradient-to-r from-brand-emerald via-brand-emerald-hover to-premium-highlight text-transparent bg-clip-text">financial profile</span>.
+            <h1 className="text-4xl xl:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
+              Unlock the power of your <span className="bg-gradient-to-r from-[#237E45] via-[#237E45] to-emerald-200 text-transparent bg-clip-text">financial profile</span>.
             </h1>
-            <p className="text-sm text-text-secondary mt-4 max-w-md leading-relaxed">
+            <p className="text-sm text-white/60 mt-4 max-w-md leading-relaxed">
               renocred evaluates your credit score, compares 130+ cards, and acts as your personal optimizer to maximize your rewards and savings.
             </p>
           </div>
@@ -275,25 +261,18 @@ export function LoginScreen() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="bg-surface-elevated border border-border-subtle rounded-[2rem] p-6 lg:p-8 w-full shadow-2xl relative flex flex-col items-center"
+            className="bg-[#151515] border border-white/10 rounded-[2rem] p-6 lg:p-8 w-full shadow-2xl relative flex flex-col items-center"
           >
             {/* ── Header Row: Demo Button & Tab Switcher ── */}
             <div className="w-full flex justify-between items-center mb-6">
-              <button
-                onClick={handleDemoLogin}
-                className="text-xs font-bold px-4 py-2 rounded-xl bg-brand-emerald-muted hover:bg-brand-emerald-glow text-brand-emerald border border-border-emerald transition-colors flex items-center gap-2"
-              >
-                <CreditCard size={14} /> Try Demo
-              </button>
-              
-              <div className="inline-flex p-1 rounded-xl bg-surface-secondary border border-border-subtle backdrop-blur-sm">
+            <div className="w-full flex justify-end items-center mb-6">
                 <button
                   onClick={() => setMode('signin')}
                   className={cn(
                     'px-6 py-2 rounded-lg text-sm font-bold transition-all duration-200',
                     mode === 'signin'
-                      ? 'bg-brand-emerald text-white shadow-[0_0_15px_rgba(4,59,39,0.3)] border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27]'
-                      : 'text-text-secondary hover:text-text-primary'
+                      ? 'bg-[#237E45] text-white shadow-lg border border-[#237E45]/50'
+                      : 'text-white/60 hover:text-white'
                   )}
                 >
                   Sign In
@@ -303,8 +282,8 @@ export function LoginScreen() {
                   className={cn(
                     'px-6 py-2 rounded-lg text-sm font-bold transition-all duration-200',
                     mode === 'signup'
-                      ? 'bg-brand-emerald text-white shadow-[0_0_15px_rgba(4,59,39,0.3)] border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27]'
-                      : 'text-text-secondary hover:text-text-primary'
+                      ? 'bg-[#237E45] text-white shadow-lg border border-[#237E45]/50'
+                      : 'text-white/60 hover:text-white'
                   )}
                 >
                   Sign Up

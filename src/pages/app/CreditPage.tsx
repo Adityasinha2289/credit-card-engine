@@ -6,7 +6,7 @@ import {
   HeartPulse, Car, Music, Tag, ExternalLink, Plus, Trophy, Check,
   CreditCard, ArrowRight, PlaneTakeoff, Info, Circle
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { cn } from '../../lib/utils';
@@ -18,6 +18,7 @@ import {
 } from '../../features/finix/lib/recommendEngine';
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../../features/finix/data/cardDataset';
 import { getCardTheme } from '../../features/finix/config/cardThemeRegistry';
+import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPERS
@@ -264,7 +265,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
             <div className="flex flex-col xl:flex-row gap-6 max-w-6xl">
               {/* Primary Pick (55-60% width) */}
               <div className="xl:w-[58%]">
-                {results.slice(0, 1).map((card) => {
+                {results.slice(0, 1).map((card, idx) => {
                   const theme = getCardTheme(card.id);
                   const applyUrl = BANK_APPLY_URLS[card.bank];
                   const estimatedHighRate = Math.max(...(card.rewards?.map(r=>r.rate) || [0]), card.baseRewardRate);
@@ -288,15 +289,8 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                       </div>
 
                       <div className="p-8 md:p-10 flex flex-col items-center flex-1">
-                        <div
-                          className="w-56 h-36 md:w-64 md:h-40 rounded-2xl shadow-xl relative overflow-hidden ring-1 ring-white/10 mb-8"
-                          style={{ background: `linear-gradient(135deg, ${theme.gradientFrom}, ${theme.gradientTo})` }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                          <div className="absolute bottom-4 left-5 right-5">
-                            <p className="text-white/90 text-sm font-mono tracking-wider opacity-80">•••• •••• ••••</p>
-                            <p className="text-white/90 text-xs mt-1.5 font-medium truncate tracking-wide">{card.bank}</p>
-                          </div>
+                        <div className="mb-8 flex justify-center w-full">
+                          <PhysicalCard card={card} variant="recommendation" recommended={true} />
                         </div>
 
                         <div className="w-full text-center mb-8">
@@ -367,14 +361,19 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                       transition={{ delay: (idx + 1) * 0.1 }}
                       className="group bg-[#0F1412] border border-[#242D29] hover:border-[#384640] rounded-2xl overflow-hidden transition-all duration-300 flex"
                     >
-                      <div className="w-12 flex-shrink-0 bg-[#131917] border-r border-[#242D29] flex flex-col items-center pt-6">
-                        <span className="text-xs font-mono text-[#737C77]">0{idx + 2}</span>
+                      <div className="w-12 flex-shrink-0 flex flex-col items-center pt-8">
+                        <span className="text-xs font-mono text-white/30">0{idx + 2}</span>
                       </div>
-                      <div className="p-5 flex-1 flex flex-col">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h4 className="text-base font-medium text-[#F2F4F2] leading-tight mb-1">{card.name}</h4>
-                            <p className="text-[10px] text-[#A0AAA5] uppercase tracking-wider">{card.bank}</p>
+                      <div className="p-5 pl-0 flex-1 flex flex-col">
+                        <div className="flex flex-col sm:flex-row sm:justify-between items-start mb-4 gap-4">
+                          <div className="flex items-start gap-4">
+                             <div className="origin-top-left scale-[0.5] sm:scale-[0.65] h-[88px] sm:h-[114px] w-[140px] sm:w-[182px] shrink-0">
+                               <PhysicalCard card={card} variant="compact" />
+                             </div>
+                             <div className="mt-1">
+                               <h4 className="text-base font-medium text-white/90 leading-tight mb-1">{card.name}</h4>
+                               <p className="text-[10px] text-white/50 uppercase tracking-wider">{card.bank}</p>
+                             </div>
                           </div>
                           <div className="flex flex-col items-end">
                             <span className="text-lg font-mono text-[#F2F4F2] font-medium leading-none">{card.matchPercent}</span>
@@ -509,10 +508,9 @@ function CardPickerModal({ onSelect, onClose, excludeIds }: {
                 onClick={() => { onSelect(card); onClose(); }}
                 className="w-full flex items-center gap-4 p-4 rounded-2xl bg-[#131917] border border-[#242D29] hover:border-[#384640] transition-all text-left group"
               >
-                <div
-                  className="w-16 h-10 rounded-lg flex-shrink-0 shadow-md ring-1 ring-white/10"
-                  style={{ background: `linear-gradient(135deg, ${theme.gradientFrom}, ${theme.gradientTo})` }}
-                />
+                <div className="origin-top-left scale-[0.5] w-[82px] h-[52px]">
+                  <PhysicalCard card={card} variant="compact" />
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-[#F2F4F2] truncate">{card.name}</p>
                   <p className="text-[10px] text-[#737C77] mt-0.5">{card.bank} · {card.network} · {card.annualFee === 0 ? 'Free' : formatINR(card.annualFee)}</p>
@@ -595,11 +593,10 @@ function CompareTab() {
                   animate={{ scale: 1, opacity: 1 }}
                   className="relative rounded-2xl border border-[#242D29] bg-[#0F1412] p-5 flex flex-col gap-4 group hover:border-[#384640] transition-colors"
                 >
-                  <div className="flex justify-between items-start">
-                    <div
-                      className="w-16 h-10 rounded-lg shadow-sm ring-1 ring-white/10"
-                      style={{ background: `linear-gradient(135deg, ${theme.gradientFrom}, ${theme.gradientTo})` }}
-                    />
+                  <div className="flex justify-between items-start mb-2 h-[45px]">
+                    <div className="origin-top-left scale-[0.43]">
+                      <PhysicalCard card={card} variant="comparison" />
+                    </div>
                   </div>
 
                   <div className="min-h-[44px]">
@@ -838,26 +835,29 @@ function MyWalletTab() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function CreditPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<CreditTab>('recommend');
 
-  return (
-    <PageContainer hideHeader>
-      <div className="w-full min-h-screen text-[#F2F4F2] pb-24 md:pb-32 px-4 md:px-8 max-w-[1400px] mx-auto font-body">
+  React.useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/compare')) setActiveTab('compare');
+    else if (path.includes('/wallet')) setActiveTab('wallet');
+    else setActiveTab('recommend');
+  }, [location]);
 
-        {/* COMMAND HEADER (Quiet Editorial Hierarchy) */}
-        <header className="pt-6 md:pt-10 pb-6">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 w-fit">
-              <span className="text-[10px] font-bold tracking-widest uppercase text-[#737C77]">Credit Intelligence</span>
-            </div>
-            <h1 className="font-display text-3xl md:text-4xl tracking-tight text-[#F2F4F2] max-w-2xl">
-              Find the right credit.<br/>Make every card count.
-            </h1>
-            <p className="text-[#A0AAA5] text-sm md:text-base max-w-xl leading-relaxed">
-              Discover cards that fit your financial profile, compare the differences that matter, and optimize the cards you already own.
-            </p>
-          </div>
-        </header>
+  const handleTabChange = (id: CreditTab) => {
+    setActiveTab(id);
+    navigate(`/app/credit/${id}`);
+  };
+
+  return (
+    <PageContainer
+      eyebrow="Credit Intelligence"
+      title="Find the right credit. Make every card count."
+      subtitle="Discover cards that fit your financial profile, compare the differences that matter, and optimize the cards you already own."
+    >
+      <div className="w-full flex flex-col gap-10 relative">
 
         {/* SEGMENTED TABS */}
         <div className="mb-10">
@@ -867,7 +867,7 @@ export default function CreditPage() {
               return (
                 <button
                   key={id}
-                  onClick={() => setActiveTab(id)}
+                  onClick={() => handleTabChange(id)}
                   className={cn(
                     'relative flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300',
                     isActive ? 'text-[#F2F4F2]' : 'text-[#737C77] hover:text-[#A0AAA5]'

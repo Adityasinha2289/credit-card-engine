@@ -20,11 +20,11 @@ interface DashboardLayoutProps {
 }
 
 const MOBILE_NAV = [
-  { id: 'home',      path: '/app',          label: 'Home',      Icon: LayoutDashboard },
-  { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCard },
-  { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: Wallet },
-  { id: 'lifestyle', path: '/app/lifestyle',label: 'Lifestyle', Icon: Gift },
-  { id: 'profile',   path: '/app/profile',  label: 'Profile',   Icon: User },
+  { id: 'home',        path: '/app',            label: 'Home',        Icon: LayoutDashboard },
+  { id: 'credit',      path: '/app/credit',     label: 'Credit',      Icon: CreditCard },
+  { id: 'wallet',      path: '/app/wallet',     label: 'Wallet',      Icon: Wallet },
+  { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: Gift },
+  { id: 'profile',     path: '/app/profile',    label: 'Profile',     Icon: User },
 ];
 
 export function DashboardLayout({

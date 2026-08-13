@@ -5,7 +5,7 @@ import type { PaymentMethod } from '../types';
  * Adapter to translate existing real CardData into the pure PaymentMethod domain abstraction.
  * This preserves required metadata without polluting the generic core engine.
  */
-export function adaptCardDataToPaymentMethod(card: CardData, userId: string = 'demo-user-id'): PaymentMethod {
+export function adaptCardDataToPaymentMethod(card: CardData, userId: string): PaymentMethod {
   return {
     id: card.id,
     userId,
@@ -29,6 +29,6 @@ export function adaptCardDataToPaymentMethod(card: CardData, userId: string = 'd
 /**
  * Convenience method to adapt an array of CardData.
  */
-export function adaptUserCardsToPaymentMethods(cards: CardData[], userId: string = 'demo-user-id'): PaymentMethod[] {
+export function adaptUserCardsToPaymentMethods(cards: CardData[], userId: string): PaymentMethod[] {
   return cards.map(c => adaptCardDataToPaymentMethod(c, userId));
 }

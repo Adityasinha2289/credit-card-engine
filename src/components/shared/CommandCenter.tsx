@@ -29,12 +29,14 @@ export function CommandCenter() {
     navigate(path);
   };
 
+  const TaqdeerIcon = () => <img src="/taqdeer-logo.jpg" alt="Taqdeer AI" className="w-full h-full object-cover rounded-lg" />;
+
   const suggestions = [
     { icon: Compass, label: 'Plan a Trip', path: '/app/lifestyle/plan', badge: 'Popular' },
     { icon: MapPin, label: 'Plan a Date', path: '/app/lifestyle/plan/date' },
     { icon: ShoppingBag, label: 'Shop Smarter', path: '/app/lifestyle/shop' },
     { icon: Book, label: 'Start a Hobby', path: '/app/lifestyle/invest' },
-    { icon: Sparkles, label: 'Ask Taqdeer', path: '/app/taqdeer' },
+    { icon: TaqdeerIcon, label: 'Ask Taqdeer', path: '/app/taqdeer' },
   ];
 
   return (

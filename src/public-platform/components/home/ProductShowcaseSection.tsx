@@ -65,7 +65,7 @@ export function ProductShowcaseSection() {
                       {scenario.desc}
                     </p>
                     
-                    <Link to={`/methodology#${scenario.id}`} className="flex items-center gap-2 text-xs md:text-sm font-semibold text-white group-hover:text-[#00E599] transition-colors w-fit drop-shadow">
+                    <Link to={`/methodology#${scenario.id}`} className="flex items-center gap-2 text-xs md:text-sm font-semibold text-white group-hover:text-[#237E45] transition-colors w-fit drop-shadow">
                       See how it works <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>

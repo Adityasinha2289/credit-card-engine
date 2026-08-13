@@ -1,0 +1,1453 @@
+
+> renocred@0.0.0 lint
+> oxlint
+
+
+  ! eslint(no-unused-vars): Identifier 'ChevronRight' is imported but never used.
+   ,-[src/public-platform/components/home/HeroSection.tsx:3:20]
+ 2 | import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
+ 3 | import { Sparkles, ChevronRight, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+   :                    ^^^^^^|^^^^^
+   :                          `-- 'ChevronRight' is imported here
+ 4 | import { staggerContainer, fadeUpVariant, springSmooth, MotionButton, interactivePrimary, interactiveSecondary } from '../../../motion';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'interactivePrimary' is imported but never used.
+   ,-[src/public-platform/components/home/HeroSection.tsx:4:71]
+ 3 | import { Sparkles, ChevronRight, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+ 4 | import { staggerContainer, fadeUpVariant, springSmooth, MotionButton, interactivePrimary, interactiveSecondary } from '../../../motion';
+   :                                                                       ^^^^^^^^^|^^^^^^^^
+   :                                                                                `-- 'interactivePrimary' is imported here
+ 5 | import { HeroPhoneAnimation } from './HeroPhoneAnimation';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'interactiveSecondary' is imported but never used.
+   ,-[src/public-platform/components/home/HeroSection.tsx:4:91]
+ 3 | import { Sparkles, ChevronRight, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+ 4 | import { staggerContainer, fadeUpVariant, springSmooth, MotionButton, interactivePrimary, interactiveSecondary } from '../../../motion';
+   :                                                                                           ^^^^^^^^^^|^^^^^^^^^
+   :                                                                                                     `-- 'interactiveSecondary' is imported here
+ 5 | import { HeroPhoneAnimation } from './HeroPhoneAnimation';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ALL_CARDS' is imported but never used.
+   ,-[marketing/src/app/best/[category]/page.tsx:4:10]
+ 3 | import Link from 'next/link';
+ 4 | import { ALL_CARDS, getBestCardsForCategory, getTopLoungeCards, getLifetimeFreeCards, CardData } from '../../../lib/cards';
+   :          ^^^^|^^^^
+   :              `-- 'ALL_CARDS' is imported here
+ 5 | import { FAQSchema } from '../../../components/StructuredData';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Check' is imported but never used.
+   ,-[marketing/src/app/best/[category]/page.tsx:6:17]
+ 5 | import { FAQSchema } from '../../../components/StructuredData';
+ 6 | import { Award, Check, Zap, ArrowRight, HelpCircle } from 'lucide-react';
+   :                 ^^|^^
+   :                   `-- 'Check' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Zap' is imported but never used.
+   ,-[marketing/src/app/best/[category]/page.tsx:6:24]
+ 5 | import { FAQSchema } from '../../../components/StructuredData';
+ 6 | import { Award, Check, Zap, ArrowRight, HelpCircle } from 'lucide-react';
+   :                        ^|^
+   :                         `-- 'Zap' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/best/[category]/page.tsx:45:23]
+ 44 | 
+ 45 | export async function generateStaticParams() {
+    :                       ^^^^^^^^^^^^^^^^^^^^
+ 46 |   return Object.keys(CATEGORY_CONFIG).map((category) => ({ category }));
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/best/[category]/page.tsx:49:23]
+ 48 | 
+ 49 | export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    :                       ^^^^^^^^^^^^^^^^
+ 50 |   const { category } = await params;
+    `----
+
+  ! eslint(no-unused-vars): Identifier 'interactiveSecondary' is imported but never used.
+   ,-[src/public-platform/components/home/HeroPhoneAnimation.tsx:4:10]
+ 3 | import { Sparkles, Activity, CheckCircle2 } from 'lucide-react';
+ 4 | import { interactiveSecondary } from '../../../motion';
+   :          ^^^^^^^^^^|^^^^^^^^^
+   :                    `-- 'interactiveSecondary' is imported here
+ 5 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/OfferForm.tsx:78:16]
+ 77 |         }
+ 78 |       } catch (err) {
+    :                ^|^
+    :                 `-- 'err' is declared here
+ 79 |         toast.error('Network error');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+     ,-[src/pages/admin/OfferForm.tsx:133:14]
+ 132 |       }
+ 133 |     } catch (err) {
+     :              ^|^
+     :               `-- 'err' is declared here
+ 134 |       toast.error('Network error');
+     `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Identifier 'toast' is imported but never used.
+   ,-[src/public-platform/components/PublicFooter.tsx:2:10]
+ 1 | import { Link, useNavigate } from 'react-router-dom';
+ 2 | import { toast } from 'sonner';
+   :          ^^|^^
+   :            `-- 'toast' is imported here
+ 3 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/PartnerForm.tsx:62:16]
+ 61 |         }
+ 62 |       } catch (err) {
+    :                ^|^
+    :                 `-- 'err' is declared here
+ 63 |         toast.error('Network error');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+     ,-[src/pages/admin/PartnerForm.tsx:107:14]
+ 106 |       }
+ 107 |     } catch (err) {
+     :              ^|^
+     :               `-- 'err' is declared here
+ 108 |       toast.error('Network error');
+     `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/EntityManagement.tsx:43:16]
+ 42 |         }
+ 43 |       } catch (err) {
+    :                ^|^
+    :                 `-- 'err' is declared here
+ 44 |         setError('Failed to load entities');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/EntityManagement.tsx:78:14]
+ 77 |       }
+ 78 |     } catch (err) {
+    :              ^|^
+    :               `-- 'err' is declared here
+ 79 |       toast.error('Network error');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Identifier 'MoreVertical' is imported but never used.
+   ,-[src/pages/admin/PartnerManagement.tsx:2:24]
+ 1 | import { useState, useEffect } from 'react';
+ 2 | import { Plus, Search, MoreVertical, Edit2, CheckCircle2, XCircle } from 'lucide-react';
+   :                        ^^^^^^|^^^^^
+   :                              `-- 'MoreVertical' is imported here
+ 3 | import { useNavigate } from 'react-router-dom';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/PartnerManagement.tsx:40:16]
+ 39 |         }
+ 40 |       } catch (err) {
+    :                ^|^
+    :                 `-- 'err' is declared here
+ 41 |         setError('Failed to load partners');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/PartnerManagement.tsx:75:14]
+ 74 |       }
+ 75 |     } catch (err) {
+    :              ^|^
+    :               `-- 'err' is declared here
+ 76 |       toast.error('Network error');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Type 'CardData' is imported but never used.
+   ,-[src/pages/app/HomePage.tsx:7:15]
+ 6 | import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
+ 7 | import type { CardData } from '../../features/cards/types/card.types';
+   :               ^^^^|^^^
+   :                   `-- 'CardData' is imported here
+ 8 | import { 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'savings' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/pages/app/HomePage.tsx:20:10]
+ 19 | 
+ 20 |   const [savings, setSavings] = useState<number>(0);
+    :          ^^^|^^^
+    :             `-- 'savings' is declared here
+ 21 | 
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Identifier 'analytics' is imported but never used.
+   ,-[src/App.tsx:1:10]
+ 1 | import { analytics } from './lib/analytics';
+   :          ^^^^|^^^^
+   :              `-- 'analytics' is imported here
+ 2 | import './index.css';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'totalCards' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/pages/app/WalletPage.tsx:22:9]
+ 21 |   // Deriving basic stats
+ 22 |   const totalCards = userCards.length;
+    :         ^^^^^|^^^^
+    :              `-- 'totalCards' is declared here
+ 23 |   const activeCards = userCards.filter(c => c.status === 'active').length;
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'activeCards' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/pages/app/WalletPage.tsx:23:9]
+ 22 |   const totalCards = userCards.length;
+ 23 |   const activeCards = userCards.filter(c => c.status === 'active').length;
+    :         ^^^^^|^^^^^
+    :              `-- 'activeCards' is declared here
+ 24 | 
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'results' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/pages/app/WalletPage.tsx:32:15]
+ 31 |         const userId = profile?.id || 'demo-user-id';
+ 32 |         const results = await CommerceOptimizationService.optimizeCollection(userId);
+    :               ^^^|^^^
+    :                  `-- 'results' is declared here
+ 33 |         
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Identifier 'useEffect' is imported but never used.
+   ,-[src/public-platform/components/home/InteractiveDemoSection.tsx:1:28]
+ 1 | import { useState, useRef, useEffect } from 'react';
+   :                            ^^^^|^^^^
+   :                                `-- 'useEffect' is imported here
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Clock' is imported but never used.
+   ,-[src/public-platform/components/home/InteractiveDemoSection.tsx:4:35]
+ 3 | import { 
+ 4 |   Sparkles, ArrowRight, Activity, Clock, CheckCircle2, CreditCard, ShieldCheck, ChevronRight, Check, Search
+   :                                   ^^|^^
+   :                                     `-- 'Clock' is imported here
+ 5 | } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Catch parameter 'e' is caught but never used.
+    ,-[src/public-platform/components/home/InteractiveDemoSection.tsx:71:14]
+ 70 |       }, 3000);
+ 71 |     } catch (e) {
+    :              |
+    :              `-- 'e' is declared here
+ 72 |       setDecision({ content: "I couldn't process that request right now." });
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Parameter 'request' is declared but never used. Unused parameters should start with a '_'.
+    ,-[src/features/recommendation/adapters/LegacyEngineAdapter.ts:14:27]
+ 13 | 
+ 14 |   public calculateSavings(request: UnifiedRecommendationRequest): SavingsProjection {
+    :                           ^^^|^^^
+    :                              `-- 'request' is declared here
+ 15 |     // Legacy engine does not compute savings projection
+    `----
+  help: Consider removing this parameter.
+
+  ! eslint(no-unused-vars): Identifier 'ShieldCheck' is imported but never used.
+   ,-[marketing/src/app/banks/[slug]/page.tsx:5:10]
+ 4 | import { ALL_BANKS, getBankBySlug, getCardsByBank } from '../../../lib/cards';
+ 5 | import { ShieldCheck, Award, ArrowRight } from 'lucide-react';
+   :          ^^^^^|^^^^^
+   :               `-- 'ShieldCheck' is imported here
+ 6 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Award' is imported but never used.
+   ,-[marketing/src/app/banks/[slug]/page.tsx:5:23]
+ 4 | import { ALL_BANKS, getBankBySlug, getCardsByBank } from '../../../lib/cards';
+ 5 | import { ShieldCheck, Award, ArrowRight } from 'lucide-react';
+   :                       ^^|^^
+   :                         `-- 'Award' is imported here
+ 6 | 
+   `----
+  help: Consider removing this import.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/banks/[slug]/page.tsx:11:23]
+ 10 | 
+ 11 | export async function generateStaticParams() {
+    :                       ^^^^^^^^^^^^^^^^^^^^
+ 12 |   return ALL_BANKS.map((bank) => ({
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/banks/[slug]/page.tsx:17:23]
+ 16 | 
+ 17 | export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    :                       ^^^^^^^^^^^^^^^^
+ 18 |   const { slug } = await params;
+    `----
+
+  ! eslint(no-unused-vars): Variable 'catalogMerchantIds' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/features/recommendation/evaluation/scenarioValidator.ts:21:11]
+ 20 |     );
+ 21 |     const catalogMerchantIds = new Set(
+    :           ^^^^^^^^^|^^^^^^^^
+    :                    `-- 'catalogMerchantIds' is declared here
+ 22 |       knownMerchantIds || merchantRepo.getMerchants().map((m) => m.id)
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'catalogOfferIds' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/features/recommendation/evaluation/scenarioValidator.ts:25:11]
+ 24 |     const catalogOffers = merchantRepo.getOffers();
+ 25 |     const catalogOfferIds = new Set(catalogOffers.map((o) => o.id));
+    :           ^^^^^^^|^^^^^^^
+    :                  `-- 'catalogOfferIds' is declared here
+ 26 | 
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Catch parameter 'e' is caught but never used.
+     ,-[src/features/finix/lib/taqdeerEngine.ts:317:14]
+ 316 |       return envUrl;
+ 317 |     } catch (e) {
+     :              |
+     :              `-- 'e' is declared here
+ 318 |       console.error(`Invalid VITE_AI_API_URL provided: ${envUrl}`);
+     `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'error' is caught but never used.
+     ,-[src/features/finix/lib/taqdeerEngine.ts:397:14]
+ 396 |       }
+ 397 |     } catch (error) {
+     :              ^^|^^
+     :                `-- 'error' is declared here
+ 398 |       console.error("Taqdeer AI Backend is unavailable. Falling back to local engine.");
+     `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Identifier 'USE_NEW_DATASET' is imported but never used.
+   ,-[scripts/parityTest.ts:5:10]
+ 4 | import { CardRepository as FinixRepo } from '../src/features/finix/data/repository/CardRepository';
+ 5 | import { USE_NEW_DATASET } from '../src/features/finix/data/repository/CardRepository';
+   :          ^^^^^^^|^^^^^^^
+   :                 `-- 'USE_NEW_DATASET' is imported here
+ 6 | import type { CreditCardIntelligence } from '../src/features/card-intelligence/types';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'CardData' is imported but never used.
+   ,-[marketing/src/app/calculators/rewards/page.tsx:5:21]
+ 4 | import Link from 'next/link';
+ 5 | import { ALL_CARDS, CardData } from '../../../lib/cards';
+   :                     ^^^^|^^^
+   :                         `-- 'CardData' is imported here
+ 6 | import { Calculator, Award, ArrowRight, RefreshCw } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Award' is imported but never used.
+   ,-[marketing/src/app/calculators/rewards/page.tsx:6:22]
+ 5 | import { ALL_CARDS, CardData } from '../../../lib/cards';
+ 6 | import { Calculator, Award, ArrowRight, RefreshCw } from 'lucide-react';
+   :                      ^^|^^
+   :                        `-- 'Award' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ArrowRight' is imported but never used.
+   ,-[marketing/src/app/calculators/rewards/page.tsx:6:29]
+ 5 | import { ALL_CARDS, CardData } from '../../../lib/cards';
+ 6 | import { Calculator, Award, ArrowRight, RefreshCw } from 'lucide-react';
+   :                             ^^^^^|^^^^
+   :                                  `-- 'ArrowRight' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'RefreshCw' is imported but never used.
+   ,-[marketing/src/app/calculators/rewards/page.tsx:6:41]
+ 5 | import { ALL_CARDS, CardData } from '../../../lib/cards';
+ 6 | import { Calculator, Award, ArrowRight, RefreshCw } from 'lucide-react';
+   :                                         ^^^^|^^^^
+   :                                             `-- 'RefreshCw' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Type 'TransactionCategory' is imported but never used.
+   ,-[src/features/recommendation/evaluation/benchmarkRunner.ts:5:15]
+ 4 | import { CardRepository } from '../../card-intelligence/cardRepository';
+ 5 | import type { TransactionCategory } from '../../dashboard/types/dashboard.types';
+   :               ^^^^^^^^^|^^^^^^^^^
+   :                        `-- 'TransactionCategory' is imported here
+ 6 | import type {
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ChevronRight' is imported but never used.
+   ,-[src/pages/app/CreditPage.tsx:4:28]
+ 3 | import {
+ 4 |   Sparkles, Scale, Wallet, ChevronRight, Search, X, Star,
+   :                            ^^^^^^|^^^^^
+   :                                  `-- 'ChevronRight' is imported here
+ 5 |   Utensils, ShoppingBag, Plane, ShoppingCart, Fuel, Film, Zap,
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Star' is imported but never used.
+   ,-[src/pages/app/CreditPage.tsx:4:53]
+ 3 | import {
+ 4 |   Sparkles, Scale, Wallet, ChevronRight, Search, X, Star,
+   :                                                     ^^|^
+   :                                                       `-- 'Star' is imported here
+ 5 |   Utensils, ShoppingBag, Plane, ShoppingCart, Fuel, Film, Zap,
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Check' is imported but never used.
+   ,-[src/pages/app/CreditPage.tsx:6:60]
+ 5 |   Utensils, ShoppingBag, Plane, ShoppingCart, Fuel, Film, Zap,
+ 6 |   HeartPulse, Car, Music, Tag, ExternalLink, Plus, Trophy, Check,
+   :                                                            ^^|^^
+   :                                                              `-- 'Check' is imported here
+ 7 |   CreditCard, ArrowRight, PlaneTakeoff, Info, Circle
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'CreditCard' is imported but never used.
+   ,-[src/pages/app/CreditPage.tsx:7:3]
+ 6 |   HeartPulse, Car, Music, Tag, ExternalLink, Plus, Trophy, Check,
+ 7 |   CreditCard, ArrowRight, PlaneTakeoff, Info, Circle
+   :   ^^^^^|^^^^
+   :        `-- 'CreditCard' is imported here
+ 8 | } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Info' is imported but never used.
+   ,-[src/pages/app/CreditPage.tsx:7:41]
+ 6 |   HeartPulse, Car, Music, Tag, ExternalLink, Plus, Trophy, Check,
+ 7 |   CreditCard, ArrowRight, PlaneTakeoff, Info, Circle
+   :                                         ^^|^
+   :                                           `-- 'Info' is imported here
+ 8 | } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Circle' is imported but never used.
+   ,-[src/pages/app/CreditPage.tsx:7:47]
+ 6 |   HeartPulse, Car, Music, Tag, ExternalLink, Plus, Trophy, Check,
+ 7 |   CreditCard, ArrowRight, PlaneTakeoff, Info, Circle
+   :                                               ^^^|^^
+   :                                                  `-- 'Circle' is imported here
+ 8 | } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'theme' is declared but never used. Unused variables should start with a '_'.
+     ,-[src/pages/app/CreditPage.tsx:269:25]
+ 268 |                 {results.slice(0, 1).map((card) => {
+ 269 |                   const theme = getCardTheme(card.id);
+     :                         ^^|^^
+     :                           `-- 'theme' is declared here
+ 270 |                   const applyUrl = BANK_APPLY_URLS[card.bank];
+     `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'theme' is declared but never used. Unused variables should start with a '_'.
+     ,-[src/pages/app/CreditPage.tsx:354:25]
+ 353 |                 {results.slice(1, 4).map((card, idx) => {
+ 354 |                   const theme = getCardTheme(card.id);
+     :                         ^^|^^
+     :                           `-- 'theme' is declared here
+ 355 |                   const applyUrl = BANK_APPLY_URLS[card.bank];
+     `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'theme' is declared but never used. Unused variables should start with a '_'.
+     ,-[src/pages/app/CreditPage.tsx:504:19]
+ 503 |           {filtered.slice(0, 30).map(card => {
+ 504 |             const theme = getCardTheme(card.id);
+     :                   ^^|^^
+     :                     `-- 'theme' is declared here
+ 505 |             return (
+     `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'theme' is declared but never used. Unused variables should start with a '_'.
+     ,-[src/pages/app/CreditPage.tsx:588:21]
+ 587 |             if (card) {
+ 588 |               const theme = getCardTheme(card.id);
+     :                     ^^|^^
+     :                       `-- 'theme' is declared here
+ 589 |               return (
+     `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Parameter 'i' is declared but never used. Unused parameters should start with a '_'.
+     ,-[src/pages/app/CreditPage.tsx:669:47]
+ 668 |                     <th className="text-left p-5 text-[10px] text-[#737C77] uppercase tracking-wider font-semibold w-48 sticky left-0 bg-[#0F1412] z-10 border-r border-[#242D29]">Feature</th>
+ 669 |                     {selectedCards.map((card, i) => (
+     :                                               |
+     :                                               `-- 'i' is declared here
+ 670 |                       <th key={card.id} className="p-5 text-center min-w-[140px] border-r border-[#242D29]/50 last:border-r-0">
+     `----
+  help: Consider removing this parameter.
+
+  ! eslint(no-unused-vars): Identifier 'ALL_CARDS' is imported but never used.
+   ,-[marketing/src/app/compare/[slug]/page.tsx:4:10]
+ 3 | import Link from 'next/link';
+ 4 | import { ALL_CARDS, getCardBySlug } from '../../../lib/cards';
+   :          ^^^^|^^^^
+   :              `-- 'ALL_CARDS' is imported here
+ 5 | import { FAQSchema } from '../../../components/StructuredData';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Check' is imported but never used.
+   ,-[marketing/src/app/compare/[slug]/page.tsx:6:10]
+ 5 | import { FAQSchema } from '../../../components/StructuredData';
+ 6 | import { Check, X, Award, HelpCircle } from 'lucide-react';
+   :          ^^|^^
+   :            `-- 'Check' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'X' is imported but never used.
+   ,-[marketing/src/app/compare/[slug]/page.tsx:6:17]
+ 5 | import { FAQSchema } from '../../../components/StructuredData';
+ 6 | import { Check, X, Award, HelpCircle } from 'lucide-react';
+   :                 |
+   :                 `-- 'X' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/compare/[slug]/page.tsx:12:23]
+ 11 | 
+ 12 | export async function generateStaticParams() {
+    :                       ^^^^^^^^^^^^^^^^^^^^
+ 13 |   const params: { slug: string }[] = [];
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/compare/[slug]/page.tsx:27:23]
+ 26 | 
+ 27 | export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    :                       ^^^^^^^^^^^^^^^^
+ 28 |   const { slug } = await params;
+    `----
+
+  ! eslint(no-unused-vars): Variable 'text' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/features/recommendation/intelligence/scoringRules.ts:14:11]
+ 13 |     let rawRate = 1.0;
+ 14 |     const text = card.rewardRate.toLowerCase();
+    :           ^^|^
+    :             `-- 'text' is declared here
+ 15 |     const mName = (merchantName || '').toLowerCase();
+    `----
+  help: Consider removing this declaration.
+
+  x Invalid Unicode escape sequence
+    ,-[scratch/patch_layout.cjs:33:4]
+ 32 |   'const availablePoints = rewards.totalPoints - rewards.redeemedPoints;',
+ 33 |   \`const availablePoints = rewards.totalPoints - rewards.redeemedPoints;
+    :    ^
+ 34 |   const totalOutstanding = creditAccounts.reduce((acc, account) => acc + account.currentBalance, 0);\`
+    `----
+
+  ! eslint(no-unused-vars): Identifier 'Sparkles' is imported but never used.
+   ,-[src/pages/app/TaqdeerPage.tsx:2:10]
+ 1 | import React, { useState } from 'react';
+ 2 | import { Sparkles, ArrowRight, User } from 'lucide-react';
+   :          ^^^^|^^^
+   :              `-- 'Sparkles' is imported here
+ 3 | import { PageContainer } from '../../components/shared/PageContainer';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'createClient' is declared but never used. Unused variables should start with a '_'.
+   ,-[supabase/generate_backfill.cjs:1:9]
+ 1 | const { createClient } = require('@supabase/supabase-js');
+   :         ^^^^^^|^^^^^
+   :               `-- 'createClient' is declared here
+ 2 | const crypto = require('crypto');
+   `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'supabaseUrl' is declared but never used. Unused variables should start with a '_'.
+   ,-[supabase/generate_backfill.cjs:8:7]
+ 7 | dotenv.config({ path: '.env' });
+ 8 | const supabaseUrl = process.env.VITE_SUPABASE_URL;
+   :       ^^^^^|^^^^^
+   :            `-- 'supabaseUrl' is declared here
+ 9 | // Use service role key if available, otherwise anon key (but anon key might not have RLS permission to insert for other users!)
+   `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Identifier 'Plus' is imported but never used.
+   ,-[src/features/admin/components/EligibilityBuilder.tsx:2:10]
+ 1 | import { useState } from 'react';
+ 2 | import { Plus, X } from 'lucide-react';
+   :          ^^|^
+   :            `-- 'Plus' is imported here
+ 3 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Utensils' is imported but never used.
+   ,-[src/pages/app/lifestyle/PlanDatePage.tsx:3:54]
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+ 3 | import { MapPin, Calendar, Users, Heart, ArrowRight, Utensils, Music, Car } from 'lucide-react';
+   :                                                      ^^^^|^^^
+   :                                                          `-- 'Utensils' is imported here
+ 4 | import { MOCK_DATE_ITINERARY } from '../../../features/lifestyle/mock/datePlans';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Music' is imported but never used.
+   ,-[src/pages/app/lifestyle/PlanDatePage.tsx:3:64]
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+ 3 | import { MapPin, Calendar, Users, Heart, ArrowRight, Utensils, Music, Car } from 'lucide-react';
+   :                                                                ^^|^^
+   :                                                                  `-- 'Music' is imported here
+ 4 | import { MOCK_DATE_ITINERARY } from '../../../features/lifestyle/mock/datePlans';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Car' is imported but never used.
+   ,-[src/pages/app/lifestyle/PlanDatePage.tsx:3:71]
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+ 3 | import { MapPin, Calendar, Users, Heart, ArrowRight, Utensils, Music, Car } from 'lucide-react';
+   :                                                                       ^|^
+   :                                                                        `-- 'Car' is imported here
+ 4 | import { MOCK_DATE_ITINERARY } from '../../../features/lifestyle/mock/datePlans';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Parameter 'idx' is declared but never used. Unused parameters should start with a '_'.
+     ,-[src/pages/app/lifestyle/PlanDatePage.tsx:135:49]
+ 134 |                 <div className="relative border-l border-border-subtle ml-4 space-y-8 pb-4">
+ 135 |                   {itinerary.venues.map((venue, idx) => (
+     :                                                 ^|^
+     :                                                  `-- 'idx' is declared here
+ 136 |                     <div key={venue.id} className="relative pl-6">
+     `----
+  help: Consider removing this parameter.
+
+  ! eslint(no-unused-vars): Identifier 'cn' is imported but never used.
+   ,-[src/features/onboarding/components/primitives/OnboardingLayout.tsx:3:10]
+ 2 | import { AnimatePresence, motion } from 'framer-motion';
+ 3 | import { cn } from '../../../../lib/utils';
+   :          ^|
+   :           `-- 'cn' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Loader2' is imported but never used.
+   ,-[src/pages/app/lifestyle/ShopPage.tsx:2:18]
+ 1 | import React, { useState, useEffect } from 'react';
+ 2 | import { Search, Loader2 } from 'lucide-react';
+   :                  ^^^|^^^
+   :                     `-- 'Loader2' is imported here
+ 3 | import { SmartSpendCard } from '../../../components/shared/SmartSpendCard';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ExplanationEngine' is imported but never used.
+   ,-[src/features/optimization/engine/ranking.ts:4:10]
+ 3 | import { EligibilityEngine } from './eligibility';
+ 4 | import { ExplanationEngine } from './explain';
+   :          ^^^^^^^^|^^^^^^^^
+   :                  `-- 'ExplanationEngine' is imported here
+ 5 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Type 'CommerceEntity' is imported but never used.
+   ,-[src/pages/app/walletIntelligence.ts:2:15]
+ 1 | import { CommerceOptimizationService } from '../../features/commerce';
+ 2 | import type { CommerceEntity } from '../../features/commerce/types';
+   :               ^^^^^^^|^^^^^^
+   :                      `-- 'CommerceEntity' is imported here
+ 3 | import type { OptimizationResult } from '../../features/optimization/types';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Type 'OptimizationResult' is imported but never used.
+   ,-[src/pages/app/walletIntelligence.ts:3:15]
+ 2 | import type { CommerceEntity } from '../../features/commerce/types';
+ 3 | import type { OptimizationResult } from '../../features/optimization/types';
+   :               ^^^^^^^^^|^^^^^^^^
+   :                        `-- 'OptimizationResult' is imported here
+ 4 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/OfferManagement.tsx:42:16]
+ 41 |         }
+ 42 |       } catch (err) {
+    :                ^|^
+    :                 `-- 'err' is declared here
+ 43 |         setError('Failed to load offers');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/OfferManagement.tsx:78:14]
+ 77 |       }
+ 78 |     } catch (err) {
+    :              ^|^
+    :               `-- 'err' is declared here
+ 79 |       toast.error('Network error');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter '_err' is caught but never used.
+    ,-[src/features/events/eventBus.ts:56:16]
+ 55 |         sub.handler(event as unknown as DomainEvent);
+ 56 |       } catch (_err) {
+    :                ^^|^
+    :                  `-- '_err' is declared here
+ 57 |         this.repo.pushToDLQ(event as unknown as DomainEvent);
+    `----
+  help: Consider handling this error.
+
+  ! react-hooks(exhaustive-deps): React Hook useEffect has missing dependencies: 'messages.length', and 'messages'
+    ,-[src/features/taqdeer/components/TaqdeerDrawer.tsx:37:6]
+ 28 | 
+ 29 |     if (messages.length === 0 || (isOpen && messages[messages.length - 1].content !== prompt)) {
+    :         ^^^^^^^^                            ^^^^^^^^
+ 30 |       setMessages(prev => {
+ 31 |         if (prev.length > 0 && prev[prev.length - 1].content === prompt) {
+ 32 |           return prev;
+ 33 |         }
+ 34 |         return [...prev, { role: 'ai', content: prompt }];
+ 35 |       });
+ 36 |     }
+ 37 |   }, [location.pathname, isOpen]);
+    :      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 38 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/pages/admin/EntityForm.tsx:78:16]
+ 77 |         }
+ 78 |       } catch (err) {
+    :                ^|^
+    :                 `-- 'err' is declared here
+ 79 |         toast.error('Network error');
+    `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+     ,-[src/pages/admin/EntityForm.tsx:124:14]
+ 123 |       }
+ 124 |     } catch (err) {
+     :              ^|^
+     :               `-- 'err' is declared here
+ 125 |       toast.error('Network error');
+     `----
+  help: Consider handling this error.
+
+  ! eslint(no-unused-vars): Identifier 'useEffect' is imported but never used.
+   ,-[src/features/finix/components/WalletV4Panel.tsx:1:20]
+ 1 | import { useState, useEffect } from 'react';
+   :                    ^^^^|^^^^
+   :                        `-- 'useEffect' is imported here
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'AnimatePresence' is imported but never used.
+   ,-[src/features/finix/components/WalletV4Panel.tsx:2:18]
+ 1 | import { useState, useEffect } from 'react';
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   :                  ^^^^^^^|^^^^^^^
+   :                         `-- 'AnimatePresence' is imported here
+ 3 | import { Sparkles, Check, ChevronRight } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'cn' is imported but never used.
+   ,-[src/features/finix/components/WalletV4Panel.tsx:4:10]
+ 3 | import { Sparkles, Check, ChevronRight } from 'lucide-react';
+ 4 | import { cn } from '../../../lib/utils';
+   :          ^|
+   :           `-- 'cn' is imported here
+ 5 | import { useDashboardStore } from '../../dashboard/store/dashboardStore';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'getCardTheme' is imported but never used.
+   ,-[src/features/finix/components/WalletV4Panel.tsx:8:10]
+ 7 | import type { CardData } from '../../cards/types/card.types';
+ 8 | import { getCardTheme } from '../config/cardThemeRegistry';
+   :          ^^^^^^|^^^^^
+   :                `-- 'getCardTheme' is imported here
+ 9 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'isHovered' is declared but never used. Unused variables should start with a '_'.
+     ,-[src/features/finix/components/WalletV4Panel.tsx:203:17]
+ 202 |           const cardName = result ? result.card.name : 'Premium Card';
+ 203 |           const isHovered = hoveredCategory === cat.id;
+     :                 ^^^^|^^^^
+     :                     `-- 'isHovered' is declared here
+ 204 |           
+     `----
+  help: Consider removing this declaration.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[src/features/finix/components/WalletV4Panel.tsx:29:17]
+ 28 | 
+ 29 | export function getBestCardForCategory(category: SpendCategory, userCards: CardData[]) {
+    :                 ^^^^^^^^^^^^^^^^^^^^^^
+ 30 |   if (!userCards || userCards.length === 0) return null;
+    `----
+
+  ! eslint(no-unused-vars): Identifier 'AnimatePresence' is imported but never used.
+   ,-[src/features/onboarding/components/steps/FinalLoadingStep.tsx:2:18]
+ 1 | import React, { useEffect, useState } from 'react';
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   :                  ^^^^^^^|^^^^^^^
+   :                         `-- 'AnimatePresence' is imported here
+ 3 | import { Compass, Zap, Building2, CreditCard, Sparkles, Check } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Sparkles' is imported but never used.
+   ,-[src/components/shared/CommandCenter.tsx:3:54]
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+ 3 | import { Search, Compass, MapPin, ShoppingBag, Book, Sparkles, X } from 'lucide-react';
+   :                                                      ^^^^|^^^
+   :                                                          `-- 'Sparkles' is imported here
+ 4 | import { useNavigate } from 'react-router-dom';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'cn' is imported but never used.
+   ,-[src/components/shared/CommandCenter.tsx:5:10]
+ 4 | import { useNavigate } from 'react-router-dom';
+ 5 | import { cn } from '../../lib/utils';
+   :          ^|
+   :           `-- 'cn' is imported here
+ 6 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Search' is imported but never used.
+   ,-[src/components/layout/TopNav.tsx:3:16]
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+ 3 | import { Bell, Search, Command, CheckCircle2 } from 'lucide-react';
+   :                ^^^|^^
+   :                   `-- 'Search' is imported here
+ 4 | import { cn } from '../../lib/utils';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Command' is imported but never used.
+   ,-[src/components/layout/TopNav.tsx:3:24]
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+ 3 | import { Bell, Search, Command, CheckCircle2 } from 'lucide-react';
+   :                        ^^^|^^^
+   :                           `-- 'Command' is imported here
+ 4 | import { cn } from '../../lib/utils';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'CheckCircle2' is imported but never used.
+   ,-[src/components/layout/TopNav.tsx:3:33]
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+ 3 | import { Bell, Search, Command, CheckCircle2 } from 'lucide-react';
+   :                                 ^^^^^^|^^^^^
+   :                                       `-- 'CheckCircle2' is imported here
+ 4 | import { cn } from '../../lib/utils';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'useLocation' is imported but never used.
+   ,-[src/components/layout/TopNav.tsx:5:10]
+ 4 | import { cn } from '../../lib/utils';
+ 5 | import { useLocation, useNavigate } from 'react-router-dom';
+   :          ^^^^^|^^^^^
+   :               `-- 'useLocation' is imported here
+ 6 | import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'useNavigate' is imported but never used.
+   ,-[src/components/layout/TopNav.tsx:5:23]
+ 4 | import { cn } from '../../lib/utils';
+ 5 | import { useLocation, useNavigate } from 'react-router-dom';
+   :                       ^^^^^|^^^^^
+   :                            `-- 'useNavigate' is imported here
+ 6 | import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'firstName' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/components/layout/TopNav.tsx:35:9]
+ 34 | 
+ 35 |   const firstName = profile?.name?.split(' ')[0] || 'Aditya';
+    :         ^^^^|^^^^
+    :             `-- 'firstName' is declared here
+ 36 | 
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Identifier 'useDashboardStore' is imported but never used.
+    ,-[src/features/onboarding/OnboardingFlow.tsx:10:10]
+  9 | import { FinalLoadingStep } from './components/steps/FinalLoadingStep';
+ 10 | import { useDashboardStore } from '../dashboard/store/dashboardStore';
+    :          ^^^^^^^^|^^^^^^^^
+    :                  `-- 'useDashboardStore' is imported here
+ 11 | import { motion, AnimatePresence } from 'framer-motion';
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'AnimatePresence' is imported but never used.
+    ,-[src/features/onboarding/OnboardingFlow.tsx:11:18]
+ 10 | import { useDashboardStore } from '../dashboard/store/dashboardStore';
+ 11 | import { motion, AnimatePresence } from 'framer-motion';
+    :                  ^^^^^^^|^^^^^^^
+    :                         `-- 'AnimatePresence' is imported here
+ 12 | 
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Camera' is imported but never used.
+    ,-[src/features/onboarding/components/steps/LifestyleStep.tsx:10:3]
+  9 |   Shirt, Home, Fuel, ShoppingCart,
+ 10 |   Camera, Coffee, Gamepad2, Dog
+    :   ^^^|^^
+    :      `-- 'Camera' is imported here
+ 11 | } from 'lucide-react';
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Coffee' is imported but never used.
+    ,-[src/features/onboarding/components/steps/LifestyleStep.tsx:10:11]
+  9 |   Shirt, Home, Fuel, ShoppingCart,
+ 10 |   Camera, Coffee, Gamepad2, Dog
+    :           ^^^|^^
+    :              `-- 'Coffee' is imported here
+ 11 | } from 'lucide-react';
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Gamepad2' is imported but never used.
+    ,-[src/features/onboarding/components/steps/LifestyleStep.tsx:10:19]
+  9 |   Shirt, Home, Fuel, ShoppingCart,
+ 10 |   Camera, Coffee, Gamepad2, Dog
+    :                   ^^^^|^^^
+    :                       `-- 'Gamepad2' is imported here
+ 11 | } from 'lucide-react';
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Dog' is imported but never used.
+    ,-[src/features/onboarding/components/steps/LifestyleStep.tsx:10:29]
+  9 |   Shirt, Home, Fuel, ShoppingCart,
+ 10 |   Camera, Coffee, Gamepad2, Dog
+    :                             ^|^
+    :                              `-- 'Dog' is imported here
+ 11 | } from 'lucide-react';
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ChevronRight' is imported but never used.
+   ,-[src/features/dashboard/components/LoginScreen.tsx:7:3]
+ 6 |   X,
+ 7 |   ChevronRight,
+   :   ^^^^^^|^^^^^
+   :         `-- 'ChevronRight' is imported here
+ 8 |   ChevronLeft,
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ChevronLeft' is imported but never used.
+   ,-[src/features/dashboard/components/LoginScreen.tsx:8:3]
+ 7 |   ChevronRight,
+ 8 |   ChevronLeft,
+   :   ^^^^^|^^^^^
+   :        `-- 'ChevronLeft' is imported here
+ 9 |   Sparkles,
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Sparkles' is imported but never used.
+    ,-[src/features/dashboard/components/LoginScreen.tsx:9:3]
+  8 |   ChevronLeft,
+  9 |   Sparkles,
+    :   ^^^^|^^^
+    :       `-- 'Sparkles' is imported here
+ 10 |   ShieldCheck,
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ShieldCheck' is imported but never used.
+    ,-[src/features/dashboard/components/LoginScreen.tsx:10:3]
+  9 |   Sparkles,
+ 10 |   ShieldCheck,
+    :   ^^^^^|^^^^^
+    :        `-- 'ShieldCheck' is imported here
+ 11 |   Coins,
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'CheckCircle2' is imported but never used.
+    ,-[src/features/dashboard/components/LoginScreen.tsx:16:3]
+ 15 |   Gift,
+ 16 |   CheckCircle2,
+    :   ^^^^^^|^^^^^
+    :         `-- 'CheckCircle2' is imported here
+ 17 |   MapPin,
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'MapPin' is imported but never used.
+    ,-[src/features/dashboard/components/LoginScreen.tsx:17:3]
+ 16 |   CheckCircle2,
+ 17 |   MapPin,
+    :   ^^^|^^
+    :      `-- 'MapPin' is imported here
+ 18 |   Briefcase,
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Briefcase' is imported but never used.
+    ,-[src/features/dashboard/components/LoginScreen.tsx:18:3]
+ 17 |   MapPin,
+ 18 |   Briefcase,
+    :   ^^^^|^^^^
+    :       `-- 'Briefcase' is imported here
+ 19 | } from 'lucide-react';
+    `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Variable 'GOAL_OPTIONS' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/features/dashboard/components/LoginScreen.tsx:29:7]
+ 28 | 
+ 29 | const GOAL_OPTIONS: { id: PrimaryGoal; label: string; icon: any; description: string }[] = [
+    :       ^^^^^^|^^^^^
+    :             `-- 'GOAL_OPTIONS' is declared here
+ 30 |   { id: 'Maximise Cashback', label: 'Maximise Cashback', icon: Coins, description: 'Get maximum cash returns on your daily expenses' },
+    `----
+  help: Consider removing this declaration.
+
+  ! eslint(no-unused-vars): Variable 'OCCUPATION_OPTIONS' is declared but never used. Unused variables should start with a '_'.
+    ,-[src/features/dashboard/components/LoginScreen.tsx:37:7]
+ 36 | 
+ 37 | const OCCUPATION_OPTIONS: Occupation[] = [
+    :       ^^^^^^^^^|^^^^^^^^
+    :                `-- 'OCCUPATION_OPTIONS' is declared here
+ 38 |   'Student',
+    `----
+  help: Consider removing this declaration.
+
+  ! react-hooks(exhaustive-deps): The ref's value `.current` is accessed directly in the effect cleanup function.
+     ,-[src/features/dashboard/components/LoginScreen.tsx:115:7]
+ 114 |       // Cleanup any lingering listeners by re-querying
+ 115 |       authPanelRef.current?.querySelectorAll<HTMLInputElement>(
+     :       ^^^^^^^^^^^^^^^^^^^^
+ 116 |         'input[name="firstName"], input[id*="firstName"], input[autocomplete="given-name"]'
+     `----
+  help: The ref value will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by react, copy it to a variable inside the effect and use that variable in the cleanup function.
+
+  ! eslint(no-unused-vars): Identifier 'useMemo' is imported but never used.
+   ,-[src/features/dashboard/components/v3/DashboardV3.tsx:1:30]
+ 1 | import { Suspense, useState, useMemo } from 'react';
+   :                              ^^^|^^^
+   :                                 `-- 'useMemo' is imported here
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'motion' is imported but never used.
+   ,-[src/features/dashboard/components/v3/DashboardV3.tsx:2:10]
+ 1 | import { Suspense, useState, useMemo } from 'react';
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   :          ^^^|^^
+   :             `-- 'motion' is imported here
+ 3 | import { useDashboardStore } from '../../store/dashboardStore';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Parameter 'isDark' is declared but never used. Unused parameters should start with a '_'.
+    ,-[src/components/layout/DashboardLayout.tsx:31:3]
+ 30 | export function DashboardLayout({
+ 31 |   isDark,
+    :   ^^^|^^
+    :      `-- 'isDark' is declared here
+ 32 |   onToggleTheme,
+    `----
+  help: Consider removing this parameter.
+
+  ! eslint(no-unused-vars): Parameter 'onToggleTheme' is declared but never used. Unused parameters should start with a '_'.
+    ,-[src/components/layout/DashboardLayout.tsx:32:3]
+ 31 |   isDark,
+ 32 |   onToggleTheme,
+    :   ^^^^^^|^^^^^^
+    :         `-- 'onToggleTheme' is declared here
+ 33 |   children,
+    `----
+  help: Consider removing this parameter.
+
+  ! react-hooks(exhaustive-deps): React Hook useCallback has a missing dependency: 'onComplete'
+    ,-[src/features/onboarding/components/steps/InitializationStep.tsx:14:50]
+ 13 | 
+ 14 |   const stableComplete = useCallback(onComplete, []);
+    :                                      ^^^^^|^^^^  ^^
+    :                                           `-- useCallback uses `onComplete` here
+ 15 | 
+    `----
+  help: Either include it or remove the dependency array.
+
+  ! react-hooks(exhaustive-deps): React Hook useMemo has a missing dependency: 'defaultParams'
+     ,-[src/features/finix/components/CreditScoreSimulator.tsx:213:6]
+ 198 |   const factorImpact = useMemo(() => {
+ 199 |     const base = simulateScore(baseScore, defaultParams);
+     :                                           ^^^^^^|^^^^^^
+     :                                                 `-- useMemo uses `defaultParams` here
+ 200 |     const impactOf = (key: keyof SimParams, val: number | boolean) => {
+ 201 |       const tweaked = { ...defaultParams, [key]: val };
+ 202 |       return simulateScore(baseScore, tweaked) - base;
+ 203 |     };
+ 204 |     return {
+ 205 |       utilization:    impactOf('utilization', params.utilization),
+ 206 |       missedPayments: impactOf('missedPayments', params.missedPayments),
+ 207 |       creditAge:      impactOf('creditAge', params.creditAge),
+ 208 |       totalAccounts:  impactOf('totalAccounts', params.totalAccounts),
+ 209 |       hardInquiries:  impactOf('hardInquiries', params.hardInquiries),
+ 210 |       newAccounts:    impactOf('newAccounts', params.newAccounts),
+ 211 |       debtToIncome:   impactOf('debtToIncome', params.debtToIncome),
+ 212 |     };
+ 213 |   }, [params, baseScore]);
+     :      ^^^^^^^^^^^^^^^^^^^
+ 214 | 
+     `----
+  help: Either include it or remove the dependency array.
+
+  ! eslint(no-unused-vars): Identifier 'useEffect' is imported but never used.
+   ,-[src/features/dashboard/components/ProfileTab.tsx:1:20]
+ 1 | import { useState, useEffect } from 'react';
+   :                    ^^^^|^^^^
+   :                        `-- 'useEffect' is imported here
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ShieldCheck' is imported but never used.
+   ,-[src/components/shared/SmartSpendCard.tsx:2:58]
+ 1 | import { motion } from 'framer-motion';
+ 2 | import { CreditCard, Tag, TrendingDown, ArrowRight, Zap, ShieldCheck } from 'lucide-react';
+   :                                                          ^^^^^|^^^^^
+   :                                                               `-- 'ShieldCheck' is imported here
+ 3 | import type { MockRecommendation } from '../../features/lifestyle/types';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Catch parameter 'err' is caught but never used.
+    ,-[src/components/shared/SmartSpendCard.tsx:51:16]
+ 50 |         });
+ 51 |       } catch (err) {
+    :                ^|^
+    :                 `-- 'err' is declared here
+ 52 |         setIsNavigating(false);
+    `----
+  help: Consider handling this error.
+
+  x react-hooks(rules-of-hooks): React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render.
+    ,-[src/features/dashboard/components/home/AICuratedWallet.tsx:24:43]
+ 23 |   // State for which card is currently taking the hero spot
+ 24 |   const [activeCardId, setActiveCardId] = useState<string>(topPickId);
+    :                                           ^^^^^^^^^^^^^|^^^^^^^^^^^^^
+    :                                                        `-- This Hook call is not reachable on every render path.
+ 25 | 
+    `----
+  help: Move the Hook call before the condition, or call it unconditionally and branch inside the Hook/effect instead.
+
+  ! eslint(no-unused-vars): Parameter 'query' is declared but never used. Unused parameters should start with a '_'.
+    ,-[src/features/dashboard/components/home/CoreDashboard.tsx:20:29]
+ 19 | 
+ 20 |   const handleAskTaqdeer = (query: string) => {
+    :                             ^^|^^
+    :                               `-- 'query' is declared here
+ 21 |     const event = new CustomEvent('NAVIGATE_TAB', { detail: 'taqdeer' });
+    `----
+  help: Consider removing this parameter.
+
+  ! eslint(no-unused-vars): Parameter 'network' is declared but never used. Unused parameters should start with a '_'.
+    ,-[src/features/recommendation/ui/mappers/formatters.ts:24:49]
+ 23 | 
+ 24 | export function getCardGradient(issuer: string, network: string): { from: string, to: string } {
+    :                                                 ^^^|^^^
+    :                                                    `-- 'network' is declared here
+ 25 |   const i = issuer?.toLowerCase() || '';
+    `----
+  help: Consider removing this parameter.
+
+  ! eslint(no-unused-vars): Identifier 'useEffect' is imported but never used.
+   ,-[src/features/dashboard/components/v3/QuickAskTaqdeer.tsx:1:20]
+ 1 | import { useState, useEffect, useRef } from 'react';
+   :                    ^^^^|^^^^
+   :                        `-- 'useEffect' is imported here
+ 2 | import { motion, AnimatePresence } from 'framer-motion';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Clock' is imported but never used.
+   ,-[src/features/dashboard/components/v3/QuickAskTaqdeer.tsx:4:35]
+ 3 | import { 
+ 4 |   Sparkles, ArrowRight, Activity, Clock, CheckCircle2, CreditCard, ShieldCheck, ChevronRight, Check, Search
+   :                                   ^^|^^
+   :                                     `-- 'Clock' is imported here
+ 5 | } from 'lucide-react';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Catch parameter 'e' is caught but never used.
+    ,-[src/features/dashboard/components/v3/QuickAskTaqdeer.tsx:74:14]
+ 73 |       }, 3000);
+ 74 |     } catch (e) {
+    :              |
+    :              `-- 'e' is declared here
+ 75 |       setDecision({ content:"I couldn't process that request right now." });
+    `----
+  help: Consider handling this error.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/layout.tsx:15:14]
+ 14 | 
+ 15 | export const metadata: Metadata = {
+    :              ^^^^^^^^
+ 16 |   title: "Create Next App",
+    `----
+
+  ! eslint(no-unused-vars): Identifier 'ShoppingBag' is imported but never used.
+   ,-[marketing/src/app/merchants/[slug]/page.tsx:7:10]
+ 6 | import { FAQSchema } from '../../../components/StructuredData';
+ 7 | import { ShoppingBag, Award, ArrowRight, HelpCircle, Check, Zap } from 'lucide-react';
+   :          ^^^^^|^^^^^
+   :               `-- 'ShoppingBag' is imported here
+ 8 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Check' is imported but never used.
+   ,-[marketing/src/app/merchants/[slug]/page.tsx:7:54]
+ 6 | import { FAQSchema } from '../../../components/StructuredData';
+ 7 | import { ShoppingBag, Award, ArrowRight, HelpCircle, Check, Zap } from 'lucide-react';
+   :                                                      ^^|^^
+   :                                                        `-- 'Check' is imported here
+ 8 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Zap' is imported but never used.
+   ,-[marketing/src/app/merchants/[slug]/page.tsx:7:61]
+ 6 | import { FAQSchema } from '../../../components/StructuredData';
+ 7 | import { ShoppingBag, Award, ArrowRight, HelpCircle, Check, Zap } from 'lucide-react';
+   :                                                             ^|^
+   :                                                              `-- 'Zap' is imported here
+ 8 | 
+   `----
+  help: Consider removing this import.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/merchants/[slug]/page.tsx:22:23]
+ 21 | 
+ 22 | export async function generateStaticParams() {
+    :                       ^^^^^^^^^^^^^^^^^^^^
+ 23 |   return MERCHANTS.map((m) => ({ slug: m.slug }));
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/merchants/[slug]/page.tsx:26:23]
+ 25 | 
+ 26 | export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    :                       ^^^^^^^^^^^^^^^^
+ 27 |   const { slug } = await params;
+    `----
+
+  ! eslint(no-unused-vars): Identifier 'CreditCard' is imported but never used.
+   ,-[src/features/dashboard/components/v3/WalletSnapshotV3.tsx:2:32]
+ 1 | import { motion } from 'framer-motion';
+ 2 | import { Wallet as WalletIcon, CreditCard, PieChart, Calendar, Gift } from 'lucide-react';
+   :                                ^^^^^|^^^^
+   :                                     `-- 'CreditCard' is imported here
+ 3 | import { CreditCard as PhysicalCard } from '../../../cards/components/CreditCard';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Gift' is imported but never used.
+   ,-[src/features/dashboard/components/v3/WalletSnapshotV3.tsx:2:64]
+ 1 | import { motion } from 'framer-motion';
+ 2 | import { Wallet as WalletIcon, CreditCard, PieChart, Calendar, Gift } from 'lucide-react';
+   :                                                                ^^|^
+   :                                                                  `-- 'Gift' is imported here
+ 3 | import { CreditCard as PhysicalCard } from '../../../cards/components/CreditCard';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'formatCents' is imported but never used.
+   ,-[src/features/dashboard/components/v3/WalletSnapshotV3.tsx:6:10]
+ 5 | import type { CreditAccountData } from '../../types/dashboard.types';
+ 6 | import { formatCents } from '../../../../lib/utils';
+   :          ^^^^^|^^^^^
+   :               `-- 'formatCents' is imported here
+ 7 | import { EmptyWalletGuidance } from './EmptyWalletGuidance';
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Parameter 'setActiveCardId' is declared but never used. Unused parameters should start with a '_'.
+    ,-[src/features/dashboard/components/v3/WalletSnapshotV3.tsx:22:3]
+ 21 |   activeCardId, 
+ 22 |   setActiveCardId,
+    :   ^^^^^^^|^^^^^^^
+    :          `-- 'setActiveCardId' is declared here
+ 23 |   onAddCard
+    `----
+  help: Consider removing this parameter.
+
+  ! eslint(no-unused-vars): Identifier 'Shield' is imported but never used.
+   ,-[marketing/src/app/cards/[slug]/page.tsx:6:10]
+ 5 | import { FinancialProductSchema, FAQSchema } from '../../../components/StructuredData';
+ 6 | import { Shield, Check, X, Award, Zap, ChevronRight, HelpCircle, ArrowLeft } from 'lucide-react';
+   :          ^^^|^^
+   :             `-- 'Shield' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ChevronRight' is imported but never used.
+   ,-[marketing/src/app/cards/[slug]/page.tsx:6:40]
+ 5 | import { FinancialProductSchema, FAQSchema } from '../../../components/StructuredData';
+ 6 | import { Shield, Check, X, Award, Zap, ChevronRight, HelpCircle, ArrowLeft } from 'lucide-react';
+   :                                        ^^^^^^|^^^^^
+   :                                              `-- 'ChevronRight' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ArrowLeft' is imported but never used.
+   ,-[marketing/src/app/cards/[slug]/page.tsx:6:66]
+ 5 | import { FinancialProductSchema, FAQSchema } from '../../../components/StructuredData';
+ 6 | import { Shield, Check, X, Award, Zap, ChevronRight, HelpCircle, ArrowLeft } from 'lucide-react';
+   :                                                                  ^^^^|^^^^
+   :                                                                      `-- 'ArrowLeft' is imported here
+ 7 | 
+   `----
+  help: Consider removing this import.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/cards/[slug]/page.tsx:12:23]
+ 11 | 
+ 12 | export async function generateStaticParams() {
+    :                       ^^^^^^^^^^^^^^^^^^^^
+ 13 |   return ALL_CARDS.map((card) => ({
+    `----
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+    ,-[marketing/src/app/cards/[slug]/page.tsx:18:23]
+ 17 | 
+ 18 | export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    :                       ^^^^^^^^^^^^^^^^
+ 19 |   const { slug } = await params;
+    `----
+
+  ! eslint(no-unused-vars): Identifier 'CreditCard' is imported but never used.
+   ,-[marketing/src/app/cards/page.tsx:4:10]
+ 3 | import { ALL_CARDS, ALL_BANKS } from '../../lib/cards';
+ 4 | import { CreditCard, Award, ArrowRight, ShieldCheck, Filter } from 'lucide-react';
+   :          ^^^^^|^^^^
+   :               `-- 'CreditCard' is imported here
+ 5 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'Award' is imported but never used.
+   ,-[marketing/src/app/cards/page.tsx:4:22]
+ 3 | import { ALL_CARDS, ALL_BANKS } from '../../lib/cards';
+ 4 | import { CreditCard, Award, ArrowRight, ShieldCheck, Filter } from 'lucide-react';
+   :                      ^^|^^
+   :                        `-- 'Award' is imported here
+ 5 | 
+   `----
+  help: Consider removing this import.
+
+  ! eslint(no-unused-vars): Identifier 'ShieldCheck' is imported but never used.
+   ,-[marketing/src/app/cards/page.tsx:4:41]
+ 3 | import { ALL_CARDS, ALL_BANKS } from '../../lib/cards';
+ 4 | import { CreditCard, Award, ArrowRight, ShieldCheck, Filter } from 'lucide-react';
+   :                                         ^^^^^|^^^^^
+   :                                              `-- 'ShieldCheck' is imported here
+ 5 | 
+   `----
+  help: Consider removing this import.
+
+  ! react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+   ,-[marketing/src/app/cards/page.tsx:6:14]
+ 5 | 
+ 6 | export const metadata: Metadata = {
+   :              ^^^^^^^^
+ 7 |   title: 'All Credit Cards in India (2026 Directory) | RenoCred',
+   `----
+
+  ! react-hooks(exhaustive-deps): React Hook useMemo has unnecessary dependency: rewards
+     ,-[src/features/dashboard/components/MonthlyReport.tsx:153:6]
+ 152 |     };
+ 153 |   }, [transactions, year, month, creditAccounts, rewards, userCards, profile, budgets]);
+     :      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 154 | }
+     `----
+  help: Either include it or remove the dependency array.
+
+Found 144 warnings and 2 errors.
+Finished in 18ms on 394 files with 103 rules using 10 threads.

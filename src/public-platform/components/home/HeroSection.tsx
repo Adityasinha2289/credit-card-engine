@@ -30,7 +30,7 @@ export function HeroSection() {
         style={{ backgroundImage: grainSvg }}
       />
       {/* Subtle Radial Depth */}
-      <div className="absolute top-1/4 right-1/4 w-[800px] h-[800px] bg-brand-emerald rounded-full blur-[200px] opacity-[0.1] pointer-events-none" />
+      <div className="absolute top-1/4 right-1/4 w-[800px] h-[800px] bg-semantic-brand-strong rounded-full blur-[200px] opacity-[0.1] pointer-events-none" />
       <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-white rounded-full blur-[120px] opacity-[0.015] pointer-events-none" />
       
       {/* Main Content Container */}
@@ -43,10 +43,7 @@ export function HeroSection() {
           initial="hidden"
           animate="show"
         >
-          <motion.div variants={fadeUpVariant} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111111] border border-white/[0.04] text-[10px] uppercase tracking-[0.2em] font-semibold text-gray-400 mb-10 shadow-sm">
-            <Sparkles className="w-3 h-3 text-brand-emerald" />
-            <span className="text-gray-300">AI-Powered Orchestration</span>
-          </motion.div>
+
           
           <motion.h1 variants={fadeUpVariant} className="text-[clamp(3rem,6vw,5.5rem)] font-display font-medium mb-6 md:mb-8 tracking-[-0.03em] leading-[1.05] text-white break-words w-full">
             Absolute certainty. <br/>
@@ -58,7 +55,7 @@ export function HeroSection() {
           </motion.p>
           
           <motion.div variants={fadeUpVariant} className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
-            <MotionButton intent="primary" className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-b from-brand-emerald to-[#022417] text-white font-medium px-10 py-4 rounded-xl flex items-center justify-center gap-3 transition-all shadow-[0_2px_15px_rgba(4,59,39,0.4),inset_0_1px_1px_rgba(255,255,255,0.2)] hover:shadow-[0_4px_30px_rgba(4,59,39,0.6),inset_0_1px_1px_rgba(255,255,255,0.3)] border border-brand-emerald/80 hover:-translate-y-0.5">
+            <MotionButton intent="primary" className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-b from-[#2a9652] to-[#1e6e3c] text-white font-bold px-10 py-4 rounded-full flex items-center justify-center gap-3 transition-all shadow-[0_8px_32px_-8px_rgba(35,126,69,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)] ring-1 ring-white/10 hover:shadow-[0_16px_48px_-12px_rgba(35,126,69,0.7),inset_0_1px_1px_rgba(255,255,255,0.3)] hover:-translate-y-0.5 hover:brightness-110 [text-shadow:0_1px_2px_rgba(0,0,0,0.2)]">
               Analyze My Wallet
             </MotionButton>
             <MotionButton intent="secondary" className="w-full sm:w-auto bg-transparent text-gray-300 font-medium px-8 py-4 rounded-xl flex items-center justify-center gap-2 hover:text-white transition-colors">

@@ -1,44 +1,29 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { CommerceOptimizationService } from '../../features/commerce';
 import { cn } from '../../lib/utils';
+import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
+import type { CardData } from '../../features/cards/types/card.types';
 import { 
   Search, Layers, CreditCard, Compass, Plane, Utensils, 
-  ShoppingBag, CheckCircle2, ArrowRight
+  ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, 
+  Sparkles, AlertCircle, BookOpen, Receipt, Heart, Plus
 } from 'lucide-react';
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  HOME V4.1 — Polish & Premium Composition
-// ─────────────────────────────────────────────────────────────────────────────
-
-const INTENTS = [
-  { id: 'travel',    label: 'Travel',        path: '/app/lifestyle/plan' },
-  { id: 'dining',    label: 'Dining',         path: '/app/lifestyle/plan/date' },
-  { id: 'shopping',  label: 'Shopping',       path: '/app/lifestyle/shop' },
-  { id: 'learning',  label: 'Learning',       path: '/app/lifestyle/invest' },
-];
+import { PageContainer } from '../../components/shared/PageContainer';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const profile = useDashboardStore((s) => s.profile);
   const userCards = useDashboardStore((s) => s.userCards);
-  const transactions = useDashboardStore((s) => s.transactions);
 
-  const [hoveredIntent, setHoveredIntent] = useState<string | null>(null);
   const [savings, setSavings] = useState<number>(0);
-
-  const totalSpend = useMemo(() => {
-    return transactions
-      .filter(t => t.type === 'debit')
-      .reduce((sum, t) => sum + t.amount, 0);
-  }, [transactions]);
 
   useEffect(() => {
     async function fetchResults() {
       try {
-        const userId = profile?.id || 'demo-user-id';
+        const userId = profile?.id;
+        if (!userId) return;
         const data = await CommerceOptimizationService.optimizeCollection(userId);
         const total = data.reduce((sum, { result }) => sum + result.savings, 0);
         setSavings(total > 0 ? total : 12000);
@@ -49,293 +34,429 @@ export default function HomePage() {
     fetchResults();
   }, [profile?.id]);
 
-  const creditScore = profile?.creditScore || 810;
+  // Greetings logic
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const userName = profile?.name ? profile.name.split(' ')[0] : 'Aditya';
+
+  // For You Recommendations
+  const mainRecommendation = {
+    name: 'SBI Cashback',
+    benefit: '5% unlimited cashback',
+    value: '+₹2,400',
+    reason: 'Matches your heavy online shopping spend.',
+  };
+
+  const alternativeRecommendations = [
+    { name: 'Amex Platinum Travel', benefit: 'Travel milestones', value: '+₹4,200' },
+    { name: 'HDFC Swiggy Card', benefit: '10% on food delivery', value: '+₹1,500' }
+  ];
+
+  // Marketplace categories
+  const categories = [
+    { 
+      id: 'travel', 
+      label: 'Travel & Flights', 
+      desc: 'Maximize miles, hotel stays and travel rewards.', 
+      icon: Plane, 
+      path: '/app/marketplace/travel',
+      image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop'
+    },
+    { 
+      id: 'lifestyle', 
+      label: 'Lifestyle', 
+      desc: 'Curated offers across fashion, wellness and premium life.', 
+      icon: Compass, 
+      path: '/app/marketplace/lifestyle',
+      image: 'https://images.unsplash.com/photo-1540932239986-30128078f3c5?q=80&w=600&auto=format&fit=crop'
+    },
+    { 
+      id: 'shopping', 
+      label: 'Shopping', 
+      desc: 'Earn more on every purchase across top brands.', 
+      icon: ShoppingBag, 
+      path: '/app/marketplace/shopping',
+      image: 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?q=80&w=600&auto=format&fit=crop'
+    },
+    { 
+      id: 'dining', 
+      label: 'Dining', 
+      desc: 'Get the best rewards at your favourite restaurants.', 
+      icon: Utensils, 
+      path: '/app/marketplace/dining',
+      image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=600&auto=format&fit=crop'
+    },
+    { 
+      id: 'learning', 
+      label: 'Learning', 
+      desc: 'Pay less, learn more with exclusive offers on courses.', 
+      icon: BookOpen, 
+      path: '/app/marketplace/learning',
+      image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=600&auto=format&fit=crop'
+    },
+    { 
+      id: 'debt', 
+      label: 'Debt', 
+      desc: 'Smart tools and offers to help you manage and repay better.', 
+      icon: Receipt, 
+      path: '/app/marketplace/debt',
+      image: 'https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?q=80&w=600&auto=format&fit=crop'
+    },
+    { 
+      id: 'investment', 
+      label: 'Investment', 
+      desc: 'Grow your wealth with partners and smart reward strategies.', 
+      icon: TrendingUp, 
+      path: '/app/marketplace/investment',
+      image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=600&auto=format&fit=crop'
+    },
+    { 
+      id: 'hobbies', 
+      label: 'Hobbies', 
+      desc: 'From gadgets to gear, rewards for what you love.', 
+      icon: Heart, 
+      path: '/app/marketplace/hobbies',
+      image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop'
+    },
+  ];
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 py-6 lg:py-10 pb-32 flex flex-col gap-12 lg:gap-16 relative">
+    <PageContainer hideHeader className="gap-12 md:gap-16 relative selection:bg-[#237E45]/30 selection:text-white">
       
-      {/* Global Background Atmosphere: Obsidian Forest */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[radial-gradient(ellipse_at_top_right,_rgba(13,107,67,0.06)_0%,_transparent_60%)]" />
-
-      {/* ── 1. COMPRESSED HERO ─────────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h1 className="text-[2.75rem] lg:text-[4rem] font-display font-medium text-semantic-text-primary tracking-tight leading-[1.05] whitespace-pre-line mb-3">
-            {'Your money,\nworking smarter.'}
-          </h1>
-          <p className="text-sm lg:text-base text-semantic-text-muted tracking-wide max-w-md">
-            One intelligent view of your cards, spending and opportunities.
-          </p>
-        </motion.div>
-
-        {/* Intent Navigation */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex flex-wrap items-center gap-6 lg:gap-10"
-        >
-          {INTENTS.map((intent) => {
-            const isHovered = hoveredIntent === intent.id;
-            return (
-              <button
-                key={intent.id}
-                onClick={() => navigate(intent.path)}
-                onMouseEnter={() => setHoveredIntent(intent.id)}
-                onMouseLeave={() => setHoveredIntent(null)}
-                className="relative py-2 group flex items-center gap-2"
-              >
-                <span className={cn(
-                  "text-[12px] font-medium tracking-wider transition-all duration-300 uppercase",
-                  isHovered ? "text-[#19B86A]" : "text-semantic-text-muted"
-                )}>
-                  {intent.label}
-                </span>
-                <div className={cn(
-                  "absolute bottom-0 left-0 h-[1px] bg-[#19B86A] transition-all duration-300 ease-out",
-                  isHovered ? "w-full opacity-100" : "w-0 opacity-0"
-                )} />
-              </button>
-            );
-          })}
-        </motion.div>
+      {/* ── 1. GREETING ─────────────────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col gap-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <h1 className="text-4xl md:text-5xl font-display font-medium text-[#F2F4F2] tracking-tight leading-tight">
+          {greeting}, {userName}
+        </h1>
       </section>
 
-      {/* ── 2. PRIMARY ACTIONS & INTELLIGENCE ────────────────────────────── */}
-      <section className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Left Column: Primary Actions */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          {/* Large Action */}
+      {/* ── 2. YOUR WALLET & 3. TODAY'S REWARDS ─────────────────────────── */}
+      <section className="relative z-10 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h2 className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Your Wallet</h2>
+            <span className="px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-white/60 font-medium">{userCards.length} Cards</span>
+          </div>
           <button 
-            onClick={() => navigate('/app/credit/advisor')}
-            className="group flex-1 flex flex-col justify-center gap-4 p-8 rounded-[1.5rem] bg-[#07120D] hover:bg-[#081A12] border border-white/[0.02] transition-colors text-left"
+            onClick={() => navigate('/app/wallet')}
+            className="text-xs font-semibold text-[#237E45] uppercase tracking-widest hover:text-white transition-colors flex items-center gap-1.5"
           >
-            <div className="w-10 h-10 rounded-full bg-white/[0.03] flex items-center justify-center mb-2 group-hover:bg-[#19B86A]/10 transition-colors">
-              <Search className="w-4 h-4 text-semantic-text-secondary group-hover:text-[#19B86A] transition-colors" />
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-semantic-text-muted mb-1">
-                Find Your Card
-              </p>
-              <h3 className="text-lg text-semantic-text-primary font-medium mb-2 group-hover:text-[#19B86A] transition-colors">
-                What's the best credit card for me?
-              </h3>
-              <p className="text-[13px] text-semantic-text-muted leading-relaxed">
-                Analyze your spending to find cards that maximize your rewards.
-              </p>
-            </div>
+            View wallet <ArrowRight className="w-3 h-3" />
           </button>
+        </div>
 
-          {/* Medium Actions Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button 
+        {/* Wallet Rail — PhysicalCard variant wallet */}
+        <div className="flex overflow-x-auto hide-scrollbar gap-4 pb-1 -mx-6 px-6 sm:mx-0 sm:px-0">
+          {userCards.length === 0 ? (
+            <div 
               onClick={() => navigate('/app/wallet')}
-              className="group flex flex-col gap-3 p-5 rounded-[1rem] bg-[#07120D] hover:bg-[#081A12] border border-white/[0.02] transition-colors text-left"
+              className="flex-none w-full max-w-[360px] aspect-[1.586] rounded-[20px] flex flex-col items-center justify-center border border-dashed border-white/20 bg-[#050806]/50 cursor-pointer hover:border-[#237E45]/50 hover:bg-[#237E45]/5 transition-all"
             >
-              <Layers className="w-4 h-4 text-semantic-text-secondary group-hover:text-[#19B86A]" />
-              <div>
-                <p className="text-[9px] font-semibold tracking-[0.18em] uppercase text-semantic-text-muted mb-1">
-                  Compare Wallet
-                </p>
-                <p className="text-[13px] text-semantic-text-secondary group-hover:text-[#19B86A] transition-colors">
-                  Which cards should I keep, use or replace?
-                </p>
+              <div className="w-12 h-12 rounded-full bg-white/[0.03] flex items-center justify-center mb-3 text-white/50">
+                <Plus size={24} />
               </div>
-            </button>
-            <button 
-              onClick={() => navigate('/app/lifestyle')}
-              className="group flex flex-col gap-3 p-5 rounded-[1rem] bg-[#07120D] hover:bg-[#081A12] border border-white/[0.02] transition-colors text-left"
+              <span className="text-sm font-medium text-white/90">Add your first card here</span>
+              <span className="text-xs text-white/50 mt-1">Unlock intelligence and rewards</span>
+            </div>
+          ) : (
+            userCards.slice(0, 3).map(card => (
+              <PhysicalCard
+                key={card.id}
+                card={card}
+                variant="wallet"
+                onClick={() => navigate('/app/wallet')}
+              />
+            ))
+          )}
+
+          {userCards.length > 3 && (
+            <div
+              onClick={() => navigate('/app/wallet')}
+              className="flex-none w-[248px] aspect-[1.586] rounded-[20px] flex flex-col items-center justify-center border border-dashed border-white/10 cursor-pointer hover:border-[#237E45]/40 hover:bg-[#237E45]/5 transition-all group"
             >
-              <Compass className="w-4 h-4 text-semantic-text-secondary group-hover:text-[#19B86A]" />
-              <div>
-                <p className="text-[9px] font-semibold tracking-[0.18em] uppercase text-semantic-text-muted mb-1">
-                  Explore
-                </p>
-                <p className="text-[13px] text-semantic-text-secondary group-hover:text-[#19B86A] transition-colors">
-                  Discover rewards, offers and smarter spending.
-                </p>
-              </div>
+              <span className="text-[22px] font-light text-white/40 group-hover:text-[#237E45] transition-colors mb-1">+{userCards.length - 3}</span>
+              <span className="text-[9px] uppercase tracking-widest font-semibold text-white/40 group-hover:text-[#237E45]/70">More Cards</span>
+            </div>
+          )}
+        </div>
+
+        {/* Intelligence Strip (Today's Rewards) */}
+        {userCards.length > 0 && (
+          <div className="flex flex-wrap items-center gap-4 pt-2">
+            <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Today:</span>
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-[#237E45]" />
+              <span className="text-[11px] font-medium text-[#237E45]">3 rewards available</span>
+            </div>
+            <div className="w-1 h-1 rounded-full bg-white/10" />
+            <div className="flex items-center gap-1.5">
+              <TrendingUp className="w-3 h-3 text-white/60" />
+              <span className="text-[11px] font-medium text-white/70">5 active offers</span>
+            </div>
+            <div className="w-1 h-1 rounded-full bg-white/10" />
+            <div className="flex items-center gap-1.5">
+              <AlertCircle className="w-3 h-3 text-[#B86A19]" />
+              <span className="text-[11px] font-medium text-[#B86A19]">Swiggy 50% expires today</span>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* ── 4. FOR YOU (Editorial Recommendation Area) ───────────────────────── */}
+      <section className="relative z-10 grid grid-cols-1 md:grid-cols-[1fr_300px] gap-12 items-start border-t border-white/[0.04] pt-8 md:pt-12 mt-2">
+        {/* Main Recommendation (Left Column) */}
+        <div className="flex flex-col gap-6">
+          <p className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#237E45] flex items-center gap-2">
+            <Sparkles className="w-4 h-4" /> Best match for you
+          </p>
+
+          <PhysicalCard
+            card={{
+              id: 'rec-sbi',
+              pan: '•••• •••• •••• 1234',
+              cardholderName: profile?.name?.toUpperCase() || 'ADITYA SINHA',
+              expiry: '12/28',
+              network: 'visa',
+              bank: 'SBI Card',
+              status: 'active',
+              availableCredit: 0,
+              creditLimit: 0,
+              label: 'Cashback SBI Card',
+              gradientFrom: '#1E3C72',
+              gradientTo: '#2A5298'
+            }}
+            variant="recommendation"
+            onClick={() => navigate('/app/credit/advisor')}
+          />
+
+          <div className="space-y-2 max-w-md">
+            <h3 className="text-xl md:text-2xl font-display font-medium text-[#F2F4F2]">{mainRecommendation.name}</h3>
+            <p className="text-base text-[#237E45] font-medium">{mainRecommendation.value} estimated value</p>
+            <p className="text-sm text-[#737C77] leading-relaxed mb-4">
+              Based on your CIBIL and spending habits, this card could maximize your returns.
+            </p>
+            <button
+              onClick={() => navigate('/app/credit/advisor')}
+              className="text-xs font-bold text-[#237E45] uppercase tracking-widest flex items-center gap-1.5 hover:text-white transition-colors pt-2"
+            >
+              View card <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Right Column: Which Card Should I Use? (Hero Functional Component) */}
-        <div className="lg:col-span-7 flex h-full">
-          <div className="w-full relative overflow-hidden bg-gradient-to-br from-[#0A2418] to-[#0D3020] rounded-[1.5rem] lg:rounded-[2rem] border border-[#19B86A]/[0.08] p-8 lg:p-12 flex flex-col justify-center">
-            {/* Atmospheric light */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,_rgba(25,184,106,0.15)_0%,_transparent_60%)] pointer-events-none" />
-            
-            <div className="relative z-10 flex flex-col gap-8">
-              <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-[#19B86A] flex items-center gap-2">
-                <CreditCard className="w-3 h-3" />
-                Which card should I use?
-              </p>
-              
-              <div>
-                <h3 className="text-4xl lg:text-[3.5rem] font-mono font-medium text-white tracking-tight mb-2">
-                  ₹8,500
-                </h3>
-                <p className="text-white/70 text-lg">
-                  Flight to Dubai
-                </p>
+        {/* Alternatives (Right Column) — compact card visual + info */}
+        <div className="flex flex-col pl-0 md:pl-8 md:border-l border-white/[0.04] min-w-0">
+          <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77] mb-6">Other Options</span>
+          
+          <div className="flex overflow-x-auto hide-scrollbar gap-6 pb-2 -mx-6 px-6 md:mx-0 md:px-0">
+            <div
+              onClick={() => navigate('/app/credit/advisor')}
+              className="flex flex-col gap-3 cursor-pointer group flex-none w-[280px]"
+            >
+            <PhysicalCard
+              card={{
+                id: 'rec-amex',
+                pan: '•••• •••••• •3456',
+                cardholderName: profile?.name?.toUpperCase() || 'ADITYA SINHA',
+                expiry: '09/29',
+                network: 'amex',
+                bank: 'American Express',
+                status: 'active',
+                availableCredit: 0,
+                creditLimit: 0,
+                label: 'Platinum Travel',
+                gradientFrom: '#8E9EAB',
+                gradientTo: '#EEF2F3'
+              }}
+              variant="compact"
+              onClick={() => navigate('/app/credit/advisor')}
+            />
+            <div className="flex flex-col gap-1 min-w-0">
+              <h4 className="text-sm font-medium text-white/90 group-hover:text-[#237E45] transition-colors truncate">{alternativeRecommendations[0].name}</h4>
+              <span className="text-sm font-semibold text-[#237E45]">{alternativeRecommendations[0].value}</span>
+              <p className="text-xs text-[#737C77] truncate">{alternativeRecommendations[0].benefit}</p>
+            </div>
+          </div>
+          
+          <div
+            onClick={() => navigate('/app/credit/advisor')}
+            className="flex flex-col gap-3 cursor-pointer group flex-none w-[280px]"
+          >
+            <PhysicalCard
+              card={{
+                id: 'rec-hdfc',
+                pan: '•••• •••• •••• 9876',
+                cardholderName: profile?.name?.toUpperCase() || 'ADITYA SINHA',
+                expiry: '03/30',
+                network: 'mastercard',
+                bank: 'HDFC Bank',
+                status: 'active',
+                availableCredit: 0,
+                creditLimit: 0,
+                label: 'Swiggy HDFC Bank',
+                gradientFrom: '#FC8019',
+                gradientTo: '#F2F4F2'
+              }}
+              variant="compact"
+              onClick={() => navigate('/app/credit/advisor')}
+            />
+            <div className="flex flex-col gap-1 min-w-0">
+              <h4 className="text-sm font-medium text-white/90 group-hover:text-[#237E45] transition-colors truncate">{alternativeRecommendations[1].name}</h4>
+              <span className="text-sm font-semibold text-[#237E45]">{alternativeRecommendations[1].value}</span>
+              <p className="text-xs text-[#737C77] truncate">{alternativeRecommendations[1].benefit}</p>
+            </div>
+          </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. LIFESTYLE / DISCOVERY ────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col gap-6">
+        <div className="flex items-center gap-3 border-b border-white/[0.04] pb-4">
+          <h2 className="text-xl md:text-2xl font-display font-medium text-[#F2F4F2]">Planning Something?</h2>
+          <p className="text-sm text-[#737C77]">Explore opportunities selected around how you spend.</p>
+        </div>
+        
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mt-2">
+          {categories.slice(0, 4).map(cat => (
+            <button 
+              key={cat.id}
+              onClick={() => navigate(cat.path)}
+              className="group relative flex flex-col justify-between text-left h-[220px] sm:h-[340px] rounded-[20px] sm:rounded-[24px] overflow-hidden border border-white/[0.04] bg-[#050806] transition-transform duration-300 hover:-translate-y-[2px] shadow-lg hover:shadow-2xl hover:shadow-[#237E45]/5"
+            >
+              {/* Background Image Container (Upper 60%) */}
+              <div className="absolute inset-x-0 top-0 h-[65%] overflow-hidden">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                  style={{ backgroundImage: `url('${cat.image}')` }}
+                />
               </div>
 
-              <div className="h-[1px] w-full bg-white/[0.1]" />
-
-              <div>
-                <p className="text-[11px] font-medium tracking-[0.1em] uppercase text-white/50 mb-3">
-                  RenoCred Recommends
-                </p>
-                <div className="flex flex-wrap items-center gap-4">
-                  <p className="text-white font-medium text-lg">SBI Signature Rewards</p>
-                  <span className="px-3 py-1.5 rounded-full bg-[#19B86A]/20 text-[#19B86A] text-[11px] font-bold tracking-wider">
-                    +₹1,240 estimated value
-                  </span>
+              {/* Gradient Overlay for seamless fade into Obsidian base */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#050806]/40 via-[#050806]/80 to-[#050806] transition-colors duration-300 group-hover:from-[#050806]/30" />
+              
+              {/* Top: Icon Container */}
+              <div className="relative z-10 p-3 sm:p-5 lg:p-6">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-[#237E45]/20 flex items-center justify-center bg-[#071A11]/40 backdrop-blur-md transition-colors duration-300 group-hover:border-[#237E45]/40 group-hover:bg-[#0A2418]/60">
+                  <cat.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#237E45] transition-colors duration-300 group-hover:text-[#237E45]" strokeWidth={1.5} />
                 </div>
               </div>
 
-              <button className="group self-start flex items-center gap-3 mt-2 px-6 py-3 rounded-full bg-white text-[#0A2418] text-[12px] font-bold tracking-wider uppercase hover:bg-white/90 transition-colors">
-                Use this card
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 3. FINANCIAL PORTFOLIO SNAPSHOT ──────────────────────────────── */}
-      <section className="relative z-10 w-full flex flex-col lg:flex-row gap-6">
-        <div className="w-full relative overflow-hidden bg-[#07120D] rounded-[1.5rem] lg:rounded-[2rem] border border-white/[0.02] p-8 lg:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
-          
-          {/* Left: Financial Position */}
-          <div className="flex flex-col gap-6">
-            <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-semantic-text-muted">
-              Your Financial Position
-            </p>
-            <div className="flex flex-wrap items-center gap-8 lg:gap-12">
-              <div className="flex flex-col gap-1">
-                <span className="text-2xl lg:text-3xl font-mono font-medium text-semantic-text-primary">
-                  {String(userCards.length).padStart(2, '0')}
-                </span>
-                <span className="text-[9px] uppercase tracking-widest text-semantic-text-muted">
-                  Active Cards
-                </span>
+              {/* Bottom: Typography & CTA */}
+              <div className="absolute inset-0 p-3 sm:p-6 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                <h3 className="text-sm sm:text-lg font-medium text-white/90 mb-1 sm:mb-2">{cat.label}</h3>
+                <p className="text-[10px] sm:text-sm text-[#A0AAA5] leading-relaxed line-clamp-2 mb-2 sm:mb-4">
+                  {cat.desc}
+                </p>
+                <div className="hidden sm:flex items-center gap-1.5 text-[14px] font-medium text-[#237E45]/90 group-hover:text-[#237E45] transition-colors duration-300">
+                  Explore {cat.label.split(' ')[0].toLowerCase()} <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
+                </div>
               </div>
-              <div className="w-[1px] h-8 bg-white/[0.05]" />
-              <div className="flex flex-col gap-1">
-                <span className="text-2xl lg:text-3xl font-mono font-medium text-semantic-text-primary">
-                  {creditScore}
-                </span>
-                <span className="text-[9px] uppercase tracking-widest text-semantic-text-muted">
-                  CIBIL
-                </span>
-              </div>
-              <div className="w-[1px] h-8 bg-white/[0.05]" />
-              <div className="flex flex-col gap-1">
-                <span className="text-2xl lg:text-3xl font-mono font-medium text-semantic-text-primary">
-                  ₹{(totalSpend / 100).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                </span>
-                <span className="text-[9px] uppercase tracking-widest text-semantic-text-muted">
-                  Cycle spend
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Vertical Divider on Desktop */}
-          <div className="hidden lg:block w-[1px] h-24 bg-white/[0.05]" />
-          <div className="block lg:hidden w-full h-[1px] bg-white/[0.05]" />
-
-          {/* Right: The Opportunity Insight */}
-          <div className="flex flex-col max-w-sm relative">
-            <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-[#19B86A] mb-4">
-              Your Opportunity
-            </p>
-            <h3 className="text-2xl lg:text-3xl font-mono font-medium text-semantic-text-primary tracking-tight mb-1">
-              ₹{savings.toLocaleString('en-IN')}
-            </h3>
-            <p className="text-[11px] text-semantic-text-secondary mb-3">
-              potential value this cycle
-            </p>
-            <p className="text-[13px] text-semantic-text-muted mb-4 leading-relaxed">
-              RenoCred found opportunities across your current wallet.
-            </p>
-            <button 
-              onClick={() => navigate('/app/lifestyle/shop')}
-              className="group flex items-center gap-2 text-[11px] font-semibold text-[#19B86A] tracking-wider uppercase transition-colors"
-            >
-              View opportunities
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
             </button>
-          </div>
-          
+          ))}
+        </div>
+
+        <div className="flex justify-center mt-2">
+          <button 
+            onClick={() => navigate('/app/marketplace')}
+            className="px-6 py-3 rounded-full bg-white/[0.03] border border-white/[0.08] text-sm font-medium text-white/80 hover:bg-white/[0.06] hover:text-white transition-all flex items-center gap-2 group"
+          >
+            View more options <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       </section>
 
-      {/* ── 4. DISCOVER (Horizontal Rail) ────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col gap-6">
+      {/* ── 6. CREDIT INTELLIGENCE ─────────────────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col gap-5 mt-8">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-semantic-text-muted mb-2">
-            Discover
-          </p>
-          <p className="text-[13px] text-semantic-text-secondary">
-            Opportunities selected around how you spend.
-          </p>
+          <h2 className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#237E45]/70 mb-1">Your Credit Intelligence</h2>
+          <h3 className="text-[26px] font-medium text-white">Smarter insights. Maximum rewards.</h3>
+          <p className="text-[14px] text-white/50 mt-1">AI-powered intelligence to help you choose, compare and use your cards the right way.</p>
         </div>
         
-        <div className="flex overflow-x-auto hide-scrollbar gap-4 lg:gap-6 pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Card 1: Find my best card */}
           <button 
-            onClick={() => navigate('/app/lifestyle/plan')}
-            className="flex-none w-[280px] lg:w-[320px] group flex flex-col p-6 rounded-[1.25rem] bg-[#0A2418] border border-[#19B86A]/[0.1] hover:border-[#19B86A]/30 transition-colors text-left relative overflow-hidden"
+            onClick={() => navigate('/app/credit/recommend')}
+            className="group relative flex flex-col items-start text-left p-6 h-[220px] rounded-[24px] bg-[#07120D] border border-[#237E45]/10 hover:bg-[#081A12] transition-colors duration-300 overflow-hidden"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_100%,_rgba(25,184,106,0.15)_0%,_transparent_60%)] pointer-events-none transition-opacity opacity-50 group-hover:opacity-100" />
-            <Plane className="w-5 h-5 text-[#19B86A] mb-4" />
-            <h4 className="text-white font-medium mb-2">Travel</h4>
-            <p className="text-[13px] text-white/70 mb-4">Earn more from your next trip.</p>
-            <span className="text-[10px] font-semibold tracking-wider text-[#19B86A] uppercase flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Explore travel rewards <ArrowRight className="w-3 h-3" />
-            </span>
+            {/* Visual: Subtle radial signal */}
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+              style={{ background: 'radial-gradient(circle at 20% 20%, rgba(25,184,106,0.15) 0%, transparent 50%)' }}
+            />
+            
+            <div className="relative z-10">
+              <div className="w-10 h-10 rounded-full border border-[#237E45]/20 flex items-center justify-center mb-4">
+                <Search className="w-4 h-4 text-[#237E45]" strokeWidth={1.5} />
+              </div>
+              <h4 className="text-[20px] lg:text-[22px] font-medium text-white mb-2 leading-none">Find my best card</h4>
+              <p className="text-[14px] text-white/50 leading-relaxed pr-4">Analyze your spending to find the card that gives you the most value.</p>
+            </div>
+            
+            <div className="relative z-10 mt-auto flex items-center gap-1.5 text-[13px] text-[#237E45] transition-transform duration-300 group-hover:translate-x-1">
+              Find your best card <ArrowRight className="w-3.5 h-3.5" />
+            </div>
           </button>
-          
+
+          {/* Card 2: Compare my cards */}
           <button 
-            onClick={() => navigate('/app/lifestyle/plan/date')}
-            className="flex-none w-[280px] lg:w-[320px] group flex flex-col p-6 rounded-[1.25rem] bg-[#07120D] hover:bg-[#081A12] border border-white/[0.02] transition-colors text-left"
+            onClick={() => navigate('/app/wallet')}
+            className="group relative flex flex-col items-start text-left p-6 h-[220px] rounded-[24px] bg-[#07120D] border border-[#237E45]/10 hover:bg-[#081A12] transition-colors duration-300 overflow-hidden"
           >
-            <Utensils className="w-5 h-5 text-semantic-text-secondary mb-4 group-hover:text-semantic-text-primary transition-colors" />
-            <h4 className="text-semantic-text-primary font-medium mb-2">Dining</h4>
-            <p className="text-[13px] text-semantic-text-muted mb-4">Get more from where you already spend.</p>
-            <span className="text-[10px] font-semibold tracking-wider text-semantic-text-secondary uppercase flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Explore dining rewards <ArrowRight className="w-3 h-3" />
-            </span>
+            {/* Visual: Overlapping card outlines */}
+            <div className="absolute right-0 bottom-0 pointer-events-none w-32 h-32 opacity-20 group-hover:opacity-40 transition-opacity duration-500 overflow-hidden">
+              <div className="absolute right-4 bottom-4 w-24 h-16 border border-[#237E45]/30 rounded-xl rotate-[-10deg]" />
+              <div className="absolute -right-2 -bottom-2 w-24 h-16 border border-[#237E45]/50 rounded-xl rotate-[5deg] bg-[#050806]/50 backdrop-blur-[1px]" />
+            </div>
+
+            <div className="relative z-10">
+              <div className="w-10 h-10 rounded-full border border-[#237E45]/20 flex items-center justify-center mb-4">
+                <Layers className="w-4 h-4 text-[#237E45]" strokeWidth={1.5} />
+              </div>
+              <h4 className="text-[20px] lg:text-[22px] font-medium text-white mb-2 leading-none">Compare my cards</h4>
+              <p className="text-[14px] text-white/50 leading-relaxed pr-4">Compare the cards already in your wallet and see which performs better.</p>
+            </div>
+            
+            <div className="relative z-10 mt-auto flex items-center gap-1.5 text-[13px] text-[#237E45] transition-transform duration-300 group-hover:translate-x-1">
+              Compare now <ArrowRight className="w-3.5 h-3.5" />
+            </div>
           </button>
-          
+
+          {/* Card 3: Which card should I use? */}
           <button 
-            onClick={() => navigate('/app/lifestyle/shop')}
-            className="flex-none w-[280px] lg:w-[320px] group flex flex-col p-6 rounded-[1.25rem] bg-[#07120D] hover:bg-[#081A12] border border-white/[0.02] transition-colors text-left"
+            onClick={() => navigate('/app/wallet')}
+            className="group relative flex flex-col items-start text-left p-6 h-[220px] rounded-[24px] bg-[#07120D] border border-[#237E45]/10 hover:bg-[#081A12] transition-colors duration-300 overflow-hidden"
           >
-            <ShoppingBag className="w-5 h-5 text-semantic-text-secondary mb-4 group-hover:text-semantic-text-primary transition-colors" />
-            <h4 className="text-semantic-text-primary font-medium mb-2">Shopping</h4>
-            <p className="text-[13px] text-semantic-text-muted mb-4">Offers worth knowing about.</p>
-            <span className="text-[10px] font-semibold tracking-wider text-semantic-text-secondary uppercase flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Explore offers <ArrowRight className="w-3 h-3" />
-            </span>
+            {/* Visual: Transaction line signal path */}
+            <div className="absolute right-4 bottom-8 pointer-events-none opacity-20 group-hover:opacity-50 transition-opacity duration-500">
+              <svg className="w-24 h-12" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 30 Q 30 0, 60 20 T 100 10" stroke="#237E45" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" />
+                <circle cx="100" cy="10" r="3" fill="#237E45" />
+                <circle cx="100" cy="10" r="6" fill="#237E45" fillOpacity="0.2" />
+              </svg>
+            </div>
+
+            <div className="relative z-10">
+              <div className="w-10 h-10 rounded-full border border-[#237E45]/20 flex items-center justify-center mb-4">
+                <CreditCard className="w-4 h-4 text-[#237E45]" strokeWidth={1.5} />
+              </div>
+              <h4 className="text-[20px] lg:text-[22px] font-medium text-white mb-2 leading-none">Which card should I use?</h4>
+              <p className="text-[14px] text-white/50 leading-relaxed pr-4">Find the optimal card for a specific transaction.</p>
+            </div>
+            
+            <div className="relative z-10 mt-auto flex items-center gap-1.5 text-[13px] text-[#237E45] transition-transform duration-300 group-hover:translate-x-1">
+              Get recommendation <ArrowRight className="w-3.5 h-3.5" />
+            </div>
           </button>
         </div>
       </section>
 
-      {/* ── 5. NEXT FOR YOU ──────────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col gap-4">
-        <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-semantic-text-muted mb-2">
-          Next for you
-        </p>
+      {/* ── 7. NEXT FOR YOU ─────────────────────────────────────────────── */}
+      <section className="relative z-10 flex flex-col gap-2 mt-2">
+        <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/50 mb-1">Next for you</h2>
         
-        <div className="flex flex-col max-w-2xl">
+        <div className="flex flex-col w-full max-w-2xl bg-[#07120D] border border-white/[0.04] rounded-2xl overflow-hidden">
           {[
             { id: 1, text: `Review your ${userCards.length} active cards` },
             { id: 2, text: 'Upcoming bill in 4 days' },
@@ -344,22 +465,22 @@ export default function HomePage() {
             <button 
               key={action.id}
               className={cn(
-                "group flex items-center justify-between py-3 transition-colors",
-                i !== arr.length - 1 ? "border-b border-white/[0.03]" : ""
+                "group flex items-center justify-between px-5 py-3.5 transition-all duration-300 hover:bg-white/[0.02]",
+                i !== arr.length - 1 ? "border-b border-white/[0.04]" : ""
               )}
             >
               <div className="flex items-center gap-4">
-                <CheckCircle2 className="w-4 h-4 text-semantic-text-muted group-hover:text-[#19B86A] transition-colors" />
-                <span className="text-[14px] text-semantic-text-secondary group-hover:text-semantic-text-primary transition-colors">
+                <CheckCircle2 className="w-4 h-4 text-white/20 group-hover:text-[#237E45] transition-colors duration-300" />
+                <span className="text-[13px] font-medium text-white/70 group-hover:text-white transition-colors duration-300">
                   {action.text}
                 </span>
               </div>
-              <ArrowRight className="w-4 h-4 text-transparent group-hover:text-[#19B86A] transition-all -translate-x-2 group-hover:translate-x-0" />
+              <ArrowRight className="w-4 h-4 text-transparent group-hover:text-[#237E45] transition-all duration-300 -translate-x-2 group-hover:translate-x-0" />
             </button>
           ))}
         </div>
       </section>
 
-    </div>
+    </PageContainer>
   );
 }

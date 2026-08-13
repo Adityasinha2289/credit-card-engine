@@ -5,7 +5,7 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { dark } from '@clerk/themes'
 import './index.css'
 import App from './App.tsx'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PublicLayout } from './public-platform/layouts/PublicLayout';
 import { HomePage } from './public-platform/pages/HomePage';
 import { AboutPage } from './public-platform/pages/AboutPage';
@@ -24,6 +24,12 @@ import './lib/sentry';
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Toaster } from 'sonner'
 import { AuthAnalytics } from './components/AuthAnalytics'
+import { ScrollToTop } from './components/ScrollToTop'
+
+// Marketplace Pages
+import MarketplaceHome from './pages/marketplace/MarketplaceHome';
+import CategoryPage from './pages/marketplace/CategoryPage';
+import SubcategoryPage from './pages/marketplace/SubcategoryPage';
 
 // Import your publishable key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'mock_key'
@@ -45,7 +51,7 @@ const appContent = (
       appearance={{
         baseTheme: dark,
         variables: {
-          colorPrimary: '#5da08c',
+          colorPrimary: '#237E45',
           colorText: 'white',
           colorBackground: 'transparent',
           colorInputBackground: 'rgba(255, 255, 255, 0.03)',
@@ -57,29 +63,35 @@ const appContent = (
           rootBox:"w-full flex justify-center",
           cardBox:"w-full shadow-none border-none",
           card:"bg-transparent shadow-none border-none w-full p-0 sm:p-0",
-          headerTitle:"font-display font-bold text-2xl text-text-primary tracking-tight",
-          headerSubtitle:"text-text-secondary",
-          socialButtonsBlockButton:"bg-surface-primary/50 border border-border-subtle !shadow-none hover:bg-surface-secondary text-white !rounded-xl py-3 transition-colors",
+          headerTitle:"font-display font-bold text-2xl text-white tracking-tight",
+          headerSubtitle:"text-white/60",
+          socialButtonsBlockButton:"bg-[#151515] border border-white/10 !shadow-none hover:bg-[#1e1e1e] text-white !rounded-xl py-3 transition-colors",
           socialButtonsBlockButtonText:"text-sm font-semibold",
-          dividerLine:"bg-white/[0.04]",
-          dividerText:"text-text-muted text-xs uppercase tracking-widest font-bold",
-          formFieldLabel:"text-xs font-bold text-text-secondary",
-          formFieldInput:"bg-surface-secondary border border-border-subtle !shadow-none !outline-none text-text-primary !rounded-xl px-4 py-3 focus:border-brand-emerald/50 focus:ring-1 focus:ring-brand-emerald-glow transition-all text-sm",
-          formButtonPrimary:"bg-brand-emerald hover:bg-brand-600 text-white font-semibold text-sm py-3 !rounded-xl !border-none !shadow-none hover:!shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-[0.98]",
-          footer:"bg-transparent border-none",
+          dividerLine:"bg-white/10",
+          dividerText:"text-white/40 text-xs uppercase tracking-widest font-bold",
+          formFieldLabel:"text-xs font-bold text-white/60",
+          formFieldInput:"bg-[#151515] border border-white/10 !shadow-none !outline-none text-white !rounded-xl px-4 py-3 focus:border-[#237E45]/50 focus:ring-1 focus:ring-[#237E45]/30 transition-all text-sm",
+          formButtonPrimary:"bg-[#237E45] hover:bg-[#237E45]/90 text-white font-bold text-sm py-3 !rounded-xl !border-none !shadow-none transition-all active:scale-[0.98]",
+          footer:"hidden",
           footerAction:"hidden",
           footerActionText:"hidden",
           footerActionLink:"hidden",
-          identityPreviewText:"text-text-primary",
-          identityPreviewEditButtonIcon:"text-brand-emerald hover:text-brand-600",
+          identityPreviewText:"text-white",
+          identityPreviewEditButtonIcon:"text-[#237E45] hover:text-[#237E45]/80",
         }
       }}
     >
       <AuthAnalytics />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Private App Route */}
           <Route path="/app/*" element={<App />} />
+
+          {/* Marketplace Routes (Redirect to internal App) */}
+          <Route path="/marketplace" element={<Navigate to="/app/marketplace" replace />} />
+          <Route path="/marketplace/:categorySlug" element={<Navigate to="/app/marketplace" replace />} />
+          <Route path="/marketplace/:categorySlug/:subcategorySlug" element={<Navigate to="/app/marketplace" replace />} />
           
           {/* Public Platform Routes */}
           <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />

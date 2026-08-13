@@ -64,10 +64,10 @@ export function HeroPhoneAnimation() {
       >
         <div className="relative transform scale-[min(1,calc((100vw-48px)/340))] sm:scale-[min(1,calc((100vw-48px)/340))] md:scale-100 origin-top flex justify-center">
         {/* Glow behind phone */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[600px] bg-brand-emerald rounded-[100px] blur-[160px] opacity-[0.1]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[600px] bg-semantic-brand-strong rounded-[100px] blur-[160px] opacity-[0.1]" />
 
         {/* iPhone 17 Pro - Black Titanium Outer Frame */}
-        <div className="w-[340px] h-[720px] bg-[#161617] rounded-[55px] p-[2px] shadow-[0_40px_100px_-20px_rgba(0,0,0,1)] relative border border-[#2b2b2c] ring-1 ring-[#000000]">
+        <div className="w-[340px] h-[737px] bg-[#161617] rounded-[55px] p-[2px] shadow-[0_40px_100px_-20px_rgba(0,0,0,1)] relative border border-[#2b2b2c] ring-1 ring-[#000000]">
           
           {/* Hardware Buttons */}
           <div className="absolute top-[120px] -left-[3px] w-[3px] h-[30px] bg-[#1a1a1a] rounded-l-md border border-[#2b2b2c] border-r-0" />
@@ -127,12 +127,12 @@ export function HeroPhoneAnimation() {
                             initial={{ x: "-100%" }}
                             animate={{ x: "100%" }}
                             transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                            className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-r from-transparent via-brand-emerald to-transparent"
+                            className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-r from-transparent via-semantic-brand-strong to-transparent"
                           />
                         </div>
                         
                         <div className="flex items-center gap-3">
-                          <Activity className="w-4 h-4 text-brand-emerald animate-pulse" />
+                          <Activity className="w-4 h-4 text-semantic-brand-strong animate-pulse" />
                           <span className="text-sm font-medium text-gray-300">
                             {step === 1 ? "Analyzing 12 connected cards..." : "Calculating maximum value..."}
                           </span>
@@ -154,11 +154,11 @@ export function HeroPhoneAnimation() {
                         className="bg-gradient-to-br from-[#121212] to-[#080808] rounded-[24px] p-5 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] ring-1 ring-white/[0.06] relative"
                       >
                         {/* Edge highlight */}
-                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-brand-emerald/0 via-brand-emerald/40 to-brand-emerald/0" />
+                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-semantic-brand-strong/0 via-semantic-brand-strong/40 to-semantic-brand-strong/0" />
                         
                         <div className="flex justify-between items-start mb-5">
                           <div>
-                            <p className="text-brand-emerald text-[9px] font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1">
+                            <p className="text-semantic-brand-strong text-[9px] font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1">
                               <Sparkles className="w-2.5 h-2.5" /> Undeniable Choice
                             </p>
                             <p className="text-lg font-medium text-white tracking-tight">HDFC Infinia</p>
@@ -182,10 +182,10 @@ export function HeroPhoneAnimation() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.4, duration: 0.5 }}
-                          className="bg-success-emerald/10 rounded-xl p-3 border border-success-emerald/20 flex justify-between items-center"
+                          className="bg-semantic-brand-strong/10 rounded-xl p-3 border border-semantic-brand-strong/20 flex justify-between items-center"
                         >
-                          <span className="text-xs font-semibold text-success-emerald">Total Savings</span>
-                          <span className="text-lg font-bold text-success-emerald">₹10,490</span>
+                          <span className="text-xs font-semibold text-semantic-brand-strong">Total Savings</span>
+                          <span className="text-lg font-bold text-semantic-brand-strong">₹10,490</span>
                         </motion.div>
 
                         {/* Confidence Metric - Appears at step 4 */}
@@ -197,7 +197,7 @@ export function HeroPhoneAnimation() {
                               transition={{ duration: 0.4, type: "spring" }}
                               className="absolute -top-3 -right-3 bg-[#0A0A0A] border border-white/[0.1] rounded-full px-3 py-1 flex items-center gap-1.5 shadow-xl"
                             >
-                              <CheckCircle2 className="w-3 h-3 text-success-emerald" />
+                              <CheckCircle2 className="w-3 h-3 text-semantic-brand-strong" />
                               <span className="text-[10px] font-bold text-white tracking-wider">98% CONFIDENCE</span>
                             </motion.div>
                           )}

@@ -192,7 +192,7 @@ export function TaqdeerPanel() {
           'fixed bottom-24 right-5 z-40',
           'w-14 h-14 rounded-full',
           'glass-panel',
-          'flex items-center justify-center text-[#00E599]',
+          'flex items-center justify-center text-[#237E45]',
           'transition-all duration-200',
           isOpen && 'opacity-0 pointer-events-none',
         )}

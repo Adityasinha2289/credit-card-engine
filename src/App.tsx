@@ -23,8 +23,14 @@ const ExplorePage = lazy(() => import('./pages/app/ExplorePage'));
 const InsightsPage = lazy(() => import('./pages/app/InsightsPage'));
 const TaqdeerPage = lazy(() => import('./pages/app/TaqdeerPage'));
 const ProfilePage = lazy(() => import('./pages/app/ProfilePage'));
+const SettingsPage = lazy(() => import('./pages/app/SettingsPage'));
 
-// Lifestyle (Phase 5A Prototype)
+// Marketplace
+const MarketplaceHome = lazy(() => import('./pages/marketplace/MarketplaceHome'));
+const CategoryPage = lazy(() => import('./pages/marketplace/CategoryPage'));
+const SubcategoryPage = lazy(() => import('./pages/marketplace/SubcategoryPage'));
+
+// Lifestyle (Phase 5A Prototype) - Redirecting to marketplace
 const LifestyleHub = lazy(() => import('./pages/app/lifestyle/LifestyleHub'));
 const PlanDatePage = lazy(() => import('./pages/app/lifestyle/PlanDatePage'));
 const InvestPage = lazy(() => import('./pages/app/lifestyle/InvestPage'));
@@ -46,9 +52,21 @@ export default function App() {
   const supabase = useSupabase();
   const [hasAttemptedHydration, setHasAttemptedHydration] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
+  const _reset = useDashboardStore((s) => s._reset);
   const isHydrated = useHydration();
   const hydrateFromSupabase = useDashboardStore((s) => s.hydrateFromSupabase);
   const [isHydratingFromSupabase, setIsHydratingFromSupabase] = useState(false);
+
+  // Security: Reset store if user signs out or if account changes
+  useEffect(() => {
+    if (isLoaded) {
+      if (!user) {
+        _reset();
+      } else if (profile && profile.id !== user.id) {
+        _reset();
+      }
+    }
+  }, [isLoaded, user, profile?.id, _reset]);
 
   // Authentication & Hydration flow
   useEffect(() => {
@@ -65,7 +83,11 @@ export default function App() {
       try {
         if (!isHydrated && !hasAttemptedHydration) {
           setIsHydratingFromSupabase(true);
-          await hydrateFromSupabase(clerkId, supabase);
+          const email = user.primaryEmailAddress?.emailAddress || '';
+          const name = user.fullName || user.firstName || 'Your Name';
+          const avatar = user.imageUrl || '';
+          
+          await hydrateFromSupabase(clerkId, email, name, avatar);
           setHasAttemptedHydration(true);
         }
       } catch (error) {
@@ -107,7 +129,7 @@ export default function App() {
   }
 
   // 1. If not signed in AND not using the demo, show LoginScreen (Clerk Auth View)
-  const isDemo = profile?.id === 'demo-user-id' || import.meta.env.VITE_USE_DEMO_DATA === 'true';
+  const isDemo = import.meta.env.VITE_USE_DEMO_DATA === 'true';
   if (!isSignedIn && !isDemo) {
     return <LoginScreen />;
   }
@@ -131,19 +153,22 @@ export default function App() {
           </DashboardLayout>
         }>
           <Route path="/" element={<HomePage />} />
-          <Route path="/credit" element={<CreditPage />} />
+          <Route path="/credit/*" element={<CreditPage />} />
           <Route path="/wallet" element={<WalletPage />} />
           <Route path="/taqdeer" element={<TaqdeerPage />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/insights" element={<InsightsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           
-          <Route path="/lifestyle" element={<LifestyleHub />} />
-          <Route path="/lifestyle/plan" element={<LifestyleHub />} />
-          <Route path="/lifestyle/plan/date" element={<PlanDatePage />} />
-          <Route path="/lifestyle/invest" element={<InvestPage />} />
-          <Route path="/lifestyle/shop" element={<ShopPage />} />
-          <Route path="/lifestyle/partner/:id" element={<PartnerDetailPage />} />
+          {/* Marketplace Routes in Dashboard */}
+          <Route path="marketplace" element={<MarketplaceHome />} />
+          <Route path="marketplace/:categorySlug" element={<CategoryPage />} />
+          <Route path="marketplace/:categorySlug/:subcategorySlug" element={<SubcategoryPage />} />
+          
+          {/* Legacy Lifestyle Routes - redirecting to marketplace */}
+          <Route path="lifestyle" element={<Navigate to="/app/marketplace" replace />} />
+          <Route path="lifestyle/*" element={<Navigate to="/app/marketplace" replace />} />
         </Route>
 
         {/* Admin Routes */}
@@ -165,7 +190,7 @@ export default function App() {
         </Route>
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </Suspense>
   );

@@ -5,6 +5,7 @@ import { AgeStep } from './components/steps/AgeStep';
 import { LifestyleStep } from './components/steps/LifestyleStep';
 import { FinancialGoalsStep } from './components/steps/FinancialGoalsStep';
 import { CurrentCardsStep } from './components/steps/CurrentCardsStep';
+import { FinancialProfileStep } from './components/steps/FinancialProfileStep';
 import { InitializationStep } from './components/steps/InitializationStep';
 import { FinalLoadingStep } from './components/steps/FinalLoadingStep';
 import { useDashboardStore } from '../dashboard/store/dashboardStore';
@@ -14,6 +15,8 @@ export interface OnboardingState {
   age?: string;
   priorities?: string[];
   goal?: string;
+  salary?: number;
+  creditScore?: number;
   banks?: string[];
 }
 
@@ -23,11 +26,12 @@ const TRANSITION_MESSAGES: Record<string, string> = {
   '1->2': 'Mapping spending behaviour...',
   '2->3': 'Preparing recommendations...',
   '3->4': 'Finding the best reward categories...',
-  '4->5': 'Building your financial profile...',
+  '4->5': 'Analyzing financial baseline...',
+  '5->6': 'Building your financial profile...',
 };
 
 export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingState) => void }) {
-  const [step, setStep] = useState(-1); // -1: Init, 0: Welcome, 1-4: Steps, 5: Final
+  const [step, setStep] = useState(-1); // -1: Init, 0: Welcome, 1-5: Steps, 6: Final
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionMessage, setTransitionMessage] = useState('');
   const [state, setState] = useState<OnboardingState>({});
@@ -91,7 +95,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
   }
 
   // === Final loading (full-screen, no layout shell) ===
-  if (step === 5) {
+  if (step === 6) {
     return <FinalLoadingStep />;
   }
 
@@ -137,6 +141,18 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
         );
       case 4:
         return (
+          <FinancialProfileStep
+            initialSalary={state.salary}
+            initialCreditScore={state.creditScore}
+            onBack={goBack}
+            onContinue={(salary, creditScore) => {
+              setState(s => ({ ...s, salary, creditScore }));
+              goNext(4);
+            }}
+          />
+        );
+      case 5:
+        return (
           <CurrentCardsStep
             initialValues={state.banks}
             onBack={goBack}
@@ -144,7 +160,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
               const finalState = { ...state, banks };
               setState(finalState);
               // Show final loading transition, then complete
-              transitionTo(4, 5, 'Building your financial profile...');
+              transitionTo(5, 6, 'Building your financial profile...');
               setTimeout(() => {
                 handleFinish(finalState);
               }, 4500); // Completes after final loading plays
@@ -160,7 +176,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
     <OnboardingLayout
       stepKey={`step-${step}`}
       currentStep={step}
-      totalSteps={4}
+      totalSteps={5}
     >
       {renderStep()}
     </OnboardingLayout>

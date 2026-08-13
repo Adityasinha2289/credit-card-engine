@@ -13,7 +13,7 @@ export default {
         'ag-hover': '0 4px 8px 0 rgba(0,0,0, 0.4), 0 8px 24px 0 rgba(0,0,0, 0.8)',
         'ag-float': '0 8px 16px 0 rgba(0,0,0, 0.6), 0 16px 40px 0 rgba(0,0,0, 1.0)',
         'ag-modal': '0 12px 24px 0 rgba(0,0,0, 0.8), 0 24px 64px 0 rgba(0,0,0, 1.0)',
-        'ag-glow-primary': '0 4px 16px 0 rgba(0, 229, 153, 0.10), 0 8px 32px 0 rgba(0, 229, 153, 0.05)',
+        'ag-glow-primary': '0 4px 16px 0 rgba(35, 126, 69, 0.10), 0 8px 32px 0 rgba(35, 126, 69, 0.05)',
       },
       colors: {
         // V2 SEMANTIC SYSTEM
@@ -47,13 +47,13 @@ export default {
           300: '#111111',
         },
         surface: {
-          shell: '#0B0F0D',
-          primary: '#0F1412', 
-          card: '#131917', 
-          elevated: '#181F1C', 
-          intelligence: '#0A2117',
-          'intelligence-elevated': '#0E2C1E',
-          secondary: '#0F1412', // Legacy mapping
+          shell: '#050806',
+          primary: '#07120D', 
+          card: '#07120D', 
+          elevated: '#081A12', 
+          intelligence: '#0A2418',
+          'intelligence-elevated': '#0A2418',
+          secondary: '#07120D',
         },
         // V3 SEMANTIC EMERALD (Only for savings/value)
         brand: {
@@ -66,11 +66,11 @@ export default {
           600: '#0AB377',
           700: '#0BCC88',
           800: '#0DE699',
-          900: '#00E599', // Primary brand action/value
-          emerald: '#00E599',
+          900: '#237E45', // Primary brand action/value
+          emerald: '#237E45',
         },
         // Action / Status
-        profit: '#00E599',
+        profit: '#237E45',
         loss: '#FF453A',
         caution: '#FF9F0A',
         
@@ -87,7 +87,7 @@ export default {
           strong: '#242D29',
           intelligence: '#164534',
           hover: '#1E6549',
-          emerald: 'rgba(0, 229, 153, 0.3)',
+          emerald: 'rgba(35, 126, 69, 0.3)',
         }
       },
       fontFamily: {

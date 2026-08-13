@@ -12,14 +12,13 @@ export class PaymentMethodProvider {
    * This provides seamless equivalent data to the Optimization Engine.
    */
   static async getUserPaymentMethods(userId: string): Promise<PaymentMethod[]> {
-    if (userId === 'demo-user-id') {
-      // Demo user explicitly always uses legacy mock fallback to prevent 
-      // fake data from polluting production tables.
-      return this.getLegacyFallback(userId);
-    }
+
 
     try {
-      const productionMethods = await PaymentMethodRepository.getPaymentMethods(userId);
+      const { supabaseClient } = useDashboardStore.getState();
+      if (!supabaseClient) throw new Error('Supabase client not initialized');
+      
+      const productionMethods = await PaymentMethodRepository.getPaymentMethods(supabaseClient as any, userId);
       
       // If production returned valid records, use them.
       // (If the repo is in mock mode, it will return [])

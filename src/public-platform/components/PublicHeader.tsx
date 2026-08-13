@@ -63,7 +63,7 @@ export function PublicHeader() {
           to="/" 
           whileHover={hoverPhysicsSecondary}
           whileTap={tapPhysicsSecondary}
-          className="font-display font-bold text-xl tracking-tight flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 rounded-md"
+          className="font-display font-bold text-xl tracking-tight flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md"
         >
           <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover" />
           <span className="text-white">RenoCred</span>
@@ -75,7 +75,7 @@ export function PublicHeader() {
             to="/" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 rounded-md px-2 py-1"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
           >
             Home
           </MotionLink>
@@ -83,7 +83,7 @@ export function PublicHeader() {
             href="#product" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 rounded-md px-2 py-1"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
           >
             Product
           </MotionAnchor>
@@ -91,7 +91,7 @@ export function PublicHeader() {
             href="#ai" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 rounded-md px-2 py-1"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
           >
             Intelligence
           </MotionAnchor>
@@ -99,7 +99,7 @@ export function PublicHeader() {
             to="/methodology" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 rounded-md px-2 py-1"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
           >
             Methodology
           </MotionLink>
@@ -107,7 +107,7 @@ export function PublicHeader() {
             to="/about" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 rounded-md px-2 py-1"
+            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
           >
             About
           </MotionLink>
@@ -120,7 +120,7 @@ export function PublicHeader() {
             to="/app" 
             whileHover={hoverPhysicsPrimary}
             whileTap={tapPhysicsPrimary}
-            className="relative overflow-hidden bg-gradient-to-b from-brand-emerald to-[#022417] text-white text-sm font-medium py-2 px-6 rounded-xl transition-all shadow-[0_2px_10px_rgba(4,59,39,0.3),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_4px_20px_rgba(4,59,39,0.5),inset_0_1px_1px_rgba(255,255,255,0.2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 border border-brand-emerald"
+            className="relative overflow-hidden bg-gradient-to-b from-[#2a9652] to-[#1e6e3c] text-white text-sm font-bold py-2 px-6 rounded-full transition-all shadow-[0_8px_24px_-6px_rgba(35,126,69,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)] ring-1 ring-white/10 hover:shadow-[0_12px_32px_-8px_rgba(35,126,69,0.7),inset_0_1px_1px_rgba(255,255,255,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#237E45]/50 hover:-translate-y-0.5 hover:brightness-110 [text-shadow:0_1px_2px_rgba(0,0,0,0.2)]"
           >
             Open App
           </MotionLink>

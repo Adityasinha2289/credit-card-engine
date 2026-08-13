@@ -28,7 +28,7 @@ export function WrongCardSection() {
     <section className="relative w-full bg-[#050505] text-white overflow-hidden py-24 lg:py-32 flex items-center justify-center min-h-[750px] lg:min-h-[850px]">
       
       {/* Background Lighting */}
-      <div className="absolute top-1/2 right-[20%] -translate-y-1/2 w-[600px] h-[600px] bg-[#00E599] blur-[200px] opacity-[0.04] pointer-events-none rounded-full" />
+      <div className="absolute top-1/2 right-[20%] -translate-y-1/2 w-[600px] h-[600px] bg-[#237E45] blur-[200px] opacity-[0.04] pointer-events-none rounded-full" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#050505_100%)] pointer-events-none opacity-80" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]" />
 
@@ -37,7 +37,7 @@ export function WrongCardSection() {
         {/* LEFT CONTENT (5 COLUMNS) */}
         <div className="col-span-1 lg:col-span-5 flex flex-col items-start text-left w-full min-w-0">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111111] border border-white/[0.04] text-[10px] uppercase tracking-[0.2em] font-semibold text-gray-400 mb-8 shadow-sm">
-            <Sparkles className="w-3 h-3 text-[#00E599]" />
+            <Sparkles className="w-3 h-3 text-[#237E45]" />
             <span className="text-gray-300">Intelligent Context</span>
           </div>
 
@@ -57,7 +57,7 @@ export function WrongCardSection() {
               >
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center shrink-0">
-                    <Icon className="w-6 h-6 text-[#00E599]" />
+                    <Icon className="w-6 h-6 text-[#237E45]" />
                   </div>
                   <h3 className="text-[clamp(2rem,4vw,3rem)] font-display font-medium text-white tracking-tight leading-none break-words min-w-0">
                     {activeScenario.title}
@@ -76,7 +76,7 @@ export function WrongCardSection() {
                   {scenarios.map((s, idx) => (
                     <div 
                       key={s.id} 
-                      className={`h-1 rounded-full transition-all duration-500 ${idx === activeIndex ? 'w-8 bg-[#00E599]' : 'w-2 bg-gray-800'}`}
+                      className={`h-1 rounded-full transition-all duration-500 ${idx === activeIndex ? 'w-8 bg-[#237E45]' : 'w-2 bg-gray-800'}`}
                     />
                   ))}
                 </div>
@@ -142,11 +142,11 @@ export function WrongCardSection() {
 
                         {/* 3D Recommendation Card */}
                         <div className="bg-gradient-to-br from-[#121212] to-[#080808] rounded-[24px] p-5 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] ring-1 ring-white/[0.06] relative">
-                          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[#00E599]/0 via-[#00E599]/40 to-[#00E599]/0" />
+                          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[#237E45]/0 via-[#237E45]/40 to-[#237E45]/0" />
                           
                           <div className="flex justify-between items-start mb-5">
                             <div>
-                              <p className="text-[#00E599] text-[9px] font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1">
+                              <p className="text-[#237E45] text-[9px] font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1">
                                 <Sparkles className="w-2.5 h-2.5" /> Best Choice
                               </p>
                               <p className="text-lg font-medium text-white tracking-tight">{activeScenario.card}</p>
@@ -160,13 +160,13 @@ export function WrongCardSection() {
                             </div>
                           </div>
 
-                          <div className="bg-[#00E599]/10 rounded-xl p-3 border border-[#00E599]/20 flex justify-between items-center mb-2">
-                            <span className="text-xs font-semibold text-[#00E599]">Total Savings</span>
-                            <span className="text-lg font-bold text-[#00E599]">{activeScenario.save}</span>
+                          <div className="bg-[#237E45]/10 rounded-xl p-3 border border-[#237E45]/20 flex justify-between items-center mb-2">
+                            <span className="text-xs font-semibold text-[#237E45]">Total Savings</span>
+                            <span className="text-lg font-bold text-[#237E45]">{activeScenario.save}</span>
                           </div>
 
                           <div className="absolute -top-3 -right-3 bg-[#0A0A0A] border border-white/[0.1] rounded-full px-3 py-1 flex items-center gap-1.5 shadow-xl">
-                            <CheckCircle2 className="w-3 h-3 text-[#00E599]" />
+                            <CheckCircle2 className="w-3 h-3 text-[#237E45]" />
                             <span className="text-[10px] font-bold text-white tracking-wider">{activeScenario.confidence}% CONFIDENCE</span>
                           </div>
                         </div>

@@ -26,7 +26,8 @@ export default function PartnerDetailPage() {
         setPartner(p);
 
         if (p) {
-          const userId = profile?.id || 'demo-user-id';
+          const userId = profile?.id;
+          if (!userId) return;
           const data = await CommerceOptimizationService.optimizeCollection(userId, p.id);
           setResults(data);
         }

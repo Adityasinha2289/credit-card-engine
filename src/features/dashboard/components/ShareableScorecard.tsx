@@ -297,12 +297,7 @@ export function ShareableScorecard() {
       <motion.button
         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
         onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-2.5 py-3 px-5 rounded-2xl font-bold text-sm transition-all"
-        style={{
-          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-          boxShadow: '0 4px 20px rgba(99,102,241,0.3)',
-          color: 'white',
-        }}
+        className="w-full flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-full font-bold text-sm transition-all bg-[#237E45] text-[#050806] hover:bg-[#128a4f] shadow-[0_4px_20px_rgba(25,184,106,0.3)]"
       >
         <Share2 size={16} />
         Share My Scorecard
@@ -345,8 +340,7 @@ export function ShareableScorecard() {
                   whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   onClick={handleDownload}
                   disabled={capturing}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm text-white transition-all disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 20px rgba(99,102,241,0.3)' }}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm text-[#050806] bg-[#237E45] hover:bg-[#128a4f] transition-all disabled:opacity-50 shadow-[0_4px_20px_rgba(25,184,106,0.3)]"
                 >
                   <Download size={16} />
                   {capturing ? 'Saving…' : 'Download PNG'}

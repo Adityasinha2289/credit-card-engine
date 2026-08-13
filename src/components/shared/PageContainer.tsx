@@ -1,26 +1,33 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
+import { PageHeader } from './PageHeader';
+
+export interface PageContainerProps {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  children: ReactNode;
+  className?: string;
+  hideHeader?: boolean;
+}
 
 export function PageContainer({
+  eyebrow,
   title,
   subtitle,
   children,
   className,
-}: {
-  title?: string;
-  subtitle?: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
+  hideHeader = false,
+}: PageContainerProps) {
   return (
-    <div className={cn("flex flex-col w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 flex-1", className)}>
-      {(title || subtitle) && (
-        <div className="mb-6 lg:mb-8">
-          {title && <h1 className="text-2xl lg:text-3xl font-display font-bold text-semantic-text-primary tracking-tight">{title}</h1>}
-          {subtitle && <p className="text-sm text-semantic-text-muted mt-1 font-medium tracking-wide">{subtitle}</p>}
-        </div>
+    <div className="w-full max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 pt-8 lg:pt-12 pb-24 flex flex-col flex-1">
+      {!hideHeader && title && (
+        <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
       )}
-      {children}
+      
+      <div className={cn("w-full flex flex-col gap-8", className)}>
+        {children}
+      </div>
     </div>
   );
 }

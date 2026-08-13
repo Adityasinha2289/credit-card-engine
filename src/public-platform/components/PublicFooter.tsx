@@ -1,18 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export function PublicFooter() {
+  const navigate = useNavigate();
   const year = new Date().getFullYear();
   
   const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    toast('Sign up or log in to RenoCred to explore this feature and access all tools.', {
-      style: {
-        background: '#0A0A0A',
-        color: '#fff',
-        border: '1px solid rgba(255,255,255,0.1)'
-      }
-    });
+    navigate('/app');
   };
   return (
     <footer className="border-t border-white/5 bg-[#0f1115] py-16">

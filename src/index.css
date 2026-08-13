@@ -11,17 +11,17 @@
 
 @layer base {
   :root {
-    /* V3 Color System - Quiet Luxury Obsidian + Emerald */
+    /* V3 Color System - Quiet Luxury Obsidian + Emerald (Phase 9.6 Updated) */
     --color-canvas: #050806;
-    --color-shell: #050806; /* Same as canvas for unified feel */
-    --color-surface-secondary: #07100B;
-    --color-surface-primary: #0A1510;
-    --color-surface-card: #0A1510;
-    --color-surface-elevated: #0E1B15;
-    --color-surface-intelligence: #0B2418;
+    --color-shell: #050806; 
+    --color-surface-primary: #07120D;
+    --color-surface-secondary: #07120D;
+    --color-surface-card: #07120D;
+    --color-surface-elevated: #081A12;
+    --color-surface-intelligence: #0A2418;
     
-    --color-brand: #19B86A;
-    --color-brand-strong: #2CCF7A;
+    --color-brand: #237E45;
+    --color-brand-strong: #237E45;
     --color-brand-dark: #0D6B43;
     --color-brand-muted: #4B8F70;
     
@@ -32,7 +32,7 @@
     
     --color-border-subtle: rgba(255, 255, 255, 0.055);
     --color-border-strong: rgba(255, 255, 255, 0.08);
-    --color-border-intelligence: rgba(25, 184, 106, 0.2);
+    --color-border-intelligence: rgba(35, 126, 69, 0.2);
 
     /* Semantic Aliases for backward compatibility */
     --bg-page: var(--color-canvas);
@@ -72,12 +72,12 @@
   }
 
   ::selection {
-    background-color: rgba(0, 229, 153, 0.25);
+    background-color: rgba(35, 126, 69, 0.25);
     color: var(--text-primary);
   }
 
   *:focus-visible {
-    outline: 2px solid rgba(0, 229, 153, 0.5);
+    outline: 2px solid rgba(35, 126, 69, 0.5);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -141,7 +141,7 @@
 
 @layer utilities {
   .text-gradient-emerald {
-    background: linear-gradient(to bottom right, white, #00E599, #056644);
+    background: linear-gradient(to bottom right, white, #237E45, #056644);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -160,7 +160,21 @@
     box-shadow: none !important;
   }
   
-  .cl-footerAction, .cl-lastAuthenticationStrategyBadge {
+  .cl-footerAction {
+    display: none !important;
+  }
+  
+  .cl-footer, .cl-internal-phxnls {
+    display: none !important;
+  }
+
+  .cl-socialButtonsBlockButton {
+    overflow: visible !important;
+    position: relative !important;
+  }
+
+  /* Target all possible Clerk badge classes for 'Last used' */
+  [class*="Badge"], .cl-badge, .cl-socialButtonsBlockButtonBadge, .cl-lastAuthenticationStrategyBadge {
     display: none !important;
   }
   

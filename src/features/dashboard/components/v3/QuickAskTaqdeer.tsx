@@ -103,7 +103,7 @@ export function QuickAskTaqdeer() {
               
               {/* TAQDEER Mark & Headline */}
               <div className="w-14 h-14 rounded-2xl bg-[#111] border border-white/[0.08] flex items-center justify-center mb-8 shadow-2xl">
-                <Sparkles className="w-6 h-6 text-[#00E599]" />
+                <Sparkles className="w-6 h-6 text-[#237E45]" />
               </div>
               
               <h1 className="text-4xl md:text-5xl font-display font-medium text-white mb-4 tracking-tight">
@@ -115,7 +115,7 @@ export function QuickAskTaqdeer() {
 
               {/* HERO COMPOSER */}
               <div className="w-full relative group mb-12 z-20">
-                <div className="absolute inset-[-4px] bg-gradient-to-r from-[#00E599]/0 via-[#00E599]/20 to-[#00E599]/0 blur-xl rounded-[2.5rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="absolute inset-[-4px] bg-gradient-to-r from-[#237E45]/0 via-[#237E45]/20 to-[#237E45]/0 blur-xl rounded-[2.5rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
                 
                 <div className="relative bg-[#0F0F0F] border border-white/[0.1] group-focus-within:border-white/[0.2] rounded-[2rem] shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
                   <textarea
@@ -172,7 +172,7 @@ export function QuickAskTaqdeer() {
                       </div>
                       <div className="flex items-center justify-between border-t border-border-subtle pt-4 mt-2">
                         <span className="text-xs text-gray-500">Saved</span>
-                        <span className="text-sm font-semibold text-[#00E599] group-hover:text-white transition-colors">{rec.saved}</span>
+                        <span className="text-sm font-semibold text-[#237E45] group-hover:text-white transition-colors">{rec.saved}</span>
                       </div>
                     </div>
                   ))}
@@ -203,9 +203,9 @@ export function QuickAskTaqdeer() {
               <motion.div 
                 animate={{ rotate: -360 }}
                 transition={{ duration: 12, repeat: Infinity, ease:"linear" }}
-                className="absolute inset-2 rounded-full border border-dashed border-[#00E599]/30"
+                className="absolute inset-2 rounded-full border border-dashed border-[#237E45]/30"
               />
-              <Sparkles className="w-8 h-8 text-[#00E599] animate-pulse" />
+              <Sparkles className="w-8 h-8 text-[#237E45] animate-pulse" />
             </div>
 
             <div className="flex flex-col items-start gap-4 w-full max-w-sm">
@@ -222,12 +222,12 @@ export function QuickAskTaqdeer() {
                   >
                     <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#111] border border-white/[0.1] shrink-0">
                       {isDone ? (
-                        <Check className="w-3 h-3 text-[#00E599]" />
+                        <Check className="w-3 h-3 text-[#237E45]" />
                       ) : isActive ? (
                         <motion.div 
                           animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
-                          className="w-1.5 h-1.5 rounded-full bg-[#00E599]" 
+                          className="w-1.5 h-1.5 rounded-full bg-[#237E45]" 
                         />
                       ) : (
                         <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
@@ -259,7 +259,7 @@ export function QuickAskTaqdeer() {
                 
                 <div className="flex items-center justify-between w-full border-b border-border-subtle pb-4">
                   <h3 className="text-lg font-display font-medium text-white flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[#00E599]" />
+                    <Sparkles className="w-5 h-5 text-[#237E45]" />
                     Financial Decision Report
                   </h3>
                   <button 
@@ -272,15 +272,15 @@ export function QuickAskTaqdeer() {
 
                 {/* Top Decision Card */}
                 <div className="w-full bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-[2rem] p-1 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/[0.08] relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#00E599]/40 to-transparent" />
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#237E45]/40 to-transparent" />
                   
                   <div className="p-6 md:p-8">
                     <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-4">
-                          <div className="px-3 py-1 rounded-full bg-[#00E599]/10 border border-[#00E599]/20 flex items-center gap-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-[#00E599]" />
-                            <span className="text-[10px] font-bold text-[#00E599] tracking-widest uppercase">98% Confidence</span>
+                          <div className="px-3 py-1 rounded-full bg-[#237E45]/10 border border-[#237E45]/20 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#237E45]" />
+                            <span className="text-[10px] font-bold text-[#237E45] tracking-widest uppercase">98% Confidence</span>
                           </div>
                           <span className="text-xs text-gray-500 font-medium">Optimal Recommendation</span>
                         </div>
@@ -330,7 +330,7 @@ export function QuickAskTaqdeer() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="lg:col-span-2 bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-border-subtle">
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-[#00E599]" />
+                      <Activity className="w-4 h-4 text-[#237E45]" />
                       Decision Breakdown
                     </h4>
                     <div className="prose prose-sm prose-invert max-w-none text-gray-400 leading-relaxed font-light text-base">
@@ -338,7 +338,7 @@ export function QuickAskTaqdeer() {
                         if (line.startsWith('•')) {
                           return (
                             <div key={i} className="flex items-start gap-3 mb-4">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#00E599] mt-2.5 shrink-0" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#237E45] mt-2.5 shrink-0" />
                               <span className="text-gray-300">{line.replace('•', '').replace(/\*\*/g, '').trim()}</span>
                             </div>
                           );
@@ -351,7 +351,7 @@ export function QuickAskTaqdeer() {
 
                   <div className="bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-border-subtle">
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-[#00E599]" />
+                      <ShieldCheck className="w-4 h-4 text-[#237E45]" />
                       Alternatives
                     </h4>
                     <div className="space-y-3">

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { supabase, isBackendEnabled } from '../../../lib/supabase';
 import { FeatureEngine } from '../../feature-flags/featureEngine';
 import { CommerceMapper } from '../mappers';

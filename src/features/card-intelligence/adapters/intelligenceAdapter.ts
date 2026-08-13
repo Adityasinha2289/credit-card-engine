@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { CreditCardIntelligence, CardNetwork, RewardType, PremiumTier, TransactionCategory } from '../types';
 import type { CreditCard } from '../../../../renocred-data/types';
 

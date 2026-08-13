@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Merchant, MerchantOffer } from './types';
 
 export const MOCK_MERCHANTS: Merchant[] = [

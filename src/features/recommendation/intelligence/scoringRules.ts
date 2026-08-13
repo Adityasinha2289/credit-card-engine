@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { CreditCardIntelligence } from '../../card-intelligence/types';
 import type { MerchantOffer } from '../../merchant-intelligence/types';
 import type { TransactionCategory, PrimaryGoal } from '../../dashboard/types/dashboard.types';

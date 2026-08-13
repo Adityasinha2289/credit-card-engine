@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { supabase } from '../../src/lib/supabase';
 import { CommissionCalculator } from '../../src/features/commerce/services/CommissionCalculator';

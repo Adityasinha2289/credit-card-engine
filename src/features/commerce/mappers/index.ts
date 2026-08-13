@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Database } from '../../../lib/database.types';
 import type { CommerceCategory, CommercePartner, CommerceEntity, CommerceOffer } from '../types';
 

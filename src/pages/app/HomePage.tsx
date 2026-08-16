@@ -12,10 +12,19 @@ import {
 } from 'lucide-react';
 import { PageContainer } from '../../components/shared/PageContainer';
 
+import { useUser } from '@clerk/clerk-react';
+import { useProfileQuery, useUserCardsQuery } from '../../hooks/queries';
+
 export default function HomePage() {
   const navigate = useNavigate();
-  const profile = useDashboardStore((s) => s.profile);
-  const userCards = useDashboardStore((s) => s.userCards);
+  const { user } = useUser();
+  const { data: profileQuery } = useProfileQuery(user?.id);
+  const { data: userCardsQuery } = useUserCardsQuery(user?.id);
+  const profileStore = useDashboardStore((s) => s.profile);
+  const userCardsStore = useDashboardStore((s) => s.userCards);
+
+  const profile = profileQuery ?? profileStore;
+  const userCards = userCardsStore;
 
   const [savings, setSavings] = useState<number>(0);
 
@@ -203,7 +212,8 @@ export default function HomePage() {
       </section>
 
       {/* ── 4. FOR YOU (Editorial Recommendation Area) ───────────────────────── */}
-      <section className="relative z-10 grid grid-cols-1 md:grid-cols-[1fr_300px] gap-12 items-start border-t border-white/[0.04] pt-8 md:pt-12 mt-2">
+      {userCards.length > 0 && (
+      <section className="relative z-10 grid grid-cols-1 md:grid-cols-[1fr_340px] lg:grid-cols-[1fr_360px] gap-12 items-start border-t border-white/[0.04] pt-8 md:pt-12 mt-2">
         {/* Main Recommendation (Left Column) */}
         <div className="flex flex-col gap-6">
           <p className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#237E45] flex items-center gap-2">
@@ -309,6 +319,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── 3. LIFESTYLE / DISCOVERY ────────────────────────────────── */}
       <section className="relative z-10 flex flex-col gap-6">

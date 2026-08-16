@@ -7,7 +7,8 @@ describe('ProfileService', () => {
       from: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: { code: '123', message: 'DB Error' } })
+      single: vi.fn().mockResolvedValue({ data: null, error: { code: '123', message: 'DB Error' } }),
+      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: { code: '123', message: 'DB Error' } })
     } as any;
     
     const service = new ProfileService(mockClient);

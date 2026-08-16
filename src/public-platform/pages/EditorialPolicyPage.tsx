@@ -3,14 +3,13 @@ import { ContentMeta } from '../components/ContentMeta';
 
 export function EditorialPolicyPage() {
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-20">
       <SEO 
         title="Editorial Policy | Renocred"
         description="Learn about our commitment to providing clear, accurate, and objective financial information."
         canonicalUrl="https://renocred.com/editorial-policy"
       />
       <h1 className="text-4xl font-display font-bold mb-4 tracking-tight">Editorial Policy</h1>
-      <ContentMeta author="RenoCred Team" role="Credit Intelligence" date="2026-07-25" variant="reviewed" />
       <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
         <p>Renocred is committed to providing clear, accurate, and objective financial information.</p>
         <h2 className="text-2xl font-bold text-white mt-12 mb-4">Accuracy and Verification</h2>

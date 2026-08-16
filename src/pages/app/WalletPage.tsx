@@ -10,10 +10,23 @@ import { CreditCard as PhysicalCard } from '../../features/cards/components/Cred
 import { toast } from 'sonner';
 import AddCardModal from '../../features/dashboard/components/AddCardModal';
 
+import { useUser } from '@clerk/clerk-react';
+import { useProfileQuery, useUserCardsQuery } from '../../hooks/queries';
+import { useDashboardMutations } from '../../hooks/queries/useDashboardMutations';
+import { CardDetailsModal } from '../../features/dashboard/components/CardDetailsModal';
+
 export default function WalletPage() {
-  const { userCards, profile } = useDashboardStore();
+  const { user } = useUser();
+  const { data: profileQuery } = useProfileQuery(user?.id);
+  const { data: userCardsQuery } = useUserCardsQuery(user?.id);
+  const { deleteUserCard } = useDashboardMutations(user?.id);
+  const store = useDashboardStore();
+
+  const profile = profileQuery ?? store.profile;
+  const userCards = store.userCards;
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAddCardModal, setShowAddCardModal] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<any>(null);
 
   const [analysisStatus, setAnalysisStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
   const [coverageData, setCoverageData] = useState<{name: string, value: number}[]>([]);
@@ -226,6 +239,7 @@ export default function WalletPage() {
                       <motion.div
                         key={card.id}
                         whileHover={{ y: -2 }}
+                        onClick={() => setSelectedCard(card)}
                         className={cn(
                           "group relative bg-[#07120D] border border-white/[0.04] hover:border-[#237E45]/20 hover:bg-[#081A12] rounded-[24px] p-6 transition-all duration-300 overflow-hidden cursor-pointer",
                           card.status !== 'active' && "opacity-60 grayscale"
@@ -371,6 +385,18 @@ export default function WalletPage() {
         <AnimatePresence>
           {showAddCardModal && (
             <AddCardModal onClose={() => setShowAddCardModal(false)} />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {selectedCard && (
+            <CardDetailsModal
+              card={selectedCard}
+              onClose={() => setSelectedCard(null)}
+              onRemove={async () => {
+                await deleteUserCard.mutateAsync(selectedCard.id);
+              }}
+            />
           )}
         </AnimatePresence>
     </PageContainer>

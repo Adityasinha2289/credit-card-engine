@@ -430,11 +430,16 @@ interface TransactionFeedProps {
   className?: string;
 }
 
+import { useUser } from '@clerk/clerk-react';
+import { useTransactionsQuery } from '../../../hooks/queries';
+
 export function TransactionFeed({ limit = 12, className }: TransactionFeedProps) {
-  // Bug fix: filter by activeCardId so only relevant transactions show
-  const allTransactions = useDashboardStore(
+  const { user } = useUser();
+  const { data: transactionsQuery } = useTransactionsQuery(user?.id);
+  const allTransactionsStore = useDashboardStore(
     useShallow((s) => s.transactions),
   );
+  const allTransactions = transactionsQuery ?? allTransactionsStore;
   const activeCardId = useDashboardStore((s) => s.activeCardId);
   const [showForm, setShowForm] = useState(false);
 

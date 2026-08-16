@@ -12,6 +12,7 @@ export interface SEOProps {
   twitterCardType?: string;
   twitterTitle?: string;
   twitterDescription?: string;
+  schemaData?: Record<string, any> | Record<string, any>[];
 }
 
 export function SEO({
@@ -26,6 +27,7 @@ export function SEO({
   twitterCardType = 'summary_large_image',
   twitterTitle,
   twitterDescription,
+  schemaData,
 }: SEOProps) {
   useEffect(() => {
     // 1. Update Title
@@ -67,11 +69,19 @@ export function SEO({
     setMetaTag('name', 'twitter:title', twitterTitle || title);
     setMetaTag('name', 'twitter:description', twitterDescription || description);
 
-    // Cleanup logic (optional, but good practice if routes change often)
-    return () => {
-      // In a CSR app, we generally overwrite rather than remove to prevent flashing,
-      // but it's safe since the next route will immediately overwrite them.
-    };
+    // 6. Update JSON-LD Structured Data (AEO & GEO)
+    let scriptJsonLd = document.querySelector('script[id="renocred-jsonld"]');
+    if (schemaData) {
+      if (!scriptJsonLd) {
+        scriptJsonLd = document.createElement('script');
+        scriptJsonLd.setAttribute('id', 'renocred-jsonld');
+        scriptJsonLd.setAttribute('type', 'application/ld+json');
+        document.head.appendChild(scriptJsonLd);
+      }
+      scriptJsonLd.textContent = JSON.stringify(schemaData);
+    } else if (scriptJsonLd) {
+      scriptJsonLd.remove();
+    }
   }, [
     title,
     description,
@@ -84,6 +94,7 @@ export function SEO({
     twitterCardType,
     twitterTitle,
     twitterDescription,
+    schemaData,
   ]);
 
   return null;

@@ -297,7 +297,7 @@ export function ShareableScorecard() {
       <motion.button
         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
         onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-full font-bold text-sm transition-all bg-[#237E45] text-[#050806] hover:bg-[#128a4f] shadow-[0_4px_20px_rgba(25,184,106,0.3)]"
+        className="w-full flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-full font-bold text-sm transition-all bg-emerald-500 text-[#0A0A0A] shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
       >
         <Share2 size={16} />
         Share My Scorecard

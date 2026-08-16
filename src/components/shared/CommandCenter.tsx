@@ -29,7 +29,7 @@ export function CommandCenter() {
     navigate(path);
   };
 
-  const TaqdeerIcon = () => <img src="/taqdeer-logo.jpg" alt="Taqdeer AI" className="w-full h-full object-cover rounded-lg" />;
+  const TaqdeerIcon = () => <img src="/taqdeer-logo.png" alt="Taqdeer AI" className="w-full h-full object-cover rounded-lg" />;
 
   const suggestions = [
     { icon: Compass, label: 'Plan a Trip', path: '/app/lifestyle/plan', badge: 'Popular' },

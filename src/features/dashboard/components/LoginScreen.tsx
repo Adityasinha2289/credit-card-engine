@@ -23,6 +23,7 @@ import type { AppProfile, UserSegment, PrimaryGoal, Occupation } from '../types/
 import { cn } from '../../../lib/utils';
 import type { OnboardingState } from '../../onboarding/OnboardingFlow';
 import { lazy, Suspense } from 'react';
+import { MASTER_CARD_DATASET } from '../../finix/data/masterDataset';
 
 const OnboardingFlow = lazy(() => import('../../onboarding/OnboardingFlow').then(m => ({ default: m.OnboardingFlow })));
 
@@ -131,6 +132,30 @@ export function LoginScreen() {
     };
 
     login(profile);
+    
+    // Process selected credit cards
+    if (state.banks && state.banks.length > 0) {
+      const store = useDashboardStore.getState();
+      state.banks.forEach(cardId => {
+        const fullCard = MASTER_CARD_DATASET.find(c => c.id === cardId);
+        if (fullCard) {
+          store.addUserCard({
+            id: fullCard.id,
+            pan: fullCard.first4Digits + ' **** **** ' + Math.floor(1000 + Math.random() * 9000),
+            cardholderName: profile.name,
+            expiry: '12/28',
+            network: fullCard.network.toLowerCase() as any,
+            bank: fullCard.bank,
+            status: 'active',
+            availableCredit: fullCard.minIncome ? Math.floor(fullCard.minIncome / 12) : 50000,
+            creditLimit: fullCard.minIncome ? Math.floor(fullCard.minIncome / 12) : 50000,
+            label: fullCard.name,
+            gradientFrom: fullCard.gradientFrom || '#1e3c72',
+            gradientTo: fullCard.gradientTo || '#2a5298',
+          });
+        }
+      });
+    }
   };
 
   // During sign-up, show whatever is typed in real time; fall back to signed-in name or placeholder

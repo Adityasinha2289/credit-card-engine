@@ -37,7 +37,7 @@ export default function TaqdeerPage() {
             {messages.map((msg, i) => (
               <div key={i} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden ${msg.role === 'ai' ? 'bg-brand-emerald/20 text-brand-emerald' : 'bg-surface-elevated text-text-muted'}`}>
-                  {msg.role === 'ai' ? <img src="/taqdeer-logo.jpg" alt="AI" className="w-full h-full object-cover" /> : <User size={16} />}
+                  {msg.role === 'ai' ? <img src="/taqdeer-logo.png" alt="AI" className="w-full h-full object-cover" /> : <User size={16} />}
                 </div>
                 <div className={`max-w-[80%] p-4 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-surface-elevated text-text-primary rounded-tr-sm' : 'bg-brand-emerald/5 border border-brand-emerald/20 text-text-primary rounded-tl-sm'}`}>
                   {msg.content}

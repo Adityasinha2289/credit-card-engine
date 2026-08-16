@@ -47,26 +47,39 @@ const OfferManagement = lazy(() => import('./pages/admin/OfferManagement'));
 const OfferForm = lazy(() => import('./pages/admin/OfferForm'));
 const AffiliateManagement = lazy(() => import('./pages/admin/AffiliateManagement'));
 
+import { useQueryClient } from '@tanstack/react-query';
+
 export default function App() {
   const { isLoaded, isSignedIn, user } = useUser();
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
   const [hasAttemptedHydration, setHasAttemptedHydration] = useState(false);
   const profile = useDashboardStore((s) => s.profile);
   const _reset = useDashboardStore((s) => s._reset);
+  const setSupabaseClient = useDashboardStore((s) => s.setSupabaseClient);
   const isHydrated = useHydration();
   const hydrateFromSupabase = useDashboardStore((s) => s.hydrateFromSupabase);
   const [isHydratingFromSupabase, setIsHydratingFromSupabase] = useState(false);
 
-  // Security: Reset store if user signs out or if account changes
+  // Sync Supabase Client instance to store for actions
+  useEffect(() => {
+    if (supabase) {
+      setSupabaseClient(supabase as any);
+    }
+  }, [supabase, setSupabaseClient]);
+
+  // Security: Reset store & clear query cache if user signs out or account changes
   useEffect(() => {
     if (isLoaded) {
       if (!user) {
         _reset();
+        queryClient.clear();
       } else if (profile && profile.id !== user.id) {
         _reset();
+        queryClient.clear();
       }
     }
-  }, [isLoaded, user, profile?.id, _reset]);
+  }, [isLoaded, user, profile?.id, _reset, queryClient]);
 
   // Authentication & Hydration flow
   useEffect(() => {

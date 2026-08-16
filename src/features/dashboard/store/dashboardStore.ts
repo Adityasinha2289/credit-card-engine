@@ -36,7 +36,10 @@ async function safeDbWrite<T>(
     const { data, error } = await operation;
     if (error) {
       console.error(`[DB Error] ${contextMessage}:`, error);
-      toast.error(`Database Error: ${error.message || contextMessage}`);
+      // Suppress schema cache column mismatch errors from user-facing toasts
+      if (error.code !== 'PGRST204' && !error.message?.includes('schema cache')) {
+        toast.error(`Database Error: ${error.message || contextMessage}`);
+      }
       return null;
     }
     return data;
@@ -44,6 +47,59 @@ async function safeDbWrite<T>(
     console.error(`[DB Exception] ${contextMessage}:`, err);
     toast.error(`Network or Database Exception: ${err.message || contextMessage}`);
     return null;
+  }
+}
+
+/** Robust user profile upsert with automatic fallback for unmigrated database columns */
+async function upsertUserProfile(supabaseClient: any, profile: any, contextMessage: string): Promise<boolean> {
+  if (!supabaseClient || !profile?.id) return false;
+
+  const fullPayload = {
+    id: profile.id,
+    email: profile.email,
+    name: profile.name,
+    phone: profile.phone,
+    avatar_url: profile.avatar,
+    salary: profile.salary,
+    credit_score: profile.creditScore,
+    onboarding_completed: profile.onboardingCompleted,
+    user_segment: profile.userSegment,
+    primary_goal: profile.primaryGoal,
+    spend_categories: profile.spendCategories,
+    city: profile.city,
+    occupation: profile.occupation,
+  };
+
+  const corePayload = {
+    id: profile.id,
+    email: profile.email,
+    name: profile.name,
+    phone: profile.phone,
+    avatar_url: profile.avatar,
+    salary: profile.salary,
+    credit_score: profile.creditScore,
+  };
+
+  try {
+    const { error } = await supabaseClient.from('users').upsert(fullPayload);
+    if (error) {
+      if (error.code === 'PGRST204' || error.message?.includes('schema cache') || error.message?.includes('column')) {
+        console.warn(`[DB Schema Notice] Extended profile columns not yet present in Supabase table. Falling back to core columns.`);
+        const { error: coreErr } = await supabaseClient.from('users').upsert(corePayload);
+        if (coreErr) {
+          console.error(`[DB Error] ${contextMessage} (core fallback):`, coreErr);
+          return false;
+        }
+        return true;
+      }
+      console.error(`[DB Error] ${contextMessage}:`, error);
+      toast.error(`Database Error: ${error.message || contextMessage}`);
+      return false;
+    }
+    return true;
+  } catch (err: any) {
+    console.error(`[DB Exception] ${contextMessage}:`, err);
+    return false;
   }
 }
 
@@ -258,31 +314,48 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             }
           });
 
-          // SYNC TO SUPABASE
+          // SYNC TO SUPABASE via ATOMIC RPC
           const { supabaseClient, profile, creditAccounts } = get();
           if (supabaseClient && profile) {
-            await safeDbWrite(
-              (supabaseClient as any).from('transactions').insert({
-                id: newTx.id,
-                user_id: profile.id,
-                card_id: newTx.cardId,
-                merchant: newTx.merchant,
-                amount: newTx.amount,
-                category: newTx.category,
-                type: newTx.type,
-                is_pending: newTx.pending || false,
+            const rpcResult = await safeDbWrite(
+              (supabaseClient as any).rpc('add_transaction_v1', {
+                p_id: newTx.id,
+                p_user_id: profile.id,
+                p_card_id: newTx.cardId,
+                p_merchant: newTx.merchant,
+                p_amount: newTx.amount,
+                p_category: newTx.category,
+                p_type: newTx.type,
+                p_is_pending: newTx.pending || false,
               }),
-              'insert transaction'
+              'atomic add_transaction_v1 RPC'
             );
 
-            const updatedAccount = creditAccounts.find(a => a.cardId === input.cardId);
-            if (updatedAccount) {
+            // Fallback for dev environments if RPC is not yet deployed
+            if (rpcResult === null) {
               await safeDbWrite(
-                (supabaseClient as any).from('credit_accounts')
-                  .update({ current_balance: updatedAccount.currentBalance })
-                  .eq('user_card_id', input.cardId),
-                'update credit account balance'
+                (supabaseClient as any).from('transactions').insert({
+                  id: newTx.id,
+                  user_id: profile.id,
+                  card_id: newTx.cardId,
+                  merchant: newTx.merchant,
+                  amount: newTx.amount,
+                  category: newTx.category,
+                  type: newTx.type,
+                  is_pending: newTx.pending || false,
+                }),
+                'insert transaction fallback'
               );
+
+              const updatedAccount = creditAccounts.find(a => a.cardId === input.cardId);
+              if (updatedAccount) {
+                await safeDbWrite(
+                  (supabaseClient as any).from('credit_accounts')
+                    .update({ current_balance: updatedAccount.currentBalance })
+                    .eq('user_card_id', input.cardId),
+                  'update credit account balance fallback'
+                );
+              }
             }
           }
         },
@@ -326,31 +399,41 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
           const { supabaseClient, profile, creditAccounts } = get();
           if (supabaseClient && profile) {
-            const updatedAccount = creditAccounts.find(a => a.cardId === cardId);
-            const effectivePayment = Math.min(amount, (updatedAccount?.currentBalance ?? 0) + amount);
-            
-            // Insert credit transaction
-            await safeDbWrite(
-              (supabaseClient as any).from('transactions').insert({
-                id: generateId(),
-                user_id: profile.id,
-                card_id: cardId,
-                merchant: 'Bill Payment',
-                amount: -effectivePayment,
-                category: 'other',
-                type: 'credit',
-                is_pending: false,
+            const rpcResult = await safeDbWrite(
+              (supabaseClient as any).rpc('pay_bill_v1', {
+                p_user_id: profile.id,
+                p_card_id: cardId,
+                p_amount: amount,
               }),
-              'insert bill payment transaction'
+              'atomic pay_bill_v1 RPC'
             );
 
-            if (updatedAccount) {
+            if (rpcResult === null) {
+              const updatedAccount = creditAccounts.find(a => a.cardId === cardId);
+              const effectivePayment = Math.min(amount, (updatedAccount?.currentBalance ?? 0) + amount);
+              
               await safeDbWrite(
-                (supabaseClient as any).from('credit_accounts')
-                  .update({ current_balance: updatedAccount.currentBalance })
-                  .eq('user_card_id', cardId),
-                'update credit account balance'
+                (supabaseClient as any).from('transactions').insert({
+                  id: generateId(),
+                  user_id: profile.id,
+                  card_id: cardId,
+                  merchant: 'Bill Payment',
+                  amount: -effectivePayment,
+                  category: 'other',
+                  type: 'credit',
+                  is_pending: false,
+                }),
+                'insert bill payment transaction fallback'
               );
+
+              if (updatedAccount) {
+                await safeDbWrite(
+                  (supabaseClient as any).from('credit_accounts')
+                    .update({ current_balance: updatedAccount.currentBalance })
+                    .eq('user_card_id', cardId),
+                  'update credit account balance fallback'
+                );
+              }
             }
           }
         },
@@ -374,20 +457,8 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE
           const { supabaseClient } = get();
           if (supabaseClient && profile) {
-             const result = await safeDbWrite(
-               (supabaseClient as any).from('users').upsert({
-                  id: profile.id,
-                  email: profile.email,
-                  name: profile.name,
-                  phone: profile.phone,
-                  avatar_url: profile.avatar,
-                  salary: profile.salary,
-                  credit_score: profile.creditScore,
-               }),
-               'sync user profile'
-             );
-
-             if (result !== null) {
+             const success = await upsertUserProfile(supabaseClient, profile, 'sync user profile');
+             if (success) {
                console.log('Successfully saved to Supabase!');
                toast.success('Profile saved to cloud!');
              }
@@ -418,23 +489,15 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE
           const { supabaseClient } = get();
           if (supabaseClient && profile) {
-             await safeDbWrite(
-               (supabaseClient as any).from('users').upsert({
-                  id: profile.id,
-                  email: profile.email,
-                  name: profile.name,
-                  phone: profile.phone,
-                  avatar_url: profile.avatar,
-                  salary: profile.salary,
-                  credit_score: profile.creditScore,
-               }),
-               'update user profile'
-             );
+             await upsertUserProfile(supabaseClient, profile, 'update user profile');
           }
         },
 
-        // ── addUserCard ──────────────────────────────────────────────────────
         async addUserCard(card) {
+          // Check for existing card to avoid duplicates
+          const exists = get().userCards.some(c => c.id === card.id);
+          if (exists) return;
+
           set((state) => {
             const cardholderName = state.profile ? state.profile.name : 'Premium Member';
             const newCard: CardData = {
@@ -463,34 +526,48 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             }
           });
 
-          // SYNC TO SUPABASE
+          // SYNC TO SUPABASE via ATOMIC RPC
           const { supabaseClient, profile } = get();
           if (supabaseClient && profile) {
-            const data = await safeDbWrite(
-              (supabaseClient as any).from('user_cards').insert({
-                user_id: profile.id,
-                card_id: card.id,
-                last_4_digits: card.pan.slice(-4),
-                cardholder_name: profile.name,
-                expiry: card.expiry,
-                credit_limit: card.creditLimit,
-                status: 'active',
-              }).select('id').single(),
-              'add user card'
+            const rpcResult = await safeDbWrite(
+              (supabaseClient as any).rpc('add_user_card_v1', {
+                p_user_id: profile.id,
+                p_card_id: card.id,
+                p_last_4_digits: card.pan.slice(-4),
+                p_cardholder_name: profile.name,
+                p_expiry: card.expiry,
+                p_credit_limit: card.creditLimit,
+              }),
+              'atomic add_user_card_v1 RPC'
             );
 
-            if (data && (data as any).id) {
-              await safeDbWrite(
-                (supabaseClient as any).from('credit_accounts').insert({
+            if (rpcResult === null) {
+              const data = await safeDbWrite(
+                (supabaseClient as any).from('user_cards').insert({
                   user_id: profile.id,
                   card_id: card.id,
-                  user_card_id: (data as any).id,
-                  current_balance: 0,
-                  available_credit: card.creditLimit,
-                  next_statement_date: '2023-10-01',
-                }),
-                'create credit account'
+                  last_4_digits: card.pan.slice(-4),
+                  cardholder_name: profile.name,
+                  expiry: card.expiry,
+                  credit_limit: card.creditLimit,
+                  status: 'active',
+                }).select('id').single(),
+                'add user card fallback'
               );
+
+              if (data && (data as any).id) {
+                await safeDbWrite(
+                  (supabaseClient as any).from('credit_accounts').insert({
+                    user_id: profile.id,
+                    card_id: card.id,
+                    user_card_id: (data as any).id,
+                    current_balance: 0,
+                    available_credit: card.creditLimit,
+                    next_statement_date: '2023-10-01',
+                  }),
+                  'create credit account fallback'
+                );
+              }
             }
           }
         },
@@ -506,11 +583,11 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               state.activeCardId = state.userCards.length > 0 ? state.userCards[0].id : '';
             }
           });
-          const { supabaseClient } = get();
-          if (supabaseClient) {
-            // cardId here is the master card_id, so we delete by card_id
+          const { supabaseClient, profile } = get();
+          if (supabaseClient && profile) {
+            // Scope deletion strictly by card_id and authenticated user_id
             await safeDbWrite(
-              (supabaseClient as any).from('user_cards').delete().eq('card_id', cardId),
+              (supabaseClient as any).from('user_cards').delete().eq('card_id', cardId).eq('user_id', profile.id),
               'delete user card'
             );
           }
@@ -666,6 +743,12 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                 avatar: userRow.avatar_url || clerkAvatar,
                 salary: userRow.salary,
                 creditScore: userRow.credit_score,
+                onboardingCompleted: userRow.onboarding_completed || get().profile?.onboardingCompleted || false,
+                userSegment: userRow.user_segment ?? get().profile?.userSegment,
+                primaryGoal: userRow.primary_goal ?? get().profile?.primaryGoal,
+                spendCategories: userRow.spend_categories ?? get().profile?.spendCategories,
+                city: userRow.city ?? get().profile?.city,
+                occupation: userRow.occupation ?? get().profile?.occupation,
              };
              
              // Fetch Cards
@@ -796,16 +879,9 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
          * across reloads if the browser was closed mid-action.
          */
         partialize: (state) => ({
-          transactions:   state.transactions,
-          creditAccounts: state.creditAccounts,
-          rewards:        state.rewards,
-          activeCardId:   state.activeCardId,
-          profile:        state.profile,
-          userCards:      state.userCards,
-          subscriptions:  state.subscriptions,
-          milestones:     state.milestones,
-          offers:         state.offers,
-          budgets:        state.budgets,
+          activeCardId: state.activeCardId,
+          profile: state.profile,
+          userCards: state.userCards,
         }),
 
         /**

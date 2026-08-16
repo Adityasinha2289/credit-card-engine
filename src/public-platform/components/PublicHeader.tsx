@@ -1,6 +1,9 @@
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { interactivePrimary, interactiveSecondary } from '../../motion';
+import { CardsMegaMenu } from './header/CardsMegaMenu';
+import { ChevronDown } from 'lucide-react';
 
 // Wrap Link to allow Framer Motion props
 const MotionLink = motion.create ? motion.create(Link as any) : motion(Link as any);
@@ -9,6 +12,19 @@ const MotionAnchor = motion.a;
 export function PublicHeader() {
   const { scrollY } = useScroll();
   const shouldReduceMotion = useReducedMotion();
+  const [isCardsMenuOpen, setIsCardsMenuOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsCardsMenuOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsCardsMenuOpen(false);
+    }, 150); // slight delay to prevent flickering when moving to dropdown
+  };
 
   // Continuous GPU-accelerated interpolation (0px to 50px of scroll)
   const backgroundColor = useTransform(
@@ -56,7 +72,7 @@ export function PublicHeader() {
         WebkitBackdropFilter: backdropBlur,
       }}
     >
-      <div className="mx-auto max-w-7xl px-6 flex items-center justify-between">
+      <div className="mx-auto max-w-7xl px-6 flex items-center justify-between relative">
         
         {/* Logo */}
         <MotionLink 
@@ -71,29 +87,44 @@ export function PublicHeader() {
         
         {/* Links */}
         <nav className="hidden md:flex items-center gap-8">
-          <MotionLink 
-            to="/" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
-          >
-            Home
-          </MotionLink>
           <MotionAnchor 
-            href="#product" 
+            href="/#product" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
             className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
           >
             Product
           </MotionAnchor>
+          
+          <div 
+            className="relative h-full flex items-center"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <MotionLink 
+              to="/cards"
+              whileHover={hoverPhysicsSecondary}
+              whileTap={tapPhysicsSecondary}
+              className={`text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 flex items-center gap-1 ${isCardsMenuOpen ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+            >
+              Cards <ChevronDown size={14} className={`transition-transform duration-200 ${isCardsMenuOpen ? 'rotate-180 text-semantic-brand-strong' : ''}`} />
+            </MotionLink>
+            <AnimatePresence>
+              {isCardsMenuOpen && (
+                <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                  <CardsMegaMenu onClose={() => setIsCardsMenuOpen(false)} />
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <MotionAnchor 
-            href="#ai" 
+            href="/#how-it-works" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
             className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
           >
-            Intelligence
+            How It Works
           </MotionAnchor>
           <MotionLink 
             to="/methodology" 
@@ -103,26 +134,25 @@ export function PublicHeader() {
           >
             Methodology
           </MotionLink>
-          <MotionLink 
-            to="/about" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
-          >
-            About
-          </MotionLink>
         </nav>
         
         {/* CTAs */}
-        <div className="flex items-center gap-6">
-
+        <div className="flex items-center gap-4">
           <MotionLink 
-            to="/app" 
+            to="/app#log-in" 
+            whileHover={hoverPhysicsSecondary}
+            whileTap={tapPhysicsSecondary}
+            className="hidden md:block text-sm font-medium text-gray-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
+          >
+            Log In
+          </MotionLink>
+          <MotionLink 
+            to="/app#sign-up" 
             whileHover={hoverPhysicsPrimary}
             whileTap={tapPhysicsPrimary}
-            className="relative overflow-hidden bg-gradient-to-b from-[#2a9652] to-[#1e6e3c] text-white text-sm font-bold py-2 px-6 rounded-full transition-all shadow-[0_8px_24px_-6px_rgba(35,126,69,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)] ring-1 ring-white/10 hover:shadow-[0_12px_32px_-8px_rgba(35,126,69,0.7),inset_0_1px_1px_rgba(255,255,255,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#237E45]/50 hover:-translate-y-0.5 hover:brightness-110 [text-shadow:0_1px_2px_rgba(0,0,0,0.2)]"
+            className="bg-emerald-500 text-[#0A0A0A] text-sm font-semibold py-2.5 px-6 rounded-full transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
           >
-            Open App
+            Get Started
           </MotionLink>
         </div>
 

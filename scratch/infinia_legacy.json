@@ -1,0 +1,324 @@
+{
+  "id": "hdfc-infinia-metal",
+  "card_title": "HDFC Infinia Metal credit card",
+  "overview": null,
+  "best_suited_for": [
+    "Entertainment",
+    "Travel",
+    "Hotel Transfer",
+    "Pay by Points"
+  ],
+  "fees": {
+    "joining_fee": 3,
+    "annual_fee": null,
+    "return_percentage": "Apply Now"
+  },
+  "source_id": "hdfc-infinia-metal",
+  "extraction_timestamp": "2026-08-02T04:00:00Z",
+  "schema_version": "1.0",
+  "rewards": [
+    {
+      "points": 5.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Base Rewards",
+      "raw_text": "Earn 5 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 50.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Jockey via SmartBuy",
+      "raw_text": "Earn 50 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 50.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "IGP via SmartBuy",
+      "raw_text": "Earn 50 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 50.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "PharmEasy via SmartBuy",
+      "raw_text": "Earn 50 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 50.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Hotels",
+      "raw_text": "Earn 50 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Gift Cards via SmartBuy",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "RedBus via SmartBuy",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Flights",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Holidays via SmartBuy",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Myntra via SmartBuy",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Duty Free (Adani One) via Smartbuy",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Drivado via SmartBuy",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 25.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Apple via SmartBuy",
+      "raw_text": "Earn 25 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 15.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Trains via SmartBuy",
+      "raw_text": "Earn 15 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 5.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "International",
+      "raw_text": "Earn 5 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 5.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Insurance",
+      "raw_text": "Earn 5 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 5.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Telecom & Cable",
+      "raw_text": "Earn 5 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 5.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Utilities",
+      "raw_text": "Earn 5 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 5.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Grocery",
+      "raw_text": "Earn 5 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 5.0,
+      "spend": 150,
+      "point_type": "Reward Points",
+      "category": "Education",
+      "raw_text": "Earn 5 Reward Points per ₹150 spent"
+    },
+    {
+      "points": 0.0,
+      "spend": 0,
+      "point_type": "Unknown",
+      "category": "Wallets",
+      "raw_text": "No Reward Points on this category."
+    },
+    {
+      "points": 0.0,
+      "spend": 0,
+      "point_type": "Unknown",
+      "category": "EMI",
+      "raw_text": "No Reward Points on this category."
+    },
+    {
+      "points": 0.0,
+      "spend": 0,
+      "point_type": "Unknown",
+      "category": "Government",
+      "raw_text": "No Reward Points on this category."
+    },
+    {
+      "points": 0.0,
+      "spend": 0,
+      "point_type": "Unknown",
+      "category": "Rent",
+      "raw_text": "No Reward Points on this category."
+    },
+    {
+      "points": 0.0,
+      "spend": 0,
+      "point_type": "Unknown",
+      "category": "UPI",
+      "raw_text": "No Reward Points on this category."
+    },
+    {
+      "points": 0.0,
+      "spend": 0,
+      "point_type": "Unknown",
+      "category": "Fuel",
+      "raw_text": "No Reward Points on this category."
+    }
+  ],
+  "benefits": [],
+  "lounge": [
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": null,
+      "category": "",
+      "raw_text": "Limit:Unlimited"
+    },
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": "No explicit spend condition",
+      "category": "",
+      "raw_text": "Eligibility Criteria:No explicit spend condition"
+    },
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": null,
+      "category": "",
+      "raw_text": "Limit:Unlimited"
+    },
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": "Unlimited through Priority Pass membership",
+      "category": "",
+      "raw_text": "Eligibility Criteria:Unlimited through Priority Pass membership"
+    },
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": null,
+      "category": "",
+      "raw_text": "Limit:Unlimited"
+    },
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": "As per primary card.",
+      "category": "",
+      "raw_text": "Eligibility Criteria:As per primary card."
+    },
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": null,
+      "category": "",
+      "raw_text": "Limit:Unlimited"
+    },
+    {
+      "limit": null,
+      "frequency": null,
+      "eligibility": "Unlimited through Priority Pass membership",
+      "category": "",
+      "raw_text": "Eligibility Criteria:Unlimited through Priority Pass membership"
+    }
+  ],
+  "milestones": [
+    {
+      "category": null,
+      "details": [
+        "Spent:₹0",
+        "Cycle Type:Statement"
+      ],
+      "text": null
+    },
+    {
+      "category": null,
+      "details": [
+        "Spent:₹1000000",
+        "Cycle Type:Statement"
+      ],
+      "text": null
+    }
+  ],
+  "redemption": [
+    {
+      "category": null,
+      "details": [],
+      "text": ""
+    },
+    {
+      "category": null,
+      "details": [],
+      "text": ""
+    },
+    {
+      "category": null,
+      "details": [],
+      "text": ""
+    },
+    {
+      "category": null,
+      "details": [],
+      "text": ""
+    }
+  ],
+  "eligibility": [],
+  "issuer": "HDFC",
+  "network": "Visa",
+  "card_categories": [
+    "Lifestyle",
+    "Rewards"
+  ],
+  "minimum_income": 3600000,
+  "minimum_income_type": null,
+  "minimum_cibil": 780,
+  "card_tier": "Ultra Premium",
+  "data_confidence": {
+    "issuer": "legacy",
+    "network": "legacy",
+    "minimum_income": "legacy",
+    "minimum_cibil": "legacy",
+    "card_categories": "unknown",
+    "card_tier": "unknown"
+  },
+  "annual_fee": 12500,
+  "fee_waiver_spend": 1000000,
+  "welcome_bonus": "₹12,500 joining bonus"
+}

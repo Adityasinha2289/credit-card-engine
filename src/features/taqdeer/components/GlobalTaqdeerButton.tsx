@@ -45,7 +45,7 @@ export function GlobalTaqdeerButton({ onClick, isOpen }: GlobalTaqdeerButtonProp
             isOpen ? "border-[#237E45] text-[#237E45]" : "text-white/90"
           )}
         >
-          <img src="/taqdeer-logo.jpg" alt="Taqdeer AI" className="w-full h-full object-cover rounded-2xl" />
+          <img src="/taqdeer-logo.png" alt="Taqdeer AI" className="w-full h-full object-cover rounded-2xl" />
         </button>
       </div>
     </div>

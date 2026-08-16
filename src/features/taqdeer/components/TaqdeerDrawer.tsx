@@ -113,7 +113,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                       ? 'bg-semantic-surface-intelligence border-semantic-border-intelligence text-semantic-brand' 
                       : 'bg-[#1e1e1e] border-white/10 text-white/50'
                   )}>
-                    {msg.role === 'ai' ? <img src="/taqdeer-logo.jpg" alt="AI" className="w-full h-full object-cover" /> : <User size={12} />}
+                    {msg.role === 'ai' ? <img src="/taqdeer-logo.png" alt="AI" className="w-full h-full object-cover" /> : <User size={12} />}
                   </div>
                   <div className={cn(
                     "max-w-[85%] p-3 text-[13px] leading-relaxed whitespace-pre-wrap border",
@@ -128,7 +128,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
               {isTyping && (
                 <div className="flex gap-3">
                   <div className="w-6 h-6 mt-0.5 rounded-full flex items-center justify-center shrink-0 border overflow-hidden bg-semantic-surface-intelligence border-semantic-border-intelligence text-semantic-brand">
-                    <img src="/taqdeer-logo.jpg" alt="AI" className="w-full h-full object-cover" />
+                    <img src="/taqdeer-logo.png" alt="AI" className="w-full h-full object-cover" />
                   </div>
                   <div className="max-w-[85%] p-3 text-[13px] leading-relaxed bg-[#1e1e1e] border border-white/5 text-white/90 rounded-2xl rounded-tl-sm">
                     <span className="flex gap-1 items-center h-4">

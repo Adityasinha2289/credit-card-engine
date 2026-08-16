@@ -44,22 +44,21 @@ export function HeroSection() {
           animate="show"
         >
 
-          
-          <motion.h1 variants={fadeUpVariant} className="text-[clamp(3rem,6vw,5.5rem)] font-display font-medium mb-6 md:mb-8 tracking-[-0.03em] leading-[1.05] text-white break-words w-full">
-            Absolute certainty. <br/>
-            <span className="text-gray-500">Every time you pay.</span>
+          <motion.h1 variants={fadeUpVariant} className="text-[clamp(2.5rem,5vw,4.5rem)] font-display font-medium mb-6 md:mb-8 tracking-[-0.03em] leading-[1.05] text-white break-words w-full">
+            Your wallet has more potential.<br/>
+            <span className="text-gray-500">RenoCred helps you unlock it.</span>
           </motion.h1>
           
-          <motion.p variants={fadeUpVariant} className="text-[clamp(1rem,2vw,1.125rem)] text-gray-400 mb-10 md:mb-12 max-w-lg leading-[1.7] font-light">
-            We analyze your cards, current offers, and purchase history in milliseconds to guarantee maximum return on every transaction. You simply swipe.
+          <motion.p variants={fadeUpVariant} className="text-[clamp(1rem,1.5vw,1.125rem)] text-gray-400 mb-10 md:mb-12 max-w-lg leading-[1.7] font-light">
+            RenoCred understands your cards, spending patterns, and financial preferences to provide personalized recommendations.
           </motion.p>
           
           <motion.div variants={fadeUpVariant} className="flex flex-col sm:flex-row items-center gap-5 w-full sm:w-auto">
-            <MotionButton intent="primary" className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-b from-[#2a9652] to-[#1e6e3c] text-white font-bold px-10 py-4 rounded-full flex items-center justify-center gap-3 transition-all shadow-[0_8px_32px_-8px_rgba(35,126,69,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)] ring-1 ring-white/10 hover:shadow-[0_16px_48px_-12px_rgba(35,126,69,0.7),inset_0_1px_1px_rgba(255,255,255,0.3)] hover:-translate-y-0.5 hover:brightness-110 [text-shadow:0_1px_2px_rgba(0,0,0,0.2)]">
-              Analyze My Wallet
+            <MotionButton onClick={() => window.location.href = '/app#sign-up'} intent="primary" className="group w-full sm:w-auto bg-emerald-500 text-[#0A0A0A] font-semibold px-10 py-4 rounded-full flex items-center justify-center gap-3 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50">
+              Start Optimizing
             </MotionButton>
-            <MotionButton intent="secondary" className="w-full sm:w-auto bg-transparent text-gray-300 font-medium px-8 py-4 rounded-xl flex items-center justify-center gap-2 hover:text-white transition-colors">
-              See How It Works <ArrowRight className="w-4 h-4" />
+            <MotionButton onClick={() => document.getElementById('product')?.scrollIntoView({ behavior: 'smooth' })} intent="secondary" className="w-full sm:w-auto bg-transparent text-gray-300 font-medium px-8 py-4 rounded-xl flex items-center justify-center gap-2 hover:text-white transition-colors">
+              Explore RenoCred <ArrowRight className="w-4 h-4" />
             </MotionButton>
           </motion.div>
 

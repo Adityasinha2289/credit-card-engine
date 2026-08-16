@@ -46,7 +46,7 @@ describe('Payment Method Integration', () => {
       const selectMock = vi.fn().mockReturnValue({ eq: eqMock1 });
       (supabase!.from as any).mockReturnValue({ select: selectMock });
 
-      const results = await PaymentMethodRepository.getPaymentMethods('user-1');
+      const results = await PaymentMethodRepository.getPaymentMethods(supabase as any, 'user-1');
       const pm = results[0];
 
       expect(pm.id).toBe('pm-1');
@@ -68,7 +68,7 @@ describe('Payment Method Integration', () => {
       const updateMock = vi.fn().mockReturnValue({ eq: eqMock1 });
       (supabase!.from as any).mockReturnValue({ update: updateMock });
 
-      await PaymentMethodRepository.updateUserMetadata('user-1', 'pm-1', 'My Custom Name');
+      await PaymentMethodRepository.updateUserMetadata(supabase as any, 'user-1', 'pm-1', 'My Custom Name');
       
       // Prove that it ONLY passes `name` to the update query
       expect(updateMock).toHaveBeenCalledWith({ name: 'My Custom Name' });

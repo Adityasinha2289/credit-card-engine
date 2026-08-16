@@ -14,14 +14,14 @@ interface AICuratedWalletProps {
 }
 
 export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId, context = 'Swiggy' }: AICuratedWalletProps) {
-  // If no cards, don't render (handled by empty state in parent)
-  if (cards.length === 0) return null;
-
   // The AI's primary recommendation
-  const topPickId = bestCardId || cards[0].id;
+  const topPickId = bestCardId || cards[0]?.id || '';
   
   // State for which card is currently taking the hero spot
   const [activeCardId, setActiveCardId] = useState<string>(topPickId);
+
+  // If no cards, don't render (handled by empty state in parent)
+  if (cards.length === 0) return null;
 
   // Cards to display in the mini gallery
   const otherCards = cards.filter(c => c.id !== activeCardId);

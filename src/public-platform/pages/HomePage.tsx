@@ -1,37 +1,40 @@
 import { SEO } from '../components/SEO';
+import { getOrganizationSchema, getWebSiteSchema } from '../lib/schemaBuilders';
 import { HeroSection } from '../components/home/HeroSection';
-import { InteractiveDemoSection } from '../components/home/InteractiveDemoSection';
-import { WrongCardSection } from '../components/home/WrongCardSection';
-import { ProductShowcaseSection } from '../components/home/ProductShowcaseSection';
-import { HowTaqdeerThinksSection } from '../components/home/HowTaqdeerThinksSection';
+import { WhatItDoesSection } from '../components/home/WhatItDoesSection';
+import { FeatureShowcase } from '../components/home/FeatureShowcase';
+import { SmartRecommendations } from '../components/home/SmartRecommendations';
+import { WalletUnderstood } from '../components/home/WalletUnderstood';
+import { UseCasesSection } from '../components/home/UseCasesSection';
+import { DifferentiationSection } from '../components/home/DifferentiationSection';
+import { PersonalizationSection } from '../components/home/PersonalizationSection';
 import { TrustSection } from '../components/home/TrustSection';
-import { RealSavingsSection } from '../components/home/RealSavingsSection';
+import { VisionSection } from '../components/home/VisionSection';
 import { CtaSection } from '../components/home/CtaSection';
 
 export function HomePage() {
   return (
-    <div className="flex-1 flex flex-col relative w-full bg-[#0A0A0A] text-white selection:bg-brand-emerald-glow font-sans">
+    <div className="flex-1 flex flex-col relative w-full bg-[#050505] text-white selection:bg-brand-emerald-glow font-sans">
       <SEO 
-        title="RenoCred | The Intelligent Financial Operating System"
-        description="RenoCred analyzes your cards, rewards, merchant offers and spending patterns to recommend the smartest payment option before every purchase."
-        canonicalUrl="https://www.renocred.com/"
+        title="RenoCred | Intelligent Financial Optimization"
+        description="RenoCred understands your cards, spending, and financial preferences to provide personalized recommendations. Stop leaving money on the table."
+        canonicalUrl="https://renocred.com/"
+        schemaData={[getOrganizationSchema(), getWebSiteSchema()]}
       />
       
       <main className="w-full flex flex-col">
         <HeroSection />
-        <InteractiveDemoSection />
-        <WrongCardSection />
-        <ProductShowcaseSection />
-        <HowTaqdeerThinksSection />
+        <WhatItDoesSection />
+        <FeatureShowcase />
+        <SmartRecommendations />
+        <WalletUnderstood />
+        <UseCasesSection />
+        <DifferentiationSection />
+        <PersonalizationSection />
         <TrustSection />
-        <RealSavingsSection />
+        <VisionSection />
         <CtaSection />
       </main>
-
-      {/* Minimal Footer */}
-      <footer className="w-full py-12 bg-[#050505] text-center border-t border-white/[0.04] text-gray-500 text-sm">
-        <p>© {new Date().getFullYear()} RenoCred. All rights reserved.</p>
-      </footer>
     </div>
   );
 }

@@ -48,7 +48,6 @@ export function AboutPage() {
           We built RenoCred to solve a simple problem: maximizing credit card rewards and financial value is entirely too complicated.
         </motion.p>
         <div className="max-w-2xl mx-auto mt-8 flex justify-center">
-          <ContentMeta author="RenoCred Team" role="Credit Intelligence" date="2026-07-25" />
         </div>
       </section>
 

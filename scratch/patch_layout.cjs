@@ -27,15 +27,14 @@ for (let i = startIndex; i < content.length; i++) {
 const returnIndex = content.indexOf('return (', startIndex);
 const hookCode = content.substring(startIndex, returnIndex);
 
-// Add totalOutstanding computation
 const updatedHookCode = hookCode.replace(
   'const availablePoints = rewards.totalPoints - rewards.redeemedPoints;',
-  \`const availablePoints = rewards.totalPoints - rewards.redeemedPoints;
-  const totalOutstanding = creditAccounts.reduce((acc, account) => acc + account.currentBalance, 0);\`
+  `const availablePoints = rewards.totalPoints - rewards.redeemedPoints;
+  const totalOutstanding = creditAccounts.reduce((acc, account) => acc + account.currentBalance, 0);`
 );
 
 // We'll rewrite the JSX return completely.
-const newJSX = \`return (
+const newJSX = `return (
     <div className="max-w-4xl mx-auto pb-24 text-text-primary bg-black min-h-screen">
       
       {/* ── 1. GREETINGS & SAVINGS ────────────────────────────────────── */}

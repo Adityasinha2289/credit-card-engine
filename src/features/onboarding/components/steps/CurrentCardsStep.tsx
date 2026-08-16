@@ -3,21 +3,8 @@ import { SectionHeading, SectionDescription } from '../primitives/Typography';
 import { ContinueButton, BackButton, SkipButton } from '../primitives/Buttons';
 import { motion } from 'framer-motion';
 import { Search, Check } from 'lucide-react';
-
-const TOP_BANKS = [
-  { id: 'hdfc', name: 'HDFC Bank' },
-  { id: 'sbi', name: 'SBI Card' },
-  { id: 'icici', name: 'ICICI Bank' },
-  { id: 'axis', name: 'Axis Bank' },
-  { id: 'amex', name: 'American Express' },
-  { id: 'kotak', name: 'Kotak Mahindra' },
-  { id: 'indusind', name: 'IndusInd Bank' },
-  { id: 'yes', name: 'YES Bank' },
-  { id: 'rbl', name: 'RBL Bank' },
-  { id: 'sc', name: 'Standard Chartered' },
-  { id: 'citi', name: 'Citibank' },
-  { id: 'bob', name: 'Bank of Baroda' },
-];
+import { MASTER_CARD_DATASET } from '../../../finix/data/masterDataset';
+import { CreditCard as PhysicalCard } from '../../../cards/components/CreditCard';
 
 interface CurrentCardsStepProps {
   onBack: () => void;
@@ -26,14 +13,17 @@ interface CurrentCardsStepProps {
 }
 
 export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: CurrentCardsStepProps) {
-  const [selectedBanks, setSelectedBanks] = useState<string[]>(initialValues);
+  const [selectedCards, setSelectedCards] = useState<string[]>(initialValues);
   const [search, setSearch] = useState('');
 
-  const filteredBanks = TOP_BANKS.filter(b => b.name.toLowerCase().includes(search.toLowerCase()));
+  // Only show first 12 cards if no search, otherwise show matched cards
+  const filteredCards = search 
+    ? MASTER_CARD_DATASET.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || c.bank.toLowerCase().includes(search.toLowerCase()))
+    : MASTER_CARD_DATASET.slice(0, 12);
 
-  const toggleBank = (id: string) => {
-    setSelectedBanks(prev =>
-      prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]
+  const toggleCard = (id: string) => {
+    setSelectedCards(prev =>
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
     );
   };
 
@@ -57,7 +47,7 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
         className="text-sm mb-8"
         style={{ color: '#6E7471' }}
       >
-        Select all banks you hold cards with.
+        Search and select the credit cards you currently hold.
       </motion.p>
 
       {/* Search */}
@@ -69,7 +59,7 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search banks..."
+          placeholder="Search for your credit cards..."
           className="w-full rounded-[16px] py-3.5 pl-11 pr-4 text-sm font-medium outline-none transition-all duration-200"
           style={{
             backgroundColor: '#0C0D0D',
@@ -81,33 +71,34 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
         />
       </div>
 
-      {/* Bank grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-14 max-h-[40vh] overflow-y-auto pr-1"
+      {/* Card grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-14 max-h-[45vh] overflow-y-auto pr-1"
         style={{ scrollbarWidth: 'thin', scrollbarColor: '#232626 transparent' }}
       >
-        {filteredBanks.map((bank, idx) => {
-          const isSelected = selectedBanks.includes(bank.id);
+        {filteredCards.map((card, idx) => {
+          const isSelected = selectedCards.includes(card.id);
+          const fakeLast4 = ((card.id.length * 17) % 9000 + 1000).toString();
+          const networkKey = (card.network?.toLowerCase() === 'rupay' ? 'rupay' : card.network?.toLowerCase() || 'visa') as any;
 
           return (
             <motion.button
-              key={bank.id}
-              onClick={() => toggleBank(bank.id)}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.97 }}
+              key={card.id}
+              onClick={() => toggleCard(card.id)}
+              whileHover={{ y: -3, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: idx * 0.02 }}
-              className="relative p-4 rounded-[16px] flex flex-col items-center justify-center gap-3 transition-all duration-300"
+              transition={{ duration: 0.3, delay: Math.min(idx * 0.02, 0.3) }}
+              className="group relative p-3.5 rounded-[20px] flex flex-col items-center justify-between gap-3 transition-all duration-300 text-center overflow-hidden"
               style={{
-                backgroundColor: isSelected ? '#121414' : '#0C0D0D',
+                backgroundColor: isSelected ? '#121715' : '#0C0D0D',
                 border: `1px solid ${isSelected ? '#5D8F74' : '#232626'}`,
-                boxShadow: isSelected ? '0 4px 15px rgba(93,143,116,0.1)' : 'none',
-                minHeight: 88,
+                boxShadow: isSelected ? '0 8px 24px rgba(93,143,116,0.18)' : 'none',
               }}
             >
-              {/* Checkmark */}
+              {/* Checkmark indicator */}
               <motion.div
-                className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full flex items-center justify-center"
+                className="absolute top-2.5 right-2.5 z-20 w-6 h-6 rounded-full flex items-center justify-center shadow-md"
                 initial={false}
                 animate={{
                   opacity: isSelected ? 1 : 0,
@@ -116,27 +107,42 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
                 }}
                 transition={{ duration: 0.2 }}
               >
-                <Check size={10} strokeWidth={3} color="#F4F4F2" />
+                <Check size={12} strokeWidth={3} color="#F4F4F2" />
               </motion.div>
 
-              {/* Bank initial as placeholder */}
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{
-                  backgroundColor: isSelected ? 'rgba(93,143,116,0.15)' : '#1a1c1c',
-                }}
-              >
-                <span className="font-display font-bold text-sm"
-                  style={{ color: isSelected ? '#5D8F74' : '#6E7471' }}
-                >
-                  {bank.name.charAt(0)}
-                </span>
+              {/* Miniature 2D Physical Card */}
+              <div className="w-full flex items-center justify-center pt-2 pb-1 relative">
+                <div className="w-full max-w-[200px] transition-transform duration-300 group-hover:scale-105">
+                  <PhysicalCard
+                    card={{
+                      id: card.id,
+                      pan: `${card.first4Digits || '4532'} •••• •••• ${fakeLast4}`,
+                      cardholderName: 'RENOCRED MEMBER',
+                      expiry: '12/28',
+                      network: networkKey,
+                      bank: card.bank,
+                      status: 'active',
+                      availableCredit: 0,
+                      creditLimit: 0,
+                      label: card.name,
+                    }}
+                    variant="compact"
+                  />
+                </div>
               </div>
 
-              <span className="text-xs font-medium text-center leading-tight"
-                style={{ color: isSelected ? '#F4F4F2' : '#A4A8A6' }}
-              >
-                {bank.name}
-              </span>
+              <div className="flex flex-col items-center w-full px-1 pb-1">
+                <span className="text-xs font-semibold text-center leading-snug line-clamp-1 mb-1 transition-colors"
+                  style={{ color: isSelected ? '#F4F4F2' : '#D1D5DB' }}
+                >
+                  {card.name}
+                </span>
+                <span className="text-[10px] text-center font-medium"
+                  style={{ color: isSelected ? '#5D8F74' : '#6E7471' }}
+                >
+                  {card.bank} • {card.network}
+                </span>
+              </div>
             </motion.button>
           );
         })}
@@ -149,7 +155,7 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
         className="flex items-center gap-4"
       >
         <BackButton onClick={onBack}>Back</BackButton>
-        <ContinueButton onClick={() => onContinue(selectedBanks)}>
+        <ContinueButton onClick={() => onContinue(selectedCards)}>
           Finish Setup
         </ContinueButton>
       </motion.div>

@@ -59,6 +59,7 @@ export function ProfileTab() {
   const [occupation, setOccupation] = useState<Occupation | undefined>(profile?.occupation);
   const [isOccupationDropdownOpen, setIsOccupationDropdownOpen] = useState(false);
   const [city, setCity] = useState(profile?.city || '');
+  const [spendCategories] = useState<string[]>(profile?.spendCategories || []);
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -111,6 +112,7 @@ export function ProfileTab() {
       creditScore,
       userSegment,
       primaryGoal,
+      spendCategories,
       occupation,
       city: city.trim() || undefined,
       onboardingCompleted: true,
@@ -438,6 +440,30 @@ export function ProfileTab() {
 
             <hr className="border-white/[0.04]" />
 
+            {/* TOP SPEND PRIORITIES */}
+            <section className="space-y-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Top Spend Priorities</span>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-white/90">Your declared focus areas</h3>
+                <p className="text-sm text-white/50">These priorities help shape your card and marketplace recommendations.</p>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                {spendCategories.length > 0 ? spendCategories.map((category) => (
+                  <div key={category} className="py-2.5 px-5 rounded-full bg-[#121414] border border-[#237E45]/20 text-[#F2F4F2] text-sm font-medium capitalize">
+                    {category}
+                  </div>
+                )) : (
+                  <p className="text-sm text-white/30 italic">No priorities selected during onboarding.</p>
+                )}
+              </div>
+            </section>
+
+            <hr className="border-white/[0.04]" />
+
             {/* SHARE SECTION */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
@@ -477,7 +503,7 @@ export function ProfileTab() {
               
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-[#237E45] text-[#050806] hover:bg-[#128a4f] py-3.5 px-8 rounded-full font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-emerald-500 text-[#0A0A0A] font-semibold py-3.5 px-8 rounded-full transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 flex items-center justify-center gap-2 text-sm"
               >
                 SAVE CHANGES →
               </button>

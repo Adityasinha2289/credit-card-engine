@@ -17,6 +17,8 @@ import { PrivacyPage } from './public-platform/pages/PrivacyPage';
 import { TermsPage } from './public-platform/pages/TermsPage';
 import { DisclaimerPage } from './public-platform/pages/DisclaimerPage';
 import { NotFoundPage } from './public-platform/pages/NotFoundPage';
+import { CardsDirectoryPage } from './public-platform/pages/CardsDirectoryPage';
+import { CardDetailPage } from './public-platform/pages/CardDetailPage';
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
 
@@ -25,13 +27,46 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { Toaster } from 'sonner'
 import { AuthAnalytics } from './components/AuthAnalytics'
 import { ScrollToTop } from './components/ScrollToTop'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+    },
+  },
+})
 
 // Marketplace Pages
 import MarketplaceHome from './pages/marketplace/MarketplaceHome';
 import CategoryPage from './pages/marketplace/CategoryPage';
 import SubcategoryPage from './pages/marketplace/SubcategoryPage';
 
-// Import your publishable key
+import { CategoryHubPage } from './public-platform/pages/CategoryHubPage';
+import { CardComparisonPage } from './public-platform/pages/CardComparisonPage';
+import { RewardCalculatorPage } from './public-platform/pages/calculators/RewardCalculatorPage';
+import { BreakEvenCalculatorPage } from './public-platform/pages/calculators/BreakEvenCalculatorPage';
+import { CreditUtilizationPage } from './public-platform/pages/calculators/CreditUtilizationPage';
+import { getCategoryTaxonomy, getComparisonPairBySlug } from './public-platform/lib/cardKnowledgeGraph';
+import { useParams } from 'react-router-dom';
+
+function CompareRouter() {
+  const { categoryOrPairSlug } = useParams<{ categoryOrPairSlug: string }>();
+  if (!categoryOrPairSlug) return <PublicLayout><NotFoundPage /></PublicLayout>;
+
+  if (categoryOrPairSlug.includes('-vs-')) {
+    const pair = getComparisonPairBySlug(categoryOrPairSlug);
+    if (!pair) return <PublicLayout><NotFoundPage /></PublicLayout>;
+    return <PublicLayout><CardComparisonPage /></PublicLayout>;
+  }
+
+  const category = getCategoryTaxonomy(categoryOrPairSlug);
+  if (!category) return <PublicLayout><NotFoundPage /></PublicLayout>;
+  return <PublicLayout><CategoryHubPage /></PublicLayout>;
+}
+
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'mock_key'
 
 const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY
@@ -81,34 +116,46 @@ const appContent = (
         }
       }}
     >
-      <AuthAnalytics />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          {/* Private App Route */}
-          <Route path="/app/*" element={<App />} />
+      <QueryClientProvider client={queryClient}>
+        <AuthAnalytics />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            {/* Private App Route */}
+            <Route path="/app/*" element={<App />} />
 
-          {/* Marketplace Routes (Redirect to internal App) */}
-          <Route path="/marketplace" element={<Navigate to="/app/marketplace" replace />} />
-          <Route path="/marketplace/:categorySlug" element={<Navigate to="/app/marketplace" replace />} />
-          <Route path="/marketplace/:categorySlug/:subcategorySlug" element={<Navigate to="/app/marketplace" replace />} />
-          
-          {/* Public Platform Routes */}
-          <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
-          <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
-          <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
-          <Route path="/methodology" element={<PublicLayout><MethodologyPage /></PublicLayout>} />
-          <Route path="/editorial-policy" element={<PublicLayout><EditorialPolicyPage /></PublicLayout>} />
-          <Route path="/affiliate-disclosure" element={<PublicLayout><AffiliateDisclosurePage /></PublicLayout>} />
-          <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
-          <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
-          <Route path="/disclaimer" element={<PublicLayout><DisclaimerPage /></PublicLayout>} />
-          
-          {/* 404 Fallback */}
-          <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
-        </Routes>
-      </BrowserRouter>
-      <Toaster theme="dark" position="top-center" />
+            {/* Marketplace Routes (Redirect to internal App) */}
+            <Route path="/marketplace" element={<Navigate to="/app/marketplace" replace />} />
+            <Route path="/marketplace/:categorySlug" element={<Navigate to="/app/marketplace" replace />} />
+
+            {/* Public Platform Routes */}
+            <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+            <Route path="/cards" element={<PublicLayout><CardsDirectoryPage /></PublicLayout>} />
+            <Route path="/cards/:slug" element={<PublicLayout><CardDetailPage /></PublicLayout>} />
+            
+            {/* SEO & Search-Intent Layer: Category Hubs & Comparisons */}
+            <Route path="/compare/:categoryOrPairSlug" element={<CompareRouter />} />
+            
+            {/* Utility Calculators */}
+            <Route path="/calculators/credit-card-reward-calculator" element={<PublicLayout><RewardCalculatorPage /></PublicLayout>} />
+            <Route path="/calculators/annual-fee-break-even" element={<PublicLayout><BreakEvenCalculatorPage /></PublicLayout>} />
+            <Route path="/calculators/credit-utilization" element={<PublicLayout><CreditUtilizationPage /></PublicLayout>} />
+
+            <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+            <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+            <Route path="/methodology" element={<PublicLayout><MethodologyPage /></PublicLayout>} />
+            <Route path="/editorial-policy" element={<PublicLayout><EditorialPolicyPage /></PublicLayout>} />
+            <Route path="/affiliate-disclosure" element={<PublicLayout><AffiliateDisclosurePage /></PublicLayout>} />
+            <Route path="/privacy" element={<PublicLayout><PrivacyPage /></PublicLayout>} />
+            <Route path="/terms" element={<PublicLayout><TermsPage /></PublicLayout>} />
+            <Route path="/disclaimer" element={<PublicLayout><DisclaimerPage /></PublicLayout>} />
+            
+            {/* 404 Fallback */}
+            <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
+          </Routes>
+        </BrowserRouter>
+        <Toaster theme="dark" position="top-center" />
+      </QueryClientProvider>
     </ClerkProvider>
 );
 

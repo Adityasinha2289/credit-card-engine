@@ -1,4 +1,5 @@
 import { SEO } from '../components/SEO';
+import { getBreadcrumbSchema } from '../lib/schemaBuilders';
 import { ContentMeta } from '../components/ContentMeta';
 import { FAQSchema } from '../components/FAQSchema';
 import { motion } from 'framer-motion';
@@ -38,6 +39,10 @@ export function MethodologyPage() {
         title="Evaluation Methodology | How Renocred Compares Credit Cards"
         description="Read how Renocred uses structured data and rule-based models to evaluate and recommend credit cards."
         canonicalUrl="https://renocred.com/methodology"
+        schemaData={getBreadcrumbSchema([
+          { name: 'Home', item: '/' },
+          { name: 'Methodology', item: '/methodology' }
+        ])}
       />
       
       {/* Background Effects */}
@@ -45,7 +50,7 @@ export function MethodologyPage() {
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Hero Section with Logo */}
-      <section className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 text-center z-10">
+      <section className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-12 text-center z-10">
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -77,7 +82,6 @@ export function MethodologyPage() {
           We use structured data and clear, rule-based models to evaluate credit cards. No opaque AI, just transparent math tailored to your spending habits.
         </motion.p>
         <div className="max-w-2xl mx-auto mt-6">
-          <ContentMeta author="RenoCred Team" role="Credit Intelligence" date="2026-07-25" variant="reviewed" />
         </div>
       </section>
 

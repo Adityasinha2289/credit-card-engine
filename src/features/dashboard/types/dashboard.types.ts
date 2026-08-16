@@ -127,8 +127,9 @@ export interface AppProfile {
   salary: number;
   creditScore: number;
   userSegment?: UserSegment;
-  onboardingCompleted?: boolean;
+  onboardingCompleted: boolean;
   primaryGoal?: PrimaryGoal;
+  spendCategories?: string[];
   occupation?: Occupation;
   city?: string;
 }

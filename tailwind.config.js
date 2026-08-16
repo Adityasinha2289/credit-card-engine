@@ -15,6 +15,12 @@ export default {
         'ag-modal': '0 12px 24px 0 rgba(0,0,0, 0.8), 0 24px 64px 0 rgba(0,0,0, 1.0)',
         'ag-glow-primary': '0 4px 16px 0 rgba(35, 126, 69, 0.10), 0 8px 32px 0 rgba(35, 126, 69, 0.05)',
       },
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        }
+      },
       colors: {
         // V2 SEMANTIC SYSTEM
         semantic: {

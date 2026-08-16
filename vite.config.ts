@@ -29,12 +29,6 @@ export default defineConfig({
           if (id.includes('node_modules/framer-motion') || id.includes('node_modules/lucide-react') || id.includes('node_modules/recharts')) {
             return 'vendor-ui';
           }
-          if (id.includes('node_modules/@clerk')) {
-            return 'vendor-auth';
-          }
-          if (id.includes('node_modules/@supabase')) {
-            return 'vendor-db';
-          }
           if (id.includes('node_modules/sonner') || id.includes('node_modules/zustand') || id.includes('node_modules/immer') || id.includes('node_modules/clsx') || id.includes('node_modules/tailwind-merge')) {
             return 'vendor-utils';
           }

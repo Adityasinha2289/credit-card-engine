@@ -25,9 +25,6 @@ import { RewardCalculatorPage } from './public-platform/pages/calculators/Reward
 import { BreakEvenCalculatorPage } from './public-platform/pages/calculators/BreakEvenCalculatorPage';
 import { CreditUtilizationPage } from './public-platform/pages/calculators/CreditUtilizationPage';
 
-import posthog from 'posthog-js'
-import { PostHogProvider } from 'posthog-js/react'
-
 // Lazy loaded boundaries
 const AuthenticatedAppWrapper = lazy(() => import('./components/AuthenticatedAppWrapper'));
 const CompareRouter = lazy(() => import('./public-platform/pages/CompareRouter'));
@@ -38,21 +35,26 @@ const POSTHOG_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.c
 
 function DeferredAnalytics() {
   useEffect(() => {
-    const initAnalytics = () => {
+    const initAnalytics = async () => {
       // 1. Initialize Posthog
       if (POSTHOG_KEY) {
-        posthog.init(POSTHOG_KEY, {
-          api_host: POSTHOG_HOST,
-        });
+        try {
+          const posthog = (await import('posthog-js')).default;
+          posthog.init(POSTHOG_KEY, {
+            api_host: POSTHOG_HOST,
+          });
+        } catch (err) {
+          console.warn('Failed to initialize PostHog', err);
+        }
       }
       // 2. Initialize Sentry
-      import('./lib/sentry');
+      import('./lib/sentry').catch(console.warn);
     };
 
     if (document.readyState === 'complete') {
-      setTimeout(initAnalytics, 100);
+      setTimeout(initAnalytics, 2000);
     } else {
-      window.addEventListener('load', () => setTimeout(initAnalytics, 100));
+      window.addEventListener('load', () => setTimeout(initAnalytics, 2000));
     }
   }, []);
 
@@ -105,13 +107,7 @@ const appContent = (
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      {POSTHOG_KEY ? (
-        <PostHogProvider client={posthog}>
-          {appContent}
-        </PostHogProvider>
-      ) : (
-        appContent
-      )}
+      {appContent}
     </ErrorBoundary>
   </StrictMode>,
 )

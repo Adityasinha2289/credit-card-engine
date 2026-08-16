@@ -137,7 +137,15 @@ export function PublicHeader() {
         </nav>
         
         {/* CTAs */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
+          <MotionLink 
+            to="/cards"
+            whileHover={hoverPhysicsSecondary}
+            whileTap={tapPhysicsSecondary}
+            className="md:hidden text-sm font-medium text-gray-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
+          >
+            Explore Cards
+          </MotionLink>
           <MotionLink 
             to="/app#log-in" 
             whileHover={hoverPhysicsSecondary}

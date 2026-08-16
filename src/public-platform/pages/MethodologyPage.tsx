@@ -237,7 +237,7 @@ export function MethodologyPage() {
           {/* Food */}
           <div id="food" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
             <div className="absolute inset-0 z-0">
-              <img src="/images/features/food.png" alt="Food & Dining Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src="/images/features/food.webp" alt="Food & Dining Methodology" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
             </div>
@@ -252,7 +252,7 @@ export function MethodologyPage() {
           {/* Flights */}
           <div id="flights" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
             <div className="absolute inset-0 z-0">
-              <img src="/images/features/travel.png" alt="Travel & Flights Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src="/images/features/travel.webp" alt="Travel & Flights Methodology" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
             </div>
@@ -267,7 +267,7 @@ export function MethodologyPage() {
           {/* Fuel */}
           <div id="fuel" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
             <div className="absolute inset-0 z-0">
-              <img src="/images/features/fuel.png" alt="Fuel Stations Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src="/images/features/fuel.webp" alt="Fuel Stations Methodology" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
             </div>
@@ -282,7 +282,7 @@ export function MethodologyPage() {
           {/* Shopping */}
           <div id="shopping" className="relative h-[400px] md:h-[450px] w-full rounded-[2.5rem] overflow-hidden group scroll-mt-32">
             <div className="absolute inset-0 z-0">
-              <img src="/images/features/shopping.png" alt="Online Shopping Methodology" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src="/images/features/shopping.webp" alt="Online Shopping Methodology" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent opacity-95" />
             </div>

@@ -4,10 +4,10 @@ import { ShoppingBag, Fuel, Plane, Utensils, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const scenarios = [
-  { id: 'food', title: 'Food & Dining', desc: 'RenoCred instantly identifies which of your cards offers the highest multiplier for Zomato, Swiggy, and local restaurants.', icon: Utensils, image: '/images/features/food.png' },
-  { id: 'flights', title: 'Travel & Flights', desc: 'Stop wasting points. We calculate the exact redemption value of your air miles vs cash back for any flight booking.', icon: Plane, image: '/images/features/travel.png' },
-  { id: 'fuel', title: 'Fuel Stations', desc: 'Most fuel cards have specific MCC restrictions. RenoCred ensures you actually get your surcharge waiver.', icon: Fuel, image: '/images/features/fuel.png' },
-  { id: 'shopping', title: 'Online Shopping', desc: 'During big sales, we factor in instant bank discounts, affiliate offers, and card-specific limits in real-time.', icon: ShoppingBag, image: '/images/features/shopping.png' },
+  { id: 'food', title: 'Food & Dining', desc: 'RenoCred instantly identifies which of your cards offers the highest multiplier for Zomato, Swiggy, and local restaurants.', icon: Utensils, image: '/images/features/food.webp' },
+  { id: 'flights', title: 'Travel & Flights', desc: 'Stop wasting points. We calculate the exact redemption value of your air miles vs cash back for any flight booking.', icon: Plane, image: '/images/features/travel.webp' },
+  { id: 'fuel', title: 'Fuel Stations', desc: 'Most fuel cards have specific MCC restrictions. RenoCred ensures you actually get your surcharge waiver.', icon: Fuel, image: '/images/features/fuel.webp' },
+  { id: 'shopping', title: 'Online Shopping', desc: 'During big sales, we factor in instant bank discounts, affiliate offers, and card-specific limits in real-time.', icon: ShoppingBag, image: '/images/features/shopping.webp' },
 ];
 
 export function ProductShowcaseSection() {

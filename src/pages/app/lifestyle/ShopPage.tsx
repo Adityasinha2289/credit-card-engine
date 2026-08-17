@@ -33,7 +33,7 @@ export default function ShopPage() {
   }, [profile?.id]);
 
   return (
-    <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-screen pt-8">
+    <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-[100dvh] pt-8">
       <header className="mb-10 text-center">
         <h1 className="text-4xl font-display font-medium tracking-tight text-white mb-4">
           Shop Smarter

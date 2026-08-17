@@ -20,7 +20,7 @@ export function ProductShowcaseSection() {
 
   return (
     <section id="product" ref={targetRef} className="relative h-[300vh] bg-[#0A0A0A]">
-      <div className="sticky top-0 flex flex-col justify-center h-screen overflow-hidden py-16 md:py-24">
+      <div className="sticky top-0 flex flex-col justify-center h-[100dvh] overflow-hidden py-16 md:py-24">
         
         <div className="w-full max-w-7xl mx-auto px-6 z-10 mb-8 md:mb-12 shrink-0">
           <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-display font-bold text-white mb-4 tracking-tight">

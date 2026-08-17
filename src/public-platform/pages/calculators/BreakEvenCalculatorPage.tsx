@@ -24,7 +24,7 @@ export function BreakEvenCalculatorPage() {
   ]);
 
   return (
-    <div className="w-full relative min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
+    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
       <SEO
         title="Credit Card Annual Fee Break-Even Calculator (2026) | RenoCred"
         description="Calculate the exact annual and monthly spending required to recover your credit card annual fee. Compare fee waiver thresholds across Indian credit cards."

@@ -49,7 +49,7 @@ export default function PlanDatePage() {
   }, [step, itinerary, profile?.id]);
   
   return (
-    <div className="max-w-3xl mx-auto pb-32 text-text-primary min-h-screen pt-8">
+    <div className="max-w-3xl mx-auto pb-32 text-text-primary min-h-[100dvh] pt-8">
       
       <AnimatePresence mode="wait">
         {step === 'input' ? (

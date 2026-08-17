@@ -22,7 +22,7 @@ export function HeroSection() {
   const activeY = shouldReduceMotion ? 0 : smoothY;
 
   return (
-    <section ref={containerRef} className="relative w-full min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-[#050505] text-white pt-32 pb-24">
+    <section ref={containerRef} className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-[#050505] text-white pt-32 pb-24">
       
       {/* Background Lighting & Grain */}
       <div 
@@ -34,7 +34,7 @@ export function HeroSection() {
       <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-white rounded-full blur-[120px] opacity-[0.015] pointer-events-none" />
       
       {/* Main Content Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-y-16 lg:gap-x-12 items-center min-h-[calc(100vh-8rem)]">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-y-16 lg:gap-x-12 items-center min-h-[calc(100dvh-8rem)]">
         
         {/* Left Text - Editorial Typography */}
         <div className="col-span-1 lg:col-span-6 flex flex-col items-start text-left z-20 w-full min-w-0 animate-[fade-in-up_0.8s_ease-out_forwards]">

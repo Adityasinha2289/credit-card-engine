@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { interactivePrimary, interactiveSecondary } from '../../motion';
 import { CardsMegaMenu } from './header/CardsMegaMenu';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 
 // Wrap Link to allow Framer Motion props
 const MotionLink = motion.create ? motion.create(Link as any) : motion(Link as any);
@@ -13,6 +13,7 @@ export function PublicHeader() {
   const { scrollY } = useScroll();
   const shouldReduceMotion = useReducedMotion();
   const [isCardsMenuOpen, setIsCardsMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
@@ -162,9 +163,62 @@ export function PublicHeader() {
           >
             Get Started
           </MotionLink>
+          
+          <button 
+            className="md:hidden p-2 -mr-2 text-gray-300 hover:text-white"
+            onClick={() => setIsMobileMenuOpen(true)}
+          >
+            <Menu className="w-6 h-6" />
+          </button>
         </div>
 
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] bg-[#0A0A0A] flex flex-col p-6"
+          >
+            <div className="flex items-center justify-between mb-12">
+              <div className="font-display font-bold text-xl tracking-tight flex items-center gap-2">
+                <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover" />
+                <span className="text-white">RenoCred</span>
+              </div>
+              <button 
+                className="p-2 -mr-2 text-gray-300 hover:text-white bg-white/5 rounded-full"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <nav className="flex flex-col gap-6 text-xl font-medium">
+              <a href="/#product" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10">Product</a>
+              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10 flex justify-between items-center">
+                Cards <ChevronDown size={20} className="-rotate-90" />
+              </Link>
+              <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10">How It Works</a>
+              <Link to="/methodology" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10">Methodology</Link>
+              <Link to="/app#log-in" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10">Log In</Link>
+            </nav>
+            
+            <div className="mt-auto mb-8">
+              <Link 
+                to="/app#sign-up"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full bg-emerald-500 text-[#0A0A0A] text-lg font-semibold py-4 rounded-full flex items-center justify-center transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]"
+              >
+                Get Started
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }

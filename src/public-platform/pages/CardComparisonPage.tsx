@@ -34,7 +34,7 @@ export function CardComparisonPage() {
   ]);
 
   return (
-    <div className="w-full relative min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
+    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
       <SEO
         title={`${cardA.cardName} vs ${cardB.cardName} Comparison (2026) | RenoCred`}
         description={`Compare ${cardA.cardName} and ${cardB.cardName} side-by-side. Analyze annual fees (${cardA.formattedAnnualFee} vs ${cardB.formattedAnnualFee}), reward rates, lounge access, and milestone perks.`}
@@ -137,7 +137,7 @@ export function CardComparisonPage() {
           </h2>
 
           <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#0D120F]">
-            <table className="w-full text-left text-sm text-gray-300 min-w-[650px]">
+            <table className="w-full text-left text-sm text-gray-300 ">
               <thead className="bg-white/5 text-xs text-gray-400 uppercase tracking-wider font-semibold">
                 <tr>
                   <th className="py-4 px-6 w-1/3">Feature</th>

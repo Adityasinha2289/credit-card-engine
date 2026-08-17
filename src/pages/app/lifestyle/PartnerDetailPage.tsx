@@ -42,7 +42,7 @@ export default function PartnerDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-40 min-h-screen text-brand-emerald">
+      <div className="flex justify-center items-center py-40 min-h-[100dvh] text-brand-emerald">
         <Loader2 className="animate-spin w-8 h-8" />
       </div>
     );
@@ -53,7 +53,7 @@ export default function PartnerDetailPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-screen">
+    <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-[100dvh]">
       
       {/* Hero */}
       <div className="relative h-64 md:h-80 w-full overflow-hidden mb-8 rounded-b-3xl -mx-4 sm:mx-0 sm:mt-4 shadow-ag-base">

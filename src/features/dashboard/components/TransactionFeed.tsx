@@ -581,7 +581,7 @@ export function TransactionFeed({ limit = 12, className }: TransactionFeedProps)
       </AnimatePresence>
 
       {/* ── List ───────────────────────────────────────────────────── */}
-      <div className="relative mt-2 max-h-[calc(100vh-220px)] overflow-y-auto pr-2 pb-6 -mr-2 scroll-shadow-bottom">
+      <div className="relative mt-2 max-h-[calc(100dvh-220px)] overflow-y-auto pr-2 pb-6 -mr-2 scroll-shadow-bottom">
         <motion.ul
           className="flex flex-col gap-2"
           role="list"

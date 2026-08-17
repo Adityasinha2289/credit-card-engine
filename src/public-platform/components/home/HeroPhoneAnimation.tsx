@@ -60,9 +60,10 @@ export function HeroPhoneAnimation() {
       <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="relative w-full flex justify-center items-center"
+        className="relative w-full flex justify-center items-start"
+        style={{ height: 'calc(737px * min(1, calc((100vw - 48px) / 340)))' }}
       >
-        <div className="relative transform scale-[min(1,calc((100vw-48px)/340))] sm:scale-[min(1,calc((100vw-48px)/340))] md:scale-100 origin-top flex justify-center">
+        <div className="relative transform scale-[min(1,calc((100vw-48px)/340))] md:scale-100 origin-top flex justify-center">
         {/* Glow behind phone */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[600px] bg-semantic-brand-strong rounded-[100px] blur-[160px] opacity-[0.1]" />
 

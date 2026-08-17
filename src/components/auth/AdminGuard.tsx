@@ -13,7 +13,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   if (!isLoaded) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#0a0a0a]">
+      <div className="flex h-[100dvh] w-full items-center justify-center bg-[#0a0a0a]">
         <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
       </div>
     );

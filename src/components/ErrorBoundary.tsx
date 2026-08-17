@@ -8,7 +8,7 @@ interface Props {
 
 const FallbackComponent = ({ resetError }: { resetError: () => void }) => {
   return (
-    <div className="min-h-screen bg-surface-primary dark:bg-surface-elevated flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-[100dvh] bg-surface-primary dark:bg-surface-elevated flex flex-col items-center justify-center p-6 text-center">
       <div className="max-w-md w-full bg-surface-primary  rounded-[2rem] p-8 shadow-[0_0_20px_rgba(4,59,39,0.3)] border border-border-subtle  flex flex-col items-center">
         <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
           <AlertTriangle size={32} className="text-red-500" />

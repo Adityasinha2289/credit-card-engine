@@ -43,7 +43,7 @@ export function CardsDirectoryPage() {
   ]);
 
   return (
-    <div className="w-full relative min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
+    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
       <SEO
         title="Indian Credit Cards Directory (2026) | Compare 130+ Cards | RenoCred"
         description="Explore verified Indian credit cards from HDFC, SBI, Axis, and ICICI Bank. Compare reward rates, lounge access, annual fees, and forex markups."
@@ -67,7 +67,7 @@ export function CardsDirectoryPage() {
         <aside className="w-full md:w-56 lg:w-64 shrink-0">
           <div className="md:sticky md:top-32">
             <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest mb-6 px-4">Filter by Bank</h3>
-            <div className="space-y-1 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full">
+            <div className="space-y-1 max-h-[calc(100dvh-12rem)] overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full">
               <button
                 onClick={() => setSelectedIssuer('all')}
                 className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${

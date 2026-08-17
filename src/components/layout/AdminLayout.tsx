@@ -30,7 +30,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { signOut } = useClerk();
 
   return (
-    <div className="flex h-screen w-full bg-[#0a0a0a] text-slate-200 font-sans selection:bg-emerald-500/30">
+    <div className="flex h-[100dvh] w-full bg-[#0a0a0a] text-slate-200 font-sans selection:bg-emerald-500/30">
       
       {/* Sidebar */}
       <aside className="w-64 border-r border-slate-800 bg-[#0a0a0a] flex flex-col hidden md:flex">
@@ -89,7 +89,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col h-[100dvh] overflow-hidden">
         {/* Mobile Header (minimal) */}
         <header className="md:hidden h-16 border-b border-slate-800 flex items-center px-4">
           <div className="flex items-center gap-2 text-emerald-500">

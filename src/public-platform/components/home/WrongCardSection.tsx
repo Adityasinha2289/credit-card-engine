@@ -86,13 +86,15 @@ export function WrongCardSection() {
         </div>
 
         {/* RIGHT CONTENT (7 COLUMNS) */}
-        <div className="col-span-1 lg:col-span-7 flex justify-center items-center relative w-full min-w-0 h-[600px] lg:h-auto py-8">
+        <div className="col-span-1 lg:col-span-7 flex justify-center items-center relative w-full min-w-0 h-auto py-8">
           
           <motion.div 
             animate={{ y: [0, -15, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative transform scale-[0.8] sm:scale-90 lg:scale-100 origin-center flex justify-center w-full max-w-[400px]"
+            className="relative flex justify-center w-full max-w-[100vw] overflow-visible items-start"
+            style={{ height: 'calc(720px * min(1, calc((100vw - 48px) / 340)))' }}
           >
+            <div className="relative transform scale-[min(1,calc((100vw-48px)/340))] md:scale-100 origin-top flex justify-center">
             {/* iPhone 17 Pro - Black Titanium */}
             <div className="w-[340px] h-[720px] bg-[#161617] rounded-[55px] p-[2px] shadow-[0_40px_100px_-20px_rgba(0,0,0,1)] relative border border-[#2b2b2c] ring-1 ring-[#000000] shrink-0">
               
@@ -178,6 +180,7 @@ export function WrongCardSection() {
                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-1/3 h-1 bg-white rounded-full opacity-20" />
                 </div>
               </div>
+            </div>
             </div>
           </motion.div>
         </div>

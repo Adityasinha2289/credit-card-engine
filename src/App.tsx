@@ -154,7 +154,7 @@ export default function App() {
 
   return (
     <Suspense fallback={
-      <div className="flex h-screen w-full items-center justify-center bg-[#0a0a0a]">
+      <div className="flex h-[100dvh] w-full items-center justify-center bg-[#0a0a0a]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
       </div>
     }>

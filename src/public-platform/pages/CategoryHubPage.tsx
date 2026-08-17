@@ -46,7 +46,7 @@ export function CategoryHubPage() {
   };
 
   return (
-    <div className="w-full relative min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
+    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
       <SEO
         title={`Best Credit Cards for ${taxonomy.name} in India (2026) | RenoCred`}
         description={taxonomy.description}
@@ -98,7 +98,7 @@ export function CategoryHubPage() {
           </h2>
 
           <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#0D120F]">
-            <table className="w-full text-left text-sm text-gray-300 min-w-[650px]">
+            <table className="w-full text-left text-sm text-gray-300 ">
               <thead className="bg-white/5 text-xs text-gray-400 uppercase tracking-wider font-semibold">
                 <tr>
                   <th className="py-4 px-6">Credit Card</th>

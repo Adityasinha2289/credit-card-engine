@@ -49,7 +49,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="hidden lg:flex fixed top-0 left-0 h-screen w-[240px] z-40 flex-col bg-[#060A08]"
+      className="hidden lg:flex fixed top-0 left-0 h-[100dvh] w-[240px] z-40 flex-col bg-[#060A08]"
       aria-label="Main navigation"
     >
       {/* ── Brand Area ───────────────────────────────────────────────────────── */}

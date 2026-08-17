@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export function AboutPage() {
   return (
-    <div className="w-full min-h-screen relative overflow-hidden bg-[#0A0A0A] text-white selection:bg-brand-emerald-glow">
+    <div className="w-full min-h-[100dvh] relative overflow-hidden bg-[#0A0A0A] text-white selection:bg-brand-emerald-glow">
       <SEO 
         title="About RenoCred | Optimizing Your Credit Card Strategy"
         description="Learn about RenoCred's mission to bring clarity and transparency to the Indian credit card ecosystem."

@@ -11,7 +11,7 @@ interface OnboardingLayoutProps {
 
 export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }: OnboardingLayoutProps) {
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden"
+    <div className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-hidden"
       style={{ backgroundColor: '#050606' }}
     >
       {/* Subtle emerald atmosphere — never overwhelming */}

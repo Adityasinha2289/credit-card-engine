@@ -27,7 +27,7 @@ export function RewardCalculatorPage() {
   ]);
 
   return (
-    <div className="w-full relative min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
+    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
       <SEO
         title="Credit Card Reward Calculator (2026) | Estimate Cashback & Points | RenoCred"
         description="Calculate your estimated monthly and annual reward earnings across Indian credit cards. Calculate net annual value after annual fee deductions."

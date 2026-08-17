@@ -165,14 +165,14 @@ export function LoginScreen() {
 
   if (isSignedIn) {
     return (
-      <Suspense fallback={<div className="min-h-screen w-full bg-surface-primary" />}>
+      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-surface-primary" />}>
         <OnboardingFlow onComplete={handleOnboardingComplete} />
       </Suspense>
     );
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#0a0a0a] p-4 lg:p-8">
+    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-[#0a0a0a] p-4 lg:p-8">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] max-w-5xl w-full gap-8 items-center">
         {/* Left Side: Branding & Premium Dashboard Teaser */}
         <div className="flex flex-col gap-6 text-left hidden lg:flex">

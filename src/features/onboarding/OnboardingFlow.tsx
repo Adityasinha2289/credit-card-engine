@@ -61,7 +61,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
   // === Transition interstitial ===
   if (isTransitioning) {
     return (
-      <div className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden"
+      <div className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center overflow-hidden"
         style={{ backgroundColor: '#050606' }}
       >
         <motion.div

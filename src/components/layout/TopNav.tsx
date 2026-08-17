@@ -76,7 +76,7 @@ export function TopNav() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.98 }}
                 transition={{ duration: 0.15, ease:"easeOut" }}
-                className="absolute right-0 top-[calc(100%+8px)] w-80 bg-[#151515] rounded-2xl shadow-2xl border border-white/10 overflow-hidden z-50"
+                className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-4rem)] sm:w-80 bg-[#151515] rounded-2xl shadow-2xl border border-white/10 overflow-hidden z-50"
               >
                 <div className="p-5 border-b border-white/5 flex justify-between items-center bg-transparent">
                   <h3 className="font-semibold text-white text-[15px]">Notifications</h3>

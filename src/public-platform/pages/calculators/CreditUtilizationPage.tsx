@@ -20,7 +20,7 @@ export function CreditUtilizationPage() {
   ]);
 
   return (
-    <div className="w-full relative min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
+    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
       <SEO
         title="Credit Utilization Ratio Calculator (2026) | CIBIL Impact | RenoCred"
         description="Calculate your credit card utilization ratio percentage and understand its impact on your CIBIL score. Ideal credit utilization benchmark guide."

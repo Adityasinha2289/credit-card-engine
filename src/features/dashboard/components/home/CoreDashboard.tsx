@@ -25,7 +25,7 @@ export function CoreDashboard({ onNavigateToTab }: CoreDashboardProps) {
   // V4 Empty State (Narrative-driven)
   if (userCards.length === 0) {
     return (
-      <div className="relative min-h-screen">
+      <div className="relative min-h-[100dvh]">
         <AmbientCanvas />
         <div className="max-w-4xl mx-auto w-full pt-32 pb-20 px-4 md:px-0 flex flex-col items-start justify-center min-h-[70vh]">
           <motion.div
@@ -58,7 +58,7 @@ export function CoreDashboard({ onNavigateToTab }: CoreDashboardProps) {
 
   // V4 Full Experience
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative min-h-[100dvh] w-full">
       <AmbientCanvas />
       
       <div className="max-w-5xl mx-auto w-full pb-32">

@@ -74,7 +74,7 @@ export function CardDetailPage() {
   const faqSchema = getFAQPageSchema(faqs);
 
   return (
-    <div className="w-full relative min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
+    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
       <SEO
         title={`${card.cardName} Rewards, Fees & Benefits (2026) | RenoCred`}
         description={`Detailed breakdown of ${card.cardName} by ${card.issuer}. Reward rate: ${card.rewardRate}. Annual fee: ${card.formattedAnnualFee}. Lounge access: ${card.loungeAccess}.`}

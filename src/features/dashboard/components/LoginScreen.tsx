@@ -122,7 +122,7 @@ export function LoginScreen() {
       name: user?.fullName || user?.firstName || 'Your Name',
       email: user?.primaryEmailAddress?.emailAddress || '',
       phone: user?.primaryPhoneNumber?.phoneNumber || 'XXXXXXXXXX',
-      avatar: user?.imageUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=User&backgroundColor=f8f9fa`,
+      avatar: user?.imageUrl || `https://api.dicebear.com/9.x/notionists/svg?seed=User&backgroundColor=f8f9fa`,
       salary: state.salary || 1500000,
       creditScore: state.creditScore || 750,
       userSegment: calculatedSegment,

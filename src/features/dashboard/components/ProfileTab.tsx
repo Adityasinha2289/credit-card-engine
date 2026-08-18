@@ -64,7 +64,7 @@ export function ProfileTab() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const avatarUrl = `https://api.dicebear.com/7.x/notionists/svg?seed=${avatarSeed}&backgroundColor=f8f9fa`;
+  const avatarUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${avatarSeed}&backgroundColor=f8f9fa`;
 
   const handleSalarySliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
@@ -163,7 +163,7 @@ export function ProfileTab() {
                             : 'border border-white/[0.08] hover:border-white/30 opacity-70 hover:opacity-100'
                         )}
                       >
-                        <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${seed}&backgroundColor=f8f9fa`} alt={seed} className="w-full h-full object-cover" />
+                        <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=f8f9fa`} alt={seed} className="w-full h-full object-cover" />
                       </button>
                     ))}
                   </div>

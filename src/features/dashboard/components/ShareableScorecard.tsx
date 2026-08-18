@@ -119,7 +119,7 @@ function ScorecardCanvas({ captureRef }: { captureRef: React.RefObject<HTMLDivEl
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <img
-            src={profile.avatar}
+            src={profile.avatar?.replace('7.x', '9.x')}
             alt={profile.name}
             style={{ width: 52, height: 52, borderRadius: '50%', background: '#1c1c28', border: '2px solid rgba(255,255,255,0.1)' }}
             crossOrigin="anonymous"

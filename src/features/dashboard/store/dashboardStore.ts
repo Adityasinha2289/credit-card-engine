@@ -38,7 +38,12 @@ async function safeDbWrite<T>(
       console.error(`[DB Error] ${contextMessage}:`, error);
       // Suppress schema cache column mismatch errors from user-facing toasts
       if (error.code !== 'PGRST204' && !error.message?.includes('schema cache')) {
-        toast.error(`Database Error: ${error.message || contextMessage}`);
+        // Suppress catalog out-of-sync errors for new dataset
+        if (!error.message?.includes('user_cards_card_id_fkey')) {
+          toast.error(`Database Error: ${error.message || contextMessage}`);
+        } else {
+          console.warn(`[DB Warning] Ignored user_cards_card_id_fkey error - backend cards table out of sync with frontend catalog.`);
+        }
       }
       return null;
     }
@@ -807,9 +812,14 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                       label: cardDef?.name || 'Credit Card',
                       gradientFrom: cardDef?.gradient_from || '#1F5247',
                       gradientVia: '#30595c',
-                      gradientTo: cardDef?.gradient_to || '#456171',
-                    }
+                      gradientTo: cardDef?.gradient_to || '#1B3029',
+                    } as CardData;
                   });
+                  const localCards = get().userCards;
+                  const missingLocalCards = localCards.filter(
+                    local => !dbCards.some((db: any) => db.id === local.id)
+                  );
+                  state.userCards = [...dbCards, ...missingLocalCards];
                 }
                 
                 if (transactionsRow) {

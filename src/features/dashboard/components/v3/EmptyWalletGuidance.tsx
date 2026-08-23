@@ -9,7 +9,7 @@ export function EmptyWalletGuidance({ onAddCard }: EmptyWalletGuidanceProps) {
     <div className="panel-glass rounded-[2rem] p-8 border border-dashed border-border-subtle dark:border-white/[0.1] flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden bg-surface-primary dark:bg-[#1a1d21]">
       <div className="absolute inset-0 bg-brand-emerald/5 blur-2xl" />
       
-      <div className="relative z-10 w-24 h-16 rounded-xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md shadow-xl flex flex-col justify-between p-2.5 mb-6">
+      <div className="relative z-10 w-24 h-16 rounded-xl border border-gray-300 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md shadow-xl flex flex-col justify-between p-2.5 mb-6">
         <div className="flex justify-between items-start">
           <div className="w-6 h-1.5 bg-white/20 rounded-full" />
           <div className="w-4 h-2.5 bg-white/30 rounded-sm" />
@@ -24,7 +24,7 @@ export function EmptyWalletGuidance({ onAddCard }: EmptyWalletGuidanceProps) {
 
       <button
         onClick={onAddCard}
-        className="flex items-center gap-2 bg-brand-emerald hover:bg-brand-600 text-white text-sm font-bold py-3 px-6 rounded-full shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95 group"
+        className="flex items-center gap-2 bg-brand-emerald hover:bg-brand-600 text-gray-900 text-sm font-bold py-3 px-6 rounded-full shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95 group"
       >
         <Plus size={16} /> 
         Add First Card

@@ -1,0 +1,35 @@
+const fs = require('fs');
+const path = require('path');
+
+function replaceInDirectory(dir) {
+  if (!fs.existsSync(dir)) return;
+  const stats = fs.statSync(dir);
+  if (!stats.isDirectory()) {
+    if (dir.endsWith('.ts') || dir.endsWith('.tsx') || dir.endsWith('.css') || dir.endsWith('.js')) {
+      let content = fs.readFileSync(dir, 'utf8');
+      let newContent = content.replace(/#237E45/gi, '#2A9D5C');
+      if (content !== newContent) {
+        fs.writeFileSync(dir, newContent);
+        console.log('Updated', dir);
+      }
+    }
+    return;
+  }
+  
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      replaceInDirectory(fullPath);
+    } else if (fullPath.endsWith('.ts') || fullPath.endsWith('.tsx') || fullPath.endsWith('.css') || fullPath.endsWith('.js')) {
+      let content = fs.readFileSync(fullPath, 'utf8');
+      let newContent = content.replace(/#237E45/gi, '#2A9D5C');
+      if (content !== newContent) {
+        fs.writeFileSync(fullPath, newContent);
+        console.log('Updated', fullPath);
+      }
+    }
+  }
+}
+
+replaceInDirectory(path.join(__dirname, 'src'));

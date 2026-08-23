@@ -112,8 +112,8 @@ export interface FinancialCard {
   issuer?: string;
   network?: string;
   premiumTier?: string;
-  annualFee: number;
-  joiningFee: number;
+  annualFee: number | null;
+  joiningFee: number | null;
   feeWaiverSpend?: number;
   
   rewardRules: RewardRule[];

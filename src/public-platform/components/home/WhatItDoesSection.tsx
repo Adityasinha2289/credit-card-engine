@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Wallet, Search, TrendingUp, Gift, BarChart2, UserCheck } from 'lucide-react';
+import { Wallet, TrendingUp, UserCheck } from 'lucide-react';
 import { fadeUpVariant, staggerContainer } from '../../../motion';
 
 const features = [
@@ -9,24 +9,9 @@ const features = [
     description: 'See your cards, fees, rewards, benefits, and important information in one unified dashboard.'
   },
   {
-    icon: Search,
-    title: 'Discover Better Cards',
-    description: 'Find cards actually relevant to your financial profile, spending habits, and eligibility.'
-  },
-  {
     icon: TrendingUp,
     title: 'Optimize Your Spending',
     description: 'Identify exactly which card provides the strongest value for any particular transaction.'
-  },
-  {
-    icon: Gift,
-    title: 'Track Rewards',
-    description: 'Understand your rewards, benefits, and earning potential instead of manually tracking everything.'
-  },
-  {
-    icon: BarChart2,
-    title: 'Compare Intelligently',
-    description: 'Compare financial products using metrics relevant to you rather than generic rankings.'
   },
   {
     icon: UserCheck,

@@ -1,0 +1,6 @@
+- [x] Update `PublicHeader.tsx` to a light theme.
+- [x] Create `HeroDeviceContent.tsx`.
+- [x] Create `IPadMockup.tsx`.
+- [x] Create `MacBookMockup.tsx`.
+- [x] Rewrite `HeroSection.tsx` to match the redesigned structure and 3D device showcase.
+- [x] Test responsivenes and run `npm run build`.

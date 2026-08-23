@@ -1,7 +1,7 @@
 import { analytics } from './lib/analytics';
 import './index.css';
 import { useState, useEffect, Suspense, lazy } from 'react';
-import { useUser } from '@clerk/clerk-react';
+import { useUser, RedirectToSignIn, RedirectToSignUp } from '@clerk/clerk-react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import { DashboardLayout } from './components/layout/DashboardLayout';
@@ -74,9 +74,11 @@ export default function App() {
       if (!user) {
         _reset();
         queryClient.clear();
+        setHasAttemptedHydration(false);
       } else if (profile && profile.id !== user.id) {
         _reset();
         queryClient.clear();
+        setHasAttemptedHydration(false);
       }
     }
   }, [isLoaded, user, profile?.id, _reset, queryClient]);
@@ -94,13 +96,13 @@ export default function App() {
       if (!clerkId) return;
 
       try {
-        if (!isHydrated && !hasAttemptedHydration) {
+        if ((!isHydrated || !profile) && !hasAttemptedHydration) {
           setIsHydratingFromSupabase(true);
           const email = user.primaryEmailAddress?.emailAddress || '';
           const name = user.fullName || user.firstName || 'Your Name';
           const avatar = user.imageUrl || '';
           
-          await hydrateFromSupabase(clerkId, email, name, avatar);
+          await hydrateFromSupabase(clerkId, email, name, avatar, user.unsafeMetadata);
           setHasAttemptedHydration(true);
         }
       } catch (error) {
@@ -148,15 +150,18 @@ export default function App() {
   }
 
   // 2. If signed in, but profile or onboarding is incomplete, show LoginScreen (Questionnaire View)
-  if (isSignedIn && (!profile || !profile.onboardingCompleted)) {
+  const clerkMetadata = user?.unsafeMetadata as any;
+  const isCompletedInClerk = clerkMetadata?.onboardingCompleted === true;
+
+  if (isSignedIn && (!profile || (!profile.onboardingCompleted && !isCompletedInClerk))) {
     return <LoginScreen />;
   }
 
   return (
     <Suspense fallback={
-      <div className="flex h-[100dvh] w-full items-center justify-center bg-[#0a0a0a]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
-      </div>
+      <DashboardLayout isDark={true} onToggleTheme={() => {}}>
+        <div className="p-6 md:p-12 w-full max-w-7xl mx-auto"><DashboardSkeleton /></div>
+      </DashboardLayout>
     }>
       <Routes>
         {/* Customer App Routes */}

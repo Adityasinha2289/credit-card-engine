@@ -35,7 +35,7 @@ export default function ShopPage() {
   return (
     <div className="max-w-4xl mx-auto pb-24 text-text-primary min-h-[100dvh] pt-8">
       <header className="mb-10 text-center">
-        <h1 className="text-4xl font-display font-medium tracking-tight text-white mb-4">
+        <h1 className="text-4xl font-display font-medium tracking-tight text-gray-900 mb-4">
           Shop Smarter
         </h1>
         <p className="text-lg text-text-muted font-light max-w-xl mx-auto">

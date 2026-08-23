@@ -1,81 +1,93 @@
-// @ts-nocheck
 import type { CreditCardIntelligence, CardNetwork, RewardType, PremiumTier, TransactionCategory } from '../types';
 import type { CreditCard } from '../../../../renocred-data/types';
+import type { CanonicalCard } from '../../../../renocred-data/types/canonical';
+import { DatasetNormalizer } from '../../../../renocred-data/normalizers/DatasetNormalizer';
 
 /**
- * Validates and maps the generic CreditCard schema to the CreditCardIntelligence schema.
- * Silently drops invalid cards.
+ * Type guard to distinguish CanonicalCard from legacy CreditCard.
  */
-export function toCreditCardIntelligence(cards: CreditCard[]): CreditCardIntelligence[] {
+function isCanonicalCard(card: unknown): card is CanonicalCard {
+  return typeof card === 'object' && card !== null && 'identity' in card && typeof (card as Record<string, unknown>).identity === 'object';
+}
+
+/**
+ * Validates and maps CanonicalCard or CreditCard objects to CreditCardIntelligence schema.
+ */
+export function toCreditCardIntelligence(cards: (CanonicalCard | CreditCard)[]): CreditCardIntelligence[] {
   const result: CreditCardIntelligence[] = [];
   const seenIds = new Set<string>();
 
-  for (const card of cards) {
+  for (const raw of cards) {
+    const canonical: CanonicalCard = isCanonicalCard(raw)
+      ? raw
+      : DatasetNormalizer.normalizeCard(raw).card;
+
+    const id = canonical.identity.id;
+    const cardName = canonical.identity.name;
+    const issuer = canonical.identity.issuer;
+
     // 1. Validate required fields
-    if (!card.id || !card.card_title || !card.issuer) {
-      console.warn(`[Adapter] Skipping card due to missing required fields: ${card.id}`);
+    if (!id || id.trim() === '') {
+      console.warn(`[IntelligenceAdapter] Skipping card with missing ID: ${cardName}`);
       continue;
     }
 
-    // 2. Validate duplicate ids
-    if (seenIds.has(card.id)) {
-      console.warn(`[Adapter] Skipping duplicate card id: ${card.id}`);
+    // 2. Prevent duplicates in runtime array
+    if (seenIds.has(id)) {
+      console.warn(`[IntelligenceAdapter] Skipping duplicate card ID: ${id}`);
       continue;
     }
-    seenIds.add(card.id);
+    seenIds.add(id);
 
-    // 3. Validate income values
-    if (
-      (card.annual_fee !== null && card.annual_fee !== undefined && card.annual_fee < 0) ||
-      (card.minimum_income !== null && card.minimum_income !== undefined && card.minimum_income < 0) ||
-      (card.minimum_cibil !== null && card.minimum_cibil !== undefined && card.minimum_cibil < 0)
-    ) {
-      console.warn(`[Adapter] Skipping card ${card.id} due to negative income/fee values.`);
-      continue;
-    }
+    // 3. Network mapping (Preserve truth)
+    const network = mapNetwork(canonical.identity.network);
 
-    // 4. Validate malformed rewards (NaN or negative)
-    const hasMalformedRewards = card.rewards?.some(r => r.points < 0 || r.spend < 0);
-    if (hasMalformedRewards) {
-      console.warn(`[Adapter] Skipping card ${card.id} due to malformed rewards structure.`);
-      continue;
-    }
+    // 4. Annual fee & joining fee
+    const annualFee = canonical.fees.annualFee !== null ? canonical.fees.annualFee.amount : null;
+    const joiningFee = canonical.fees.joiningFee !== null ? canonical.fees.joiningFee.amount : annualFee;
 
-    // Map fields
-    const network = mapNetwork(card.network);
-    const premiumTier = mapPremiumTier(card.card_tier, card.annual_fee);
-    const { rewardType, rewardRate } = calculateRewardRate(card.rewards);
-    const { loungeAccess, isLoungeValid } = mapLoungeAccess(card.lounge);
-    
-    // 5. Validate lounge data
-    if (!isLoungeValid) {
-      console.warn(`[Adapter] Skipping card ${card.id} due to negative lounge limit.`);
-      continue;
-    }
+    // 5. Tier & Rewards
+    const premiumTier = mapPremiumTier(canonical.identity.networkTier, annualFee);
+    const { rewardType, rewardRate } = calculateRewardRate(canonical);
+    const loungeAccess = mapLoungeAccess(canonical);
+    const forexMarkup = canonical.fees.forexMarkup ?? (canonical.travelInternational.forexMarkup ?? null);
+    const fuelBenefits = mapFuelBenefits(canonical);
+    const welcomeBenefits = mapWelcomeBenefits(canonical);
+    const milestoneBenefits = canonical.milestones.map(m => typeof m.description === 'string' ? m.description : '').filter(Boolean);
 
-    const categories = mapCategories(card.card_categories);
+    const categories = mapCategories(canonical);
 
-    const intelCard: CreditCardIntelligence = {
-      id: card.id,
-      issuer: card.issuer,
+    const topBenefit = canonical.benefits[0]?.description
+      || canonical.features[0]?.rawText
+      || 'Standard card benefits';
+
+    const intelCard: CreditCardIntelligence & {
+      dataQuality?: string;
+      recommendationConfidence?: string;
+    } = {
+      id,
+      issuer,
       network,
-      cardName: card.card_title,
-      annualFee: card.annual_fee || 0,
-      joiningFee: card.annual_fee || 0,
+      cardName,
+      annualFee,
+      joiningFee,
       rewardType,
       rewardRate,
       loungeAccess,
-      forexMarkup: 3.5, // Default fallback
-      fuelBenefits: mapFuelBenefits(card.benefits),
-      welcomeBenefits: card.welcome_bonus ? [card.welcome_bonus] : [],
-      milestoneBenefits: [], // Optional field, kept empty for now
+      forexMarkup,
+      fuelBenefits,
+      welcomeBenefits,
+      milestoneBenefits,
       eligibility: {
-        minSalary: card.minimum_income || undefined,
-        minCreditScore: card.minimum_cibil || undefined,
+        minSalary: canonical.eligibility.minimumIncome ?? canonical.eligibility.annualIncome ?? undefined,
+        minCreditScore: undefined,
       },
       categories,
       premiumTier,
-      topBenefit: card.overview || card.benefits?.[0]?.description || 'Standard benefits',
+      topBenefit,
+      isDeprecated: canonical.lifecycleStatus === 'DISCONTINUED',
+      dataQuality: canonical.dataQuality,
+      recommendationConfidence: canonical.recommendationConfidence,
     };
 
     result.push(intelCard);
@@ -87,10 +99,13 @@ export function toCreditCardIntelligence(cards: CreditCard[]): CreditCardIntelli
 function mapNetwork(networkStr?: string | null): CardNetwork {
   if (!networkStr) return 'Visa';
   const l = networkStr.toLowerCase();
+  if (l.includes('visa')) return 'Visa';
   if (l.includes('master')) return 'Mastercard';
   if (l.includes('amex') || l.includes('american')) return 'American Express';
   if (l.includes('rupay')) return 'RuPay';
-  return 'Visa';
+  
+  // Return preserved network string as CardNetwork compatibility
+  return networkStr as CardNetwork;
 }
 
 function mapPremiumTier(tier?: string | null, fee?: number | null): PremiumTier {
@@ -105,77 +120,117 @@ function mapPremiumTier(tier?: string | null, fee?: number | null): PremiumTier 
   return 'entry';
 }
 
-function calculateRewardRate(rewards?: CreditCard['rewards']): { rewardType: RewardType; rewardRate: string } {
-  if (!rewards || rewards.length === 0) {
-    return { rewardType: 'cashback', rewardRate: '1%' }; // Default safe fallback
+function calculateRewardRate(canonical: CanonicalCard): { rewardType: RewardType; rewardRate: string } {
+  // 1. Check cashback rates
+  if (canonical.cashback.rates && canonical.cashback.rates.length > 0) {
+    const firstRate = canonical.cashback.rates[0];
+    const rateTypeStr = firstRate.rateType === 'UP_TO' ? 'Up to ' : '';
+    return {
+      rewardType: 'cashback',
+      rewardRate: `${rateTypeStr}${firstRate.rate}% cashback`,
+    };
   }
 
-  // Find base reward or highest reward to represent the generic string
-  const baseReward = rewards.find(r => r.category.toLowerCase() === 'all' || r.category.toLowerCase() === 'retail') || rewards[0];
-  
-  let rewardType: RewardType = 'points';
-  const typeStr = baseReward.point_type?.toLowerCase() || '';
-  if (typeStr.includes('cashback')) rewardType = 'cashback';
-  else if (typeStr.includes('mile')) rewardType = 'miles';
-  
-  // Calculate abstract percentage based on points and spend (Naive heuristic for Phase A)
-  // Assuming 1 point = 0.25 INR for generic representation, cashback is 1:1
-  const multiplier = rewardType === 'cashback' ? 1 : 0.25;
-  const safeSpend = baseReward.spend && baseReward.spend > 0 ? baseReward.spend : 100;
-  const pct = ((baseReward.points * multiplier) / safeSpend) * 100;
-  
-  const formattedPct = isNaN(pct) || !isFinite(pct) ? 1 : parseFloat(pct.toFixed(2));
-  
-  if (rewardType === 'cashback') {
-    return { rewardType, rewardRate: `${formattedPct}%` };
+  // 2. Check points earning rules
+  if (canonical.rewards.earningRules && canonical.rewards.earningRules.length > 0) {
+    const firstRule = canonical.rewards.earningRules[0];
+    const isMiles = firstRule.condition.toLowerCase().includes('mile') || (canonical.rewards.rewardType?.toLowerCase().includes('mile') ?? false);
+    const unit = isMiles ? 'miles' : 'points';
+    
+    return {
+      rewardType: isMiles ? 'miles' : 'points',
+      rewardRate: `${firstRule.rate} ${unit} on ${firstRule.category || 'spends'}`,
+    };
   }
-  return { rewardType, rewardRate: `${baseReward.points} ${baseReward.point_type} per ₹${baseReward.spend}` };
+
+  // 3. Check base rate
+  if (canonical.rewards.baseRate !== null && canonical.rewards.baseRate > 0) {
+    return {
+      rewardType: 'rewards',
+      rewardRate: `${canonical.rewards.baseRate}% base rewards`,
+    };
+  }
+
+  // 4. If rewards are unknown, do not fabricate 1%
+  return {
+    rewardType: 'rewards',
+    rewardRate: 'Terms unconfirmed',
+  };
 }
 
-function mapLoungeAccess(lounge?: CreditCard['lounge']): { loungeAccess: string; isLoungeValid: boolean } {
-  if (!lounge || lounge.length === 0) return { loungeAccess: 'None', isLoungeValid: true };
-  
-  const dom = lounge.find(l => l.category.toLowerCase().includes('domestic'));
-  const intl = lounge.find(l => l.category.toLowerCase().includes('international'));
-
-  if (dom && dom.limit !== null && dom.limit < 0) return { loungeAccess: 'None', isLoungeValid: false };
-  if (intl && intl.limit !== null && intl.limit < 0) return { loungeAccess: 'None', isLoungeValid: false };
-
-  if (dom) {
-    return { loungeAccess: `${dom.limit} domestic per ${dom.frequency?.toLowerCase()}`, isLoungeValid: true };
-  }
-  
-  if (intl) {
-    return { loungeAccess: `${intl.limit} international per ${intl.frequency?.toLowerCase()}`, isLoungeValid: true };
+function mapLoungeAccess(canonical: CanonicalCard): string {
+  if (canonical.lounge.domesticVisits !== null && canonical.lounge.domesticVisits > 0) {
+    const freq = canonical.lounge.frequency ? ` per ${canonical.lounge.frequency.toLowerCase()}` : '/year';
+    return `${canonical.lounge.domesticVisits} domestic visits${freq}`;
   }
 
-  return { loungeAccess: 'Yes', isLoungeValid: true };
+  if (canonical.lounge.internationalVisits !== null && canonical.lounge.internationalVisits > 0) {
+    const freq = canonical.lounge.frequency ? ` per ${canonical.lounge.frequency.toLowerCase()}` : '/year';
+    return `${canonical.lounge.internationalVisits} international visits${freq}`;
+  }
+
+  if (canonical.lounge.available === 'AVAILABLE') {
+    return 'Complimentary Lounge Access';
+  }
+
+  const loungeBenefit = canonical.benefits.find(b => b.category.toLowerCase().includes('lounge'));
+  if (loungeBenefit) {
+    return loungeBenefit.description;
+  }
+
+  return 'None';
 }
 
-function mapFuelBenefits(benefits?: CreditCard['benefits']): string {
-  if (!benefits) return 'None';
-  const fuel = benefits.find(b => b.category.toLowerCase().includes('fuel'));
-  return fuel ? fuel.description : 'None';
+function mapFuelBenefits(canonical: CanonicalCard): string {
+  const fuel = canonical.benefits.find(b => b.category.toLowerCase().includes('fuel'));
+  if (fuel) return fuel.description;
+  const fuelFeature = canonical.features.find(f => f.rawText.toLowerCase().includes('fuel surcharge'));
+  if (fuelFeature) return fuelFeature.rawText;
+  return 'None';
 }
 
-function mapCategories(cats?: string[]): TransactionCategory[] {
-  if (!cats || cats.length === 0) return ['other'];
-  const mapped: Set<TransactionCategory> = new Set();
-  
-  const validCategories = ['dining', 'shopping', 'travel', 'groceries', 'fuel', 'entertainment', 'utilities', 'health', 'transport', 'subscriptions', 'other'];
+function mapWelcomeBenefits(canonical: CanonicalCard): string[] {
+  return canonical.benefits
+    .filter(b => b.category.toLowerCase().includes('welcome'))
+    .map(b => b.description);
+}
 
-  for (const c of cats) {
+function mapCategories(canonical: CanonicalCard): TransactionCategory[] {
+  const categoriesSet = new Set<TransactionCategory>();
+  const validCategories: TransactionCategory[] = [
+    'dining', 'shopping', 'travel', 'groceries', 'fuel',
+    'entertainment', 'utilities', 'health', 'transport', 'subscriptions', 'other'
+  ];
+
+  // Collect from cashback categories
+  for (const c of canonical.cashback.categories) {
     const l = c.toLowerCase();
-    let found = false;
     for (const vc of validCategories) {
-      if (l.includes(vc) || vc.includes(l)) {
-        mapped.add(vc as TransactionCategory);
-        found = true;
-        break;
+      if (l.includes(vc) || vc.includes(l)) categoriesSet.add(vc);
+    }
+  }
+
+  // Collect from earning rules
+  if (canonical.rewards.earningRules) {
+    for (const r of canonical.rewards.earningRules) {
+      const l = r.category.toLowerCase();
+      for (const vc of validCategories) {
+        if (l.includes(vc) || vc.includes(l)) categoriesSet.add(vc);
       }
     }
-    if (!found) mapped.add('other');
   }
 
-  return Array.from(mapped);
+  // Collect from benefits
+  for (const b of canonical.benefits) {
+    const l = b.category.toLowerCase();
+    for (const vc of validCategories) {
+      if (l.includes(vc) || vc.includes(l)) categoriesSet.add(vc);
+    }
+  }
+
+  if (categoriesSet.size === 0) {
+    categoriesSet.add('other');
+  }
+
+  return Array.from(categoriesSet);
 }

@@ -10,10 +10,11 @@ describe('CardRepository', () => {
     expect(cards.length > 0).toBeTruthy();
     
     // Verify that all returned cards have a valid structure (because the validator filters them)
-    const invalidCard = cards.find(c => !c.id || !c.name || !c.bank || c.annualFee < 0);
+    const invalidCard = cards.find(c => !c.id || !c.name || !c.bank || (c.annualFee !== null && c.annualFee < 0));
     expect(!invalidCard).toBeTruthy();
     
-    const invalidNetwork = cards.find(c => !['Visa', 'Mastercard', 'Amex', 'RuPay'].includes(c.network));
+    const invalidNetwork = cards.find(c => !['Visa', 'Mastercard', 'Amex', 'RuPay', 'Diners Club'].includes(c.network));
     expect(!invalidNetwork).toBeTruthy();
+    expect(cards.length).toBe(518);
   });
 });

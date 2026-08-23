@@ -13,10 +13,10 @@ export default function MarketplaceHome() {
       eyebrow="Marketplace"
       title="Rewards & Experiences"
       subtitle="Curated offers and partner rewards across categories that matter to you."
-      className="text-[#F2F4F2] font-body"
+      className="text-gray-900 font-body"
     >
       <div className="w-full flex flex-col gap-10 relative">
-        <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
+        <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#FAFBF9]" />
 
         {heroCategory && (
           <section>

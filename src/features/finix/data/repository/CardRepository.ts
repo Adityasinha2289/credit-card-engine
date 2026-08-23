@@ -51,14 +51,14 @@ export class CardRepository {
       }
 
       // 4. Invalid Network
-      const validNetworks = ['Visa', 'Mastercard', 'Amex', 'RuPay'];
+      const validNetworks = ['Visa', 'Mastercard', 'Amex', 'RuPay', 'Diners Club'];
       if (!validNetworks.includes(card.network)) {
         console.warn(`[CardRepository] Skipping card ${card.id} due to invalid network:`, card.network);
         continue;
       }
 
       // 5. Invalid Annual Fee
-      if (card.annualFee < 0 || isNaN(card.annualFee)) {
+      if (card.annualFee !== null && (card.annualFee < 0 || isNaN(card.annualFee))) {
         console.warn(`[CardRepository] Skipping card ${card.id} due to invalid annual fee:`, card.annualFee);
         continue;
       }

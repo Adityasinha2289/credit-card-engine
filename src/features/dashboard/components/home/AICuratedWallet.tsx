@@ -70,41 +70,41 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
               {/* Top Banner (AI Pick vs Preview) */}
               <div className="relative z-10 flex items-center justify-between">
                 {isAIPick ? (
-                  <motion.div layoutId="hero-badge" className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/20">
-                    <Sparkles size={14} className="text-white" />
-                    <span className="text-xs font-bold text-white tracking-widest uppercase">Today's Pick</span>
+                  <motion.div layoutId="hero-badge" className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-gray-300">
+                    <Sparkles size={14} className="text-gray-900" />
+                    <span className="text-xs font-bold text-gray-900 tracking-widest uppercase">Today's Pick</span>
                   </motion.div>
                 ) : (
-                  <motion.div layoutId="hero-badge" className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md border border-border-subtle">
-                    <span className="text-xs font-bold text-white/70 tracking-widest uppercase">Preview Mode</span>
+                  <motion.div layoutId="hero-badge" className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100/50 backdrop-blur-md border border-border-subtle">
+                    <span className="text-xs font-bold text-gray-700 tracking-widest uppercase">Preview Mode</span>
                   </motion.div>
                 )}
                 
-                <span className="text-sm font-bold text-white/90 uppercase tracking-widest">{activeCard.bank}</span>
+                <span className="text-sm font-bold text-gray-900 uppercase tracking-widest">{activeCard.bank}</span>
               </div>
 
               {/* Main Information */}
               <div className="relative z-10 mt-auto">
                 <div className="mb-4">
-                  <h3 className="text-3xl md:text-5xl font-display font-medium text-white tracking-tight mb-2">
+                  <h3 className="text-3xl md:text-5xl font-display font-medium text-gray-900 tracking-tight mb-2">
                     {activeCard.cardName || activeCard.bank}
                   </h3>
                   
                   {isAIPick ? (
                     <div className="flex flex-col gap-1">
-                      <p className="text-lg md:text-xl text-white/90 font-light">
+                      <p className="text-lg md:text-xl text-gray-900 font-light">
                         Save <span className="font-bold">₹340</span> today.
                       </p>
-                      <p className="text-sm md:text-base text-white/70 font-medium">
+                      <p className="text-sm md:text-base text-gray-700 font-medium">
                         Perfect for {context}
                       </p>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-1">
-                      <p className="text-lg md:text-xl text-white/90 font-light">
+                      <p className="text-lg md:text-xl text-gray-900 font-light">
                         Standard rewards apply.
                       </p>
-                      <p className="text-sm md:text-base text-white/70 font-medium">
+                      <p className="text-sm md:text-base text-gray-700 font-medium">
                         Sub-optimal for {context}
                       </p>
                     </div>
@@ -116,13 +116,13 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
                   <div className="hidden md:flex flex-col gap-1.5">
                     {isAIPick ? (
                       <>
-                        <p className="text-xs text-white/80 flex items-center gap-2"><span className="text-white">•</span> 10% Instant Discount</p>
-                        <p className="text-xs text-white/80 flex items-center gap-2"><span className="text-white">•</span> 5X reward multiplier</p>
+                        <p className="text-xs text-gray-800 flex items-center gap-2"><span className="text-gray-900">•</span> 10% Instant Discount</p>
+                        <p className="text-xs text-gray-800 flex items-center gap-2"><span className="text-gray-900">•</span> 5X reward multiplier</p>
                       </>
                     ) : (
                       <>
-                        <p className="text-xs text-white/60 flex items-center gap-2"><span className="text-white/40">•</span> No active multiplier</p>
-                        <p className="text-xs text-white/60 flex items-center gap-2"><span className="text-white/40">•</span> Base 1% cashback</p>
+                        <p className="text-xs text-gray-600 flex items-center gap-2"><span className="text-gray-400">•</span> No active multiplier</p>
+                        <p className="text-xs text-gray-600 flex items-center gap-2"><span className="text-gray-400">•</span> Base 1% cashback</p>
                       </>
                     )}
                   </div>
@@ -130,7 +130,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
                   {/* Confidence / CTA */}
                   <div className="flex flex-col items-end gap-3 text-right w-full md:w-auto">
                     {isAIPick && (
-                      <span className="text-xs font-bold text-white/80 bg-black/20 px-2 py-1 rounded-md backdrop-blur-sm border border-border-subtle">
+                      <span className="text-xs font-bold text-gray-800 bg-gray-100/50 px-2 py-1 rounded-md backdrop-blur-sm border border-border-subtle">
                         AI Confidence • 99%
                       </span>
                     )}
@@ -139,7 +139,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
                         e.stopPropagation();
                         onAskTaqdeer(`Why use ${activeCard.bank} for ${context}?`);
                       }}
-                      className="text-sm font-bold text-white flex items-center gap-1.5 group/btn"
+                      className="text-sm font-bold text-gray-900 flex items-center gap-1.5 group/btn"
                     >
                       Why this recommendation
                       <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
@@ -179,13 +179,13 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
                     className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none"
                     style={{ backgroundImage:"url('https://grainy-gradients.vercel.app/noise.svg')" }}
                   />
-                  <span className="text-[10px] font-bold text-white/90 uppercase tracking-widest relative z-10">{card.bank}</span>
+                  <span className="text-[10px] font-bold text-gray-900 uppercase tracking-widest relative z-10">{card.bank}</span>
                   
                   <div className="relative z-10">
-                    <p className="text-xs font-semibold text-white/80 leading-tight mb-2 truncate">
+                    <p className="text-xs font-semibold text-gray-800 leading-tight mb-2 truncate">
                       {card.cardName || 'Credit Card'}
                     </p>
-                    <p className="text-[10px] font-medium text-white/50 tracking-widest">
+                    <p className="text-[10px] font-medium text-gray-600 tracking-widest">
                       ••{card.pan.slice(-4)}
                     </p>
                   </div>
@@ -195,7 +195,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
               {overflowCount > 0 && (
                 <div 
                   onClick={onOpenWallet}
-                  className="snap-start shrink-0 w-[180px] md:w-[220px] aspect-[1.58] rounded-2xl border border-dashed border-border-subtle dark:border-white/20 flex flex-col items-center justify-center cursor-pointer hover:border-brand-emerald/50 hover:bg-brand-emerald/5 transition-all"
+                  className="snap-start shrink-0 w-[180px] md:w-[220px] aspect-[1.58] rounded-2xl border border-dashed border-border-subtle dark:border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-brand-emerald/50 hover:bg-brand-emerald/5 transition-all"
                 >
                   <span className="text-xl font-display font-medium text-text-secondary">+{overflowCount}</span>
                 </div>

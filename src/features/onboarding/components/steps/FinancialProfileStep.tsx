@@ -14,7 +14,9 @@ export function FinancialProfileStep({ onBack, onContinue, initialSalary, initia
   const [salary, setSalary] = useState<string>(initialSalary ? initialSalary.toString() : '');
   const [creditScore, setCreditScore] = useState<string>(initialCreditScore ? initialCreditScore.toString() : '');
   
-  const isValid = salary.trim().length > 0 && creditScore.trim().length > 0 && !isNaN(Number(salary)) && !isNaN(Number(creditScore));
+  const scoreNum = Number(creditScore);
+  const isScoreError = creditScore.trim().length > 0 && (isNaN(scoreNum) || scoreNum < 300 || scoreNum > 900);
+  const isValid = salary.trim().length > 0 && creditScore.trim().length > 0 && !isNaN(Number(salary)) && !isScoreError;
 
   const handleContinue = () => {
     if (isValid) {
@@ -39,17 +41,17 @@ export function FinancialProfileStep({ onBack, onContinue, initialSalary, initia
           transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col"
         >
-          <label className="text-sm font-semibold tracking-wide mb-3" style={{ color: '#A4A8A6' }}>
+          <label className="text-sm font-semibold tracking-wide mb-3" style={{ color: '#4B5563' }}>
             Annual Income (INR)
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6E7471] font-medium">₹</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280] font-medium">₹</span>
             <input
               type="text"
               value={salary}
               onChange={(e) => setSalary(e.target.value.replace(/[^0-9]/g, ''))}
               placeholder="e.g. 1500000"
-              className="w-full bg-[#0C0D0D] border border-[#232626] rounded-xl pl-8 pr-4 py-4 text-[#F4F4F2] font-medium outline-none transition-all focus:border-[#5D8F74]"
+              className="w-full bg-[#FFFFFF] border border-[#E5E7EB] rounded-xl pl-8 pr-4 py-4 text-[#111827] font-medium outline-none transition-all focus:border-[#2A9D5C]"
             />
           </div>
         </motion.div>
@@ -60,7 +62,7 @@ export function FinancialProfileStep({ onBack, onContinue, initialSalary, initia
           transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col"
         >
-          <label className="text-sm font-semibold tracking-wide mb-3" style={{ color: '#A4A8A6' }}>
+          <label className="text-sm font-semibold tracking-wide mb-3" style={{ color: '#4B5563' }}>
             Estimated CIBIL Score
           </label>
           <input
@@ -68,8 +70,18 @@ export function FinancialProfileStep({ onBack, onContinue, initialSalary, initia
             value={creditScore}
             onChange={(e) => setCreditScore(e.target.value.replace(/[^0-9]/g, '').slice(0, 3))}
             placeholder="e.g. 750"
-            className="w-full bg-[#0C0D0D] border border-[#232626] rounded-xl px-4 py-4 text-[#F4F4F2] font-medium outline-none transition-all focus:border-[#5D8F74]"
+            className={`w-full bg-[#FFFFFF] border rounded-xl px-4 py-4 text-[#111827] font-medium outline-none transition-all ${
+              isScoreError ? 'border-red-500 focus:border-red-600' : 'border-[#E5E7EB] focus:border-[#2A9D5C]'
+            }`}
           />
+          {isScoreError && (
+            <motion.p 
+              initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} 
+              className="text-red-500 text-xs font-medium mt-2"
+            >
+              Invalid CIBIL score (must be 300-900)
+            </motion.p>
+          )}
         </motion.div>
 
       </div>

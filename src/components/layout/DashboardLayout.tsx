@@ -76,28 +76,45 @@ export function DashboardLayout({
         </main>
       </div>
 
-      {/* ── Mobile Bottom Navigation Bar ───────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-semantic-shell border-t border-semantic-border-subtle z-40 flex items-center justify-around px-2 pb-safe">
+      {/* ── Mobile Bottom Navigation Bar (10/10 Premium) ───────────────────────────────── */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-[68px] bg-white/80 backdrop-blur-xl border-t border-gray-200 z-40 flex items-center justify-around px-2 pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
         {MOBILE_NAV.map((item) => {
           const isActive = isRouteActive(item.path, item.id === 'home');
           return (
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={cn(
-                'flex flex-col items-center justify-center w-full h-full gap-1 transition-colors duration-150',
-                isActive ? 'text-semantic-brand' : 'text-semantic-text-muted'
-              )}
+              className="relative flex flex-1 flex-col items-center justify-center h-full transition-all duration-300 group"
             >
-              <item.Icon
-                size={22}
-                strokeWidth={isActive ? 2 : 1.5}
-                className={cn(
-                  'transition-colors duration-150',
-                  isActive ? 'drop-shadow-[0_0_8px_rgba(0,229,153,0.3)]' : ''
-                )}
-              />
-              <span className={cn('text-[10px] tracking-wide', isActive ? 'font-semibold' : 'font-medium')}>
+              {/* Animated Top Indicator */}
+              {isActive && (
+                <motion.div
+                  layoutId="activeMobileNav"
+                  className="absolute top-0 w-10 h-1 bg-[#2A9D5C] rounded-b-full shadow-[0_2px_8px_rgba(42,157,92,0.4)]"
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )}
+
+              {/* Icon Container with subtle active background */}
+              <div className={cn(
+                "relative p-1.5 rounded-xl transition-all duration-300",
+                isActive ? "bg-[#2A9D5C]/5 mt-1" : "group-hover:bg-gray-50"
+              )}>
+                <item.Icon
+                  size={24}
+                  strokeWidth={isActive ? 2.5 : 1.5}
+                  className={cn(
+                    'transition-all duration-300',
+                    isActive ? 'text-[#2A9D5C]' : 'text-gray-400 group-hover:text-gray-600'
+                  )}
+                />
+              </div>
+
+              {/* Label */}
+              <span className={cn(
+                'text-[10px] tracking-wide transition-all duration-300 mt-0.5',
+                isActive ? 'font-bold text-[#2A9D5C]' : 'font-medium text-gray-400'
+              )}>
                 {item.label}
               </span>
             </button>

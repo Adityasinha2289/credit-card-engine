@@ -118,7 +118,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
     >
       <div className="glass-surface rounded-2xl shadow-ag-card p-4 mb-3 flex flex-col gap-3">
         {/* Toggle tabs */}
-        <div className="flex bg-surface-secondary dark:bg-white/[0.03] p-1 rounded-xl gap-1">
+        <div className="flex bg-surface-secondary dark:bg-gray-100 p-1 rounded-xl gap-1">
           <button
             type="button"
             onClick={() => { setTab('manual'); setError(null); }}
@@ -197,7 +197,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                     'text-[10px] font-semibold px-2.5 py-1 rounded-full transition-all duration-150',
                     category === value
                       ? 'btn-primary shadow-[0_0_20px_rgba(4,59,39,0.3)]'
-                      : 'bg-surface-secondary dark:bg-white/[0.04] text-text-secondary hover:bg-surface-elevated dark:hover:bg-white/[0.08]',
+                      : 'bg-surface-secondary dark:bg-gray-100 text-text-secondary hover:bg-surface-elevated dark:hover:bg-white/[0.08]',
                   )}
                   aria-pressed={category === value}
                 >
@@ -218,7 +218,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
               <button
                 type="submit"
                 className={cn(
-                  'text-xs font-semibold text-white px-4 py-1.5 rounded-full',
+                  'text-xs font-semibold text-gray-900 px-4 py-1.5 rounded-full',
                   'btn-primary shadow-[0_0_20px_rgba(4,59,39,0.3)]',
                   'transition-all duration-150 active:scale-95',
                 )}
@@ -268,7 +268,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   <button
                     type="button"
                     onClick={handleParseSms}
-                    className="text-xs font-semibold text-white px-4 py-1.5 rounded-full btn-primary shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
+                    className="text-xs font-semibold text-gray-900 px-4 py-1.5 rounded-full btn-primary shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
                   >
                     Auto Parse SMS
                   </button>
@@ -346,7 +346,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   </button>
                   <button
                     type="submit"
-                    className="text-xs font-semibold text-white px-4 py-1.5 rounded-full bg-profit hover:bg-green-600 shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
+                    className="text-xs font-semibold text-gray-900 px-4 py-1.5 rounded-full bg-profit hover:bg-green-600 shadow-[0_0_20px_rgba(4,59,39,0.3)] transition-all active:scale-95"
                   >
                     Confirm & Add
                   </button>
@@ -400,8 +400,8 @@ function EmptyState() {
           className="relative w-20 h-24 panel-glass rounded-xl border border-border-subtle flex flex-col items-center justify-start pt-3 overflow-hidden shadow-2xl"
         >
           <div className="w-12 h-1 bg-white/20 rounded-full mb-3" />
-          <div className="w-14 h-1 bg-white/10 rounded-full mb-1.5" />
-          <div className="w-10 h-1 bg-white/10 rounded-full mb-4" />
+          <div className="w-14 h-1 bg-gray-100 rounded-full mb-1.5" />
+          <div className="w-10 h-1 bg-gray-100 rounded-full mb-4" />
           
           <div className="w-full flex-1 bg-gradient-to-t from-brand-500/20 to-transparent flex items-end justify-center pb-2">
             <div className="w-6 h-6 rounded-full bg-brand-emerald/30 flex items-center justify-center border border-border-emerald">

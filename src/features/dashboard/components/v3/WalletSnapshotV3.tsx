@@ -62,7 +62,7 @@ export function WalletSnapshotV3({
           <WalletIcon size={20} className="text-brand-emerald" />
           Wallet Snapshot
         </h3>
-        <span className="text-[10px] font-bold tracking-wider uppercase bg-surface-secondary dark:bg-white/5 px-2.5 py-1 rounded-full text-text-secondary">
+        <span className="text-[10px] font-bold tracking-wider uppercase bg-surface-secondary dark:bg-gray-50 px-2.5 py-1 rounded-full text-text-secondary">
           {userCards.length} Cards
         </span>
       </div>
@@ -96,14 +96,14 @@ export function WalletSnapshotV3({
       </div>
 
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <div className="p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
+        <div className="p-4 rounded-2xl bg-surface-primary dark:bg-gray-50 border border-border-subtle">
           <div className="flex items-center gap-2 mb-1">
             <PieChart size={14} className="text-text-muted" />
             <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Utilization</span>
           </div>
           <p className="text-lg font-bold text-text-primary">{utilization}%</p>
         </div>
-        <div className="p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
+        <div className="p-4 rounded-2xl bg-surface-primary dark:bg-gray-50 border border-border-subtle">
           <div className="flex items-center gap-2 mb-1">
             <Calendar size={14} className="text-text-muted" />
             <span className="text-[10px] uppercase font-bold tracking-wider text-text-muted">Next Bill</span>

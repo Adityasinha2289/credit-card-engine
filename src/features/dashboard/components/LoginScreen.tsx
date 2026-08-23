@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
   CreditCard,
   BookOpen,
@@ -56,6 +56,39 @@ export function LoginScreen() {
   const salary = 1500000;
   const creditScore = 750;
 
+  // Premium 10/10 3D Hover Effect State
+  const [isHovered, setIsHovered] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { stiffness: 300, damping: 30, mass: 0.5 };
+  
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], ["17deg", "-17deg"]), springConfig);
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], ["-17deg", "17deg"]), springConfig);
+  
+  const glareX = useSpring(useTransform(mouseX, [-0.5, 0.5], ["100%", "0%"]), springConfig);
+  const glareY = useSpring(useTransform(mouseY, [-0.5, 0.5], ["100%", "0%"]), springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseXPos = e.clientX - rect.left;
+    const mouseYPos = e.clientY - rect.top;
+    mouseX.set(mouseXPos / width - 0.5);
+    mouseY.set(mouseYPos / height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
   // Listen to hash changes to toggle between sign-in and sign-up
   useEffect(() => {
     const handleHash = () => {
@@ -105,7 +138,7 @@ export function LoginScreen() {
     };
   }, [mode]);
 
-  const handleOnboardingComplete = (state: OnboardingState) => {
+  const handleOnboardingComplete = async (state: OnboardingState) => {
     const existingProfile = useDashboardStore.getState().profile;
     
     // Convert 18-22 to youth segment, else adult
@@ -132,6 +165,16 @@ export function LoginScreen() {
     };
 
     login(profile);
+    
+    if (user) {
+      user.update({
+        unsafeMetadata: {
+          ...user.unsafeMetadata,
+          onboardingCompleted: true,
+          profileData: profile
+        }
+      }).catch(console.error);
+    }
     
     // Process selected credit cards
     if (state.banks && state.banks.length > 0) {
@@ -172,66 +215,77 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-[#0a0a0a] p-4 lg:p-8">
+    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-[#FAFBF9] p-4 lg:p-8">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] max-w-5xl w-full gap-8 items-center">
         {/* Left Side: Branding & Premium Dashboard Teaser */}
-        <div className="flex flex-col gap-6 text-left hidden lg:flex">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(4,59,39,0.3)] overflow-hidden bg-black border border-border-subtle">
+        <div className="flex flex-col gap-6 text-left">
+          <div className="hidden lg:flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(4,59,39,0.1)] overflow-hidden bg-white border border-gray-300">
               <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />
             </div>
             <div>
-              <p className="text-2xl font-display font-bold text-white tracking-tight">
+              <p className="text-2xl font-display font-bold text-gray-900 tracking-tight">
                 renocred
               </p>
-              <p className="text-[10px] font-semibold text-white/50 tracking-[0.2em] uppercase">
+              <p className="text-[10px] font-semibold text-gray-600 tracking-[0.2em] uppercase">
                 credit intelligence
               </p>
             </div>
           </div>
 
           <div>
-            <h1 className="text-4xl xl:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
-              Unlock the power of your <span className="bg-gradient-to-r from-[#237E45] via-[#237E45] to-emerald-200 text-transparent bg-clip-text">financial profile</span>.
+            <h1 className="text-4xl xl:text-5xl font-display font-extrabold text-gray-900 tracking-tight leading-tight">
+              Unlock the power of your <span className="bg-gradient-to-r from-[#2A9D5C] via-[#2A9D5C] to-emerald-400 text-transparent bg-clip-text">financial profile</span>.
             </h1>
-            <p className="text-sm text-white/60 mt-4 max-w-md leading-relaxed">
+            <p className="hidden lg:block text-sm text-gray-600 mt-4 max-w-md leading-relaxed">
               renocred evaluates your credit score, compares 130+ cards, and acts as your personal optimizer to maximize your rewards and savings.
             </p>
           </div>
 
           {/* Interactive Card Preview */}
-          <div
-            className="relative mt-4 w-full max-w-sm rounded-2xl overflow-hidden group transition-all duration-500"
-            style={{ perspective: '800px' }}
-          >
-            {/* Card face */}
-            <div
-              className="relative h-56 rounded-2xl p-6 flex flex-col justify-between transition-transform duration-500 group-hover:scale-[1.02]"
+          <div className="hidden lg:block relative mt-4 w-full max-w-sm" style={{ perspective: '1200px' }}>
+            <motion.div
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              onMouseEnter={handleMouseEnter}
               style={{
-                background: 'linear-gradient(145deg, rgba(31,82,71,0.25) 0%, rgba(15,41,36,0.6) 40%, rgba(10,28,24,0.85) 100%)',
-                transform: 'rotateX(2deg) rotateY(-1deg)',
+                rotateX,
+                rotateY,
+                scale: isHovered ? 1.05 : 1,
                 transformStyle: 'preserve-3d',
-                boxShadow: `
-                  0 1px 0 0 rgba(255,255,255,0.08) inset,
-                  -1px 0 0 0 rgba(255,255,255,0.04) inset,
-                  1px 0 0 0 rgba(0,0,0,0.2) inset,
-                  0 -1px 0 0 rgba(0,0,0,0.3) inset,
-                  0 4px 6px -1px rgba(0,0,0,0.3),
-                  0 10px 20px -5px rgba(0,0,0,0.4),
-                  0 25px 50px -12px rgba(0,0,0,0.5),
-                  0 0 30px -5px rgba(31,82,71,0.15)
-                `,
-                border: '1px solid rgba(255,255,255,0.08)',
               }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="relative h-56 rounded-2xl p-6 flex flex-col justify-between cursor-pointer w-full group"
             >
-              {/* Top highlight edge */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
-              {/* Left highlight edge */}
-              <div className="absolute top-0 left-0 bottom-0 w-[1px] bg-gradient-to-b from-white/10 via-white/5 to-transparent pointer-events-none" />
+              {/* Main Card Background */}
+              <div 
+                className="absolute inset-0 rounded-2xl overflow-hidden transition-shadow duration-500"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(31,82,71,0.25) 0%, rgba(15,41,36,0.6) 40%, rgba(10,28,24,0.85) 100%)',
+                  boxShadow: isHovered 
+                    ? `0 30px 60px -12px rgba(42,157,92,0.5), 0 1px 0 0 rgba(255,255,255,0.12) inset, -1px 0 0 0 rgba(255,255,255,0.06) inset, 1px 0 0 0 rgba(0,0,0,0.2) inset, 0 -1px 0 0 rgba(0,0,0,0.3) inset`
+                    : `0 10px 30px -5px rgba(0,0,0,0.5), 0 1px 0 0 rgba(255,255,255,0.08) inset, -1px 0 0 0 rgba(255,255,255,0.04) inset, 1px 0 0 0 rgba(0,0,0,0.2) inset, 0 -1px 0 0 rgba(0,0,0,0.3) inset`,
+                  border: '1px solid rgba(255,255,255,0.1)',
+                }}
+              >
+                {/* Dynamic Glare */}
+                <motion.div 
+                  className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"
+                  style={{
+                    background: "radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 50%)",
+                    left: glareX,
+                    top: glareY,
+                    width: '200%',
+                    height: '200%',
+                    x: '-50%',
+                    y: '-50%',
+                  }}
+                />
+              </div>
 
               {/* Ambient brand glow */}
-              <div className="absolute top-0 right-0 w-40 h-40 bg-brand-emerald-glow rounded-full blur-[80px] pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-emerald-muted rounded-full blur-[60px] pointer-events-none" />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-brand-emerald-glow rounded-full blur-[80px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-700 mix-blend-screen" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-emerald-muted rounded-full blur-[60px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-700 mix-blend-screen" />
 
               <div className="relative z-10 flex justify-between items-start">
                 <div>
@@ -266,17 +320,7 @@ export function LoginScreen() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Card bottom edge / thickness shadow */}
-            <div
-              className="mx-2 h-2 rounded-b-xl"
-              style={{
-                background: 'linear-gradient(to bottom, rgba(10,28,24,0.7), rgba(0,0,0,0.3))',
-                marginTop: '-2px',
-                filter: 'blur(1px)',
-              }}
-            />
+            </motion.div>
           </div>
         </div>
 
@@ -286,7 +330,7 @@ export function LoginScreen() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="bg-[#151515] border border-white/10 rounded-[2rem] p-6 lg:p-8 w-full shadow-2xl relative flex flex-col items-center"
+            className="bg-[#151515] border border-gray-700 rounded-[2rem] p-6 lg:p-8 w-full shadow-2xl relative flex flex-col items-center"
           >
             {/* ── Header Row: Demo Button & Tab Switcher ── */}
             <div className="w-full flex justify-between items-center mb-6">
@@ -294,10 +338,10 @@ export function LoginScreen() {
                 <button
                   onClick={() => setMode('signin')}
                   className={cn(
-                    'px-6 py-2 rounded-lg text-sm font-bold transition-all duration-200',
+                    'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
                     mode === 'signin'
-                      ? 'bg-[#237E45] text-white shadow-lg border border-[#237E45]/50'
-                      : 'text-white/60 hover:text-white'
+                      ? 'bg-[#2A9D5C] text-gray-900 shadow-lg border border-[#2A9D5C]/50'
+                      : 'text-gray-600 hover:text-gray-900'
                   )}
                 >
                   Sign In
@@ -305,10 +349,10 @@ export function LoginScreen() {
                 <button
                   onClick={() => setMode('signup')}
                   className={cn(
-                    'px-6 py-2 rounded-lg text-sm font-bold transition-all duration-200',
+                    'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
                     mode === 'signup'
-                      ? 'bg-[#237E45] text-white shadow-lg border border-[#237E45]/50'
-                      : 'text-white/60 hover:text-white'
+                      ? 'bg-[#2A9D5C] text-gray-900 shadow-lg border border-[#2A9D5C]/50'
+                      : 'text-gray-600 hover:text-gray-900'
                   )}
                 >
                   Sign Up
@@ -368,7 +412,7 @@ export function LoginScreen() {
               <div className="mt-4 pt-3 border-t border-border-subtle text-center">
                 <button
                   onClick={() => setShowBlog(false)}
-                  className="px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(4,59,39,0.3)] bg-brand-emerald text-white font-bold border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27] hover:brightness-110 active:scale-[0.98] transition-all inline-block"
+                  className="px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(4,59,39,0.3)] bg-brand-emerald text-gray-900 font-bold border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27] hover:brightness-110 active:scale-[0.98] transition-all inline-block"
                 >
                   Got It, Thanks!
                 </button>
@@ -400,7 +444,7 @@ export function LoginScreen() {
                 </h3>
                 <button
                   onClick={() => setShowLegal(null)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.04]"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-gray-100"
                 >
                   <X size={16} />
                 </button>
@@ -431,7 +475,7 @@ export function LoginScreen() {
               <div className="mt-4 pt-3 border-t border-border-subtle text-center">
                 <button
                   onClick={() => setShowLegal(null)}
-                  className="px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(4,59,39,0.3)] bg-brand-emerald text-white font-bold border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27] hover:brightness-110 active:scale-[0.98] transition-all inline-block"
+                  className="px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(4,59,39,0.3)] bg-brand-emerald text-gray-900 font-bold border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27] hover:brightness-110 active:scale-[0.98] transition-all inline-block"
                 >
                   Close
                 </button>

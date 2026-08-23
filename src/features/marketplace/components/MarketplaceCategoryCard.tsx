@@ -29,12 +29,12 @@ export function MarketplaceCategoryCard({ category, variant = 'secondary', class
   
   const Icon = ICON_MAP[category.iconName] || Compass;
 
-  const baseClasses = "group relative overflow-hidden border border-white/[0.04] bg-[#07120D] transition-all duration-300 hover:-translate-y-[2px] cursor-pointer flex flex-col justify-end";
+  const baseClasses = "group relative overflow-hidden border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-[2px] cursor-pointer flex flex-col justify-end";
   
   const variants = {
-    hero: "h-[380px] md:h-[480px] rounded-[32px] hover:shadow-lg hover:shadow-[#237E45]/5",
-    secondary: "h-[280px] rounded-[24px] hover:border-[#237E45]/20 hover:bg-[#081A12]",
-    tertiary: "h-[180px] rounded-[24px] hover:border-[#237E45]/20 hover:bg-[#081A12]"
+    hero: "h-[380px] md:h-[480px] rounded-[32px] hover:shadow-md hover:shadow-[#2A9D5C]/10 border-gray-100",
+    secondary: "h-[280px] rounded-[24px] hover:border-[#2A9D5C]/30 hover:bg-gray-50/50",
+    tertiary: "h-[180px] rounded-[24px] hover:border-[#2A9D5C]/30 hover:bg-gray-50/50"
   };
 
   return (
@@ -54,9 +54,9 @@ export function MarketplaceCategoryCard({ category, variant = 'secondary', class
           style={{ backgroundImage: `url('${category.image}')` }}
         />
         {variant === 'hero' ? (
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050806]/10 via-[#050806]/60 to-[#050806] transition-opacity duration-300 group-hover:opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/80 transition-opacity duration-300 group-hover:opacity-90" />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#07120D]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
         )}
       </div>
 
@@ -65,26 +65,26 @@ export function MarketplaceCategoryCard({ category, variant = 'secondary', class
       )}>
         <div className={cn("flex items-center", variant === 'hero' ? 'mb-0' : 'gap-3 mb-1')}>
           <div className={cn("rounded-full border flex items-center justify-center transition-colors duration-300",
-            variant === 'hero' ? 'w-12 h-12 border-[#237E45]/20 bg-[#071A11]/60 backdrop-blur-md group-hover:border-[#237E45]/40' : 'w-8 h-8 border-white/[0.08] bg-white/[0.02]'
+            variant === 'hero' ? 'w-12 h-12 border-white/30 bg-black/40 backdrop-blur-md group-hover:border-white/50' : 'w-8 h-8 border-gray-100 bg-gray-50'
           )}>
-            <Icon className={cn(variant === 'hero' ? 'w-5 h-5 text-[#237E45]' : 'w-3.5 h-3.5 text-white/70 group-hover:text-[#237E45] transition-colors')} strokeWidth={1.5} />
+            <Icon className={cn(variant === 'hero' ? 'w-5 h-5 text-white' : 'w-3.5 h-3.5 text-gray-500 group-hover:text-[#2A9D5C] transition-colors')} strokeWidth={1.5} />
           </div>
-          {variant !== 'hero' && <h3 className={cn("font-medium text-white/90", variant === 'secondary' ? 'text-xl' : 'text-base')}>{category.name}</h3>}
+          {variant !== 'hero' && <h3 className={cn("font-semibold text-gray-900", variant === 'secondary' ? 'text-xl' : 'text-base')}>{category.name}</h3>}
         </div>
         
         {variant === 'hero' && (
           <div>
             <h3 className="text-3xl md:text-4xl font-display font-medium text-white mb-2">{category.name}</h3>
-            <p className="text-base md:text-lg text-white/60 max-w-lg">{category.description}</p>
+            <p className="text-base md:text-lg text-white/80 max-w-lg">{category.description}</p>
           </div>
         )}
 
         {variant !== 'hero' && (
-          <p className={cn("text-white/50", variant === 'secondary' ? 'text-sm' : 'text-xs leading-relaxed line-clamp-2')}>{category.description}</p>
+          <p className={cn("text-gray-500", variant === 'secondary' ? 'text-sm' : 'text-xs leading-relaxed line-clamp-2')}>{category.description}</p>
         )}
 
         <div className={cn("flex items-center gap-2 font-medium transition-colors",
-          variant === 'hero' ? 'text-sm text-[#237E45] mt-2 group-hover:text-white' : 'text-xs text-white/40 mt-1 group-hover:text-[#237E45]'
+          variant === 'hero' ? 'text-sm text-white mt-2 group-hover:text-[#2A9D5C]' : 'text-xs text-gray-400 mt-1 group-hover:text-[#2A9D5C]'
         )}>
           Explore {variant === 'hero' ? category.name : ''} <ArrowRight className={cn("transition-transform group-hover:translate-x-1", variant === 'hero' ? 'w-4 h-4' : 'w-3 h-3')} strokeWidth={2} />
         </div>

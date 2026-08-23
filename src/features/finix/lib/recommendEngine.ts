@@ -67,7 +67,8 @@ function scoreCard(card: FinixCard, profile: UserProfile): number {
   // ── Hard eligibility gates ────────────────────────────────────────────────
   if (card.minIncome > profile.annualIncome) return -1;
   if (card.minCibil  > profile.cibilScore)   return -1;
-  if (profile.maxAnnualFee > 0 && card.annualFee > profile.maxAnnualFee) return -1;
+  if (profile.maxAnnualFee === 0 && card.annualFee !== 0) return -1;
+  if (profile.maxAnnualFee > 0 && card.annualFee !== null && card.annualFee > profile.maxAnnualFee) return -1;
 
   let score = 0;
 
@@ -82,13 +83,13 @@ function scoreCard(card: FinixCard, profile: UserProfile): number {
     score += estMonthlySpend >= 20_000 ? 30 : estMonthlySpend >= 10_000 ? 20 : 10;
   }
 
-  // ── Fee scoring (lower is better) ────────────────────────────────────────
-  if (card.annualFee === 0)        score += 20;
-  else if (card.annualFee <= 500)  score += 16;
-  else if (card.annualFee <= 1000) score += 13;
-  else if (card.annualFee <= 3000) score += 10;
-  else if (card.annualFee <= 5000) score +=  7;
-  else                              score +=  3;
+  // ── Fee scoring (lower is better, unknown fee gets neutral 0 bonus) ────────
+  if (card.annualFee === 0)                                   score += 20;
+  else if (card.annualFee !== null && card.annualFee <= 500)  score += 16;
+  else if (card.annualFee !== null && card.annualFee <= 1000) score += 13;
+  else if (card.annualFee !== null && card.annualFee <= 3000) score += 10;
+  else if (card.annualFee !== null && card.annualFee <= 5000) score +=  7;
+  else if (card.annualFee !== null)                           score +=  3;
 
   // Fee waiver bonus
   if (card.feeWaiverSpend && card.feeWaiverSpend <= profile.annualIncome * 0.25) {
@@ -105,12 +106,14 @@ function scoreCard(card: FinixCard, profile: UserProfile): number {
   profile.topCategories.forEach((category, idx) => {
     const weight = Math.max(5 - idx, 1);
     const catReward = card.rewards?.find((r) => r.category === category);
-    const rate = catReward ? catReward.rate : card.baseRewardRate;
+    const rate = catReward ? catReward.rate : (card.baseRewardRate ?? 0);
     score += rate * weight;
   });
 
   // ── Base reward rate (overall quality) ───────────────────────────────────
-  score += card.baseRewardRate * 2;
+  if (card.baseRewardRate !== null && card.baseRewardRate > 0) {
+    score += card.baseRewardRate * 2;
+  }
 
   // ── Welcome bonus ────────────────────────────────────────────────────────
   if (card.welcomeBonus) score += 5;

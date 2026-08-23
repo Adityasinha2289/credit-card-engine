@@ -43,17 +43,17 @@ export function CardDetailsModal({ card, onClose, onRemove }: Props) {
         initial={{ opacity: 0, y: 100, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 100, scale: 0.95 }}
-        className="relative w-full max-w-md bg-[#07120D] border border-white/[0.04] rounded-[24px] shadow-2xl overflow-hidden"
+        className="relative w-full max-w-md bg-white border border-gray-300 rounded-[24px] shadow-2xl overflow-hidden"
       >
         <div className="p-6 md:p-8 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-display text-white/90 flex items-center gap-2">
-              <CreditCardIcon size={20} className="text-[#237E45]" />
+            <h2 className="text-xl font-display text-gray-900 flex items-center gap-2">
+              <CreditCardIcon size={20} className="text-[#2A9D5C]" />
               Card Details
             </h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white/50 hover:text-white/90 hover:bg-white/[0.04] transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
             >
               <X size={16} />
             </button>
@@ -64,27 +64,27 @@ export function CardDetailsModal({ card, onClose, onRemove }: Props) {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-[#050806] border border-white/[0.04] rounded-2xl p-4 space-y-3">
+            <div className="bg-white border border-gray-300 rounded-2xl p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-white/50">Card Name</span>
-                <span className="text-sm font-medium text-white/90">{(card as any).name || `${card.bank} ${card.network}`}</span>
+                <span className="text-sm text-gray-600">Card Name</span>
+                <span className="text-sm font-medium text-gray-900">{(card as any).name || `${card.bank} ${card.network}`}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-white/50">Card Number</span>
-                <span className="text-sm font-mono text-white/90">•••• {card.pan.slice(-4)}</span>
+                <span className="text-sm text-gray-600">Card Number</span>
+                <span className="text-sm font-mono text-gray-900">•••• {card.pan.slice(-4)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-white/50">Status</span>
+                <span className="text-sm text-gray-600">Status</span>
                 <div className="flex items-center gap-1.5">
-                  <Activity size={14} className={card.status === 'active' ? "text-[#237E45]" : "text-amber-500"} />
-                  <span className={cn("text-sm font-medium capitalize", card.status === 'active' ? "text-[#237E45]" : "text-amber-500")}>
+                  <Activity size={14} className={card.status === 'active' ? "text-[#2A9D5C]" : "text-amber-500"} />
+                  <span className={cn("text-sm font-medium capitalize", card.status === 'active' ? "text-[#2A9D5C]" : "text-amber-500")}>
                     {card.status}
                   </span>
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-white/50">Credit Limit</span>
-                <span className="text-sm font-mono text-white/90">₹{(card.creditLimit / 100).toLocaleString()}</span>
+                <span className="text-sm text-gray-600">Credit Limit</span>
+                <span className="text-sm font-mono text-gray-900">₹{(card.creditLimit / 100).toLocaleString()}</span>
               </div>
             </div>
           </div>

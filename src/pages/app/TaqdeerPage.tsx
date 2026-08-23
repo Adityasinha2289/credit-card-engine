@@ -67,7 +67,7 @@ export default function TaqdeerPage() {
             {showCanvas && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-xl font-display font-medium text-white">{MOCK_DATE_ITINERARY.title}</h2>
+                  <h2 className="text-xl font-display font-medium text-gray-900">{MOCK_DATE_ITINERARY.title}</h2>
                   <span className="text-xs bg-brand-emerald/10 text-brand-emerald px-2 py-1 rounded font-bold tracking-wider uppercase">Generated</span>
                 </div>
 
@@ -82,7 +82,7 @@ export default function TaqdeerPage() {
                         <span className="text-sm text-text-muted">₹{venue.originalCost.toLocaleString()}</span>
                       </div>
                       <div className="bg-brand-emerald/5 rounded-lg p-3 flex justify-between items-center text-sm">
-                        <span className="text-text-secondary">Best Card: <span className="text-white font-medium">{venue.recommendation.bestCard.bankName}</span></span>
+                        <span className="text-text-secondary">Best Card: <span className="text-gray-900 font-medium">{venue.recommendation.bestCard.bankName}</span></span>
                         <span className="text-brand-emerald font-semibold">-₹{venue.recommendation.totalSavings.toLocaleString()}</span>
                       </div>
                     </div>
@@ -92,7 +92,7 @@ export default function TaqdeerPage() {
                 <div className="bg-brand-emerald/10 border border-brand-emerald/30 p-5 rounded-2xl mt-8">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-text-secondary">Estimated Value</span>
-                    <span className="text-xl font-display font-bold text-white">₹4,150</span>
+                    <span className="text-xl font-display font-bold text-gray-900">₹4,150</span>
                   </div>
                   <p className="text-xs text-text-muted text-right">You save ₹650</p>
                 </div>

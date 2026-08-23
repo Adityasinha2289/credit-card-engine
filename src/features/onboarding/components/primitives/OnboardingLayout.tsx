@@ -12,7 +12,7 @@ interface OnboardingLayoutProps {
 export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }: OnboardingLayoutProps) {
   return (
     <div className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: '#050606' }}
+      style={{ backgroundColor: '#FAFBF9' }}
     >
       {/* Subtle emerald atmosphere — never overwhelming */}
       <div
@@ -28,12 +28,12 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }:
       <div className="absolute top-0 left-0 w-full px-6 md:px-10 py-6 md:py-8 flex justify-between items-center z-50">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center"
-            style={{ border: '1px solid #232626' }}
+            style={{ border: '1px solid #E5E7EB' }}
           >
             <img src="/logo.jpg" alt="RenoCred" className="w-full h-full object-cover" />
           </div>
           <span className="font-display font-bold text-xl tracking-tight hidden sm:block"
-            style={{ color: '#F4F4F2' }}
+            style={{ color: '#111827' }}
           >
             renocred
           </span>
@@ -43,7 +43,7 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }:
         {currentStep > 0 && totalSteps > 0 && (
           <div className="flex items-center gap-3">
             <span className="text-[11px] font-medium tracking-wide"
-              style={{ color: '#6E7471' }}
+              style={{ color: '#6B7280' }}
             >
               {currentStep} of {totalSteps}
             </span>
@@ -55,7 +55,7 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }:
                   initial={false}
                   animate={{
                     width: i + 1 <= currentStep ? 24 : 12,
-                    backgroundColor: i + 1 <= currentStep ? '#5D8F74' : '#232626',
+                    backgroundColor: i + 1 <= currentStep ? '#2A9D5C' : '#E5E7EB',
                   }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 />

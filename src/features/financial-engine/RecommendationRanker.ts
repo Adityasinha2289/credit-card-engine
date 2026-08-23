@@ -137,12 +137,16 @@ export class RecommendationRanker {
 
     // Fee breakdown
     if (value.annualFeeStatus === 'VERIFIED') {
-      reasons.push(`Annual fee: ₹${value.annualFee.toFixed(0)}/year.`);
+      if (value.annualFee === 0) {
+        reasons.push('Annual fee: Free (₹0/year).');
+      } else {
+        reasons.push(`Annual fee: ₹${value.annualFee.toFixed(0)}/year.`);
+      }
       if (value.joiningFee > 0) {
         reasons.push(`Joining fee: ₹${value.joiningFee.toFixed(0)} (First-year net value: ₹${value.firstYearNetValue.toFixed(0)}).`);
       }
     } else {
-      reasons.push('Annual fee: Unknown in verified database.');
+      reasons.push('Annual fee: Not disclosed in verified database.');
     }
     
     // Net incremental value

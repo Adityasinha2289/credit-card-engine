@@ -15,16 +15,16 @@ export const ContinueButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.97 }}
         className={cn(
-          "w-full sm:w-auto px-10 rounded-2xl flex items-center justify-center gap-3 font-semibold text-base transition-all duration-300",
+          "w-full sm:w-auto px-10 rounded-full flex items-center justify-center gap-3 font-semibold text-base transition-all duration-300",
           disabled && "opacity-30 pointer-events-none",
           className
         )}
         style={{
           height: 56,
-          backgroundColor: '#5D8F74',
-          color: '#F4F4F2',
+          backgroundColor: '#2A9D5C',
+          color: '#FFFFFF',
           border: 'none',
-          boxShadow: disabled ? 'none' : 'inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 20px rgba(93,143,116,0.25)',
+          boxShadow: disabled ? 'none' : 'inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 20px rgba(42,157,92,0.25)',
         }}
         disabled={disabled}
         {...props}
@@ -43,22 +43,22 @@ export const BackButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         whileTap={{ scale: 0.97 }}
         className={cn(
-          "px-6 rounded-2xl flex items-center justify-center gap-2 font-medium text-sm transition-all duration-300",
+          "px-6 rounded-full flex items-center justify-center gap-2 font-medium text-sm transition-all duration-300",
           className
         )}
         style={{
           height: 56,
           backgroundColor: 'transparent',
-          color: '#6E7471',
-          border: '1px solid #232626',
+          color: '#4B5563',
+          border: '1px solid #E5E7EB',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = '#333838';
-          e.currentTarget.style.color = '#A4A8A6';
+          e.currentTarget.style.borderColor = '#D1D5DB';
+          e.currentTarget.style.color = '#111827';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = '#232626';
-          e.currentTarget.style.color = '#6E7471';
+          e.currentTarget.style.borderColor = '#E5E7EB';
+          e.currentTarget.style.color = '#4B5563';
         }}
         {...props}
       >
@@ -78,9 +78,9 @@ export const SkipButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
           "text-sm font-medium transition-colors duration-200",
           className
         )}
-        style={{ color: '#6E7471' }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = '#A4A8A6'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = '#6E7471'; }}
+        style={{ color: '#6B7280' }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = '#111827'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = '#6B7280'; }}
         {...props}
       >
         {children}

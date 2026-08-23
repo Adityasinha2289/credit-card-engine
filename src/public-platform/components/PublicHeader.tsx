@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
 import { interactivePrimary, interactiveSecondary } from '../../motion';
@@ -14,7 +14,14 @@ export function PublicHeader() {
   const shouldReduceMotion = useReducedMotion();
   const [isCardsMenuOpen, setIsCardsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return scrollY.on("change", (latest) => {
+      setIsScrolled(latest > 50);
+    });
+  }, [scrollY]);
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -31,7 +38,7 @@ export function PublicHeader() {
   const backgroundColor = useTransform(
     scrollY,
     [0, 50],
-    ['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.8)']
+    ['rgba(250, 251, 249, 0)', 'rgba(10, 10, 10, 0.8)']
   );
   
   const borderBottomColor = useTransform(
@@ -60,6 +67,7 @@ export function PublicHeader() {
   const tapPhysicsPrimary = shouldReduceMotion ? undefined : interactivePrimary.tap;
 
   return (
+    <>
     <motion.header
       className="fixed top-0 left-0 right-0 z-50 w-full"
       style={{
@@ -80,19 +88,19 @@ export function PublicHeader() {
           to="/" 
           whileHover={hoverPhysicsSecondary}
           whileTap={tapPhysicsSecondary}
-          className="font-display font-bold text-xl tracking-tight flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md"
+          className="font-display font-bold text-xl tracking-tight flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md shrink-0"
         >
-          <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover" />
-          <span className="text-white">RenoCred</span>
+          <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+          <span className={`transition-colors duration-200 whitespace-nowrap hidden sm:block ${isScrolled ? 'text-white' : 'text-gray-900'}`}>RenoCred</span>
         </MotionLink>
         
         {/* Links */}
         <nav className="hidden md:flex items-center gap-8">
           <MotionAnchor 
-            href="/#product" 
+            href="/#how-it-works" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
+            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 ${isScrolled ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
           >
             Product
           </MotionAnchor>
@@ -106,7 +114,7 @@ export function PublicHeader() {
               to="/cards"
               whileHover={hoverPhysicsSecondary}
               whileTap={tapPhysicsSecondary}
-              className={`text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 flex items-center gap-1 ${isCardsMenuOpen ? 'text-white' : 'text-gray-400 hover:text-white'}`}
+              className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 flex items-center gap-1 ${isCardsMenuOpen ? (isScrolled ? 'text-white' : 'text-gray-900') : (isScrolled ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900')}`}
             >
               Cards <ChevronDown size={14} className={`transition-transform duration-200 ${isCardsMenuOpen ? 'rotate-180 text-semantic-brand-strong' : ''}`} />
             </MotionLink>
@@ -123,7 +131,7 @@ export function PublicHeader() {
             href="/#how-it-works" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
+            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 ${isScrolled ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
           >
             How It Works
           </MotionAnchor>
@@ -131,19 +139,19 @@ export function PublicHeader() {
             to="/methodology" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="text-sm font-medium text-gray-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
+            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 ${isScrolled ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
           >
             Methodology
           </MotionLink>
         </nav>
         
         {/* CTAs */}
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
           <MotionLink 
             to="/cards"
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="md:hidden text-sm font-medium text-gray-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
+            className={`hidden sm:block md:hidden text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-1 sm:px-2 py-1 ${isScrolled ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}
           >
             Explore Cards
           </MotionLink>
@@ -151,7 +159,7 @@ export function PublicHeader() {
             to="/app#log-in" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className="hidden md:block text-sm font-medium text-gray-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1"
+            className={`hidden md:block text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 ${isScrolled ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}
           >
             Log In
           </MotionLink>
@@ -159,20 +167,20 @@ export function PublicHeader() {
             to="/app#sign-up" 
             whileHover={hoverPhysicsPrimary}
             whileTap={tapPhysicsPrimary}
-            className="bg-emerald-500 text-[#0A0A0A] text-sm font-semibold py-2.5 px-6 rounded-full transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
+            className="bg-[#2A9D5C] text-white text-xs sm:text-sm font-semibold whitespace-nowrap py-1.5 px-3 sm:py-2 sm:px-4 md:py-2.5 md:px-6 rounded-full transition-all shadow-[0_4px_20px_rgba(42,157,92,0.25)] hover:shadow-[0_4px_25px_rgba(42,157,92,0.35)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2A9D5C]/50 shrink-0"
           >
             Get Started
           </MotionLink>
           
           <button 
-            className="md:hidden p-2 -mr-2 text-gray-300 hover:text-white"
+            className={`md:hidden p-2 -mr-2 transition-colors duration-200 ${isScrolled ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
             onClick={() => setIsMobileMenuOpen(true)}
           >
             <Menu className="w-6 h-6" />
           </button>
         </div>
-
       </div>
+    </motion.header>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
@@ -198,7 +206,7 @@ export function PublicHeader() {
             </div>
             
             <nav className="flex flex-col gap-6 text-xl font-medium">
-              <a href="/#product" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10">Product</a>
+              <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10">Product</a>
               <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-300 hover:text-white pb-4 border-b border-white/10 flex justify-between items-center">
                 Cards <ChevronDown size={20} className="-rotate-90" />
               </Link>
@@ -211,7 +219,7 @@ export function PublicHeader() {
               <Link 
                 to="/app#sign-up"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full bg-emerald-500 text-[#0A0A0A] text-lg font-semibold py-4 rounded-full flex items-center justify-center transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)]"
+                className="w-full bg-[#2A9D5C] text-white text-lg font-semibold py-4 rounded-full flex items-center justify-center transition-all shadow-[0_4px_20px_rgba(42,157,92,0.25)] hover:shadow-[0_4px_25px_rgba(42,157,92,0.35)]"
               >
                 Get Started
               </Link>
@@ -219,6 +227,6 @@ export function PublicHeader() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </>
   );
 }

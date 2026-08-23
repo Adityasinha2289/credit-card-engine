@@ -18,7 +18,7 @@ export const SectionHeading = React.forwardRef<HTMLHeadingElement, TypographyPro
           "text-3xl md:text-4xl lg:text-[42px] font-display font-bold tracking-tight leading-[1.15] mb-4",
           className
         )}
-        style={{ color: '#F4F4F2' }}
+        style={{ color: '#111827' }}
         {...props}
       >
         {children}
@@ -40,7 +40,7 @@ export const SectionDescription = React.forwardRef<HTMLParagraphElement, React.H
           "text-base lg:text-lg leading-relaxed max-w-[560px]",
           className
         )}
-        style={{ color: '#A4A8A6' }}
+        style={{ color: '#4B5563' }}
         {...props}
       >
         {children}

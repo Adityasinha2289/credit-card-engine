@@ -41,11 +41,11 @@ export function AgeStep({ onBack, onContinue, initialValue }: AgeStepProps) {
       <SectionHeading className="mb-3">
         Which stage are you in?
       </SectionHeading>
-      <SectionDescription className="mb-12">
+      <SectionDescription className="mb-6 md:mb-12">
         This helps TAQDEER recommend the right cards for you.
       </SectionDescription>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-14">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 mb-8 md:mb-14">
         {STAGES.map((stage, idx) => {
           const isSelected = selectedStage === stage.id;
 
@@ -58,33 +58,32 @@ export function AgeStep({ onBack, onContinue, initialValue }: AgeStepProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="relative p-7 rounded-[20px] text-left transition-all duration-400 overflow-hidden group flex flex-col min-h-[240px]"
+              className="relative p-5 md:p-7 rounded-[20px] text-left transition-all duration-400 overflow-hidden group flex flex-col min-h-[140px] md:min-h-[240px]"
               style={{
-                backgroundColor: isSelected ? '#121414' : '#0C0D0D',
-                border: `1px solid ${isSelected ? '#5D8F74' : '#232626'}`,
-                boxShadow: isSelected ? '0 8px 30px rgba(93,143,116,0.14)' : 'none',
+                backgroundColor: isSelected ? '#F9FAFB' : '#FFFFFF',
+                border: `1px solid ${isSelected ? '#2A9D5C' : '#E5E7EB'}`,
+                boxShadow: isSelected ? '0 8px 30px rgba(42,157,92,0.14)' : 'none',
               }}
             >
               {/* Left accent bar */}
               <motion.div
-                className="absolute left-0 top-0 bottom-0 w-[3px]"
-                style={{ backgroundColor: '#5D8F74', transformOrigin: 'top' }}
+                style={{ backgroundColor: '#2A9D5C', transformOrigin: 'top' }}
                 initial={false}
                 animate={{ scaleY: isSelected ? 1 : 0, opacity: isSelected ? 1 : 0 }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
               />
 
-              <div className="flex justify-between items-start mb-5">
+              <div className="flex justify-between items-start mb-3 md:mb-5">
                 <div>
                   <h3 className="font-display text-xl font-bold tracking-tight mb-2 transition-colors duration-300"
-                    style={{ color: isSelected ? '#F4F4F2' : '#A4A8A6' }}
+                    style={{ color: isSelected ? '#111827' : '#4B5563' }}
                   >
                     {stage.title}
                   </h3>
                   <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
                     style={{
-                      backgroundColor: isSelected ? 'rgba(93,143,116,0.15)' : '#1a1c1c',
-                      color: isSelected ? '#5D8F74' : '#6E7471',
+                      backgroundColor: isSelected ? 'rgba(42,157,92,0.15)' : '#F3F4F6',
+                      color: isSelected ? '#2A9D5C' : '#6B7280',
                     }}
                   >
                     {stage.age}
@@ -97,20 +96,20 @@ export function AgeStep({ onBack, onContinue, initialValue }: AgeStepProps) {
                   animate={{ opacity: isSelected ? 1 : 0, scale: isSelected ? 1 : 0.5 }}
                   transition={{ duration: 0.25 }}
                   className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: '#5D8F74' }}
+                  style={{ backgroundColor: '#2A9D5C' }}
                 >
-                  <Check size={14} strokeWidth={3} color="#F4F4F2" />
+                  <Check size={14} strokeWidth={3} color="#FFFFFF" />
                 </motion.div>
               </div>
 
               <div className="mt-auto">
                 <p className="text-[15px] mb-3 leading-snug transition-colors duration-300"
-                  style={{ color: isSelected ? '#F4F4F2' : '#6E7471' }}
+                  style={{ color: isSelected ? '#111827' : '#6B7280' }}
                 >
                   {stage.description}
                 </p>
                 {stage.caption && (
-                  <p className="text-sm leading-relaxed" style={{ color: '#6E7471' }}>
+                  <p className="hidden md:block text-sm leading-relaxed" style={{ color: '#6B7280' }}>
                     {stage.caption}
                   </p>
                 )}

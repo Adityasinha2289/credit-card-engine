@@ -9,7 +9,7 @@ interface IPhoneMockupProps {
 export function IPhoneMockup({ children, className }: IPhoneMockupProps) {
   return (
     <div className={cn(
-      "relative flex-shrink-0 bg-[#0A0A0A] border-[8px] border-[#3a3a3c] rounded-[3rem] shadow-2xl overflow-hidden ring-1 ring-white/10",
+      "relative flex-shrink-0 bg-[#0A0A0A] border-[8px] border-[#2a2a2c] rounded-[3rem] shadow-2xl overflow-hidden ring-1 ring-white/10 aspect-[9/19.5]",
       "shadow-[0_20px_50px_rgba(0,0,0,0.5)]",
       className
     )}>
@@ -23,7 +23,7 @@ export function IPhoneMockup({ children, className }: IPhoneMockupProps) {
       <div className="absolute -right-[10px] top-36 w-1 h-16 bg-[#3a3a3c] rounded-r-md"></div>
 
       {/* Dynamic Island */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[120px] h-[35px] bg-black rounded-[20px] z-50 flex items-center justify-between px-3">
+      <div className="absolute top-[2%] left-1/2 -translate-x-1/2 w-[35%] h-[4%] min-h-[24px] bg-black rounded-full z-50 flex items-center justify-between px-3">
         {/* Camera / Sensor dots */}
         <div className="w-3 h-3 rounded-full bg-[#111] shadow-inner flex items-center justify-center">
            <div className="w-1.5 h-1.5 rounded-full bg-[#050505]"></div>

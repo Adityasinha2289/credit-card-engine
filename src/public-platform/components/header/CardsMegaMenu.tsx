@@ -129,11 +129,11 @@ export function CardsMegaMenu({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.98 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="absolute top-[calc(100%+1rem)] left-1/2 -translate-x-1/2 w-[800px] bg-[#0A0A0A] border border-white/10 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden flex"
+      className="absolute top-[calc(100%+1rem)] left-1/2 -translate-x-1/2 w-[800px] bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden flex"
       onMouseLeave={onClose}
     >
       {/* Sidebar Categories */}
-      <div className="w-[280px] bg-[#050505] p-4 flex flex-col gap-1 border-r border-white/5">
+      <div className="w-[280px] bg-gray-50 p-4 flex flex-col gap-1 border-r border-gray-200">
         <div className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 px-3 pt-2">Explore by Category</div>
         {categories.map((cat) => (
           <button
@@ -146,14 +146,14 @@ export function CardsMegaMenu({ onClose }: { onClose: () => void }) {
             className={`w-full text-left px-3 py-3 rounded-xl flex items-start gap-3 transition-colors ${
               activeCategory === cat.id 
                 ? 'bg-semantic-brand-strong/10' 
-                : 'hover:bg-white/5'
+                : 'hover:bg-gray-200/50'
             }`}
           >
             <div className={`mt-0.5 ${activeCategory === cat.id ? 'text-semantic-brand-strong' : 'text-gray-400'}`}>
               <cat.icon size={18} />
             </div>
             <div>
-              <div className={`text-sm font-medium mb-0.5 ${activeCategory === cat.id ? 'text-semantic-brand-strong' : 'text-white'}`}>
+              <div className={`text-sm font-medium mb-0.5 ${activeCategory === cat.id ? 'text-semantic-brand-strong' : 'text-gray-900'}`}>
                 {cat.label}
               </div>
               <div className="text-xs text-gray-500 line-clamp-1">{cat.desc}</div>
@@ -173,13 +173,13 @@ export function CardsMegaMenu({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-8 bg-[#0a0a0a] relative overflow-hidden">
+      <div className="flex-1 p-8 bg-white relative overflow-hidden">
         {/* Subtle background glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-semantic-brand-strong/10 via-transparent to-transparent opacity-50 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-semantic-brand-strong/10 via-transparent to-transparent opacity-60 pointer-events-none" />
         
         <div className="relative z-10 h-full flex flex-col">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-medium text-white capitalize flex items-center gap-2">
+            <h3 className="text-lg font-medium text-gray-900 capitalize flex items-center gap-2">
               Top Picks for {activeCategory}
             </h3>
           </div>

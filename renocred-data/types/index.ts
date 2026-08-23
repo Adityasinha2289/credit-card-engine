@@ -87,3 +87,5 @@ export interface Metadata {
   benefit_types: string[];
   fee_types: string[];
 }
+
+export * from './canonical';

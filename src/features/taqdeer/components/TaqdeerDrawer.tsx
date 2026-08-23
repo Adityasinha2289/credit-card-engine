@@ -56,19 +56,19 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
             "fixed bottom-[144px] lg:bottom-[88px] right-4 lg:right-6 z-[100] flex flex-col origin-bottom-right",
             "w-[calc(100vw-32px)] lg:w-[380px]",
             "h-[500px] max-h-[calc(100dvh-160px)] lg:max-h-[calc(100dvh-120px)]",
-            "bg-[#151515] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+            "bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden"
           )}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 shrink-0">
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#237E45]" />
-              <h2 className="text-xs font-bold text-[#237E45] tracking-widest uppercase">TAQDEER</h2>
-              <span className="text-xs text-white/40 font-medium ml-1">Always available</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C]" />
+              <h2 className="text-xs font-bold text-[#2A9D5C] tracking-widest uppercase">TAQDEER</h2>
+              <span className="text-xs text-gray-400 font-medium ml-1">Always available</span>
             </div>
             <button 
               onClick={onClose}
-              className="w-7 h-7 rounded-full flex items-center justify-center bg-white/5 text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+              className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-50 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
             >
               <X size={14} />
             </button>
@@ -78,13 +78,13 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
           {messages.length === 0 ? (
             <div className="flex-1 overflow-y-auto px-6 py-2 flex flex-col hide-scrollbar">
               <div className="flex flex-col gap-1 mt-4 mb-8">
-                <h1 className="text-3xl font-medium text-white mb-2">Good Evening.</h1>
-                <p className="text-[17px] text-white">I'm <span className="text-[#237E45]">TAQDEER</span>.</p>
-                <p className="text-[17px] text-white/70">Your AI Financial Copilot.</p>
+                <h1 className="text-3xl font-medium text-gray-900 mb-2">Good Evening.</h1>
+                <p className="text-[17px] text-gray-900">I'm <span className="text-[#2A9D5C]">TAQDEER</span>.</p>
+                <p className="text-[17px] text-gray-700">Your AI Financial Copilot.</p>
               </div>
 
               <div className="mt-2">
-                <p className="text-[13px] font-semibold text-white/60 mb-4">What would you like to optimise today?</p>
+                <p className="text-[13px] font-semibold text-gray-600 mb-4">What would you like to optimise today?</p>
                 <div className="flex flex-col gap-3">
                   {[
                     { icon: <CreditCard size={18} />, text: 'Which card should I use today?' },
@@ -94,9 +94,9 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                     <button
                       key={i}
                       onClick={() => setQuery(item.text)}
-                      className="flex items-center gap-4 px-5 py-4 rounded-3xl bg-[#1e1e1e] hover:bg-[#252525] border border-white/5 transition-colors text-white/90 text-[13px] font-medium text-left"
+                      className="flex items-center gap-4 px-5 py-4 rounded-3xl bg-gray-50 hover:bg-white border border-gray-200 hover:border-[#2A9D5C]/30 hover:shadow-sm transition-all text-gray-900 text-[13px] font-medium text-left"
                     >
-                      <div className="text-white/50">{item.icon}</div>
+                      <div className="text-gray-400 group-hover:text-[#2A9D5C]">{item.icon}</div>
                       {item.text}
                     </button>
                   ))}
@@ -110,16 +110,16 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                   <div className={cn(
                     "w-6 h-6 mt-0.5 rounded-full flex items-center justify-center shrink-0 border overflow-hidden",
                     msg.role === 'ai' 
-                      ? 'bg-semantic-surface-intelligence border-semantic-border-intelligence text-semantic-brand' 
-                      : 'bg-[#1e1e1e] border-white/10 text-white/50'
+                      ? 'bg-emerald-50 border-emerald-100 text-[#2A9D5C]' 
+                      : 'bg-gray-100 border-gray-200 text-gray-600'
                   )}>
                     {msg.role === 'ai' ? <img src="/taqdeer-logo.png" alt="AI" className="w-full h-full object-cover" /> : <User size={12} />}
                   </div>
                   <div className={cn(
                     "max-w-[85%] p-3 text-[13px] leading-relaxed whitespace-pre-wrap border",
                     msg.role === 'user' 
-                      ? "bg-[#252525] text-white/90 rounded-2xl rounded-tr-sm border-white/10" 
-                      : "bg-[#1e1e1e] border-white/5 text-white/90 rounded-2xl rounded-tl-sm"
+                      ? "bg-gray-900 text-white rounded-2xl rounded-tr-sm border-gray-900 shadow-sm" 
+                      : "bg-white border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm shadow-sm"
                   )}>
                     {msg.content}
                   </div>
@@ -127,14 +127,14 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
               ))}
               {isTyping && (
                 <div className="flex gap-3">
-                  <div className="w-6 h-6 mt-0.5 rounded-full flex items-center justify-center shrink-0 border overflow-hidden bg-semantic-surface-intelligence border-semantic-border-intelligence text-semantic-brand">
+                  <div className="w-6 h-6 mt-0.5 rounded-full flex items-center justify-center shrink-0 border overflow-hidden bg-emerald-50 border-emerald-100 text-[#2A9D5C]">
                     <img src="/taqdeer-logo.png" alt="AI" className="w-full h-full object-cover" />
                   </div>
-                  <div className="max-w-[85%] p-3 text-[13px] leading-relaxed bg-[#1e1e1e] border border-white/5 text-white/90 rounded-2xl rounded-tl-sm">
+                  <div className="max-w-[85%] p-3 text-[13px] leading-relaxed bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm shadow-sm flex items-center">
                     <span className="flex gap-1 items-center h-4">
-                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-white/40" />
+                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                      <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 rounded-full bg-gray-400" />
                     </span>
                   </div>
                 </div>
@@ -150,11 +150,11 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 placeholder="Ask Taqdeer anything..." 
-                className="w-full bg-transparent border border-white/10 rounded-full py-3.5 pl-5 pr-12 text-[13px] text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors h-[52px]"
+                className="w-full bg-gray-50 border border-gray-200 rounded-full py-3.5 pl-5 pr-12 text-[13px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#2A9D5C] focus:bg-white transition-all h-[52px]"
               />
               <button 
                 type="submit" 
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-gray-900 border border-gray-900 text-white hover:bg-[#2A9D5C] hover:border-[#2A9D5C] flex items-center justify-center transition-colors shadow-sm"
               >
                 <ArrowRight size={14} />
               </button>

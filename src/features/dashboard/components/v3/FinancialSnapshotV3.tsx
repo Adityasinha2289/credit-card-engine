@@ -21,7 +21,7 @@ export function FinancialSnapshotV3({ health, ledgerSummary }: FinancialSnapshot
 
       <div className="flex flex-col gap-3">
         {/* Credit Score */}
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-gray-50 border border-border-subtle">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-brand-emerald-muted text-brand-emerald flex items-center justify-center shrink-0">
               <ShieldCheck size={16} />
@@ -37,7 +37,7 @@ export function FinancialSnapshotV3({ health, ledgerSummary }: FinancialSnapshot
         </div>
 
         {/* Optimisation Score */}
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-gray-50 border border-border-subtle">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-profit/10 text-profit flex items-center justify-center shrink-0">
               <Trophy size={16} />
@@ -53,7 +53,7 @@ export function FinancialSnapshotV3({ health, ledgerSummary }: FinancialSnapshot
         </div>
 
         {/* Reward Health */}
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-primary dark:bg-gray-50 border border-border-subtle">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0">
               <CreditCard size={16} />

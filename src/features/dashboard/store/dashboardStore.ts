@@ -226,7 +226,7 @@ interface DashboardActions {
   setSupabaseClient: (client: SupabaseClient<Database> | null) => void;
 
   /** Hydrate local state from Supabase database */
-  hydrateFromSupabase: (clerkId: string, clerkEmail: string, clerkName: string, clerkAvatar: string) => Promise<void>;
+  hydrateFromSupabase: (clerkId: string, clerkEmail: string, clerkName: string, clerkAvatar: string, clerkMetadata?: any) => Promise<void>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -722,7 +722,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         },
 
         // ── hydrateFromSupabase ──────────────────────────────────────────────
-        async hydrateFromSupabase(clerkId, clerkEmail, clerkName, clerkAvatar) {
+        async hydrateFromSupabase(clerkId, clerkEmail, clerkName, clerkAvatar, clerkMetadata?: any) {
           set({ isHydratingFromSupabase: true });
           const { supabaseClient } = get();
           if (!supabaseClient) {
@@ -739,54 +739,57 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
              import('sonner').then(m => m.toast.error(`Hydration Error: ${fetchError.message}`));
           }
 
-          if (userRow) {
-             const profile = {
-                id: userRow.id,
-                name: userRow.name || clerkName,
-                email: userRow.email,
-                phone: userRow.phone || '',
-                avatar: userRow.avatar_url || clerkAvatar,
-                salary: userRow.salary,
-                creditScore: userRow.credit_score,
-                onboardingCompleted: userRow.onboarding_completed || get().profile?.onboardingCompleted || false,
-                userSegment: userRow.user_segment ?? get().profile?.userSegment,
-                primaryGoal: userRow.primary_goal ?? get().profile?.primaryGoal,
-                spendCategories: userRow.spend_categories ?? get().profile?.spendCategories,
-                city: userRow.city ?? get().profile?.city,
-                occupation: userRow.occupation ?? get().profile?.occupation,
-             };
+          const baseData = userRow || {};
+          const metaProfile = clerkMetadata?.profileData || {};
+          const hasOnboarded = !!userRow || clerkMetadata?.onboardingCompleted === true || !!clerkMetadata?.profileData;
+          
+          const profile = {
+             id: baseData.id || metaProfile.id || clerkId,
+             name: baseData.name || metaProfile.name || clerkName,
+             email: baseData.email || metaProfile.email || clerkEmail,
+             phone: baseData.phone || metaProfile.phone || '',
+             avatar: baseData.avatar_url || metaProfile.avatar || clerkAvatar,
+             salary: baseData.salary || metaProfile.salary || 1500000,
+             creditScore: baseData.credit_score || metaProfile.creditScore || 750,
+             onboardingCompleted: hasOnboarded,
+             userSegment: baseData.user_segment || metaProfile.userSegment || get().profile?.userSegment || 'adult',
+             primaryGoal: baseData.primary_goal || metaProfile.primaryGoal || get().profile?.primaryGoal || 'Maximise Cashback',
+             spendCategories: baseData.spend_categories || metaProfile.spendCategories || get().profile?.spendCategories || [],
+             city: baseData.city || metaProfile.city || get().profile?.city || 'Mumbai',
+             occupation: baseData.occupation || metaProfile.occupation || get().profile?.occupation || 'Salaried',
+          };
              
-             // Fetch Cards
-             const walletService = new WalletService(supabaseClient as any);
-             const { data: userCardsRow } = await walletService.getWallet(userRow.id);
+          // Fetch Cards
+          const walletService = new WalletService(supabaseClient as any);
+          const { data: userCardsRow } = await walletService.getWallet(clerkId);
 
-             // Fetch Transactions
-             const { data: transactionsRow } = await (supabaseClient as any)
-               .from('transactions')
-               .select('*')
-               .eq('user_id', userRow.id)
-               .order('created_at', { ascending: false });
-               
-             // Fetch Budgets
-             const { data: budgetsRow } = await (supabaseClient as any)
-               .from('budgets')
-               .select('*')
-               .eq('user_id', userRow.id);
-               
-             // Fetch Subscriptions
-             const { data: subscriptionsRow } = await (supabaseClient as any)
-               .from('subscriptions')
-               .select('*')
-               .eq('user_id', userRow.id);
-               
-             // Fetch Credit Accounts
-             const { data: creditAccountsRow } = await (supabaseClient as any)
-               .from('credit_accounts')
-               .select('*')
-               .eq('user_id', userRow.id);
+          // Fetch Transactions
+          const { data: transactionsRow } = await (supabaseClient as any)
+            .from('transactions')
+            .select('*')
+            .eq('user_id', clerkId)
+            .order('created_at', { ascending: false });
+            
+          // Fetch Budgets
+          const { data: budgetsRow } = await (supabaseClient as any)
+            .from('budgets')
+            .select('*')
+            .eq('user_id', clerkId);
+            
+          // Fetch Subscriptions
+          const { data: subscriptionsRow } = await (supabaseClient as any)
+            .from('subscriptions')
+            .select('*')
+            .eq('user_id', clerkId);
+            
+          // Fetch Credit Accounts
+          const { data: creditAccountsRow } = await (supabaseClient as any)
+            .from('credit_accounts')
+            .select('*')
+            .eq('user_id', clerkId);
 
-             set((state) => {
-                state.profile = profile;
+          set((state) => {
+             state.profile = profile;
                 
                 state.rewards = {
                   ...EMPTY_REWARDS,
@@ -797,7 +800,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                 
                 
                 if (userCardsRow) {
-                  state.userCards = userCardsRow.map((row: any) => {
+                  const dbCards = userCardsRow.map((row: any) => {
                     const cardDef = Array.isArray(row.cards) ? row.cards[0] : row.cards;
                     return {
                       id: row.card_id,
@@ -872,8 +875,6 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                   }));
                 }
              });
-          }
-          
           set({ isHydratingFromSupabase: false });
         },
       })),

@@ -34,7 +34,7 @@ export function RecentDecisionsV3({ transactions, userCards }: RecentDecisionsV3
       </div>
       
       <div className="flex flex-col gap-6 relative">
-        <div className="absolute left-[9px] top-2 bottom-4 w-px bg-surface-secondary dark:bg-white/10" />
+        <div className="absolute left-[9px] top-2 bottom-4 w-px bg-surface-secondary dark:bg-gray-100" />
         
         {recentTransactions.map((tx) => {
           const card = userCards.find((c) => c.id === tx.cardId);

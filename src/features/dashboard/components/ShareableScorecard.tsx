@@ -324,7 +324,7 @@ export function ShareableScorecard() {
               {/* Close */}
               <button
                 onClick={() => setOpen(false)}
-                className="absolute top-6 right-0 w-9 h-9 rounded-full bg-white/[0.08] hover:bg-white/[0.14] flex items-center justify-center text-white/60 hover:text-white transition-all z-10"
+                className="absolute top-6 right-0 w-9 h-9 rounded-full bg-white/[0.08] hover:bg-white/[0.14] flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all z-10"
               >
                 <X size={16} />
               </button>
@@ -340,7 +340,7 @@ export function ShareableScorecard() {
                   whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   onClick={handleDownload}
                   disabled={capturing}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm text-[#050806] bg-[#237E45] hover:bg-[#128a4f] transition-all disabled:opacity-50 shadow-[0_4px_20px_rgba(25,184,106,0.3)]"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm text-[#050806] bg-[#2A9D5C] hover:bg-[#128a4f] transition-all disabled:opacity-50 shadow-[0_4px_20px_rgba(25,184,106,0.3)]"
                 >
                   <Download size={16} />
                   {capturing ? 'Saving…' : 'Download PNG'}
@@ -354,14 +354,14 @@ export function ShareableScorecard() {
                     'flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm border transition-all disabled:opacity-50',
                     copied
                       ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                      : 'bg-white/[0.05] border-white/[0.08] text-white/70 hover:text-white hover:bg-white/[0.08]',
+                      : 'bg-white/[0.05] border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-white/[0.08]',
                   )}
                 >
                   {copied ? <><CheckCircle2 size={16} /> Copied!</> : <><Share2 size={16} /> Copy Image</>}
                 </motion.button>
               </div>
 
-              <p className="text-xs text-white/25 text-center max-w-[360px]">
+              <p className="text-xs text-gray-900/25 text-center max-w-[360px]">
                 Your scorecard is generated locally — no data leaves your device.
               </p>
             </motion.div>

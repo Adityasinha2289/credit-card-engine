@@ -49,7 +49,7 @@ export default function PartnerDetailPage() {
   }
 
   if (!partner) {
-    return <div className="text-white p-8">Partner not found.</div>;
+    return <div className="text-gray-900 p-8">Partner not found.</div>;
   }
 
   return (
@@ -61,7 +61,7 @@ export default function PartnerDetailPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         
         <div className="absolute bottom-6 left-6 right-6">
-          <button onClick={() => navigate(-1)} className="mb-4 text-white/80 hover:text-white flex items-center gap-1 text-sm bg-black/20 px-3 py-1.5 rounded-lg backdrop-blur-md w-fit">
+          <button onClick={() => navigate(-1)} className="mb-4 text-gray-800 hover:text-gray-900 flex items-center gap-1 text-sm bg-gray-100/50 px-3 py-1.5 rounded-lg backdrop-blur-md w-fit">
             <ArrowLeft size={16} /> Back
           </button>
           <div className="flex items-center gap-2 mb-2">
@@ -69,8 +69,8 @@ export default function PartnerDetailPage() {
               Official Partner
             </span>
           </div>
-          <h1 className="text-4xl font-display font-medium text-white">{partner.name}</h1>
-          <p className="text-white/80 mt-1 max-w-xl">{partner.description}</p>
+          <h1 className="text-4xl font-display font-medium text-gray-900">{partner.name}</h1>
+          <p className="text-gray-800 mt-1 max-w-xl">{partner.description}</p>
         </div>
       </div>
 

@@ -21,7 +21,7 @@ export function SmartRecommendationV3({ decision }: SmartRecommendationV3Props) 
         
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-brand-emerald text-white flex items-center justify-center font-bold shrink-0 shadow-[0_0_20px_rgba(4,59,39,0.3)]">
+            <div className="w-10 h-10 rounded-xl bg-brand-emerald text-gray-900 flex items-center justify-center font-bold shrink-0 shadow-[0_0_20px_rgba(4,59,39,0.3)]">
               <Sparkles size={20} />
             </div>
             <div>
@@ -50,7 +50,7 @@ export function SmartRecommendationV3({ decision }: SmartRecommendationV3Props) 
         </div>
 
         <div className="flex flex-col gap-4 w-full md:w-auto shrink-0 md:min-w-[240px]">
-          <div className="p-5 rounded-3xl bg-surface-secondary dark:bg-white/[0.03] border border-border-subtle  backdrop-blur-md">
+          <div className="p-5 rounded-3xl bg-surface-secondary dark:bg-gray-100 border border-border-subtle  backdrop-blur-md">
             <span className="text-xs uppercase font-bold tracking-wider text-text-muted block mb-1">Estimated Impact</span>
             <p className="text-3xl font-display font-bold text-brand-emerald">
               {decision.estimatedImpact.savings
@@ -64,7 +64,7 @@ export function SmartRecommendationV3({ decision }: SmartRecommendationV3Props) 
             </p>
           </div>
           
-          <button className="flex items-center justify-between w-full p-4 rounded-2xl bg-brand-emerald hover:bg-brand-600 text-white font-bold transition-all shadow-[0_0_20px_rgba(4,59,39,0.3)] active:scale-95 group/btn">
+          <button className="flex items-center justify-between w-full p-4 rounded-2xl bg-brand-emerald hover:bg-brand-600 text-gray-900 font-bold transition-all shadow-[0_0_20px_rgba(4,59,39,0.3)] active:scale-95 group/btn">
             <span>View Details</span>
             <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>

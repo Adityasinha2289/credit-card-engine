@@ -68,7 +68,7 @@ export function VisionSection() {
               {/* Desktop specific line indicator */}
               <div className={`hidden md:block w-24 h-[1px] absolute top-12 ${i === 0 ? 'right-0' : i === 2 ? 'left-0' : 'left-0 right-0 mx-auto'} ${item.active ? 'bg-semantic-brand-strong' : 'bg-transparent'}`} />
               
-              <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 relative z-10 transition-all duration-500 ${item.active ? 'bg-[#0f0f0f] border-2 border-semantic-brand-strong shadow-[0_0_30px_rgba(35,126,69,0.3)]' : 'bg-[#0a0a0a] border border-white/10 group-hover:border-white/30'}`}>
+              <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 relative z-10 transition-all duration-500 ${item.active ? 'bg-[#0f0f0f] border-2 border-semantic-brand-strong shadow-[0_0_30px_rgba(42,157,92,0.3)]' : 'bg-[#0a0a0a] border border-white/10 group-hover:border-white/30'}`}>
                  <item.icon className={`w-8 h-8 ${item.active ? 'text-semantic-brand-strong' : 'text-gray-500 group-hover:text-gray-300'} transition-colors duration-300`} />
               </div>
               

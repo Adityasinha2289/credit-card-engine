@@ -130,10 +130,10 @@ export function ProfileTab() {
       eyebrow="Profile"
       title="Your financial identity."
       subtitle="Keep your profile and financial context up to date so RenoCred can make better decisions for you."
-      className="text-[#F2F4F2] font-body selection:bg-[#237E45]/30 selection:text-white"
+      className="text-gray-900 font-body selection:bg-[#2A9D5C]/30 selection:text-gray-900"
     >
       {/* Global Background Atmosphere */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
+      <div className="fixed inset-0 pointer-events-none z-[-1] bg-white" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 relative">
         <div className="lg:col-span-8">
@@ -142,12 +142,12 @@ export function ProfileTab() {
             {/* IDENTITY SECTION */}
             <section className="space-y-8">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Identity</span>
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Identity</span>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-8 items-start">
                 <div className="flex-shrink-0 flex flex-col gap-4">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border border-white/[0.08] bg-white/[0.02] shadow-xl">
+                  <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300 bg-gray-50 shadow-xl">
                     <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex gap-2 overflow-x-auto max-w-[12rem] p-1.5 pb-2.5 -ml-1.5 hide-scrollbar">
@@ -159,8 +159,8 @@ export function ProfileTab() {
                         className={cn(
                           'w-8 h-8 aspect-square rounded-full flex-shrink-0 transition-all overflow-hidden',
                           avatarSeed === seed
-                            ? 'ring-2 ring-offset-2 ring-offset-[#050806] ring-[#237E45]'
-                            : 'border border-white/[0.08] hover:border-white/30 opacity-70 hover:opacity-100'
+                            ? 'ring-2 ring-offset-2 ring-offset-[#050806] ring-[#2A9D5C]'
+                            : 'border border-gray-300 hover:border-gray-300 opacity-70 hover:opacity-100'
                         )}
                       >
                         <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=f8f9fa`} alt={seed} className="w-full h-full object-cover" />
@@ -171,35 +171,35 @@ export function ProfileTab() {
 
                 <div className="flex-1 space-y-8 w-full">
                   <div className="space-y-2">
-                    <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Full Name</label>
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Full Name</label>
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-transparent border-b border-white/[0.08] focus:border-[#237E45] pb-2 text-white/90 text-lg outline-none transition-colors"
+                      className="w-full bg-transparent border-b border-gray-300 focus:border-[#2A9D5C] pb-2 text-gray-900 text-lg outline-none transition-colors"
                       placeholder="Your Name"
                     />
                   </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
                     <div className="space-y-2 sm:col-span-2">
-                      <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Email Address</label>
+                      <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Email Address</label>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-transparent border-b border-white/[0.08] focus:border-[#237E45] pb-2 text-white/90 text-sm outline-none transition-colors"
+                        className="w-full bg-transparent border-b border-gray-300 focus:border-[#2A9D5C] pb-2 text-gray-900 text-sm outline-none transition-colors"
                         placeholder="email@example.com"
                       />
                     </div>
                     <div className="space-y-2 sm:col-span-1">
-                      <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Phone Number</label>
+                      <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Phone Number</label>
                       <input
                         type="tel"
                         maxLength={10}
                         value={phone}
                         onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
-                        className="w-full bg-transparent border-b border-white/[0.08] focus:border-[#237E45] pb-2 text-white/90 outline-none transition-colors"
+                        className="w-full bg-transparent border-b border-gray-300 focus:border-[#2A9D5C] pb-2 text-gray-900 outline-none transition-colors"
                         placeholder="+91 XXXXX XXXXX"
                       />
                     </div>
@@ -208,33 +208,33 @@ export function ProfileTab() {
               </div>
             </section>
 
-            <hr className="border-white/[0.04]" />
+            <hr className="border-gray-300" />
 
             {/* FINANCIAL PROFILE SECTION */}
             <section className="space-y-8">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Financial Profile</span>
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Financial Profile</span>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  {/* Income */}
-                 <div className="bg-[#07120D] border border-white/[0.04] p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-[#081A12] hover:border-[#237E45]/20 transition-all">
+                 <div className="bg-white border border-gray-300 p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-gray-50 hover:border-[#2A9D5C]/20 transition-all">
                     <div>
-                      <h4 className="text-sm font-medium text-white/50 mb-1">Annual income</h4>
+                      <h4 className="text-sm font-medium text-gray-600 mb-1">Annual income</h4>
                       <div className="flex items-baseline gap-2">
-                         <span className="text-2xl font-display text-white">{formatINR(salary)}</span>
-                         <span className="text-sm text-white/40">/ year</span>
+                         <span className="text-2xl font-display text-gray-900">{formatINR(salary)}</span>
+                         <span className="text-sm text-gray-400">/ year</span>
                       </div>
                     </div>
                     
                     <div className="space-y-4">
                        <div className="flex justify-between items-center relative">
-                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-sm">₹</span>
+                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
                          <input
                            type="text"
                            value={salaryInput}
                            onChange={handleSalaryInputChange}
-                           className="w-full bg-[#050806] border border-white/[0.04] rounded-[12px] py-2 pl-7 pr-3 text-white/90 text-sm outline-none focus:border-[#237E45]/50 transition-colors"
+                           className="w-full bg-white border border-gray-300 rounded-[12px] py-2 pl-7 pr-3 text-gray-900 text-sm outline-none focus:border-[#2A9D5C]/50 transition-colors"
                          />
                        </div>
                        <input
@@ -244,9 +244,9 @@ export function ProfileTab() {
                           step={50000}
                           value={salary}
                           onChange={handleSalarySliderChange}
-                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-white/[0.04] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#237E45] transition-all"
+                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-gray-100 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#2A9D5C] transition-all"
                           style={{ 
-                            backgroundImage: 'linear-gradient(#237E45, #237E45)', 
+                            backgroundImage: 'linear-gradient(#2A9D5C, #2A9D5C)', 
                             backgroundSize: `${((salary - 100000) * 100) / (10000000 - 100000)}% 100%`, 
                             backgroundRepeat: 'no-repeat' 
                           }}
@@ -255,12 +255,12 @@ export function ProfileTab() {
                  </div>
 
                  {/* CIBIL */}
-                 <div className="bg-[#07120D] border border-white/[0.04] p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-[#081A12] hover:border-[#237E45]/20 transition-all">
+                 <div className="bg-white border border-gray-300 p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-gray-50 hover:border-[#2A9D5C]/20 transition-all">
                     <div>
-                      <h4 className="text-sm font-medium text-white/50 mb-1">CIBIL score</h4>
+                      <h4 className="text-sm font-medium text-gray-600 mb-1">CIBIL score</h4>
                       <div className="flex items-center gap-3">
-                         <span className="text-2xl font-display text-white">{creditScore}</span>
-                         <span className="text-sm font-medium text-[#237E45]">
+                         <span className="text-2xl font-display text-gray-900">{creditScore}</span>
+                         <span className="text-sm font-medium text-[#2A9D5C]">
                            {creditScore >= 750 ? '· Excellent' : creditScore >= 700 ? '· Good' : creditScore >= 650 ? '· Fair' : '· Poor'}
                          </span>
                       </div>
@@ -272,7 +272,7 @@ export function ProfileTab() {
                          maxLength={3}
                          value={creditInput}
                          onChange={handleCreditInputChange}
-                         className="w-full bg-[#050806] border border-white/[0.04] rounded-[12px] py-2 px-3 text-white/90 text-sm outline-none focus:border-[#237E45]/50 transition-colors"
+                         className="w-full bg-white border border-gray-300 rounded-[12px] py-2 px-3 text-gray-900 text-sm outline-none focus:border-[#2A9D5C]/50 transition-colors"
                        />
                        <input
                           type="range"
@@ -281,9 +281,9 @@ export function ProfileTab() {
                           step={1}
                           value={creditScore}
                           onChange={handleCreditSliderChange}
-                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-white/[0.04] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#237E45] transition-all"
+                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-gray-100 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#2A9D5C] transition-all"
                           style={{ 
-                            backgroundImage: 'linear-gradient(#237E45, #237E45)', 
+                            backgroundImage: 'linear-gradient(#2A9D5C, #2A9D5C)', 
                             backgroundSize: `${((creditScore - 300) * 100) / (900 - 300)}% 100%`, 
                             backgroundRepeat: 'no-repeat' 
                           }}
@@ -294,7 +294,7 @@ export function ProfileTab() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
                 <div className="space-y-3">
-                  <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Financial Stage</label>
+                  <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Financial Stage</label>
                   <div className="flex gap-3">
                     <button
                       type="button"
@@ -302,16 +302,16 @@ export function ProfileTab() {
                       className={cn(
                         "flex-1 p-4 rounded-[20px] border text-left transition-all",
                         userSegment === 'youth'
-                          ? "bg-[#237E45]/5 border-[#237E45]/30"
-                          : "bg-[#07120D] border-white/[0.04] hover:bg-white/[0.02]"
+                          ? "bg-[#2A9D5C]/5 border-[#2A9D5C]/30"
+                          : "bg-white border-gray-300 hover:bg-gray-50"
                       )}
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className={cn("font-medium", userSegment === 'youth' ? "text-[#237E45]" : "text-white/90")}>Youth</div>
-                          <div className="text-xs text-white/50 mt-1">18–22</div>
+                          <div className={cn("font-medium", userSegment === 'youth' ? "text-[#2A9D5C]" : "text-gray-900")}>Youth</div>
+                          <div className="text-xs text-gray-600 mt-1">18–22</div>
                         </div>
-                        {userSegment === 'youth' && <CheckCircle2 size={16} className="text-[#237E45]" />}
+                        {userSegment === 'youth' && <CheckCircle2 size={16} className="text-[#2A9D5C]" />}
                       </div>
                     </button>
                     
@@ -321,16 +321,16 @@ export function ProfileTab() {
                       className={cn(
                         "flex-1 p-4 rounded-[20px] border text-left transition-all",
                         userSegment === 'adult'
-                          ? "bg-[#237E45]/5 border-[#237E45]/30"
-                          : "bg-[#07120D] border-white/[0.04] hover:bg-white/[0.02]"
+                          ? "bg-[#2A9D5C]/5 border-[#2A9D5C]/30"
+                          : "bg-white border-gray-300 hover:bg-gray-50"
                       )}
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className={cn("font-medium", userSegment === 'adult' ? "text-[#237E45]" : "text-white/90")}>Adult</div>
-                          <div className="text-xs text-white/50 mt-1">22+</div>
+                          <div className={cn("font-medium", userSegment === 'adult' ? "text-[#2A9D5C]" : "text-gray-900")}>Adult</div>
+                          <div className="text-xs text-gray-600 mt-1">22+</div>
                         </div>
-                        {userSegment === 'adult' && <CheckCircle2 size={16} className="text-[#237E45]" />}
+                        {userSegment === 'adult' && <CheckCircle2 size={16} className="text-[#2A9D5C]" />}
                       </div>
                     </button>
                   </div>
@@ -338,15 +338,15 @@ export function ProfileTab() {
                 
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">Occupation</label>
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Occupation</label>
                     <div className="relative">
                       <button
                         type="button"
                         onClick={() => setIsOccupationDropdownOpen(!isOccupationDropdownOpen)}
                         className={cn(
-                          "w-full bg-[#07120D] border rounded-[16px] py-3.5 px-4 text-sm text-left transition-colors flex items-center justify-between",
-                          isOccupationDropdownOpen ? "border-[#237E45]/50" : "border-white/[0.04]",
-                          occupation ? "text-white/90" : "text-white/50"
+                          "w-full bg-white border rounded-[16px] py-3.5 px-4 text-sm text-left transition-colors flex items-center justify-between",
+                          isOccupationDropdownOpen ? "border-[#2A9D5C]/50" : "border-gray-300",
+                          occupation ? "text-gray-900" : "text-gray-600"
                         )}
                       >
                         <span>{occupation || "Select Occupation (Optional)"}</span>
@@ -362,12 +362,12 @@ export function ProfileTab() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.15 }}
-                            className="absolute top-full left-0 right-0 mt-2 bg-[#07120D] border border-white/[0.04] rounded-[16px] overflow-hidden shadow-2xl z-50 py-2"
+                            className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-[16px] overflow-hidden shadow-2xl z-50 py-2"
                           >
                             <button
                               type="button"
                               onClick={() => { setOccupation(undefined); setIsOccupationDropdownOpen(false); }}
-                              className="w-full text-left px-4 py-2.5 text-sm text-white/50 hover:bg-white/[0.04] transition-colors"
+                              className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-100 transition-colors"
                             >
                               Select Occupation (Optional)
                             </button>
@@ -378,7 +378,7 @@ export function ProfileTab() {
                                 onClick={() => { setOccupation(occ); setIsOccupationDropdownOpen(false); }}
                                 className={cn(
                                   "w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between",
-                                  occupation === occ ? "text-[#237E45] bg-[#237E45]/5" : "text-white/90 hover:bg-white/[0.04]"
+                                  occupation === occ ? "text-[#2A9D5C] bg-[#2A9D5C]/5" : "text-gray-900 hover:bg-gray-100"
                                 )}
                               >
                                 <span>{occ}</span>
@@ -392,30 +392,30 @@ export function ProfileTab() {
                   </div>
                   
                   <div className="space-y-3">
-                    <label className="text-xs font-medium text-[#737C77] uppercase tracking-wider">City</label>
+                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">City</label>
                     <input
                       type="text"
                       placeholder="e.g. Mumbai, Bengaluru"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-full bg-[#07120D] border border-white/[0.04] rounded-[16px] py-3.5 px-4 text-white/90 text-sm outline-none focus:border-[#237E45]/50 transition-colors"
+                      className="w-full bg-white border border-gray-300 rounded-[16px] py-3.5 px-4 text-gray-900 text-sm outline-none focus:border-[#2A9D5C]/50 transition-colors"
                     />
                   </div>
                 </div>
               </div>
             </section>
 
-            <hr className="border-white/[0.04]" />
+            <hr className="border-gray-300" />
 
             {/* FINANCIAL GOALS SECTION */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Financial Goals</span>
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Financial Goals</span>
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-white/90">What are you optimizing for?</h3>
-                <p className="text-sm text-white/50">This helps RenoCred prioritize recommendations around what matters most to you.</p>
+                <h3 className="text-lg font-medium text-gray-900">What are you optimizing for?</h3>
+                <p className="text-sm text-gray-600">This helps RenoCred prioritize recommendations around what matters most to you.</p>
               </div>
               
               <div className="flex flex-wrap gap-3">
@@ -427,52 +427,52 @@ export function ProfileTab() {
                     className={cn(
                       "py-2.5 px-5 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
                       primaryGoal === goal
-                        ? "bg-[#237E45]/10 border-[#237E45]/30 text-[#237E45]"
-                        : "bg-[#07120D] border-white/[0.04] text-white/60 hover:text-white/90 hover:bg-white/[0.02]"
+                        ? "bg-[#2A9D5C]/10 border-[#2A9D5C]/30 text-[#2A9D5C]"
+                        : "bg-white border-gray-300 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     )}
                   >
-                    {primaryGoal === goal && <CheckCircle2 size={14} className="text-[#237E45]" />}
+                    {primaryGoal === goal && <CheckCircle2 size={14} className="text-[#2A9D5C]" />}
                     {goal}
                   </button>
                 ))}
               </div>
             </section>
 
-            <hr className="border-white/[0.04]" />
+            <hr className="border-gray-300" />
 
             {/* TOP SPEND PRIORITIES */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Top Spend Priorities</span>
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Top Spend Priorities</span>
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-white/90">Your declared focus areas</h3>
-                <p className="text-sm text-white/50">These priorities help shape your card and marketplace recommendations.</p>
+                <h3 className="text-lg font-medium text-gray-900">Your declared focus areas</h3>
+                <p className="text-sm text-gray-600">These priorities help shape your card and marketplace recommendations.</p>
               </div>
 
               <div className="flex flex-wrap gap-3">
                 {spendCategories.length > 0 ? spendCategories.map((category) => (
-                  <div key={category} className="py-2.5 px-5 rounded-full bg-[#121414] border border-[#237E45]/20 text-[#F2F4F2] text-sm font-medium capitalize">
+                  <div key={category} className="py-2.5 px-5 rounded-full bg-[#121414] border border-[#2A9D5C]/20 text-gray-900 text-sm font-medium capitalize">
                     {category}
                   </div>
                 )) : (
-                  <p className="text-sm text-white/30 italic">No priorities selected during onboarding.</p>
+                  <p className="text-sm text-gray-300 italic">No priorities selected during onboarding.</p>
                 )}
               </div>
             </section>
 
-            <hr className="border-white/[0.04]" />
+            <hr className="border-gray-300" />
 
             {/* SHARE SECTION */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#737C77]">Share</span>
+                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Share</span>
               </div>
               <ShareableScorecard />
             </section>
 
-            <hr className="border-white/[0.04]" />
+            <hr className="border-gray-300" />
 
             {/* SAVE ACTION */}
             <section className="pt-4 pb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
@@ -483,7 +483,7 @@ export function ProfileTab() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="text-sm font-medium text-[#237E45] flex items-center gap-2"
+                      className="text-sm font-medium text-[#2A9D5C] flex items-center gap-2"
                     >
                       <CheckCircle2 size={16} /> Profile updated successfully!
                     </motion.div>
@@ -513,25 +513,25 @@ export function ProfileTab() {
         
         {/* RIGHT PANEL - INTELLIGENCE OVERVIEW */}
         <div className="lg:col-span-4 relative hidden lg:block">
-          <div className="sticky top-24 bg-[#07120D] border border-white/[0.04] rounded-[32px] p-8 space-y-6">
-            <div className="flex items-center gap-2 text-[#237E45]">
+          <div className="sticky top-24 bg-white border border-gray-300 rounded-[32px] p-8 space-y-6">
+            <div className="flex items-center gap-2 text-[#2A9D5C]">
               <Sparkles size={16} />
               <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase">Your RenoCred Profile</span>
             </div>
-            <p className="text-white/60 text-sm leading-relaxed">
+            <p className="text-gray-600 text-sm leading-relaxed">
               Your profile helps RenoCred understand:
             </p>
-            <ul className="space-y-4 text-sm text-white/80">
+            <ul className="space-y-4 text-sm text-gray-800">
               <li className="flex items-start gap-3">
-                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#237E45]/60 shrink-0" />
+                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#2A9D5C]/60 shrink-0" />
                 <span>which cards fit your spending</span>
               </li>
               <li className="flex items-start gap-3">
-                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#237E45]/60 shrink-0" />
+                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#2A9D5C]/60 shrink-0" />
                 <span>which rewards matter most</span>
               </li>
               <li className="flex items-start gap-3">
-                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#237E45]/60 shrink-0" />
+                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#2A9D5C]/60 shrink-0" />
                 <span>which financial opportunities are relevant</span>
               </li>
             </ul>

@@ -60,7 +60,7 @@ export default function PlanDatePage() {
             exit={{ opacity: 0, y: -20 }}
           >
             <header className="mb-10 text-center">
-              <h1 className="text-4xl font-display font-medium tracking-tight text-white mb-4">
+              <h1 className="text-4xl font-display font-medium tracking-tight text-gray-900 mb-4">
                 Plan a Date
               </h1>
               <p className="text-lg text-text-muted font-light max-w-lg mx-auto">
@@ -121,7 +121,7 @@ export default function PlanDatePage() {
                 ← Back
               </button>
               <div>
-                <h1 className="text-2xl font-display font-medium text-white">{itinerary.title}</h1>
+                <h1 className="text-2xl font-display font-medium text-gray-900">{itinerary.title}</h1>
                 <p className="text-sm text-text-muted">{itinerary.location} • Budget: ₹{itinerary.budget.toLocaleString('en-IN')} • {itinerary.vibe}</p>
               </div>
             </div>
@@ -204,7 +204,7 @@ export default function PlanDatePage() {
                     
                     <div className="relative z-10 pt-4 border-t border-brand-emerald/10">
                       <p className="text-[10px] uppercase tracking-widest text-text-muted font-semibold mb-1">Effective Cost</p>
-                      <p className="text-3xl font-display font-bold text-white tracking-tight">₹{optimizationResult.totalEffectiveCost.toLocaleString('en-IN')}</p>
+                      <p className="text-3xl font-display font-bold text-gray-900 tracking-tight">₹{optimizationResult.totalEffectiveCost.toLocaleString('en-IN')}</p>
                     </div>
                   </div>
                   

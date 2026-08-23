@@ -10,18 +10,35 @@ export class RewardCalculator {
     category: TransactionCategory,
     applicableOffers: MerchantOffer[]
   ): CardRewardCalculation {
-    // 1. Base reward rate extraction
-    const rawRate = parseFloat(card.rewardRate.replace(/[^0-9.]/g, '')) || 1.0;
+    // 1. Base reward rate extraction: Only extract percentage if explicit % is present
+    let rawRate = 0;
+    const isExplicitPercentage = card.rewardRate.includes('%');
+
+    if (isExplicitPercentage) {
+      const match = card.rewardRate.match(/(\d+(?:\.\d+)?)\s*%/);
+      if (match) {
+        rawRate = parseFloat(match[1]);
+      }
+    }
+
     let effectiveRate = rawRate;
     const reasoning: string[] = [];
 
-    // 2. Category match bonus
+    // 2. Category match bonus (only if card has confirmed percentage reward or category match)
     const isCategoryMatch = card.categories.includes(category);
     if (isCategoryMatch) {
-      effectiveRate += 2.0;
-      reasoning.push(`Accelerated ${effectiveRate}% reward rate on ${category}`);
+      if (isExplicitPercentage) {
+        effectiveRate += 2.0;
+        reasoning.push(`Accelerated ${effectiveRate}% reward rate on ${category}`);
+      } else {
+        reasoning.push(`Category match on ${category} (${card.rewardRate})`);
+      }
     } else {
-      reasoning.push(`Base ${rawRate}% reward rate`);
+      if (isExplicitPercentage) {
+        reasoning.push(`Base ${rawRate}% reward rate`);
+      } else {
+        reasoning.push(`Reward structure: ${card.rewardRate}`);
+      }
     }
 
     // 3. Find card-eligible offer
@@ -38,8 +55,10 @@ export class RewardCalculator {
         offerBonusValue = matchingOffer.discountValue;
         reasoning.push(`Flat ₹${matchingOffer.discountValue} offer discount applied`);
       } else if (matchingOffer.discountType === 'points_multiplier') {
-        effectiveRate *= matchingOffer.discountValue;
-        reasoning.push(`${matchingOffer.discountValue}× points multiplier active`);
+        if (effectiveRate > 0) {
+          effectiveRate *= matchingOffer.discountValue;
+          reasoning.push(`${matchingOffer.discountValue}× points multiplier active`);
+        }
       }
     }
 
@@ -53,7 +72,9 @@ export class RewardCalculator {
     if (card.premiumTier === 'super_premium' || card.premiumTier === 'premium') {
       rankScore += 50;
     }
-    rankScore -= Math.round(card.annualFee * 0.001);
+    if (card.annualFee !== null && card.annualFee > 0) {
+      rankScore -= Math.round(card.annualFee * 0.001);
+    }
 
     return {
       card,

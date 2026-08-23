@@ -28,15 +28,14 @@ export function TopNav() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showNotifications]);
 
+  const firstName = profile?.name?.split(' ')[0] || 'Aditya';
+  
   const NOTIFICATIONS = [
-    { id: 1, title: 'Optimization Opportunity', desc: 'You are missing out on 5% cashback for Dining.', time: '2h ago', unread: true },
-    { id: 2, title: 'Bill Reminder', desc: 'Amex Platinum bill of ₹12,450 is due in 3 days.', time: '5h ago', unread: true },
+    { id: 1, title: `Welcome ${firstName} to RenoCred`, desc: 'Your personalized financial engine is ready.', time: 'Just now', unread: true },
   ];
 
-  const firstName = profile?.name?.split(' ')[0] || 'Aditya';
-
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-8 h-[52px] bg-transparent shrink-0">
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 md:px-8 h-[60px] bg-white/80 backdrop-blur-md border-b border-gray-200 shrink-0">
       {/* ── Context Identity / Greeting ─────────────────────────────────── */}
       <div className="flex-1 min-w-0">
       </div>
@@ -76,20 +75,20 @@ export function TopNav() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.98 }}
                 transition={{ duration: 0.15, ease:"easeOut" }}
-                className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-4rem)] sm:w-80 bg-[#151515] rounded-2xl shadow-2xl border border-white/10 overflow-hidden z-50"
+                className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-4rem)] sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-300 overflow-hidden z-50"
               >
-                <div className="p-5 border-b border-white/5 flex justify-between items-center bg-transparent">
-                  <h3 className="font-semibold text-white text-[15px]">Notifications</h3>
-                  <button className="text-[11px] font-bold text-[#237E45] hover:text-[#237E45]/80 uppercase tracking-widest">MARK READ</button>
+                <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-transparent">
+                  <h3 className="font-semibold text-gray-900 text-[15px]">Notifications</h3>
+                  <button className="text-[11px] font-bold text-[#2A9D5C] hover:text-[#2A9D5C]/80 uppercase tracking-widest">MARK READ</button>
                 </div>
                 <div className="flex flex-col max-h-[350px] overflow-y-auto hide-scrollbar">
                   {NOTIFICATIONS.map(notif => (
-                    <button key={notif.id} className="text-left p-5 bg-[#151515] hover:bg-[#1e1e1e] transition-colors border-b border-white/5 last:border-0 relative group">
-                      {notif.unread && <span className="absolute left-4 top-[26px] w-1.5 h-1.5 rounded-full bg-[#237E45]" />}
+                    <button key={notif.id} className="text-left p-5 bg-white hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 relative group">
+                      {notif.unread && <span className="absolute left-4 top-[26px] w-1.5 h-1.5 rounded-full bg-[#2A9D5C]" />}
                       <div className={cn("pl-5", !notif.unread &&"opacity-50")}>
-                        <h4 className="text-[14px] font-semibold text-white/90 mb-1.5">{notif.title}</h4>
-                        <p className="text-[13px] text-white/60 leading-relaxed mb-3">{notif.desc}</p>
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">{notif.time}</p>
+                        <h4 className="text-[14px] font-semibold text-gray-900 mb-1.5">{notif.title}</h4>
+                        <p className="text-[13px] text-gray-600 leading-relaxed mb-3">{notif.desc}</p>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{notif.time}</p>
                       </div>
                     </button>
                   ))}

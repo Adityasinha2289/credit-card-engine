@@ -49,13 +49,13 @@ export default function SubcategoryPage() {
           <span className="opacity-30">/</span>
           <Link to={`${basePath}/${category.slug}`} className="hover:text-white transition-colors">{category.name}</Link>
           <span className="opacity-30">/</span>
-          <span className="text-[#237E45]">{subcategory.name}</span>
+          <span className="text-[#2A9D5C]">{subcategory.name}</span>
         </div>
 
         <div className="flex items-center gap-4 mt-2">
           <button 
             onClick={() => navigate(`${basePath}/${category.slug}`)} 
-            className="w-12 h-12 rounded-full bg-[#07120D] border border-white/[0.04] flex items-center justify-center hover:bg-[#0c1f17] hover:border-[#237E45]/30 transition-all shadow-lg group"
+            className="w-12 h-12 rounded-full bg-[#07120D] border border-white/[0.04] flex items-center justify-center hover:bg-[#0c1f17] hover:border-[#2A9D5C]/30 transition-all shadow-lg group"
           >
             <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-white group-hover:-translate-x-0.5 transition-all" />
           </button>
@@ -74,8 +74,8 @@ export default function SubcategoryPage() {
             className={clsx(
               "px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md",
               activeMinor === 'all' 
-                ? "bg-[#237E45] text-white border-transparent" 
-                : "bg-[#091510] border border-white/[0.04] text-white/70 hover:text-white hover:border-[#237E45]/40"
+                ? "bg-[#2A9D5C] text-white border-transparent" 
+                : "bg-[#091510] border border-white/[0.04] text-white/70 hover:text-white hover:border-[#2A9D5C]/40"
             )}
           >
             All {subcategory.name}
@@ -87,8 +87,8 @@ export default function SubcategoryPage() {
               className={clsx(
                 "px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-md",
                 activeMinor === ssc.slug 
-                  ? "bg-[#237E45] text-white border-transparent" 
-                  : "bg-[#091510] border border-white/[0.04] text-white/70 hover:text-white hover:border-[#237E45]/40"
+                  ? "bg-[#2A9D5C] text-white border-transparent" 
+                  : "bg-[#091510] border border-white/[0.04] text-white/70 hover:text-white hover:border-[#2A9D5C]/40"
               )}
             >
               {ssc.name}
@@ -107,7 +107,7 @@ export default function SubcategoryPage() {
           <input 
             type="text" 
             placeholder={`Search ${subcategory.name}...`} 
-            className="w-full bg-[#07120D] border border-white/[0.06] rounded-2xl py-3 pl-11 pr-4 text-sm text-white focus:border-[#237E45]/50 focus:bg-[#0a1811] focus:outline-none transition-all shadow-inner"
+            className="w-full bg-[#07120D] border border-white/[0.06] rounded-2xl py-3 pl-11 pr-4 text-sm text-white focus:border-[#2A9D5C]/50 focus:bg-[#0a1811] focus:outline-none transition-all shadow-inner"
           />
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function SubcategoryPage() {
       <section className="pb-24 pt-4">
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-xl font-medium flex items-center gap-3">
-            <Sparkles className="w-5 h-5 text-[#237E45]" />
+            <Sparkles className="w-5 h-5 text-[#2A9D5C]" />
             {activeMinor === 'all' ? 'All Partners' : subcategory.subSubCategories?.find(s => s.slug === activeMinor)?.name}
           </h3>
           <span className="text-xs px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] text-white/60 font-semibold tracking-wider uppercase">
@@ -147,9 +147,9 @@ export default function SubcategoryPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="py-24 text-center flex flex-col items-center justify-center border border-white/[0.04] rounded-[32px] bg-[#07120D] shadow-2xl relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-[#237E45]/5 to-transparent pointer-events-none" />
-            <div className="w-20 h-20 rounded-full bg-[#0a1a13] flex items-center justify-center mb-6 border border-[#237E45]/20 shadow-[0_0_40px_rgba(35,126,69,0.1)]">
-              <Search className="w-8 h-8 text-[#237E45]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#2A9D5C]/5 to-transparent pointer-events-none" />
+            <div className="w-20 h-20 rounded-full bg-[#0a1a13] flex items-center justify-center mb-6 border border-[#2A9D5C]/20 shadow-[0_0_40px_rgba(42,157,92,0.1)]">
+              <Search className="w-8 h-8 text-[#2A9D5C]" />
             </div>
             <h4 className="text-2xl font-display font-medium text-white mb-3">No partners found.</h4>
             <p className="text-base text-white/50 max-w-md">We don't have any partners in this exact category right now. Check back later or explore other categories.</p>

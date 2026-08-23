@@ -56,7 +56,7 @@ export default function AddCardModal({
             <h3 className="text-lg font-display font-bold text-text-primary">Add Card to Wallet</h3>
             <button
               onClick={handleCloseModal}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.04]"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-gray-100"
             >
               <X size={16} />
             </button>
@@ -110,7 +110,7 @@ export default function AddCardModal({
                     toast.success(`${c.name} added to wallet!`);
                     handleCloseModal();
                   }}
-                  className="w-full p-3 rounded-2xl flex items-center gap-3 border border-border-subtle dark:border-white/[0.03] hover:bg-surface-secondary dark:hover:bg-white/[0.02] text-left transition-all"
+                  className="w-full p-3 rounded-2xl flex items-center gap-3 border border-border-subtle dark:border-white/[0.03] hover:bg-surface-secondary dark:hover:bg-gray-50 text-left transition-all"
                 >
                   <BankLogo bank={c.bank} />
                   <div className="flex-1 min-w-0">

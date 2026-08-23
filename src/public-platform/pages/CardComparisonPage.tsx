@@ -178,8 +178,8 @@ export function CardComparisonPage() {
                 </tr>
                 <tr className="hover:bg-white/[0.02]">
                   <td className="py-4 px-6 text-gray-400">Forex Surcharge</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardA.forexMarkup}%</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardB.forexMarkup}%</td>
+                  <td className="py-4 px-6 text-white font-mono">{cardA.forexMarkup !== null ? `${cardA.forexMarkup}%` : 'Not Disclosed'}</td>
+                  <td className="py-4 px-6 text-white font-mono">{cardB.forexMarkup !== null ? `${cardB.forexMarkup}%` : 'Not Disclosed'}</td>
                 </tr>
                 <tr className="hover:bg-white/[0.02]">
                   <td className="py-4 px-6 text-gray-400">Fuel Surcharge Waiver</td>

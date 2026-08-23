@@ -107,7 +107,7 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 type="submit"
-                className="w-10 h-10 rounded-full bg-brand-emerald text-white flex items-center justify-center hover:bg-brand-400 transition-colors"
+                className="w-10 h-10 rounded-full bg-brand-emerald text-gray-900 flex items-center justify-center hover:bg-brand-400 transition-colors"
               >
                 <CornerDownLeft size={18} strokeWidth={2.5} />
               </motion.button>

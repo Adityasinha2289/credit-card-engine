@@ -91,11 +91,11 @@ export default function LifestyleHub() {
       eyebrow="Marketplace"
       title="Lifestyle & Experiences"
       subtitle="Curated offers and partner rewards across categories that matter to you."
-      className="text-[#F2F4F2] font-body"
+      className="text-gray-900 font-body"
     >
       <div className="w-full flex flex-col gap-10 relative">
         {/* Global Background Atmosphere: Obsidian */}
-        <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
+        <div className="fixed inset-0 pointer-events-none z-[-1] bg-white" />
 
         {/* HERO SURFACE */}
         {heroCategory && (
@@ -104,7 +104,7 @@ export default function LifestyleHub() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               onClick={() => navigate(heroCategory.path)}
-              className="group relative h-[380px] md:h-[480px] rounded-[32px] overflow-hidden border border-white/[0.04] bg-[#050806] transition-transform duration-300 hover:-translate-y-[2px] shadow-lg hover:shadow-[#237E45]/5 cursor-pointer flex flex-col justify-end"
+              className="group relative h-[380px] md:h-[480px] rounded-[32px] overflow-hidden border border-gray-300 bg-white transition-transform duration-300 hover:-translate-y-[2px] shadow-lg hover:shadow-[#2A9D5C]/5 cursor-pointer flex flex-col justify-end"
             >
               <div className="absolute inset-0">
                 <div 
@@ -115,14 +115,14 @@ export default function LifestyleHub() {
               </div>
               
               <div className="relative z-10 p-8 md:p-12 flex flex-col gap-4">
-                <div className="w-12 h-12 rounded-full border border-[#237E45]/20 flex items-center justify-center bg-[#071A11]/60 backdrop-blur-md transition-colors duration-300 group-hover:border-[#237E45]/40">
-                  <heroCategory.icon className="w-5 h-5 text-[#237E45]" strokeWidth={1.5} />
+                <div className="w-12 h-12 rounded-full border border-[#2A9D5C]/20 flex items-center justify-center bg-[#071A11]/60 backdrop-blur-md transition-colors duration-300 group-hover:border-[#2A9D5C]/40">
+                  <heroCategory.icon className="w-5 h-5 text-[#2A9D5C]" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h3 className="text-3xl md:text-4xl font-display font-medium text-white mb-2">{heroCategory.label}</h3>
-                  <p className="text-base md:text-lg text-white/60 max-w-lg">{heroCategory.desc}</p>
+                  <h3 className="text-3xl md:text-4xl font-display font-medium text-gray-900 mb-2">{heroCategory.label}</h3>
+                  <p className="text-base md:text-lg text-gray-600 max-w-lg">{heroCategory.desc}</p>
                 </div>
-                <div className="flex items-center gap-2 text-sm font-medium text-[#237E45] mt-2 group-hover:text-white transition-colors">
+                <div className="flex items-center gap-2 text-sm font-medium text-[#2A9D5C] mt-2 group-hover:text-gray-900 transition-colors">
                   Explore {heroCategory.label} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={2} />
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function LifestyleHub() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + (idx * 0.1) }}
               onClick={() => navigate(cat.path)}
-              className="group relative h-[280px] rounded-[24px] overflow-hidden border border-white/[0.04] bg-[#07120D] transition-all duration-300 hover:border-[#237E45]/20 hover:bg-[#081A12] hover:-translate-y-[2px] cursor-pointer flex flex-col justify-end"
+              className="group relative h-[280px] rounded-[24px] overflow-hidden border border-gray-300 bg-white transition-all duration-300 hover:border-[#2A9D5C]/20 hover:bg-gray-50 hover:-translate-y-[2px] cursor-pointer flex flex-col justify-end"
             >
               {cat.image && (
                 <div className="absolute inset-x-0 top-0 h-[60%] overflow-hidden opacity-80 group-hover:opacity-100 transition-opacity">
@@ -153,13 +153,13 @@ export default function LifestyleHub() {
               
               <div className="relative z-10 p-6 md:p-8 flex flex-col gap-3">
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center bg-white/[0.02]">
-                    <cat.icon className="w-3.5 h-3.5 text-white/70" strokeWidth={1.5} />
+                  <div className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center bg-gray-50">
+                    <cat.icon className="w-3.5 h-3.5 text-gray-700" strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-xl font-medium text-white/90">{cat.label}</h3>
+                  <h3 className="text-xl font-medium text-gray-900">{cat.label}</h3>
                 </div>
-                <p className="text-sm text-white/50">{cat.desc}</p>
-                <div className="flex items-center gap-1.5 text-xs font-medium text-white/40 mt-1 group-hover:text-[#237E45] transition-colors">
+                <p className="text-sm text-gray-600">{cat.desc}</p>
+                <div className="flex items-center gap-1.5 text-xs font-medium text-gray-400 mt-1 group-hover:text-[#2A9D5C] transition-colors">
                   Explore <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
@@ -177,7 +177,7 @@ export default function LifestyleHub() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + (idx * 0.05) }}
                 onClick={() => navigate(cat.path)}
-                className="group relative h-[180px] rounded-[24px] overflow-hidden border border-white/[0.04] bg-[#07120D] transition-all duration-300 hover:border-[#237E45]/20 hover:bg-[#081A12] hover:-translate-y-[2px] cursor-pointer flex flex-col justify-end"
+                className="group relative h-[180px] rounded-[24px] overflow-hidden border border-gray-300 bg-white transition-all duration-300 hover:border-[#2A9D5C]/20 hover:bg-gray-50 hover:-translate-y-[2px] cursor-pointer flex flex-col justify-end"
               >
                 {cat.image && (
                   <div className="absolute inset-x-0 top-0 h-[60%] overflow-hidden opacity-40 group-hover:opacity-80 transition-opacity">
@@ -191,12 +191,12 @@ export default function LifestyleHub() {
                 
                 <div className="relative z-10 p-5 flex flex-col gap-2">
                   <div className="flex items-center gap-3 mb-1">
-                    <div className="w-8 h-8 rounded-full border border-white/[0.08] flex items-center justify-center bg-white/[0.02]">
-                      <cat.icon className="w-3.5 h-3.5 text-white/70 group-hover:text-[#237E45] transition-colors" strokeWidth={1.5} />
+                    <div className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center bg-gray-50">
+                      <cat.icon className="w-3.5 h-3.5 text-gray-700 group-hover:text-[#2A9D5C] transition-colors" strokeWidth={1.5} />
                     </div>
-                    <h4 className="text-base font-medium text-white/90">{cat.label}</h4>
+                    <h4 className="text-base font-medium text-gray-900">{cat.label}</h4>
                   </div>
-                  <p className="text-xs text-white/50 leading-relaxed line-clamp-2">{cat.desc}</p>
+                  <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">{cat.desc}</p>
                 </div>
               </motion.div>
             ))}

@@ -43,39 +43,39 @@ function SettingsRow({
       disabled={isComingSoon}
       className={cn(
         "w-full flex items-center justify-between p-4 group text-left transition-all duration-300",
-        "border-b border-white/[0.04] last:border-0",
-        "hover:bg-[#07120D]",
+        "border-b border-gray-300 last:border-0",
+        "hover:bg-white",
         isComingSoon && "opacity-50 cursor-not-allowed hover:bg-transparent"
       )}
     >
       <div className="flex items-start gap-4">
         <div className={cn(
           "w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300",
-          isDestructive ? "bg-red-500/10 text-red-500 group-hover:bg-red-500/20" : "bg-[#07120D] text-[#737C77] group-hover:text-[#237E45] border border-white/[0.04] group-hover:border-[#237E45]/20"
+          isDestructive ? "bg-red-500/10 text-red-500 group-hover:bg-red-500/20" : "bg-white text-gray-600 group-hover:text-[#2A9D5C] border border-gray-300 group-hover:border-[#2A9D5C]/20"
         )}>
           <Icon size={18} strokeWidth={1.5} />
         </div>
         <div>
           <div className={cn(
             "text-base font-semibold transition-colors duration-300 flex items-center gap-2",
-            isDestructive ? "text-red-500" : "text-[#F2F4F2] group-hover:text-white"
+            isDestructive ? "text-red-500" : "text-gray-900 group-hover:text-gray-900"
           )}>
             {title} 
-            {isComingSoon && <span className="px-1.5 py-0.5 rounded-sm bg-white/10 text-[9px] uppercase tracking-widest text-white/50">Coming Soon</span>}
+            {isComingSoon && <span className="px-1.5 py-0.5 rounded-sm bg-gray-100 text-[9px] uppercase tracking-widest text-gray-600">Coming Soon</span>}
           </div>
-          <div className="text-sm text-[#737C77] mt-0.5">{description}</div>
+          <div className="text-sm text-gray-600 mt-0.5">{description}</div>
         </div>
       </div>
       
       {!isDestructive && (
         <div className="flex items-center gap-3 shrink-0">
           {actionText && (
-            <span className="text-sm font-medium text-[#737C77] group-hover:text-white transition-colors duration-300">
+            <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
               {actionText}
             </span>
           )}
           {!isComingSoon && (
-            <ChevronRight size={16} className="text-[#737C77] group-hover:text-[#237E45] group-hover:translate-x-1 transition-all duration-300" />
+            <ChevronRight size={16} className="text-gray-600 group-hover:text-[#2A9D5C] group-hover:translate-x-1 transition-all duration-300" />
           )}
         </div>
       )}
@@ -86,10 +86,10 @@ function SettingsRow({
 function SettingsSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h3 className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-[#737C77] mb-3 ml-2">
+      <h3 className="text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-gray-600 mb-3 ml-2">
         {title}
       </h3>
-      <div className="bg-[#050806] border border-white/[0.04] rounded-[24px] overflow-hidden">
+      <div className="bg-white border border-gray-300 rounded-[24px] overflow-hidden">
         {children}
       </div>
     </div>
@@ -106,7 +106,7 @@ export default function SettingsPage() {
       eyebrow="Settings"
       title="Your RenoCred, your way."
       subtitle="Manage how RenoCred works, communicates and personalizes your experience."
-      className="font-body selection:bg-[#237E45]/30 selection:text-white"
+      className="font-body selection:bg-[#2A9D5C]/30 selection:text-gray-900"
     >
       <div className="flex flex-col md:flex-row gap-12">
         {/* Main Settings Content */}
@@ -202,29 +202,29 @@ export default function SettingsPage() {
 
         {/* Optional Right-Side Summary */}
         <div className="hidden lg:block w-[320px] shrink-0 pt-[104px]">
-          <div className="sticky top-8 bg-[#07120D] border border-white/[0.04] rounded-[24px] p-6 shadow-xl">
-            <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#737C77] mb-6">
+          <div className="sticky top-8 bg-white border border-gray-300 rounded-[24px] p-6 shadow-xl">
+            <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-600 mb-6">
               Your RenoCred Experience
             </h4>
             
             <div className="space-y-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-white/70">Personalization</span>
-                <span className="text-xs font-semibold text-[#237E45] px-2 py-0.5 rounded-full bg-[#237E45]/10 border border-[#237E45]/20">Active</span>
+                <span className="text-sm text-gray-700">Personalization</span>
+                <span className="text-xs font-semibold text-[#2A9D5C] px-2 py-0.5 rounded-full bg-[#2A9D5C]/10 border border-[#2A9D5C]/20">Active</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-white/70">Notifications</span>
-                <span className="text-xs font-semibold text-[#237E45] px-2 py-0.5 rounded-full bg-[#237E45]/10 border border-[#237E45]/20">ON</span>
+                <span className="text-sm text-gray-700">Notifications</span>
+                <span className="text-xs font-semibold text-[#2A9D5C] px-2 py-0.5 rounded-full bg-[#2A9D5C]/10 border border-[#2A9D5C]/20">ON</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-white/70">Theme</span>
-                <span className="text-xs font-medium text-white/40">Dark</span>
+                <span className="text-sm text-gray-700">Theme</span>
+                <span className="text-xs font-medium text-gray-400">Dark</span>
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/[0.04]">
-              <p className="text-xs text-[#737C77] leading-relaxed">
-                RenoCred is currently optimizing your dashboard for <strong className="text-white/80 font-medium">{profile?.primaryGoal || 'Maximum Value'}</strong>.
+            <div className="mt-8 pt-6 border-t border-gray-300">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                RenoCred is currently optimizing your dashboard for <strong className="text-gray-800 font-medium">{profile?.primaryGoal || 'Maximum Value'}</strong>.
               </p>
             </div>
           </div>

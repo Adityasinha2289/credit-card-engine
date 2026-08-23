@@ -10,14 +10,14 @@ export interface PublicCardEntity {
   cardName: string;
   issuer: string;
   network: string;
-  annualFee: number;
-  joiningFee: number;
+  annualFee: number | null;
+  joiningFee: number | null;
   formattedAnnualFee: string;
   formattedJoiningFee: string;
   rewardType: string;
   rewardRate: string;
   loungeAccess: string;
-  forexMarkup: number;
+  forexMarkup: number | null;
   fuelBenefits: string;
   welcomeBenefits: string[];
   milestoneBenefits: string[];
@@ -40,45 +40,51 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-// 1. Map Flagship 13 Cards
-const FLAGSHIP_MAP = new Map<string, CreditCardIntelligence>(
-  MOCK_CARDS_INTELLIGENCE.map((c) => [c.id, c])
-);
-
-// Helper to determine categories from master card
 function deriveCategories(card: FinixCard): string[] {
-  const cats = new Set<string>();
-  if (card.rewards) {
+  const cats: string[] = [];
+  if (card.rewards && card.rewards.length > 0) {
     card.rewards.forEach((r) => {
-      if (r.category) cats.add(r.category.toLowerCase());
+      if (r.category && !cats.includes(r.category)) {
+        cats.push(r.category);
+      }
     });
   }
-  if (card.annualFee === 0) cats.add('lifetime-free');
-  if (card.annualFee >= 5000) cats.add('premium');
-  if (card.loungeAccess > 0) cats.add('travel');
-  if (cats.size === 0) cats.add('shopping');
-  return Array.from(cats);
+  if (cats.length === 0) cats.push('general');
+  return cats;
 }
 
-// 2. Build Unified Public Knowledge Graph (Master Dataset 133 + Flagship Details)
-export const ALL_PUBLIC_CARDS: PublicCardEntity[] = [];
-const seenSlugs = new Set<string>();
-
-// First add Flagship 13 Cards
-MOCK_CARDS_INTELLIGENCE.forEach((card) => {
+// Transform mock intelligence cards for rich SSR/Public presentation
+export const ALL_PUBLIC_CARDS: PublicCardEntity[] = MOCK_CARDS_INTELLIGENCE.map((card: CreditCardIntelligence) => {
   const slug = slugify(card.cardName);
-  seenSlugs.add(slug);
-  ALL_PUBLIC_CARDS.push({
-    ...card,
+  return {
+    id: card.id,
     slug,
     url: `https://renocred.com/cards/${slug}`,
-    formattedAnnualFee: card.annualFee === 0 ? 'Free Lifetime' : `₹${card.annualFee.toLocaleString('en-IN')}`,
-    formattedJoiningFee: card.joiningFee === 0 ? 'Free' : `₹${card.joiningFee.toLocaleString('en-IN')}`,
-    isFlagship: true,
-  });
+    cardName: card.cardName,
+    issuer: card.issuer,
+    network: card.network,
+    annualFee: card.annualFee,
+    joiningFee: card.joiningFee,
+    formattedAnnualFee: card.annualFee === null ? 'Not Disclosed' : card.annualFee === 0 ? 'Free Lifetime' : `₹${card.annualFee.toLocaleString('en-IN')}`,
+    formattedJoiningFee: card.joiningFee === null ? 'Not Disclosed' : card.joiningFee === 0 ? 'Free' : `₹${card.joiningFee.toLocaleString('en-IN')}`,
+    rewardType: card.rewardType,
+    rewardRate: card.rewardRate,
+    loungeAccess: card.loungeAccess,
+    forexMarkup: card.forexMarkup,
+    fuelBenefits: card.fuelBenefits,
+    welcomeBenefits: card.welcomeBenefits,
+    milestoneBenefits: card.milestoneBenefits,
+    eligibility: card.eligibility,
+    categories: card.categories,
+    premiumTier: card.premiumTier,
+    topBenefit: card.topBenefit,
+    isFlagship: card.premiumTier === 'super_premium' || card.annualFee !== null && card.annualFee >= 5000,
+  };
 });
 
 // Next normalize Master Dataset cards that pass Data Quality Gate
+const seenSlugs = new Set(ALL_PUBLIC_CARDS.map((c) => c.slug));
+
 MASTER_CARD_DATASET.forEach((card) => {
   const slug = slugify(card.name);
   if (!seenSlugs.has(slug) && card.name && card.bank) {
@@ -91,14 +97,14 @@ MASTER_CARD_DATASET.forEach((card) => {
       cardName: card.name,
       issuer: card.bank,
       network: card.network || 'Visa',
-      annualFee: card.annualFee || 0,
-      joiningFee: card.annualFee || 0,
-      formattedAnnualFee: card.annualFee === 0 ? 'Free Lifetime' : `₹${card.annualFee.toLocaleString('en-IN')}`,
-      formattedJoiningFee: card.annualFee === 0 ? 'Free' : `₹${card.annualFee.toLocaleString('en-IN')}`,
-      rewardType: card.baseRewardRate >= 1.0 ? 'cashback' : 'points',
-      rewardRate: `${card.baseRewardRate}% base reward rate on eligible transactions`,
-      loungeAccess: card.loungeAccess > 0 ? `${card.loungeAccess} Complimentary Lounge visits/year` : 'No complimentary lounge access',
-      forexMarkup: card.annualFee >= 5000 ? 2.0 : 3.5,
+      annualFee: card.annualFee,
+      joiningFee: card.annualFee,
+      formattedAnnualFee: card.annualFee === null ? 'Not Disclosed' : card.annualFee === 0 ? 'Free Lifetime' : `₹${card.annualFee.toLocaleString('en-IN')}`,
+      formattedJoiningFee: card.annualFee === null ? 'Not Disclosed' : card.annualFee === 0 ? 'Free' : `₹${card.annualFee.toLocaleString('en-IN')}`,
+      rewardType: (card.baseRewardRate ?? 0) >= 1.0 ? 'cashback' : 'points',
+      rewardRate: card.baseRewardRate !== null ? `${card.baseRewardRate}% base reward rate on eligible transactions` : 'Reward terms unconfirmed',
+      loungeAccess: card.loungeAccess && card.loungeAccess > 0 ? `${card.loungeAccess} Complimentary Lounge visits/year` : 'No complimentary lounge access',
+      forexMarkup: card.annualFee && card.annualFee >= 5000 ? 2.0 : 3.5,
       fuelBenefits: '1% fuel surcharge waiver on eligible transactions',
       welcomeBenefits: card.welcomeBonus ? [card.welcomeBonus] : ['Standard bank welcome privileges'],
       milestoneBenefits: card.feeWaiverSpend ? [`Annual fee waiver on ₹${(card.feeWaiverSpend / 100000).toFixed(1)} Lakh spend`] : ['Standard bank milestone privileges'],
@@ -107,7 +113,7 @@ MASTER_CARD_DATASET.forEach((card) => {
         minCreditScore: card.minCibil || 700,
       },
       categories,
-      premiumTier: card.annualFee >= 10000 ? 'super_premium' : card.annualFee >= 2500 ? 'premium' : card.annualFee === 0 ? 'no_fee' : 'entry',
+      premiumTier: card.annualFee && card.annualFee >= 10000 ? 'super_premium' : card.annualFee && card.annualFee >= 2500 ? 'premium' : card.annualFee === 0 ? 'no_fee' : 'entry',
       topBenefit: card.highlights?.[0] ? card.highlights[0] : `${card.name} by ${card.bank}`,
       isFlagship: false,
     });

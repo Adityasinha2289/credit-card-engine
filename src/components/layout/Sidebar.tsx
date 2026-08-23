@@ -49,7 +49,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="hidden lg:flex fixed top-0 left-0 h-[100dvh] w-[240px] z-40 flex-col bg-[#060A08]"
+      className="hidden lg:flex fixed top-0 left-0 h-[100dvh] w-[240px] z-40 flex-col bg-white border-r border-gray-200"
       aria-label="Main navigation"
     >
       {/* ── Brand Area ───────────────────────────────────────────────────────── */}
@@ -57,7 +57,7 @@ export function Sidebar() {
         <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden shadow-lg border border-white/[0.05]">
           <img src="/logo.jpg" alt="RenoCred" className="w-full h-full object-cover" />
         </div>
-        <h1 className="text-xl font-display font-medium text-semantic-text-primary tracking-tight">
+        <h1 className="text-xl font-display font-medium text-gray-900 tracking-tight">
           RenoCred
         </h1>
       </div>
@@ -74,8 +74,8 @@ export function Sidebar() {
                 className={cn(
                   'group relative flex items-center gap-4 px-4 py-3 transition-all duration-150 w-full rounded-xl',
                   isActive
-                    ? 'bg-[#0D6B43]/15 text-semantic-text-primary'
-                    : 'text-semantic-text-muted hover:text-semantic-text-primary hover:bg-semantic-surface-primary'
+                    ? 'bg-[#2A9D5C]/10 text-[#2A9D5C]'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 )}
               >
                 {isActive && (
@@ -90,7 +90,7 @@ export function Sidebar() {
                   strokeWidth={1.5}
                   className={cn(
                     'transition-colors duration-150',
-                    isActive ? 'text-semantic-brand' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
+                    isActive ? 'text-semantic-brand' : 'text-gray-600 group-hover:text-gray-900'
                   )}
                 />
                 <span className={cn('text-[13px] font-medium tracking-wide', isActive && 'font-medium')}>
@@ -111,8 +111,8 @@ export function Sidebar() {
                 className={cn(
                   'group relative flex items-center gap-4 px-4 py-3 transition-all duration-150 w-full rounded-xl',
                   isActive
-                    ? 'bg-[#0D6B43]/15 text-semantic-text-primary'
-                    : 'text-semantic-text-muted hover:text-semantic-text-primary hover:bg-semantic-surface-primary'
+                    ? 'bg-[#2A9D5C]/10 text-[#2A9D5C]'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 )}
               >
                 {isActive && (
@@ -127,7 +127,7 @@ export function Sidebar() {
                   strokeWidth={1.5}
                   className={cn(
                     'transition-colors duration-150',
-                    isActive ? 'text-semantic-brand' : 'text-semantic-text-muted group-hover:text-semantic-text-secondary'
+                    isActive ? 'text-semantic-brand' : 'text-gray-600 group-hover:text-gray-900'
                   )}
                 />
                 <span className={cn('text-[13px] font-medium tracking-wide', isActive && 'font-medium')}>
@@ -144,16 +144,16 @@ export function Sidebar() {
         {/* User Profile Block */}
         <button 
           onClick={() => navigate('/app/profile')}
-          className="flex items-center gap-3 p-3 rounded-2xl hover:bg-semantic-surface-primary transition-colors text-left group"
+          className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition-colors text-left group"
         >
-          <div className="w-9 h-9 rounded-full bg-[#10241A] text-semantic-brand flex items-center justify-center shrink-0 border border-semantic-brand/20 font-semibold text-xs tracking-wider">
+          <div className="w-9 h-9 rounded-full bg-[#2A9D5C]/10 text-semantic-brand flex items-center justify-center shrink-0 border border-semantic-brand/20 font-semibold text-xs tracking-wider">
             {userInitials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-medium text-semantic-text-primary truncate mb-0.5">
+            <p className="text-[13px] font-medium text-gray-900 truncate mb-0.5">
               {userName}
             </p>
-            <p className="text-[10px] font-medium text-semantic-text-muted truncate group-hover:text-semantic-text-secondary transition-colors">
+            <p className="text-[10px] font-medium text-gray-600 truncate group-hover:text-gray-900 transition-colors">
               View Profile →
             </p>
           </div>

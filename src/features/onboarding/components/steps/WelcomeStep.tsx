@@ -23,7 +23,7 @@ export function WelcomeStep({ onContinue }: WelcomeStepProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         className="text-sm mb-16"
-        style={{ color: '#6E7471' }}
+        style={{ color: '#4B5563' }}
       >
         We'll personalize everything in under a minute.
       </motion.p>

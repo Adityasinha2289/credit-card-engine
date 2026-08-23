@@ -37,12 +37,12 @@ export interface CreditCardIntelligence {
   issuer: string;
   network: CardNetwork;
   cardName: string;
-  annualFee: number;
-  joiningFee: number;
+  annualFee: number | null;
+  joiningFee: number | null;
   rewardType: RewardType;
   rewardRate: string;
   loungeAccess: string;
-  forexMarkup: number;
+  forexMarkup: number | null;
   fuelBenefits: string;
   welcomeBenefits: string[];
   milestoneBenefits: string[];
@@ -57,10 +57,10 @@ export interface CardComparisonFeature {
   cardId: string;
   cardName: string;
   issuer: string;
-  annualFee: number;
+  annualFee: number | null;
   rewardRate: string;
   loungeAccess: string;
-  forexMarkup: number;
+  forexMarkup: number | null;
   fuel: string;
   diningBenefit: string;
   travelBenefit: string;

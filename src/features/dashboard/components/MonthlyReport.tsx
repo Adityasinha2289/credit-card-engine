@@ -185,7 +185,7 @@ function CategoryBar({ name, pct, total, color, emoji }: {
           <p className="text-xs font-semibold text-text-primary capitalize truncate">{name}</p>
           <p className="text-xs font-bold text-text-primary tabular-nums flex-shrink-0 ml-2">{formatINRFull(total)}</p>
         </div>
-        <div className="w-full h-2 bg-white/[0.04] rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
@@ -268,7 +268,7 @@ export function MonthlyReport() {
       {/* ── Month Selector ────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button onClick={goPrev} className="w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-text-muted hover:text-text-primary transition-all">
+          <button onClick={goPrev} className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-white/[0.08] flex items-center justify-center text-text-muted hover:text-text-primary transition-all">
             <ChevronLeft size={16} />
           </button>
           <div className="text-center min-w-[160px]">
@@ -277,7 +277,7 @@ export function MonthlyReport() {
           </div>
           <button onClick={goNext} disabled={isCurrentMonth}
             className={cn('w-9 h-9 rounded-xl flex items-center justify-center transition-all',
-              isCurrentMonth ? 'bg-white/[0.02] text-text-muted cursor-not-allowed' : 'bg-white/[0.04] hover:bg-white/[0.08] text-text-muted hover:text-text-primary')}>
+              isCurrentMonth ? 'bg-gray-50 text-text-muted cursor-not-allowed' : 'bg-gray-100 hover:bg-white/[0.08] text-text-muted hover:text-text-primary')}>
             <ChevronRight size={16} />
           </button>
         </div>
@@ -285,7 +285,7 @@ export function MonthlyReport() {
           whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
           onClick={handleDownload}
           disabled={saving}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm text-gray-900 transition-all disabled:opacity-50"
           style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 16px rgba(99,102,241,0.25)' }}
         >
           <Download size={14} /> {saving ? 'Saving…' : 'Download Report'}
@@ -302,7 +302,7 @@ export function MonthlyReport() {
             <p className="text-xl font-display font-bold text-text-primary">{MONTHS[month]} {year}</p>
           </div>
           <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold', trendIcon.color,
-            data.spendChange > 2 ? 'bg-loss/10' : data.spendChange < -2 ? 'bg-profit/10' : 'bg-white/[0.04]')}>
+            data.spendChange > 2 ? 'bg-loss/10' : data.spendChange < -2 ? 'bg-profit/10' : 'bg-gray-100')}>
             <trendIcon.Icon size={13} />
             {trendIcon.label}
           </div>
@@ -362,7 +362,7 @@ export function MonthlyReport() {
                 data.topMerchants.map((m, i) => (
                   <div key={m.name} className="flex items-center gap-3">
                     <span className={cn('w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-black flex-shrink-0',
-                      i === 0 ? 'bg-brand-emerald/15 text-brand-emerald' : 'bg-white/[0.04] text-text-muted')}>
+                      i === 0 ? 'bg-brand-emerald/15 text-brand-emerald' : 'bg-gray-100 text-text-muted')}>
                       {i + 1}
                     </span>
                     <p className="text-xs font-semibold text-text-primary truncate flex-1">{m.name}</p>
@@ -412,7 +412,7 @@ export function MonthlyReport() {
                       <p className="text-xs font-semibold text-text-primary capitalize">{b.category}</p>
                       <p className="text-[10px] font-bold text-text-muted">{formatINRFull(b.spent)} / {formatINRFull(b.limit)}</p>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.04] rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all" style={{
                         width: `${Math.min(b.pct, 100)}%`,
                         backgroundColor: b.pct >= 100 ? '#ef4444' : b.pct >= 80 ? '#f59e0b' : '#10b981',

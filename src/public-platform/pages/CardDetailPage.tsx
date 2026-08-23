@@ -148,7 +148,7 @@ export function CardDetailPage() {
               </div>
               <div>
                 <span className="text-xs text-gray-400 block uppercase tracking-wider">Forex Markup</span>
-                <span className="text-xl font-bold text-white font-mono">{card.forexMarkup}%</span>
+                <span className="text-xl font-bold text-white font-mono">{card.forexMarkup !== null ? `${card.forexMarkup}%` : 'Not Disclosed'}</span>
               </div>
             </div>
           </div>

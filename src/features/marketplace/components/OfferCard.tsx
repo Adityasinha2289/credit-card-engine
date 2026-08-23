@@ -11,9 +11,9 @@ interface OfferCardProps {
 export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
   const getIcon = () => {
     switch (offer.discountType) {
-      case 'percentage': return <Percent className="w-3.5 h-3.5 text-[#237E45]" />;
-      case 'points_multiplier': return <Sparkles className="w-3.5 h-3.5 text-[#237E45]" />;
-      default: return <Tag className="w-3.5 h-3.5 text-[#237E45]" />;
+      case 'percentage': return <Percent className="w-3.5 h-3.5 text-[#2A9D5C]" />;
+      case 'points_multiplier': return <Sparkles className="w-3.5 h-3.5 text-[#2A9D5C]" />;
+      default: return <Tag className="w-3.5 h-3.5 text-[#2A9D5C]" />;
     }
   };
 
@@ -28,7 +28,7 @@ export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
     <motion.div 
       whileHover={{ y: -4, scale: 1.01 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`group flex flex-col h-full bg-gradient-to-br from-[#0a1510] to-[#050806] border border-white/[0.04] rounded-[28px] overflow-hidden hover:border-[#237E45]/40 hover:shadow-[0_8px_32px_rgba(35,126,69,0.12)] transition-all duration-300 cursor-pointer relative ${isFeatured ? 'md:flex-row' : ''}`}
+      className={`group flex flex-col h-full bg-gradient-to-br from-[#0a1510] to-[#050806] border border-white/[0.04] rounded-[28px] overflow-hidden hover:border-[#2A9D5C]/40 hover:shadow-[0_8px_32px_rgba(42,157,92,0.12)] transition-all duration-300 cursor-pointer relative ${isFeatured ? 'md:flex-row' : ''}`}
       onClick={() => {
         if (offer.affiliateUrl) {
           window.open(offer.affiliateUrl, '_blank');
@@ -36,7 +36,7 @@ export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
       }}
     >
       {/* Subtle Glow Effect */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[100px] bg-[#237E45] opacity-0 group-hover:opacity-10 blur-[100px] transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[100px] bg-[#2A9D5C] opacity-0 group-hover:opacity-10 blur-[100px] transition-opacity duration-500 pointer-events-none" />
 
       {/* For featured cards, we can add a visual asset area. Since we only have logos, we create an abstract patterned area */}
       {isFeatured && (
@@ -50,7 +50,7 @@ export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
               )}
           </div>
           <div className="absolute bottom-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
-             <CheckCircle2 className="w-3.5 h-3.5 text-[#237E45]" />
+             <CheckCircle2 className="w-3.5 h-3.5 text-[#2A9D5C]" />
              <span className="text-[10px] text-white/80 font-semibold tracking-wider uppercase">Verified Partner</span>
           </div>
         </div>
@@ -78,15 +78,15 @@ export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
                   Brand Partner
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#237E45] uppercase tracking-wider mt-1 bg-[#237E45]/10 px-2 py-0.5 rounded-md w-fit border border-[#237E45]/20">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#2A9D5C] uppercase tracking-wider mt-1 bg-[#2A9D5C]/10 px-2 py-0.5 rounded-md w-fit border border-[#2A9D5C]/20">
                   {getIcon()} <span>{formattedDiscount}</span>
                 </div>
               )}
             </div>
           </div>
           
-          <div className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/[0.05] flex items-center justify-center group-hover:bg-[#237E45]/20 group-hover:border-[#237E45]/40 transition-colors">
-            <ExternalLink className="w-3.5 h-3.5 text-white/40 group-hover:text-[#237E45] transition-colors" />
+          <div className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/[0.05] flex items-center justify-center group-hover:bg-[#2A9D5C]/20 group-hover:border-[#2A9D5C]/40 transition-colors">
+            <ExternalLink className="w-3.5 h-3.5 text-white/40 group-hover:text-[#2A9D5C] transition-colors" />
           </div>
         </div>
 
@@ -130,7 +130,7 @@ export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
           {/* Bold CTA */}
           <div className="flex items-center gap-2 text-sm font-semibold text-white/70 group-hover:text-white transition-colors">
             {offer.isDiscovery ? 'Explore Brand' : 'Explore Offer'}
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#237E45]" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#2A9D5C]" />
           </div>
         </div>
       </div>

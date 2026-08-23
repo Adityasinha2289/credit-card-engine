@@ -38,7 +38,7 @@ export function FilterBar({ filters, onFilterChange }: FilterBarProps) {
               className={cn(
                 "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border whitespace-nowrap",
                 isActive 
-                  ? "bg-[#237E45]/10 border-[#237E45]/30 text-[#237E45]" 
+                  ? "bg-[#2A9D5C]/10 border-[#2A9D5C]/30 text-[#2A9D5C]" 
                   : "bg-white/[0.02] border-white/[0.06] text-white/60 hover:text-white/90 hover:bg-white/[0.04]"
               )}
             >
@@ -61,7 +61,7 @@ export function FilterBar({ filters, onFilterChange }: FilterBarProps) {
                     className={cn(
                       "px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap",
                       isActive 
-                        ? "bg-[#237E45] text-white shadow-sm" 
+                        ? "bg-[#2A9D5C] text-white shadow-sm" 
                         : "text-white/60 hover:text-white/90"
                     )}
                   >

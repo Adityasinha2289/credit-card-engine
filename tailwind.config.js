@@ -13,7 +13,7 @@ export default {
         'ag-hover': '0 4px 8px 0 rgba(0,0,0, 0.4), 0 8px 24px 0 rgba(0,0,0, 0.8)',
         'ag-float': '0 8px 16px 0 rgba(0,0,0, 0.6), 0 16px 40px 0 rgba(0,0,0, 1.0)',
         'ag-modal': '0 12px 24px 0 rgba(0,0,0, 0.8), 0 24px 64px 0 rgba(0,0,0, 1.0)',
-        'ag-glow-primary': '0 4px 16px 0 rgba(35, 126, 69, 0.10), 0 8px 32px 0 rgba(35, 126, 69, 0.05)',
+        'ag-glow-primary': '0 4px 16px 0 rgba(42, 157, 92, 0.10), 0 8px 32px 0 rgba(42, 157, 92, 0.05)',
       },
       keyframes: {
         'fade-in-up': {
@@ -72,11 +72,11 @@ export default {
           600: '#0AB377',
           700: '#0BCC88',
           800: '#0DE699',
-          900: '#237E45', // Primary brand action/value
-          emerald: '#237E45',
+          900: '#2A9D5C', // Primary brand action/value
+          emerald: '#2A9D5C',
         },
         // Action / Status
-        profit: '#237E45',
+        profit: '#2A9D5C',
         loss: '#FF453A',
         caution: '#FF9F0A',
         
@@ -93,7 +93,7 @@ export default {
           strong: '#242D29',
           intelligence: '#164534',
           hover: '#1E6549',
-          emerald: 'rgba(35, 126, 69, 0.3)',
+          emerald: 'rgba(42, 157, 92, 0.3)',
         }
       },
       fontFamily: {

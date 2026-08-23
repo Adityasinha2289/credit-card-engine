@@ -84,7 +84,7 @@ export function QuickAskTaqdeer() {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto min-h-[600px] text-white h-full relative">
+    <div className="flex flex-col w-full max-w-4xl mx-auto min-h-[600px] text-gray-900 h-full relative">
       <AnimatePresence mode="wait">
         
         {/* ============================================================== */}
@@ -102,20 +102,20 @@ export function QuickAskTaqdeer() {
             <div className="w-full max-w-3xl flex flex-col items-center text-center mt-[-10vh]">
               
               {/* TAQDEER Mark & Headline */}
-              <div className="w-14 h-14 rounded-2xl bg-[#111] border border-white/[0.08] flex items-center justify-center mb-8 shadow-2xl">
-                <Sparkles className="w-6 h-6 text-[#237E45]" />
+              <div className="w-14 h-14 rounded-2xl bg-[#111] border border-gray-300 flex items-center justify-center mb-8 shadow-2xl">
+                <Sparkles className="w-6 h-6 text-[#2A9D5C]" />
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-display font-medium text-white mb-4 tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-display font-medium text-gray-900 mb-4 tracking-tight">
                 What are you planning to buy?
               </h1>
-              <p className="text-gray-500 text-lg md:text-xl font-light mb-12">
+              <p className="text-gray-600 text-lg md:text-xl font-light mb-12">
                 Describe any purchase. TAQDEER recommends exactly which card to use.
               </p>
 
               {/* HERO COMPOSER */}
               <div className="w-full relative group mb-12 z-20">
-                <div className="absolute inset-[-4px] bg-gradient-to-r from-[#237E45]/0 via-[#237E45]/20 to-[#237E45]/0 blur-xl rounded-[2.5rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                <div className="absolute inset-[-4px] bg-gradient-to-r from-[#2A9D5C]/0 via-[#2A9D5C]/20 to-[#2A9D5C]/0 blur-xl rounded-[2.5rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
                 
                 <div className="relative bg-[#0F0F0F] border border-white/[0.1] group-focus-within:border-white/[0.2] rounded-[2rem] shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
                   <textarea
@@ -129,7 +129,7 @@ export function QuickAskTaqdeer() {
                       }
                     }}
                     placeholder="Ask about a purchase..."
-                    className="w-full bg-transparent border-none outline-none text-white placeholder:text-gray-600 text-xl md:text-2xl font-light resize-none min-h-[80px] p-6 pb-2 no-scrollbar leading-relaxed"
+                    className="w-full bg-transparent border-none outline-none text-gray-900 placeholder:text-gray-600 text-xl md:text-2xl font-light resize-none min-h-[80px] p-6 pb-2 no-scrollbar leading-relaxed"
                     rows={1}
                     autoFocus
                   />
@@ -141,7 +141,7 @@ export function QuickAskTaqdeer() {
                         <button
                           key={scenario}
                           onClick={() => executeQuery(scenario)}
-                          className="px-4 py-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] text-gray-400 hover:text-white text-sm font-medium transition-colors whitespace-nowrap"
+                          className="px-4 py-2 rounded-full bg-gray-100 hover:bg-white/[0.08] text-gray-400 hover:text-gray-900 text-sm font-medium transition-colors whitespace-nowrap"
                         >
                           {scenario}
                         </button>
@@ -165,14 +165,14 @@ export function QuickAskTaqdeer() {
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-600 mb-6 pl-2">Recent Recommendations</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {RECENT_RECS.map((rec, i) => (
-                    <div key={i} className="bg-[#111] border border-border-subtle rounded-2xl p-5 flex flex-col justify-between hover:border-white/[0.08] transition-colors cursor-pointer group">
+                    <div key={i} className="bg-[#111] border border-border-subtle rounded-2xl p-5 flex flex-col justify-between hover:border-gray-300 transition-colors cursor-pointer group">
                       <div>
                         <div className="text-gray-400 text-xs font-medium mb-1">{rec.title}</div>
-                        <div className="text-white font-medium text-lg tracking-tight mb-4">{rec.card}</div>
+                        <div className="text-gray-900 font-medium text-lg tracking-tight mb-4">{rec.card}</div>
                       </div>
                       <div className="flex items-center justify-between border-t border-border-subtle pt-4 mt-2">
-                        <span className="text-xs text-gray-500">Saved</span>
-                        <span className="text-sm font-semibold text-[#237E45] group-hover:text-white transition-colors">{rec.saved}</span>
+                        <span className="text-xs text-gray-600">Saved</span>
+                        <span className="text-sm font-semibold text-[#2A9D5C] group-hover:text-gray-900 transition-colors">{rec.saved}</span>
                       </div>
                     </div>
                   ))}
@@ -203,9 +203,9 @@ export function QuickAskTaqdeer() {
               <motion.div 
                 animate={{ rotate: -360 }}
                 transition={{ duration: 12, repeat: Infinity, ease:"linear" }}
-                className="absolute inset-2 rounded-full border border-dashed border-[#237E45]/30"
+                className="absolute inset-2 rounded-full border border-dashed border-[#2A9D5C]/30"
               />
-              <Sparkles className="w-8 h-8 text-[#237E45] animate-pulse" />
+              <Sparkles className="w-8 h-8 text-[#2A9D5C] animate-pulse" />
             </div>
 
             <div className="flex flex-col items-start gap-4 w-full max-w-sm">
@@ -222,18 +222,18 @@ export function QuickAskTaqdeer() {
                   >
                     <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#111] border border-white/[0.1] shrink-0">
                       {isDone ? (
-                        <Check className="w-3 h-3 text-[#237E45]" />
+                        <Check className="w-3 h-3 text-[#2A9D5C]" />
                       ) : isActive ? (
                         <motion.div 
                           animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
-                          className="w-1.5 h-1.5 rounded-full bg-[#237E45]" 
+                          className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C]" 
                         />
                       ) : (
                         <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
                       )}
                     </div>
-                    <span className={`text-sm ${isActive ? 'text-white font-medium' : isDone ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <span className={`text-sm ${isActive ? 'text-gray-900 font-medium' : isDone ? 'text-gray-400' : 'text-gray-600'}`}>
                       {stage}
                     </span>
                   </motion.div>
@@ -258,34 +258,34 @@ export function QuickAskTaqdeer() {
               <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
                 
                 <div className="flex items-center justify-between w-full border-b border-border-subtle pb-4">
-                  <h3 className="text-lg font-display font-medium text-white flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[#237E45]" />
+                  <h3 className="text-lg font-display font-medium text-gray-900 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-[#2A9D5C]" />
                     Financial Decision Report
                   </h3>
                   <button 
                     onClick={reset}
-                    className="text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-white transition-colors flex items-center gap-1"
+                    className="text-xs font-semibold uppercase tracking-wider text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-1"
                   >
                     Reset Workspace <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
 
                 {/* Top Decision Card */}
-                <div className="w-full bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-[2rem] p-1 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] border border-white/[0.08] relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#237E45]/40 to-transparent" />
+                <div className="w-full bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-[2rem] p-1 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] border border-gray-300 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#2A9D5C]/40 to-transparent" />
                   
                   <div className="p-6 md:p-8">
                     <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-4">
-                          <div className="px-3 py-1 rounded-full bg-[#237E45]/10 border border-[#237E45]/20 flex items-center gap-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-[#237E45]" />
-                            <span className="text-[10px] font-bold text-[#237E45] tracking-widest uppercase">98% Confidence</span>
+                          <div className="px-3 py-1 rounded-full bg-[#2A9D5C]/10 border border-[#2A9D5C]/20 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#2A9D5C]" />
+                            <span className="text-[10px] font-bold text-[#2A9D5C] tracking-widest uppercase">98% Confidence</span>
                           </div>
-                          <span className="text-xs text-gray-500 font-medium">Optimal Recommendation</span>
+                          <span className="text-xs text-gray-600 font-medium">Optimal Recommendation</span>
                         </div>
                         
-                        <h3 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">
+                        <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-2">
                           {decision.cards?.[0]?.name ||"Recommended Strategy"}
                         </h3>
                         
@@ -297,7 +297,7 @@ export function QuickAskTaqdeer() {
                           <button className="w-full sm:w-auto bg-white text-black font-semibold px-8 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-100 transition-colors shadow-lg shadow-white/10">
                             Use This Card
                           </button>
-                          <button className="w-full sm:w-auto bg-[#111] text-white font-medium px-8 py-3 rounded-xl flex items-center justify-center gap-2 border border-white/[0.1] hover:bg-[#1A1A1A] transition-colors">
+                          <button className="w-full sm:w-auto bg-[#111] text-gray-900 font-medium px-8 py-3 rounded-xl flex items-center justify-center gap-2 border border-white/[0.1] hover:bg-[#1A1A1A] transition-colors">
                             Save Decision
                           </button>
                         </div>
@@ -307,18 +307,18 @@ export function QuickAskTaqdeer() {
                         <div className="w-full aspect-[1.58/1] rounded-2xl bg-gradient-to-br from-gray-800 to-black p-4 border border-white/[0.1] shadow-xl relative overflow-hidden flex flex-col justify-between">
                           <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
                           <div className="flex justify-between items-start relative z-10">
-                            <CreditCard className="w-6 h-6 text-white/50" />
-                            <span className="text-[10px] font-mono text-white/30 tracking-widest">TAP TO PAY</span>
+                            <CreditCard className="w-6 h-6 text-gray-600" />
+                            <span className="text-[10px] font-mono text-gray-300 tracking-widest">TAP TO PAY</span>
                           </div>
                           <div className="relative z-10">
-                            <div className="text-sm font-medium text-white/80 mb-1">{decision.cards?.[0]?.bank ||"Bank Name"}</div>
-                            <div className="text-lg font-bold text-white tracking-tight">{decision.cards?.[0]?.name ||"Credit Card"}</div>
+                            <div className="text-sm font-medium text-gray-800 mb-1">{decision.cards?.[0]?.bank ||"Bank Name"}</div>
+                            <div className="text-lg font-bold text-gray-900 tracking-tight">{decision.cards?.[0]?.name ||"Credit Card"}</div>
                           </div>
                         </div>
                         <div className="mt-4 bg-[#111] rounded-xl p-4 border border-border-subtle">
                           <div className="flex justify-between items-center mb-1">
-                            <span className="text-xs text-gray-500 font-medium">Base Multiplier</span>
-                            <span className="text-sm font-bold text-white">5.0%</span>
+                            <span className="text-xs text-gray-600 font-medium">Base Multiplier</span>
+                            <span className="text-sm font-bold text-gray-900">5.0%</span>
                           </div>
                         </div>
                       </div>
@@ -330,7 +330,7 @@ export function QuickAskTaqdeer() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   <div className="lg:col-span-2 bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-border-subtle">
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-[#237E45]" />
+                      <Activity className="w-4 h-4 text-[#2A9D5C]" />
                       Decision Breakdown
                     </h4>
                     <div className="prose prose-sm prose-invert max-w-none text-gray-400 leading-relaxed font-light text-base">
@@ -338,7 +338,7 @@ export function QuickAskTaqdeer() {
                         if (line.startsWith('•')) {
                           return (
                             <div key={i} className="flex items-start gap-3 mb-4">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#237E45] mt-2.5 shrink-0" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C] mt-2.5 shrink-0" />
                               <span className="text-gray-300">{line.replace('•', '').replace(/\*\*/g, '').trim()}</span>
                             </div>
                           );
@@ -351,21 +351,21 @@ export function QuickAskTaqdeer() {
 
                   <div className="bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-border-subtle">
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-[#237E45]" />
+                      <ShieldCheck className="w-4 h-4 text-[#2A9D5C]" />
                       Alternatives
                     </h4>
                     <div className="space-y-3">
                       {decision.cards?.slice(1, 4).map((card, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-[#111] border border-white/[0.02] hover:border-white/[0.08] transition-colors cursor-pointer">
+                        <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-[#111] border border-white/[0.02] hover:border-gray-300 transition-colors cursor-pointer">
                           <div>
                             <div className="text-sm font-medium text-gray-200">{card.name}</div>
-                            <div className="text-xs text-gray-500 mt-1">Yields ~{card.baseRewardRate}% return</div>
+                            <div className="text-xs text-gray-600 mt-1">Yields ~{card.baseRewardRate}% return</div>
                           </div>
                           <ChevronRight className="w-4 h-4 text-gray-600" />
                         </div>
                       ))}
                       {(!decision.cards || decision.cards.length <= 1) && (
-                        <p className="text-sm text-gray-500 italic">No alternative suggestions available for this category.</p>
+                        <p className="text-sm text-gray-600 italic">No alternative suggestions available for this category.</p>
                       )}
                     </div>
                   </div>
@@ -376,8 +376,8 @@ export function QuickAskTaqdeer() {
             {/* Fixed Bottom Composer in Result State */}
             <div className="absolute bottom-0 left-0 w-full pb-6 pt-20 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pointer-events-none">
               <div className="max-w-4xl mx-auto px-4 pointer-events-auto">
-                <div className="relative bg-[#111] border border-white/[0.08] focus-within:border-white/[0.2] rounded-full shadow-2xl transition-all duration-300 flex items-center p-2 pl-6">
-                  <Search className="w-5 h-5 text-gray-500 shrink-0" />
+                <div className="relative bg-[#111] border border-gray-300 focus-within:border-white/[0.2] rounded-full shadow-2xl transition-all duration-300 flex items-center p-2 pl-6">
+                  <Search className="w-5 h-5 text-gray-600 shrink-0" />
                   <textarea
                     ref={bottomTextareaRef}
                     value={query}
@@ -389,7 +389,7 @@ export function QuickAskTaqdeer() {
                       }
                     }}
                     placeholder="Ask follow-up or new purchase..."
-                    className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-gray-600 py-3 px-4 text-base font-light resize-none h-[48px] no-scrollbar"
+                    className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder:text-gray-600 py-3 px-4 text-base font-light resize-none h-[48px] no-scrollbar"
                     rows={1}
                   />
                   <button

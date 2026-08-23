@@ -73,7 +73,7 @@ export default function CategoryPage() {
             >
               <Link 
                 to={`${basePath}/${category.slug}/${sub.slug}`}
-                className="snap-start flex-shrink-0 flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#091510] border border-white/[0.04] hover:bg-[#0c1f17] hover:border-[#237E45]/40 transition-all text-sm font-medium group shadow-lg"
+                className="snap-start flex-shrink-0 flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#091510] border border-white/[0.04] hover:bg-[#0c1f17] hover:border-[#2A9D5C]/40 transition-all text-sm font-medium group shadow-lg"
               >
                 <span className="text-white/70 group-hover:text-white transition-colors">{sub.name}</span>
               </Link>
@@ -92,7 +92,7 @@ export default function CategoryPage() {
           <input 
             type="text" 
             placeholder={`Search in ${category.name}...`} 
-            className="w-full bg-[#07120D] border border-white/[0.06] rounded-2xl py-3 pl-11 pr-4 text-sm text-white focus:border-[#237E45]/50 focus:bg-[#0a1811] focus:outline-none transition-all shadow-inner"
+            className="w-full bg-[#07120D] border border-white/[0.06] rounded-2xl py-3 pl-11 pr-4 text-sm text-white focus:border-[#2A9D5C]/50 focus:bg-[#0a1811] focus:outline-none transition-all shadow-inner"
           />
         </div>
       </section>
@@ -101,7 +101,7 @@ export default function CategoryPage() {
       <section className="pb-24">
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-xl font-medium flex items-center gap-3">
-            <Sparkles className="w-5 h-5 text-[#237E45]" />
+            <Sparkles className="w-5 h-5 text-[#2A9D5C]" />
             Curated For You
           </h3>
           <span className="text-xs px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] text-white/60 font-semibold tracking-wider uppercase">
@@ -135,9 +135,9 @@ export default function CategoryPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="py-24 text-center flex flex-col items-center justify-center border border-white/[0.04] rounded-[32px] bg-[#07120D] shadow-2xl relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-[#237E45]/5 to-transparent pointer-events-none" />
-            <div className="w-20 h-20 rounded-full bg-[#0a1a13] flex items-center justify-center mb-6 border border-[#237E45]/20 shadow-[0_0_40px_rgba(35,126,69,0.1)]">
-              <Sparkles className="w-8 h-8 text-[#237E45]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#2A9D5C]/5 to-transparent pointer-events-none" />
+            <div className="w-20 h-20 rounded-full bg-[#0a1a13] flex items-center justify-center mb-6 border border-[#2A9D5C]/20 shadow-[0_0_40px_rgba(42,157,92,0.1)]">
+              <Sparkles className="w-8 h-8 text-[#2A9D5C]" />
             </div>
             <h4 className="text-2xl font-display font-medium text-white mb-3">Premium {category.name} offers are coming.</h4>
             <p className="text-base text-white/50 max-w-md">We are currently negotiating exclusive rewards with top-tier brands in this category to ensure you get the maximum value.</p>

@@ -96,8 +96,8 @@ export function toFinancialCard(rawCard: CreditCard): FinancialCard | null {
     issuer: rawCard.issuer,
     network: rawCard.network || undefined,
     premiumTier: rawCard.card_tier || undefined,
-    annualFee: rawCard.fees?.annual_fee || rawCard.annual_fee || 0,
-    joiningFee: rawCard.fees?.joining_fee || 0,
+    annualFee: rawCard.fees?.annual_fee ?? (rawCard.annual_fee !== undefined ? rawCard.annual_fee : null),
+    joiningFee: rawCard.fees?.joining_fee ?? null,
     feeWaiverSpend: rawCard.fee_waiver_spend || undefined,
     rewardRules,
     redemptionRates: [], // Still missing from dataset

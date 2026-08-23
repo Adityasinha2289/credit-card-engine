@@ -105,8 +105,9 @@ export class ScoringRules {
     return card.categories.includes(category) ? 100 : 40;
   }
 
-  public static evalAnnualFee(annualFee: number, amount: number): number {
+  public static evalAnnualFee(annualFee: number | null, amount: number): number {
     if (annualFee === 0) return 100;
+    if (annualFee === null) return 50; // Neutral score for unconfirmed fee
     const feeRatio = (annualFee / (amount * 12 || 100000)) * 100;
     return Math.max(0, Math.min(100, Math.round(100 - feeRatio * 10)));
   }

@@ -231,13 +231,13 @@ export function CreditCard({
         tokens.wrapper,
         tokens.radius,
         isInteractive && 'cursor-pointer hover:-translate-y-1',
-        selected && 'ring-[3px] ring-[#237E45] ring-offset-4 ring-offset-[#0A0A0A]',
+        selected && 'ring-[3px] ring-[#2A9D5C] ring-offset-4 ring-offset-[#0A0A0A]',
         className
       )}
       style={{
         background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`,
         boxShadow: selected
-          ? '0 12px 32px rgba(35, 126, 69, 0.3), inset 0 1px 1px rgba(255,255,255,0.2)'
+          ? '0 12px 32px rgba(42, 157, 92, 0.3), inset 0 1px 1px rgba(255,255,255,0.2)'
           : '0 8px 24px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 1px rgba(0,0,0,0.3)',
       }}
     >
@@ -324,7 +324,7 @@ export function CreditCard({
     return (
       <div className="relative inline-block shrink-0">
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
-          <span className="bg-[#237E45] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-lg border border-[#237E45]/50">
+          <span className="bg-[#2A9D5C] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-lg border border-[#2A9D5C]/50">
             RenoCred Pick
           </span>
         </div>

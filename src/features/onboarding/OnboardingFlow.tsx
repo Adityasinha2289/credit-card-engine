@@ -31,7 +31,7 @@ const TRANSITION_MESSAGES: Record<string, string> = {
 };
 
 export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingState) => void }) {
-  const [step, setStep] = useState(-1); // -1: Init, 0: Welcome, 1-5: Steps, 6: Final
+  const [step, setStep] = useState(0); // 0: Welcome, 1-5: Steps
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionMessage, setTransitionMessage] = useState('');
   const [state, setState] = useState<OnboardingState>({});
@@ -41,13 +41,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
   }, [onComplete]);
 
   const transitionTo = useCallback((from: number, to: number, overrideMsg?: string) => {
-    const msg = overrideMsg || TRANSITION_MESSAGES[`${from}->${to}`] || 'Preparing...';
-    setIsTransitioning(true);
-    setTransitionMessage(msg);
-    setTimeout(() => {
-      setStep(to);
-      setIsTransitioning(false);
-    }, 1200);
+    setStep(to);
   }, []);
 
   const goNext = useCallback((from: number) => {
@@ -159,11 +153,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
             onContinue={(banks) => {
               const finalState = { ...state, banks };
               setState(finalState);
-              // Show final loading transition, then complete
-              transitionTo(5, 6, 'Building your financial profile...');
-              setTimeout(() => {
-                handleFinish(finalState);
-              }, 4500); // Completes after final loading plays
+              handleFinish(finalState);
             }}
           />
         );

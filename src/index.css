@@ -10,28 +10,28 @@
 
 @layer base {
   :root {
-    /* V3 Color System - Quiet Luxury Obsidian + Emerald (Phase 9.6 Updated) */
-    --color-canvas: #050806;
-    --color-shell: #050806; 
-    --color-surface-primary: #07120D;
-    --color-surface-secondary: #07120D;
-    --color-surface-card: #07120D;
-    --color-surface-elevated: #081A12;
-    --color-surface-intelligence: #0A2418;
+    /* V3 Color System - Light Edition */
+    --color-canvas: #F9FAFB;
+    --color-shell: #F9FAFB; 
+    --color-surface-primary: #FFFFFF;
+    --color-surface-secondary: #FFFFFF;
+    --color-surface-card: #FFFFFF;
+    --color-surface-elevated: #F3F4F6;
+    --color-surface-intelligence: #F0FDF4;
     
-    --color-brand: #237E45;
-    --color-brand-strong: #237E45;
+    --color-brand: #2A9D5C;
+    --color-brand-strong: #2A9D5C;
     --color-brand-dark: #0D6B43;
     --color-brand-muted: #4B8F70;
     
-    --color-text-primary: #F4F7F4;
-    --color-text-secondary: #A6B0AA;
-    --color-text-muted: #66716B;
-    --color-text-very-muted: #465049;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4B5563;
+    --color-text-muted: #6B7280;
+    --color-text-very-muted: #9CA3AF;
     
-    --color-border-subtle: rgba(255, 255, 255, 0.055);
-    --color-border-strong: rgba(255, 255, 255, 0.08);
-    --color-border-intelligence: rgba(35, 126, 69, 0.2);
+    --color-border-subtle: rgba(0, 0, 0, 0.08);
+    --color-border-strong: rgba(0, 0, 0, 0.15);
+    --color-border-intelligence: rgba(42, 157, 92, 0.2);
 
     /* Semantic Aliases for backward compatibility */
     --bg-page: var(--color-canvas);
@@ -71,12 +71,12 @@
   }
 
   ::selection {
-    background-color: rgba(35, 126, 69, 0.25);
+    background-color: rgba(42, 157, 92, 0.25);
     color: var(--text-primary);
   }
 
   *:focus-visible {
-    outline: 2px solid rgba(35, 126, 69, 0.5);
+    outline: 2px solid rgba(42, 157, 92, 0.5);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -140,7 +140,7 @@
 
 @layer utilities {
   .text-gradient-emerald {
-    background: linear-gradient(to bottom right, white, #237E45, #056644);
+    background: linear-gradient(to bottom right, white, #2A9D5C, #056644);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

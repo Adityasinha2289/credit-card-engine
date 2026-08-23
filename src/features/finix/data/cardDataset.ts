@@ -32,11 +32,11 @@ export interface FinixCard {
   id: string;
   name: string;
   bank: string;
-  network: 'Visa' | 'Mastercard' | 'Amex' | 'RuPay';
+  network: 'Visa' | 'Mastercard' | 'Amex' | 'RuPay' | 'Diners Club';
   /** First 4 digits of the card (BIN) */
   first4Digits?: string;
-  /** Annual fee in INR */
-  annualFee: number;
+  /** Annual fee in INR (null if unknown) */
+  annualFee: number | null;
   /** Fee waiver spend threshold in INR */
   feeWaiverSpend?: number;
   /** Minimum annual income in INR to be eligible */
@@ -49,8 +49,8 @@ export interface FinixCard {
   loungeAccess?: number;
   /** Category-specific reward rates */
   rewards: CardRewardRate[];
-  /** Base reward rate for all other spend */
-  baseRewardRate: number;
+  /** Base reward rate for all other spend (null if unknown) */
+  baseRewardRate: number | null;
   /** Key selling points */
   highlights: string[];
   /** Gradient for card face */

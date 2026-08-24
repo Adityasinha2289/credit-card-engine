@@ -43,15 +43,23 @@ const OCCUPATION_OPTIONS: Occupation[] = [
   'Other',
 ];
 
-export function LoginScreen() {
+import { useNavigate } from 'react-router-dom';
+
+export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin' | 'signup' }) {
   const { isSignedIn, user } = useUser();
   const login = useDashboardStore((s) => s.login);
   const resetStore = useDashboardStore((s) => s._reset);
   const [showBlog, setShowBlog] = useState(false);
   const [showLegal, setShowLegal] = useState<'privacy' | 'terms' | null>(null);
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [mode, setMode] = useState<'signin' | 'signup'>(defaultMode);
   const [livePreviewName, setLivePreviewName] = useState('');
   const authPanelRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  // Sync mode with prop
+  useEffect(() => {
+    setMode(defaultMode);
+  }, [defaultMode]);
 
   const salary = 1500000;
   const creditScore = 750;
@@ -336,7 +344,10 @@ export function LoginScreen() {
             <div className="w-full flex justify-between items-center mb-6">
             <div className="w-full flex justify-end items-center mb-6">
                 <button
-                  onClick={() => setMode('signin')}
+                  onClick={() => {
+                    setMode('signin');
+                    navigate('/app/sign-in');
+                  }}
                   className={cn(
                     'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
                     mode === 'signin'
@@ -347,7 +358,10 @@ export function LoginScreen() {
                   Sign In
                 </button>
                 <button
-                  onClick={() => setMode('signup')}
+                  onClick={() => {
+                    setMode('signup');
+                    navigate('/app/sign-up');
+                  }}
                   className={cn(
                     'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
                     mode === 'signup'
@@ -363,9 +377,9 @@ export function LoginScreen() {
             {/* ── Clerk Auth Form ── */}
             <div className="w-full">
               {mode === 'signin' ? (
-                <SignIn routing="virtual" fallbackRedirectUrl="/app" forceRedirectUrl="/app" />
+                <SignIn routing="path" path="/app/sign-in" signUpUrl="/app/sign-up" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
               ) : (
-                <SignUp routing="virtual" fallbackRedirectUrl="/app" forceRedirectUrl="/app" />
+                <SignUp routing="path" path="/app/sign-up" signInUrl="/app/sign-in" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
               )}
             </div>
         </motion.div>

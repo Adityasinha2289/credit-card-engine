@@ -12,6 +12,7 @@ import { EditorialPolicyPage } from './public-platform/pages/EditorialPolicyPage
 import { AffiliateDisclosurePage } from './public-platform/pages/AffiliateDisclosurePage';
 import { PrivacyPage } from './public-platform/pages/PrivacyPage';
 import { TermsPage } from './public-platform/pages/TermsPage';
+import { BusinessPartnerPage } from './public-platform/pages/BusinessPartnerPage';
 import { DisclaimerPage } from './public-platform/pages/DisclaimerPage';
 import { NotFoundPage } from './public-platform/pages/NotFoundPage';
 import { CardsDirectoryPage } from './public-platform/pages/CardsDirectoryPage';
@@ -87,6 +88,7 @@ const appContent = (
         <Route path="/calculators/annual-fee-break-even" element={<PublicLayout><BreakEvenCalculatorPage /></PublicLayout>} />
         <Route path="/calculators/credit-utilization" element={<PublicLayout><CreditUtilizationPage /></PublicLayout>} />
 
+        <Route path="/business" element={<PublicLayout><BusinessPartnerPage /></PublicLayout>} />
         <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
         <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
         <Route path="/methodology" element={<PublicLayout><MethodologyPage /></PublicLayout>} />

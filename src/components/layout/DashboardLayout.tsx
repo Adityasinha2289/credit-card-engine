@@ -1,4 +1,5 @@
-import { type ReactNode } from 'react';
+import React, { type ReactNode, useState } from 'react';
+import { DashboardSkeleton } from './DashboardSkeleton';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
@@ -7,7 +8,6 @@ import { cn } from '../../lib/utils';
 import { GlobalTaqdeerButton } from '../../features/taqdeer/components/GlobalTaqdeerButton';
 import { TaqdeerDrawer } from '../../features/taqdeer/components/TaqdeerDrawer';
 import { LayoutDashboard, CreditCard, Wallet, Gift, User } from 'lucide-react';
-import { useState } from 'react';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DASHBOARD LAYOUT — Root wrapper with Sidebar + TopNav + Content
@@ -61,18 +61,20 @@ export function DashboardLayout({
 
         {/* Page content */}
         <main className="flex-1 flex flex-col pb-[80px] lg:pb-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-              className="flex-1 flex flex-col w-full"
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
+          <React.Suspense fallback={<div className="p-6 md:p-12 w-full max-w-7xl mx-auto"><DashboardSkeleton /></div>}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={location.pathname}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+                className="flex-1 flex flex-col w-full"
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </React.Suspense>
         </main>
       </div>
 

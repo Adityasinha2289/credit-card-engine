@@ -363,9 +363,9 @@ export function LoginScreen() {
             {/* ── Clerk Auth Form ── */}
             <div className="w-full">
               {mode === 'signin' ? (
-                <SignIn routing="virtual" />
+                <SignIn routing="virtual" fallbackRedirectUrl="/app" forceRedirectUrl="/app" />
               ) : (
-                <SignUp routing="virtual" />
+                <SignUp routing="virtual" fallbackRedirectUrl="/app" forceRedirectUrl="/app" />
               )}
             </div>
         </motion.div>

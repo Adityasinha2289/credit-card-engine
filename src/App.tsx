@@ -158,58 +158,60 @@ export default function App() {
   }
 
   return (
-    <Suspense fallback={
-      <DashboardLayout isDark={true} onToggleTheme={() => {}}>
-        <div className="p-6 md:p-12 w-full max-w-7xl mx-auto"><DashboardSkeleton /></div>
-      </DashboardLayout>
-    }>
-      <Routes>
-        {/* Customer App Routes */}
-        <Route element={
-          <DashboardLayout isDark={true} onToggleTheme={() => {}}>
+    <Routes>
+      {/* Customer App Routes */}
+      <Route element={
+        <DashboardLayout isDark={true} onToggleTheme={() => {}}>
+          <Suspense fallback={
+            <div className="p-6 md:p-12 w-full max-w-7xl mx-auto">
+              <DashboardSkeleton />
+            </div>
+          }>
             <Outlet />
-          </DashboardLayout>
-        }>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/credit/*" element={<CreditPage />} />
-          <Route path="/wallet" element={<WalletPage />} />
-          <Route path="/taqdeer" element={<TaqdeerPage />} />
-          <Route path="/explore" element={<ExplorePage />} />
-          <Route path="/insights" element={<InsightsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          
-          {/* Marketplace Routes in Dashboard */}
-          <Route path="marketplace" element={<MarketplaceHome />} />
-          <Route path="marketplace/:categorySlug" element={<CategoryPage />} />
-          <Route path="marketplace/:categorySlug/:subcategorySlug" element={<SubcategoryPage />} />
-          
-          {/* Legacy Lifestyle Routes - redirecting to marketplace */}
-          <Route path="lifestyle" element={<Navigate to="/app/marketplace" replace />} />
-          <Route path="lifestyle/*" element={<Navigate to="/app/marketplace" replace />} />
-        </Route>
+          </Suspense>
+        </DashboardLayout>
+      }>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/credit/*" element={<CreditPage />} />
+        <Route path="/wallet" element={<WalletPage />} />
+        <Route path="/taqdeer" element={<TaqdeerPage />} />
+        <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        
+        {/* Marketplace Routes in Dashboard */}
+        <Route path="marketplace" element={<MarketplaceHome />} />
+        <Route path="marketplace/:categorySlug" element={<CategoryPage />} />
+        <Route path="marketplace/:categorySlug/:subcategorySlug" element={<SubcategoryPage />} />
+        
+        {/* Legacy Lifestyle Routes - redirecting to marketplace */}
+        <Route path="lifestyle" element={<Navigate to="/app/marketplace" replace />} />
+        <Route path="lifestyle/*" element={<Navigate to="/app/marketplace" replace />} />
+      </Route>
 
-        {/* Admin Routes */}
-        <Route path="/admin" element={
-          <AdminGuard>
-            <AdminLayout>
+      {/* Admin Routes */}
+      <Route path="/admin" element={
+        <AdminGuard>
+          <AdminLayout>
+            <Suspense fallback={<div className="p-6">Loading admin...</div>}>
               <Outlet />
-            </AdminLayout>
-          </AdminGuard>
-        }>
-          <Route index element={<AdminOverview />} />
-          <Route path="partners" element={<PartnerManagement />} />
-          <Route path="partners/:id" element={<PartnerForm />} />
-          <Route path="entities" element={<EntityManagement />} />
-          <Route path="entities/:id" element={<EntityForm />} />
-          <Route path="offers" element={<OfferManagement />} />
-          <Route path="offers/:id" element={<OfferForm />} />
-          <Route path="affiliate" element={<AffiliateManagement />} />
-        </Route>
+            </Suspense>
+          </AdminLayout>
+        </AdminGuard>
+      }>
+        <Route index element={<AdminOverview />} />
+        <Route path="partners" element={<PartnerManagement />} />
+        <Route path="partners/:id" element={<PartnerForm />} />
+        <Route path="entities" element={<EntityManagement />} />
+        <Route path="entities/:id" element={<EntityForm />} />
+        <Route path="offers" element={<OfferManagement />} />
+        <Route path="offers/:id" element={<OfferForm />} />
+        <Route path="affiliate" element={<AffiliateManagement />} />
+      </Route>
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/app" replace />} />
-      </Routes>
-    </Suspense>
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/app" replace />} />
+    </Routes>
   );
 }

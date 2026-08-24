@@ -419,10 +419,9 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
   // gracefully inform the user that the AI is offline or the query is out of scope.
   if (!merchant && !/\b(card|spend|reward|cashback|buy|pay|offer|discount|wallet|best)\b/i.test(lower)) {
     let debugInfo = "";
-    if (import.meta.env.DEV) {
-      if (!geminiApiKey) debugInfo = "\n\n*(Dev Debug: VITE_GEMINI_API_KEY is missing or undefined! Please restart your npm run dev server!)*";
-      else debugInfo = `\n\n*(Dev Debug: Gemini API key is present (starts with ${geminiApiKey.substring(0, 5)}), but all fetch requests to modelsToTry failed. Check browser console for CORS/Network errors!)*`;
-    }
+    if (!geminiApiKey) debugInfo = "\n\n*(PROD Debug: VITE_GEMINI_API_KEY is missing or undefined in Vercel Environment Variables!)*";
+    else debugInfo = `\n\n*(PROD Debug: Gemini API key is present (starts with ${geminiApiKey.substring(0, 5)}), but all fetch requests to modelsToTry failed. Check Vercel logs!)*`;
+    
     return {
       content: `⚠️ **AI Brain Offline / Out of Scope**\n\nI couldn't reach my Gemini AI brain (or this query isn't about credit cards). \n\nHowever, my **Offline Engine** is fully active! Try asking me:\n• *"Which card is best for Swiggy?"*\n• *"Wallet health"*\n• *"Which cards have lounge access?"*${debugInfo}`
     };

@@ -339,9 +339,9 @@ export async function generateTaqdeerResponse(
 
   if (geminiApiKey) {
     const modelsToTry = [
-      'gemini-1.5-flash',
-      'gemini-1.5-pro',
-      'gemini-2.0-flash-exp'
+      'gemini-2.5-flash',
+      'gemini-2.5-pro',
+      'gemini-flash-latest'
     ];
 
     const prompt = `You are Taqdeer, an expert AI credit card & wealth advisor for the Indian market at RenoCred.

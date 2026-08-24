@@ -335,6 +335,7 @@ export async function generateTaqdeerResponse(
   const lower = query.toLowerCase().trim();
   const apiUrl = getAiBackendUrl();
   const rawKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = rawKey ? String(rawKey).replace(/['"]/g, '').trim() : null;
   let debugInfo = "";
   const errors: string[] = [];
 

@@ -335,7 +335,8 @@ export async function generateTaqdeerResponse(
   const lower = query.toLowerCase().trim();
   const apiUrl = getAiBackendUrl();
   const rawKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const geminiApiKey = rawKey ? String(rawKey).replace(/['"]/g, '').trim() : null;
+  let debugInfo = "";
+  const errors: string[] = [];
 
   if (geminiApiKey) {
     const modelsToTry = [
@@ -353,7 +354,7 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
     for (const model of modelsToTry) {
       try {
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`,
+          `/api/gemini/v1beta/models/${model}:generateContent?key=${geminiApiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -372,13 +373,12 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
           }
         } else {
           const errData = await response.json().catch(() => ({}));
-          console.warn(`[Taqdeer AI] Model ${model} returned status ${response.status}:`, errData);
+          errors.push(`${model}: HTTP ${response.status} ${JSON.stringify(errData)}`);
         }
-      } catch (err) {
-        console.warn(`[Taqdeer AI] Failed requesting ${model}:`, err);
+      } catch (err: any) {
+        errors.push(`${model}: Network Error (${err.message})`);
       }
     }
-    console.error('[Taqdeer AI] All Gemini API models failed. Falling back to rule-based engine.');
   } else if (apiUrl) {
     try {
       const response = await fetch(apiUrl, {
@@ -392,14 +392,10 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
         if (data.intent !=="unknown") {
           return { content: data.content };
         }
-      } else {
-        console.warn(`AI Backend returned status: ${response.status}. Falling back to local engine.`);
       }
     } catch (error) {
-      console.error("Taqdeer AI Backend is unavailable. Falling back to local engine.");
+      // ignore
     }
-  } else {
-    console.warn("No AI Backend URL or Gemini API key configured. Falling back to local engine.");
   }
 
   // Match query against intent registry
@@ -418,9 +414,8 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
   // If no merchant was detected AND the query doesn't sound like a card query,
   // gracefully inform the user that the AI is offline or the query is out of scope.
   if (!merchant && !/\b(card|spend|reward|cashback|buy|pay|offer|discount|wallet|best)\b/i.test(lower)) {
-    let debugInfo = "";
     if (!geminiApiKey) debugInfo = "\n\n*(PROD Debug: VITE_GEMINI_API_KEY is missing or undefined in Vercel Environment Variables!)*";
-    else debugInfo = `\n\n*(PROD Debug: Gemini API key is present (starts with ${geminiApiKey.substring(0, 5)}), but all fetch requests to modelsToTry failed. Check Vercel logs!)*`;
+    else debugInfo = `\n\n*(PROD Debug: Gemini API key is present (starts with ${geminiApiKey.substring(0, 5)}), but errors occurred: ${errors.join(" | ")})*`;
     
     return {
       content: `⚠️ **AI Brain Offline / Out of Scope**\n\nI couldn't reach my Gemini AI brain (or this query isn't about credit cards). \n\nHowever, my **Offline Engine** is fully active! Try asking me:\n• *"Which card is best for Swiggy?"*\n• *"Wallet health"*\n• *"Which cards have lounge access?"*${debugInfo}`

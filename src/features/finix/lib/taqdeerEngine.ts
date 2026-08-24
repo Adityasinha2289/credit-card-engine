@@ -334,13 +334,14 @@ export async function generateTaqdeerResponse(
 ): Promise<{ content: string; cards?: FinixCard[] }> {
   const lower = query.toLowerCase().trim();
   const apiUrl = getAiBackendUrl();
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const rawKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const geminiApiKey = rawKey ? String(rawKey).replace(/['"]/g, '').trim() : null;
 
   if (geminiApiKey) {
     const modelsToTry = [
-      'gemini-2.5-flash',
-      'gemini-2.0-flash',
       'gemini-1.5-flash',
+      'gemini-1.5-pro',
+      'gemini-2.0-flash-exp'
     ];
 
     const prompt = `You are Taqdeer, an expert AI credit card & wealth advisor for the Indian market at RenoCred.

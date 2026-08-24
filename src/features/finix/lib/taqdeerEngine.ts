@@ -415,6 +415,14 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
     ? detectCategory(merchant)
     : detectCategory(lower);
 
+  // If no merchant was detected AND the query doesn't sound like a card query,
+  // gracefully inform the user that the AI is offline or the query is out of scope.
+  if (!merchant && !/\b(card|spend|reward|cashback|buy|pay|offer|discount|wallet|best)\b/i.test(lower)) {
+    return {
+      content: `⚠️ **AI Brain Offline / Out of Scope**\n\nI couldn't reach my Gemini AI brain (or this query isn't about credit cards). \n\nHowever, my **Offline Engine** is fully active! Try asking me:\n• *"Which card is best for Swiggy?"*\n• *"Wallet health"*\n• *"Which cards have lounge access?"*`
+    };
+  }
+
   const emoji = CATEGORY_EMOJIS[category] || '🍳';
   const displayCategory = CATEGORY_LABELS[category] || 'General spend';
 

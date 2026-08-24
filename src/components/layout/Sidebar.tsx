@@ -1,26 +1,26 @@
 import { motion } from 'framer-motion';
 import {
-  LayoutDashboard,
-  Wallet,
-  CreditCard,
-  Compass,
-  User,
-  Settings,
-} from 'lucide-react';
+  Squares2X2Icon,
+  CreditCardIcon,
+  WalletIcon,
+  ShoppingBagIcon,
+  UserCircleIcon,
+  Cog6ToothIcon,
+} from '@heroicons/react/24/outline';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const PRIMARY_NAV = [
-  { id: 'home',      path: '/app',          label: 'Home',      Icon: LayoutDashboard },
-  { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCard },
-  { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: Wallet },
-  { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: Compass },
+  { id: 'home',      path: '/app',          label: 'Home',      Icon: Squares2X2Icon },
+  { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCardIcon },
+  { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: WalletIcon },
+  { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: ShoppingBagIcon },
 ];
 
 const UTILITY_NAV = [
-  { id: 'profile',   path: '/app/profile',  label: 'Profile',   Icon: User },
-  { id: 'settings',  path: '/app/settings', label: 'Settings',  Icon: Settings },
+  { id: 'profile',   path: '/app/profile',  label: 'Profile',   Icon: UserCircleIcon },
+  { id: 'settings',  path: '/app/settings', label: 'Settings',  Icon: Cog6ToothIcon },
 ];
 
 export function Sidebar() {
@@ -86,14 +86,12 @@ export function Sidebar() {
                   />
                 )}
                 <item.Icon
-                  size={18}
-                  strokeWidth={1.5}
                   className={cn(
-                    'transition-colors duration-150',
-                    isActive ? 'text-semantic-brand' : 'text-gray-600 group-hover:text-gray-900'
+                    'w-[18px] h-[18px] transition-colors duration-150 stroke-[1.5]',
+                    isActive ? 'text-semantic-brand' : 'text-gray-500 group-hover:text-gray-900'
                   )}
                 />
-                <span className={cn('text-[13px] font-medium tracking-wide', isActive && 'font-medium')}>
+                <span className={cn('text-[13px] tracking-wide', isActive ? 'font-semibold' : 'font-medium')}>
                   {item.label}
                 </span>
               </button>
@@ -123,14 +121,12 @@ export function Sidebar() {
                   />
                 )}
                 <item.Icon
-                  size={18}
-                  strokeWidth={1.5}
                   className={cn(
-                    'transition-colors duration-150',
-                    isActive ? 'text-semantic-brand' : 'text-gray-600 group-hover:text-gray-900'
+                    'w-[18px] h-[18px] transition-colors duration-150 stroke-[1.5]',
+                    isActive ? 'text-semantic-brand' : 'text-gray-500 group-hover:text-gray-900'
                   )}
                 />
-                <span className={cn('text-[13px] font-medium tracking-wide', isActive && 'font-medium')}>
+                <span className={cn('text-[13px] tracking-wide', isActive ? 'font-semibold' : 'font-medium')}>
                   {item.label}
                 </span>
               </button>

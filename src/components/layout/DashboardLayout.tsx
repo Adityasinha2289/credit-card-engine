@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { GlobalTaqdeerButton } from '../../features/taqdeer/components/GlobalTaqdeerButton';
 import { TaqdeerDrawer } from '../../features/taqdeer/components/TaqdeerDrawer';
-import { LayoutDashboard, CreditCard, Wallet, Gift, User } from 'lucide-react';
+import { Squares2X2Icon, CreditCardIcon, WalletIcon, ShoppingBagIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DASHBOARD LAYOUT — Root wrapper with Sidebar + TopNav + Content
@@ -20,11 +20,11 @@ interface DashboardLayoutProps {
 }
 
 const MOBILE_NAV = [
-  { id: 'home',        path: '/app',            label: 'Home',        Icon: LayoutDashboard },
-  { id: 'credit',      path: '/app/credit',     label: 'Credit',      Icon: CreditCard },
-  { id: 'wallet',      path: '/app/wallet',     label: 'Wallet',      Icon: Wallet },
-  { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: Gift },
-  { id: 'profile',     path: '/app/profile',    label: 'Profile',     Icon: User },
+  { id: 'home',        path: '/app',            label: 'Home',        Icon: Squares2X2Icon },
+  { id: 'credit',      path: '/app/credit',     label: 'Credit',      Icon: CreditCardIcon },
+  { id: 'wallet',      path: '/app/wallet',     label: 'Wallet',      Icon: WalletIcon },
+  { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: ShoppingBagIcon },
+  { id: 'profile',     path: '/app/profile',    label: 'Profile',     Icon: UserCircleIcon },
 ];
 
 export function DashboardLayout({
@@ -94,11 +94,9 @@ export function DashboardLayout({
                 isActive ? "bg-[#2A9D5C]/5 mt-1" : "group-hover:bg-gray-50"
               )}>
                 <item.Icon
-                  size={24}
-                  strokeWidth={isActive ? 2.5 : 1.5}
                   className={cn(
-                    'transition-all duration-300',
-                    isActive ? 'text-[#2A9D5C]' : 'text-gray-400 group-hover:text-gray-600'
+                    'w-6 h-6 transition-all duration-300',
+                    isActive ? 'text-[#2A9D5C] stroke-[2]' : 'text-gray-400 group-hover:text-gray-600 stroke-[1.5]'
                   )}
                 />
               </div>

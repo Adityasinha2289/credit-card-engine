@@ -77,22 +77,29 @@ function mapRewards(canonical: CanonicalCard): CardRewardRate[] {
   // 1. Cashback rates (percentages)
   if (canonical.cashback.rates && canonical.cashback.rates.length > 0) {
     for (const cb of canonical.cashback.rates) {
-      rates.push({
-        category: normalizeCategory(cb.category || 'other'),
-        rate: cb.rate >= 0 ? cb.rate : 0,
-        cap: cb.cap ?? undefined,
-      });
+      if (cb.rate >= 0 && cb.rate <= 100) {
+        rates.push({
+          category: normalizeCategory(cb.category || 'other'),
+          rate: cb.rate,
+          cap: cb.cap ?? undefined,
+        });
+      }
     }
   }
 
   // 2. Points / Miles earning rules
+  // Legacy FinixCard expects percentages. Earning rules might contain raw point values
+  // (e.g., 50000 points for welcome bonus). We filter out anything > 100 to prevent
+  // the UI from showing "50000% cashback".
   if (canonical.rewards.earningRules && canonical.rewards.earningRules.length > 0) {
     for (const rule of canonical.rewards.earningRules) {
-      rates.push({
-        category: normalizeCategory(rule.category || 'other'),
-        rate: rule.rate >= 0 ? rule.rate : 0,
-        cap: undefined,
-      });
+      if (rule.rate >= 0 && rule.rate <= 100) {
+        rates.push({
+          category: normalizeCategory(rule.category || 'other'),
+          rate: rule.rate,
+          cap: undefined,
+        });
+      }
     }
   }
 

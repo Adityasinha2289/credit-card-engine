@@ -5,6 +5,8 @@ import { cn } from '../../../lib/utils';
 import { generateTaqdeerResponse, type TaqdeerMessage } from '../lib/taqdeerEngine';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { analytics } from '../../../lib/analytics';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  QUICK SUGGESTION CHIPS
@@ -43,19 +45,20 @@ const MessageBubble = memo(function MessageBubble({ msg }: { msg: TaqdeerMessage
       {/* Bubble */}
       <div
         className={cn(
-          'max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap',
+          'px-3.5 py-2.5 text-[13px] leading-relaxed',
           isAi
-            ? 'bg-surface/90 dark:bg-surface-raised/50 border border-border-subtle dark:border-white/[0.03] shadow-ag-base text-text-primary rounded-tl-sm'
-            : 'bg-brand-emerald text-white rounded-tr-sm',
+            ? 'bg-surface-secondary dark:bg-white/[0.03] text-text-primary rounded-2xl rounded-tl-sm border border-border-subtle shadow-sm prose prose-sm prose-p:leading-snug prose-li:my-0 prose-ul:my-1'
+            : 'bg-brand-emerald text-white rounded-2xl rounded-tr-sm shadow-sm',
         )}
-        style={{ overflowWrap: 'anywhere' }}
-        // Render **bold** markdown
-        dangerouslySetInnerHTML={{
-          __html: msg.content
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n/g, '<br/>'),
-        }}
-      />
+      >
+        {isAi ? (
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {msg.content}
+          </ReactMarkdown>
+        ) : (
+          <span className="whitespace-pre-wrap">{msg.content}</span>
+        )}
+      </div>
     </motion.div>
   );
 });

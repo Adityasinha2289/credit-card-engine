@@ -5,6 +5,8 @@ import {
 } from 'lucide-react';
 import { useDashboardStore } from '../../store/dashboardStore';
 import { generateTaqdeerResponse } from '../../../finix/lib/taqdeerEngine';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const POPULAR_SCENARIOS = [
   'MacBook Pro',
@@ -333,19 +335,10 @@ export function QuickAskTaqdeer() {
                       <Activity className="w-4 h-4 text-[#2A9D5C]" />
                       Decision Breakdown
                     </h4>
-                    <div className="prose prose-sm prose-invert max-w-none text-gray-400 leading-relaxed font-light text-base">
-                      {decision.content.split('\n').map((line, i) => {
-                        if (line.startsWith('•')) {
-                          return (
-                            <div key={i} className="flex items-start gap-3 mb-4">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C] mt-2.5 shrink-0" />
-                              <span className="text-gray-300">{line.replace('•', '').replace(/\*\*/g, '').trim()}</span>
-                            </div>
-                          );
-                        }
-                        if (line.trim().length === 0) return <div key={i} className="h-4" />;
-                        return <p key={i} className="mb-4">{line.replace(/\*\*/g, '')}</p>;
-                      })}
+                    <div className="prose prose-sm prose-invert max-w-none text-gray-400 leading-relaxed font-light text-base prose-p:leading-relaxed prose-li:my-2 prose-ul:my-2">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {decision.content}
+                      </ReactMarkdown>
                     </div>
                   </div>
 

@@ -5,6 +5,9 @@ import { useLocation } from 'react-router-dom';
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { generateTaqdeerResponse } from '../../finix/lib/taqdeerEngine';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 interface TaqdeerDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -116,12 +119,18 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                     {msg.role === 'ai' ? <img src="/taqdeer-logo.png" alt="AI" className="w-full h-full object-cover" /> : <User size={12} />}
                   </div>
                   <div className={cn(
-                    "max-w-[85%] p-3 text-[13px] leading-relaxed whitespace-pre-wrap border",
+                    "max-w-[85%] p-3 text-[13px] leading-relaxed border",
                     msg.role === 'user' 
                       ? "bg-gray-900 text-white rounded-2xl rounded-tr-sm border-gray-900 shadow-sm" 
-                      : "bg-white border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm shadow-sm"
+                      : "bg-white border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm shadow-sm prose prose-sm prose-p:leading-snug prose-li:my-0 prose-ul:my-1"
                   )}>
-                    {msg.content}
+                    {msg.role === 'ai' ? (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.content}
+                      </ReactMarkdown>
+                    ) : (
+                      <span className="whitespace-pre-wrap">{msg.content}</span>
+                    )}
                   </div>
                 </div>
               ))}

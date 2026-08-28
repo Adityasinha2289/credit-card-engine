@@ -50,7 +50,9 @@ const AffiliateManagement = lazy(() => import('./pages/admin/AffiliateManagement
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function App() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn: clerkIsSignedIn, user } = useUser();
+  const isMockSignedIn = localStorage.getItem('MOCK_AUTH') === 'true';
+  const isSignedIn = clerkIsSignedIn || isMockSignedIn;
   const supabase = useSupabase();
   const queryClient = useQueryClient();
   const [hasAttemptedHydration, setHasAttemptedHydration] = useState(false);
@@ -71,38 +73,37 @@ export default function App() {
   // Security: Reset store & clear query cache if user signs out or account changes
   useEffect(() => {
     if (isLoaded) {
-      if (!user) {
+      if (!user && !isMockSignedIn) {
         _reset();
         queryClient.clear();
         setHasAttemptedHydration(false);
-      } else if (profile && profile.id !== user.id) {
+      } else if (user && profile && profile.id !== user.id) {
         _reset();
         queryClient.clear();
         setHasAttemptedHydration(false);
       }
     }
-  }, [isLoaded, user, profile?.id, _reset, queryClient]);
+  }, [isLoaded, user, profile?.id, _reset, queryClient, isMockSignedIn]);
 
   // Authentication & Hydration flow
   useEffect(() => {
-    if (!isLoaded || !user) return;
+    if (!isLoaded || (!user && !isMockSignedIn)) return;
     
     let isMounted = true;
     
     async function initUser() {
       if (!isMounted) return;
       
-      const clerkId = user?.id;
-      if (!clerkId) return;
+      const clerkId = user?.id || 'mock_user_123';
 
       try {
         if ((!isHydrated || !profile) && !hasAttemptedHydration) {
           setIsHydratingFromSupabase(true);
-          const email = user.primaryEmailAddress?.emailAddress || '';
-          const name = user.fullName || user.firstName || 'Your Name';
-          const avatar = user.imageUrl || '';
+          const email = user?.primaryEmailAddress?.emailAddress || 'demo@renocred.com';
+          const name = user?.fullName || user?.firstName || localStorage.getItem('MOCK_NAME') || 'Demo User';
+          const avatar = user?.imageUrl || '';
           
-          await hydrateFromSupabase(clerkId, email, name, avatar, user.unsafeMetadata);
+          await hydrateFromSupabase(clerkId, email, name, avatar, user?.unsafeMetadata);
           setHasAttemptedHydration(true);
         }
       } catch (error) {
@@ -158,8 +159,9 @@ export default function App() {
   // 2. If signed in, but profile or onboarding is incomplete, show LoginScreen (Questionnaire View)
   const clerkMetadata = user?.unsafeMetadata as any;
   const isCompletedInClerk = clerkMetadata?.onboardingCompleted === true;
+  const isMockOnboarded = localStorage.getItem('MOCK_ONBOARDED') === 'true';
 
-  if (isSignedIn && (!profile || (!profile.onboardingCompleted && !isCompletedInClerk))) {
+  if (isSignedIn && (!profile || (!profile.onboardingCompleted && !isCompletedInClerk && !isMockOnboarded))) {
     return (
       <Routes>
         <Route path="*" element={<LoginScreen defaultMode="signup" />} />

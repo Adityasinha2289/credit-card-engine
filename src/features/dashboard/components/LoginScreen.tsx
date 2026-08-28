@@ -46,7 +46,9 @@ const OCCUPATION_OPTIONS: Occupation[] = [
 import { useNavigate } from 'react-router-dom';
 
 export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin' | 'signup' }) {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn: clerkIsSignedIn, user } = useUser();
+  const isMockSignedIn = localStorage.getItem('MOCK_AUTH') === 'true';
+  const isSignedIn = clerkIsSignedIn || isMockSignedIn;
   const login = useDashboardStore((s) => s.login);
   const resetStore = useDashboardStore((s) => s._reset);
   const [showBlog, setShowBlog] = useState(false);
@@ -159,9 +161,9 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
       spendCategories: state.priorities || existingProfile.spendCategories,
       onboardingCompleted: true,
     } : {
-      id: user?.id || `usr_temp_${Date.now()}`,
-      name: user?.fullName || user?.firstName || 'Your Name',
-      email: user?.primaryEmailAddress?.emailAddress || '',
+      id: user?.id || 'mock_user_123',
+      name: user?.fullName || user?.firstName || localStorage.getItem('MOCK_NAME') || 'Demo User',
+      email: user?.primaryEmailAddress?.emailAddress || 'demo@renocred.com',
       phone: user?.primaryPhoneNumber?.phoneNumber || 'XXXXXXXXXX',
       avatar: user?.imageUrl || `https://api.dicebear.com/9.x/notionists/svg?seed=User&backgroundColor=f8f9fa`,
       salary: state.salary || 1500000,
@@ -374,13 +376,77 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
               </div>
             </div>
 
-            {/* ── Clerk Auth Form ── */}
-            <div className="w-full">
-              {mode === 'signin' ? (
-                <SignIn routing="path" path="/app/sign-in" signUpUrl="/app/sign-up" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
-              ) : (
-                <SignUp routing="path" path="/app/sign-up" signInUrl="/app/sign-in" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
-              )}
+            {/* ── Custom Mock Auth Form (Bypass Clerk) ── */}
+            <div className="w-full flex flex-col gap-4 text-white">
+              <div className="text-center mb-4">
+                <h2 className="text-2xl font-bold font-display">{mode === 'signup' ? 'Create your account' : 'Sign in to Renocred'}</h2>
+                <p className="text-sm text-gray-400 mt-2">Welcome! Please fill in the details to get started.</p>
+              </div>
+
+              <button
+                onClick={() => {
+                  localStorage.setItem('MOCK_AUTH', 'true');
+                  localStorage.setItem('MOCK_NAME', 'Google User');
+                  window.location.reload();
+                }}
+                className="w-full py-3 px-4 bg-[#151515] border border-gray-700 hover:bg-[#1e1e1e] rounded-full flex items-center justify-center gap-3 transition-colors text-sm font-semibold shadow-none"
+              >
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
+                Continue with Google
+              </button>
+
+              <div className="flex items-center gap-3 my-2">
+                <div className="flex-1 h-px bg-white/10" />
+                <span className="text-xs font-bold text-white/40 uppercase tracking-widest">OR</span>
+                <div className="flex-1 h-px bg-white/10" />
+              </div>
+
+              <form 
+                className="flex flex-col gap-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const fd = new FormData(e.currentTarget);
+                  const fName = fd.get('firstName') as string || '';
+                  const lName = fd.get('lastName') as string || '';
+                  if (fName || lName) {
+                    localStorage.setItem('MOCK_NAME', `${fName} ${lName}`.trim());
+                  } else {
+                    localStorage.setItem('MOCK_NAME', fd.get('email') as string || 'Demo User');
+                  }
+                  localStorage.setItem('MOCK_AUTH', 'true');
+                  window.location.reload();
+                }}
+              >
+                {mode === 'signup' && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-white/60">First name <span className="text-white/40 font-normal ml-1">Optional</span></label>
+                      <input name="firstName" type="text" className="bg-[#151515] border border-gray-700 rounded-full px-4 py-3 outline-none focus:border-[#2A9D5C]/50 focus:ring-1 focus:ring-[#2A9D5C]/30 text-sm text-white" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-white/60">Last name <span className="text-white/40 font-normal ml-1">Optional</span></label>
+                      <input name="lastName" type="text" className="bg-[#151515] border border-gray-700 rounded-full px-4 py-3 outline-none focus:border-[#2A9D5C]/50 focus:ring-1 focus:ring-[#2A9D5C]/30 text-sm text-white" />
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-white/60">Email address</label>
+                  <input name="email" type="email" required className="bg-[#151515] border border-gray-700 rounded-full px-4 py-3 outline-none focus:border-[#2A9D5C]/50 focus:ring-1 focus:ring-[#2A9D5C]/30 text-sm text-white" />
+                </div>
+                
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-white/60">Password</label>
+                  <input name="password" type="password" required className="bg-[#151515] border border-gray-700 rounded-full px-4 py-3 outline-none focus:border-[#2A9D5C]/50 focus:ring-1 focus:ring-[#2A9D5C]/30 text-sm text-white" />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-[#2A9D5C] hover:bg-[#2A9D5C]/90 text-white font-bold text-sm py-3 rounded-full transition-all active:scale-[0.98] mt-2 border-none shadow-none"
+                >
+                  Continue
+                </button>
+              </form>
             </div>
         </motion.div>
       </div>

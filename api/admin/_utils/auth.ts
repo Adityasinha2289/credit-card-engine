@@ -17,13 +17,6 @@ export async function verifyAdminAuthorization(req: VercelRequest): Promise<Admi
 
   const token = authHeader.split(' ')[1];
 
-  // For the MVP testing / Demo, we support a mock admin token ONLY if explicitly bypassing backend verification
-  // in a real environment this should be removed, but we retain it purely for vitest local testing when
-  // no secret key is present.
-  if (token === 'admin-token-123') {
-    return { authorized: true, userId: 'mock-admin' };
-  }
-
   const secretKey = process.env.CLERK_SECRET_KEY;
   if (!secretKey) {
     console.error('CLERK_SECRET_KEY is missing. Cryptographic verification cannot proceed.');

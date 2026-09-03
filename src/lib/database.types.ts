@@ -23,6 +23,12 @@ export interface Database {
           credit_score: number;
           total_reward_points: number;
           redeemed_reward_points: number;
+          onboarding_completed: boolean;
+          user_segment: string | null;
+          primary_goal: string | null;
+          spend_categories: Json;
+          city: string | null;
+          occupation: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -36,6 +42,12 @@ export interface Database {
           credit_score?: number;
           total_reward_points?: number;
           redeemed_reward_points?: number;
+          onboarding_completed?: boolean;
+          user_segment?: string | null;
+          primary_goal?: string | null;
+          spend_categories?: Json;
+          city?: string | null;
+          occupation?: string | null;
         };
         Update: {
           name?: string | null;
@@ -45,6 +57,12 @@ export interface Database {
           credit_score?: number;
           total_reward_points?: number;
           redeemed_reward_points?: number;
+          onboarding_completed?: boolean;
+          user_segment?: string | null;
+          primary_goal?: string | null;
+          spend_categories?: Json;
+          city?: string | null;
+          occupation?: string | null;
         };
       };
 
@@ -267,6 +285,175 @@ export interface Database {
           category?: string;
         };
         Update: Partial<Database['public']['Tables']['subscriptions']['Insert']>;
+      };
+      categories: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          parent_id: string | null;
+          icon: string | null;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['categories']['Row']>;
+        Update: Partial<Database['public']['Tables']['categories']['Row']>;
+      };
+      partners: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          logo_url: string | null;
+          description: string | null;
+          primary_category_id: string | null;
+          is_sponsored: boolean;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['partners']['Row']>;
+        Update: Partial<Database['public']['Tables']['partners']['Row']>;
+      };
+      commerce_entities: {
+        Row: {
+          id: string;
+          partner_id: string;
+          category_id: string | null;
+          entity_type: string;
+          name: string;
+          description: string | null;
+          sku: string | null;
+          image_url: string | null;
+          base_price: number;
+          currency: string;
+          destination_path: string;
+          is_sponsored: boolean;
+          status: string;
+          created_at: string;
+          updated_at: string;
+          last_verified_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['commerce_entities']['Row']>;
+        Update: Partial<Database['public']['Tables']['commerce_entities']['Row']>;
+      };
+      offers: {
+        Row: {
+          id: string;
+          source: string;
+          offer_type: string;
+          value: number;
+          title: string;
+          description: string;
+          min_spend: number;
+          max_discount: number | null;
+          valid_from: string;
+          valid_until: string;
+          status: string;
+          eligibility_rules: Json;
+          internal_campaign_metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['offers']['Row']>;
+        Update: Partial<Database['public']['Tables']['offers']['Row']>;
+      };
+      payment_methods: {
+        Row: {
+          id: string;
+          user_id: string;
+          type: string;
+          name: string;
+          provider: string;
+          metadata: Json;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['payment_methods']['Row']>;
+        Update: Partial<Database['public']['Tables']['payment_methods']['Row']>;
+      };
+      affiliate_relationships: {
+        Row: {
+          id: string;
+          partner_id: string;
+          network: string;
+          tracking_template_url: string;
+          commission_model: string;
+          commission_terms: Json;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['affiliate_relationships']['Row']>;
+        Update: Partial<Database['public']['Tables']['affiliate_relationships']['Row']>;
+      };
+      tracking_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          commerce_entity_id: string | null;
+          partner_id: string;
+          offer_id: string | null;
+          source_placement: string;
+          recommendation_snapshot: Json;
+          created_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['tracking_events']['Row']>;
+        Update: Partial<Database['public']['Tables']['tracking_events']['Row']>;
+      };
+      conversions: {
+        Row: {
+          id: string;
+          tracking_event_id: string;
+          partner_id: string;
+          external_transaction_id: string;
+          order_value: number;
+          currency: string;
+          status: string;
+          converted_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['conversions']['Row']>;
+        Update: Partial<Database['public']['Tables']['conversions']['Row']>;
+      };
+      commissions: {
+        Row: {
+          id: string;
+          conversion_id: string;
+          expected_commission: number;
+          actual_commission: number | null;
+          status: string;
+          paid_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['commissions']['Row']>;
+        Update: Partial<Database['public']['Tables']['commissions']['Row']>;
+      };
+      marketplace_partner_mappings: {
+        Row: {
+          id: string;
+          partner_id: string;
+          internal_name: string;
+          webhook_secret: string;
+          created_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['marketplace_partner_mappings']['Row']>;
+        Update: Partial<Database['public']['Tables']['marketplace_partner_mappings']['Row']>;
+      };
+      processed_webhook_events: {
+        Row: {
+          id: string;
+          event_id: string;
+          event_type: string;
+          processed_at: string;
+          status: string;
+        };
+        Insert: Partial<Database['public']['Tables']['processed_webhook_events']['Row']>;
+        Update: Partial<Database['public']['Tables']['processed_webhook_events']['Row']>;
       };
     };
   };

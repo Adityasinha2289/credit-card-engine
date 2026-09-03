@@ -5,14 +5,7 @@ import { sentryVitePlugin } from "@sentry/vite-plugin"
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    port: 3000,
-    proxy: {
-      '/api/gemini': {
-        target: 'https://generativelanguage.googleapis.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/gemini/, '')
-      }
-    }
+    port: 3000
   },
   plugins: [
     react(),

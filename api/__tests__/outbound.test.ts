@@ -21,6 +21,14 @@ vi.mock('../../src/lib/supabase', () => ({
   },
   isBackendEnabled: true
 }));
+vi.mock('@clerk/backend', () => ({
+  verifyToken: vi.fn(async (token) => {
+    if (token === 'some-token') {
+      return { sub: 'user-clerk-verified' };
+    }
+    throw new Error('jwt malformed');
+  })
+}));
 
 const mockReq = (body: any, headers = {}) => {
   return {
@@ -40,6 +48,7 @@ const mockRes = () => {
 describe('Outbound API Security & Logic', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    process.env.CLERK_SECRET_KEY = 'test-secret-key';
   });
 
   it('rejects non-POST methods', async () => {

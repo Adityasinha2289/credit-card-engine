@@ -2,11 +2,11 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { CommerceRepository } from '../src/features/commerce/repositories';
 import { CommerceOptimizationService } from '../src/features/commerce';
-import { MockClerkAuth } from '../src/features/recommendation/api/auth';
+import { ClerkAuth } from '../src/features/recommendation/api/auth';
 import { supabase, isBackendEnabled } from '../src/lib/supabase';
 import crypto from 'crypto';
 
-const auth = new MockClerkAuth();
+const auth = new ClerkAuth();
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -26,9 +26,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const authHeader = req.headers.authorization;
     const authResult = await auth.verifyToken(authHeader);
 
-    // If client supplied user_id, we ignore it. We strictly use the server authenticated user.
-    // In our MockClerkAuth, if not provided it returns 'anon-user' which we treat as demo.
-    const userId = authResult.userId || 'demo-user-id';
+    let userId = 'demo-user-id'; // Default to demo user for unauthenticated requests
+    let isDemo = true;
+
+    if (authResult.authenticated && authResult.userId) {
+      userId = authResult.userId;
+      isDemo = false;
+    }
 
     // Verify entity exists
     const entities = await CommerceRepository.getCommerceEntities();
@@ -46,7 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const clickId = crypto.randomUUID();
     let finalUrl = `https://partner-redirect.example.com/${partner.slug || partner.id}?ref=${clickId}`;
 
-    const isDemo = userId === 'anon-user' || userId === 'demo-user-id';
+    // isDemo is already determined above
 
     if (!isDemo && isBackendEnabled && supabase) {
       // Look up affiliate relationship

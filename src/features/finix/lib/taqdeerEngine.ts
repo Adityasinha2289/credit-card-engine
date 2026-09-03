@@ -334,63 +334,50 @@ export async function generateTaqdeerResponse(
 ): Promise<{ content: string; cards?: FinixCard[] }> {
   const lower = query.toLowerCase().trim();
   const apiUrl = getAiBackendUrl();
-  const rawKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const geminiApiKey = rawKey ? String(rawKey).replace(/['"]/g, '').trim() : null;
   let debugInfo = "";
   const errors: string[] = [];
 
-  if (geminiApiKey) {
-    const modelsToTry = [
-      'gemini-2.5-flash',
-      'gemini-2.5-pro',
-      'gemini-flash-latest'
-    ];
-
-    const prompt = `You are Taqdeer, an expert AI credit card & wealth advisor for the Indian market at RenoCred.
-User query:"${query}"
-User's wallet cards: ${JSON.stringify(userCards.map(c => c.label || c.id))}
-
-Provide a short, direct, highly actionable response in 2-4 bullet points or paragraphs. Use emojis and markdown.`;
-
-    for (const model of modelsToTry) {
-      try {
-        const response = await fetch(
-          `/api/gemini/v1beta/models/${model}:generateContent?key=${geminiApiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-            }),
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (content) {
-            console.log(`[Taqdeer AI] Successfully responded using ${model}`);
-            return { content };
-          }
-        } else {
-          const errData = await response.json().catch(() => ({}));
-          errors.push(`${model}: HTTP ${response.status} ${JSON.stringify(errData)}`);
-        }
-      } catch (err: any) {
-        errors.push(`${model}: Network Error (${err.message})`);
-      }
+  try {
+    let token: string | null = null;
+    if (typeof window !== 'undefined' && (window as any).Clerk && (window as any).Clerk.session) {
+      token = await (window as any).Clerk.session.getToken();
     }
-  } else if (apiUrl) {
+    
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch('/api/taqdeer', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ query, userCards })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.content) {
+        return { content: data.content };
+      }
+    } else {
+      errors.push(`Backend returned HTTP ${response.status}`);
+    }
+  } catch (err: any) {
+    errors.push(`Network Error (${err.message})`);
+  }
+  if (apiUrl) {
     try {
       const response = await fetch(apiUrl, {
-        method:"POST",
-        headers: {"Content-Type":"application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, userCards })
       });
       
       if (response.ok) {
         const data = await response.json();
-        if (data.intent !=="unknown") {
+        if (data.intent !== "unknown") {
           return { content: data.content };
         }
       }
@@ -415,8 +402,8 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
   // If no merchant was detected AND the query doesn't sound like a card query,
   // gracefully inform the user that the AI is offline or the query is out of scope.
   if (!merchant && !/\b(card|spend|reward|cashback|buy|pay|offer|discount|wallet|best)\b/i.test(lower)) {
-    if (!geminiApiKey) debugInfo = "\n\n*(PROD Debug: VITE_GEMINI_API_KEY is missing or undefined in Vercel Environment Variables!)*";
-    else debugInfo = `\n\n*(PROD Debug: Gemini API key is present (starts with ${geminiApiKey.substring(0, 5)}), but errors occurred: ${errors.join(" | ")})*`;
+    if (errors.length > 0) debugInfo = `\n\n*(PROD Debug: Backend API errors occurred: ${errors.join(" | ")})*`;
+    else debugInfo = `\n\n*(PROD Debug: AI Backend is unreachable or returned no content)*`;
     
     return {
       content: `⚠️ **AI Brain Offline / Out of Scope**\n\nI couldn't reach my Gemini AI brain (or this query isn't about credit cards). \n\nHowever, my **Offline Engine** is fully active! Try asking me:\n• *"Which card is best for Swiggy?"*\n• *"Wallet health"*\n• *"Which cards have lounge access?"*${debugInfo}`

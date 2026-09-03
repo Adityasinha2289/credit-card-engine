@@ -10,7 +10,6 @@ export function validateEnv() {
     'VITE_AI_API_URL',
     'VITE_SENTRY_DSN',
     'VITE_POSTHOG_KEY',
-    'VITE_GEMINI_API_KEY',
   ];
 
   const missingVars = varsToCheck.filter(

@@ -14,15 +14,18 @@ export class OutboundService {
    */
   static async navigateToPartner(req: OutboundRequest): Promise<void> {
     try {
-      // In a real app we'd get the auth token from Clerk here.
-      // For this prototype, we'll just send a dummy header if logged in.
-      const profile = useDashboardStore.getState().profile;
+      // Fetch the real token from Clerk if available on window
+      let token = null;
+      if (typeof window !== 'undefined' && (window as any).Clerk && (window as any).Clerk.session) {
+        token = await (window as any).Clerk.session.getToken();
+      }
+      
       const headers: Record<string, string> = {
         'Content-Type': 'application/json'
       };
       
-      if (profile?.id) {
-        headers['Authorization'] = `Bearer mock-token-for-${profile.id}`;
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
 
       const response = await fetch('/api/outbound', {

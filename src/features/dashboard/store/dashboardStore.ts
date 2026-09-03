@@ -163,6 +163,8 @@ interface DashboardState {
   
   /** Supabase client injected from React tree */
   supabaseClient: SupabaseClient<Database> | null;
+  /** Identifies the active user session to prevent async race conditions */
+  currentSessionId: string | null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -272,6 +274,7 @@ const INITIAL_STATE: DashboardState = {
   offers:         [],
   budgets:        [],
   supabaseClient: null,
+  currentSessionId: null,
 };
 
 //    immer  → plain immutable updates with draft mutations
@@ -479,6 +482,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             state.creditAccounts = [];
             state.rewards = EMPTY_REWARDS;
             state.activeCardId = '';
+            state.currentSessionId = null;
           });
         },
 
@@ -600,19 +604,23 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
         // ── redeemPoints ─────────────────────────────────────────────────────
         async redeemPoints(points) {
-          set((state) => {
-            const available = state.rewards.totalPoints - state.rewards.redeemedPoints;
-            const toRedeem  = Math.min(points, available);
-            state.rewards.redeemedPoints += toRedeem;
-          });
-          const { supabaseClient, profile, rewards } = get();
+          const { supabaseClient, profile } = get();
+          
           if (supabaseClient && profile) {
-            await safeDbWrite(
-              (supabaseClient as any).from('users').update({
-                redeemed_reward_points: rewards.redeemedPoints
-              }).eq('id', profile.id),
-              'redeem points'
+            // Use atomic RPC for security (server-side point validation)
+            const result = await safeDbWrite(
+              (supabaseClient as any).rpc('redeem_points_v1', {
+                p_points: points
+              }),
+              'redeem points RPC'
             );
+            
+            if (result !== null) {
+              // Only update local state if server allowed it
+              set((state) => {
+                state.rewards.redeemedPoints += points;
+              });
+            }
           }
         },
 
@@ -723,7 +731,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
         // ── hydrateFromSupabase ──────────────────────────────────────────────
         async hydrateFromSupabase(clerkId, clerkEmail, clerkName, clerkAvatar, clerkMetadata?: any) {
-          set({ isHydratingFromSupabase: true });
+          set({ isHydratingFromSupabase: true, currentSessionId: clerkId });
           const { supabaseClient } = get();
           if (!supabaseClient) {
             set({ isHydratingFromSupabase: false });
@@ -789,13 +797,18 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             .eq('user_id', clerkId);
 
           set((state) => {
+             if (state.currentSessionId !== clerkId) {
+               console.warn(`[Hydration] Stale async request detected for user ${clerkId}. Aborting.`);
+               return;
+             }
+             
              state.profile = profile;
                 
                 state.rewards = {
                   ...EMPTY_REWARDS,
                   tier: 'gold',
-                  totalPoints: userRow.total_reward_points || 0,
-                  redeemedPoints: userRow.redeemed_reward_points || 0,
+                  totalPoints: userRow?.total_reward_points || 0,
+                  redeemedPoints: userRow?.redeemed_reward_points || 0,
                 };
                 
                 
@@ -885,15 +898,10 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         version: 5,
 
         /**
-         * Only persist the data state — not the UI/loading flags.
-         * This prevents a stale isPaymentProcessing=true from persisting
-         * across reloads if the browser was closed mid-action.
+         * Security Fix: Do not persist user-specific financial or profile data to localStorage.
+         * This prevents cross-user state leakage upon hydration.
          */
-        partialize: (state) => ({
-          activeCardId: state.activeCardId,
-          profile: state.profile,
-          userCards: state.userCards,
-        }),
+        partialize: (state) => ({}),
 
         /**
          * Migration strategy — increment version when state shape changes

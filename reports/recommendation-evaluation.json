@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-27T13:33:17.107Z",
+  "timestamp": "2026-09-01T12:56:16.059Z",
   "summary": "Recommendation Evaluation Platform evaluated 100 benchmark scenarios with Top-1 Accuracy 0% and Average Confidence 98.1%.",
   "scenariosCount": 100,
   "metrics": {
@@ -24,7 +24,7 @@
         "top3Accuracy": 0,
         "averageConfidence": 90.6,
         "averageSavings": 22,
-        "averageExecutionTimeMs": 0.35
+        "averageExecutionTimeMs": 0.36
       },
       "travel": {
         "totalScenarios": 16,
@@ -33,7 +33,7 @@
         "top3Accuracy": 0,
         "averageConfidence": 97.5,
         "averageSavings": 200,
-        "averageExecutionTimeMs": 0.31
+        "averageExecutionTimeMs": 0.34
       },
       "fuel": {
         "totalScenarios": 12,
@@ -42,7 +42,7 @@
         "top3Accuracy": 0,
         "averageConfidence": 100,
         "averageSavings": 31,
-        "averageExecutionTimeMs": 0.33
+        "averageExecutionTimeMs": 0.34
       },
       "shopping": {
         "totalScenarios": 27,
@@ -51,7 +51,7 @@
         "top3Accuracy": 0,
         "averageConfidence": 100,
         "averageSavings": 413,
-        "averageExecutionTimeMs": 0.28
+        "averageExecutionTimeMs": 0.27
       },
       "utilities": {
         "totalScenarios": 19,
@@ -60,7 +60,7 @@
         "top3Accuracy": 0,
         "averageConfidence": 100,
         "averageSavings": 117,
-        "averageExecutionTimeMs": 0.22
+        "averageExecutionTimeMs": 0.23
       },
       "medical": {
         "totalScenarios": 5,
@@ -69,7 +69,7 @@
         "top3Accuracy": 0,
         "averageConfidence": 100,
         "averageSavings": 26,
-        "averageExecutionTimeMs": 0.3
+        "averageExecutionTimeMs": 0.31
       },
       "entertainment": {
         "totalScenarios": 5,
@@ -497,15 +497,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 1.63,
+      "executionTimeMs": 1.67,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597076-zdjsn",
-        "timestamp": "2026-08-27T13:33:17.077Z",
+        "traceId": "trace-1788267376028-jev48",
+        "timestamp": "2026-09-01T12:56:16.029Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -586,15 +586,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.51,
+      "executionTimeMs": 0.54,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597077-gaygz",
-        "timestamp": "2026-08-27T13:33:17.077Z",
+        "traceId": "trace-1788267376030-48jqu",
+        "timestamp": "2026-09-01T12:56:16.030Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy Instamart",
@@ -675,15 +675,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.47,
+      "executionTimeMs": 0.5,
       "merchantResolved": true,
       "resolvedMerchantName": "Zomato Food Delivery",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597077-6x3ug",
-        "timestamp": "2026-08-27T13:33:17.078Z",
+        "traceId": "trace-1788267376030-h0a0y",
+        "timestamp": "2026-09-01T12:56:16.031Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Zomato",
@@ -763,15 +763,15 @@
         "Generates total net savings of ₹42",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.27,
+      "executionTimeMs": 0.29,
       "merchantResolved": true,
       "resolvedMerchantName": "Zomato Food Delivery",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597078-yr3zi",
-        "timestamp": "2026-08-27T13:33:17.078Z",
+        "traceId": "trace-1788267376031-1oh9w",
+        "timestamp": "2026-09-01T12:56:16.031Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Zomato Food Delivery",
@@ -851,15 +851,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.28,
+      "executionTimeMs": 0.32,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597078-b9h97",
-        "timestamp": "2026-08-27T13:33:17.078Z",
+        "traceId": "trace-1788267376031-y7nhf",
+        "timestamp": "2026-09-01T12:56:16.031Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -939,15 +939,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.25,
+      "executionTimeMs": 0.3,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597078-vz2g7",
-        "timestamp": "2026-08-27T13:33:17.079Z",
+        "traceId": "trace-1788267376031-y2hml",
+        "timestamp": "2026-09-01T12:56:16.031Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -981,14 +981,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "axis_lic_axis_bank_platinum_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-swiggy-hdfc\", got\"LIC Axis Bank Platinum Credit Card (axis_lic_axis_bank_platinum_credit_card)\""
@@ -1033,8 +1033,8 @@
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597079-fx1n6",
-        "timestamp": "2026-08-27T13:33:17.079Z",
+        "traceId": "trace-1788267376031-6k9y0",
+        "timestamp": "2026-09-01T12:56:16.032Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Zomato",
@@ -1059,7 +1059,7 @@
           },
           {
             "stageName": "Candidate Retrieval",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "totalCardsInCatalog": 518,
               "candidateCount": 518,
@@ -1075,7 +1075,7 @@
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-airtel-axis\", got\"LIC Axis Bank Platinum Credit Card (axis_lic_axis_bank_platinum_credit_card)\""
@@ -1113,15 +1113,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.2,
+      "executionTimeMs": 0.21,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597079-e2lrp",
-        "timestamp": "2026-08-27T13:33:17.079Z",
+        "traceId": "trace-1788267376032-s14l3",
+        "timestamp": "2026-09-01T12:56:16.032Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -1200,15 +1200,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.21,
+      "executionTimeMs": 0.22,
       "merchantResolved": true,
       "resolvedMerchantName": "Zomato Food Delivery",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597079-ip8a6",
-        "timestamp": "2026-08-27T13:33:17.079Z",
+        "traceId": "trace-1788267376032-tpr4j",
+        "timestamp": "2026-09-01T12:56:16.032Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Zomato",
@@ -1287,15 +1287,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.36,
+      "executionTimeMs": 0.42,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597079-kh4ny",
-        "timestamp": "2026-08-27T13:33:17.080Z",
+        "traceId": "trace-1788267376032-8ehis",
+        "timestamp": "2026-09-01T12:56:16.033Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -1374,15 +1374,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.24,
+      "executionTimeMs": 0.23,
       "merchantResolved": true,
       "resolvedMerchantName": "Zomato Food Delivery",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597080-9wbq4",
-        "timestamp": "2026-08-27T13:33:17.080Z",
+        "traceId": "trace-1788267376033-7m1fq",
+        "timestamp": "2026-09-01T12:56:16.033Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Zomato",
@@ -1461,15 +1461,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.19,
+      "executionTimeMs": 0.18,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597080-qsgng",
-        "timestamp": "2026-08-27T13:33:17.080Z",
+        "traceId": "trace-1788267376033-fvzv7",
+        "timestamp": "2026-09-01T12:56:16.033Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -1548,15 +1548,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.19,
+      "executionTimeMs": 0.2,
       "merchantResolved": true,
       "resolvedMerchantName": "Zomato Food Delivery",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597080-azvme",
-        "timestamp": "2026-08-27T13:33:17.080Z",
+        "traceId": "trace-1788267376033-kw14t",
+        "timestamp": "2026-09-01T12:56:16.033Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Zomato",
@@ -1642,8 +1642,8 @@
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597080-ci7zf",
-        "timestamp": "2026-08-27T13:33:17.080Z",
+        "traceId": "trace-1788267376033-gl9pc",
+        "timestamp": "2026-09-01T12:56:16.033Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -1729,8 +1729,8 @@
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597080-p7oxx",
-        "timestamp": "2026-08-27T13:33:17.081Z",
+        "traceId": "trace-1788267376033-irvzn",
+        "timestamp": "2026-09-01T12:56:16.034Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Zomato",
@@ -1809,15 +1809,15 @@
         "Generates total net savings of ₹128",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.34,
+      "executionTimeMs": 0.35,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597081-h5psn",
-        "timestamp": "2026-08-27T13:33:17.081Z",
+        "traceId": "trace-1788267376034-z3nbb",
+        "timestamp": "2026-09-01T12:56:16.034Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -1896,15 +1896,15 @@
         "Generates total net savings of ₹360",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.51,
+      "executionTimeMs": 0.38,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597081-j2i5y",
-        "timestamp": "2026-08-27T13:33:17.082Z",
+        "traceId": "trace-1788267376034-r9e42",
+        "timestamp": "2026-09-01T12:56:16.034Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -1939,14 +1939,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-atlas\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -1984,15 +1984,15 @@
         "Generates total net savings of ₹48",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.34,
+      "executionTimeMs": 0.43,
       "merchantResolved": true,
       "resolvedMerchantName": "IRCTC Train Booking",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597082-iogzg",
-        "timestamp": "2026-08-27T13:33:17.082Z",
+        "traceId": "trace-1788267376034-4rspj",
+        "timestamp": "2026-09-01T12:56:16.035Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IRCTC",
@@ -2027,14 +2027,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 23
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-cashback\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -2071,15 +2071,15 @@
         "Generates total net savings of ₹630",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.27,
+      "executionTimeMs": 0.35,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597082-wrf46",
-        "timestamp": "2026-08-27T13:33:17.082Z",
+        "traceId": "trace-1788267376035-ephoh",
+        "timestamp": "2026-09-01T12:56:16.035Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -2158,15 +2158,15 @@
         "Generates total net savings of ₹27",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.29,
+      "executionTimeMs": 0.38,
       "merchantResolved": true,
       "resolvedMerchantName": "Uber Rides",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597082-ltu9h",
-        "timestamp": "2026-08-27T13:33:17.082Z",
+        "traceId": "trace-1788267376035-m25d7",
+        "timestamp": "2026-09-01T12:56:16.036Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Uber Rides",
@@ -2201,14 +2201,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-ace\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -2245,15 +2245,15 @@
         "Generates total net savings of ₹225",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.33,
+      "executionTimeMs": 0.42,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597082-rmv35",
-        "timestamp": "2026-08-27T13:33:17.083Z",
+        "traceId": "trace-1788267376036-kpnce",
+        "timestamp": "2026-09-01T12:56:16.036Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -2287,14 +2287,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-atlas\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -2331,15 +2331,15 @@
         "Generates total net savings of ₹21",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.31,
+      "executionTimeMs": 0.42,
       "merchantResolved": true,
       "resolvedMerchantName": "IRCTC Train Booking",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597083-kfy3i",
-        "timestamp": "2026-08-27T13:33:17.083Z",
+        "traceId": "trace-1788267376036-4l4hs",
+        "timestamp": "2026-09-01T12:56:16.036Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IRCTC",
@@ -2417,15 +2417,15 @@
         "Generates total net savings of ₹135",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.26,
+      "executionTimeMs": 0.37,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597083-yrjs5",
-        "timestamp": "2026-08-27T13:33:17.083Z",
+        "traceId": "trace-1788267376036-dyjrj",
+        "timestamp": "2026-09-01T12:56:16.037Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -2459,14 +2459,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-atlas\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -2503,15 +2503,15 @@
         "Generates total net savings of ₹7",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.23,
+      "executionTimeMs": 0.35,
       "merchantResolved": true,
       "resolvedMerchantName": "Uber Rides",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597083-715ri",
-        "timestamp": "2026-08-27T13:33:17.084Z",
+        "traceId": "trace-1788267376037-jrte8",
+        "timestamp": "2026-09-01T12:56:16.037Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Uber Rides",
@@ -2545,14 +2545,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-ace\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -2589,15 +2589,15 @@
         "Generates total net savings of ₹525",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.4,
+      "executionTimeMs": 0.54,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597084-q31a4",
-        "timestamp": "2026-08-27T13:33:17.084Z",
+        "traceId": "trace-1788267376037-s1rv8",
+        "timestamp": "2026-09-01T12:56:16.038Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -2631,14 +2631,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-atlas\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -2675,15 +2675,15 @@
         "Generates total net savings of ₹32",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.31,
+      "executionTimeMs": 0.25,
       "merchantResolved": true,
       "resolvedMerchantName": "IRCTC Train Booking",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597084-y5il4",
-        "timestamp": "2026-08-27T13:33:17.084Z",
+        "traceId": "trace-1788267376038-r9g7i",
+        "timestamp": "2026-09-01T12:56:16.038Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IRCTC",
@@ -2761,15 +2761,15 @@
         "Generates total net savings of ₹102",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.34,
+      "executionTimeMs": 0.26,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597084-thaou",
-        "timestamp": "2026-08-27T13:33:17.085Z",
+        "traceId": "trace-1788267376038-at47n",
+        "timestamp": "2026-09-01T12:56:16.038Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -2803,14 +2803,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-atlas\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -2847,15 +2847,15 @@
         "Generates total net savings of ₹18",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.28,
+      "executionTimeMs": 0.24,
       "merchantResolved": true,
       "resolvedMerchantName": "Uber Rides",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597085-q8w7w",
-        "timestamp": "2026-08-27T13:33:17.085Z",
+        "traceId": "trace-1788267376038-z461c",
+        "timestamp": "2026-09-01T12:56:16.038Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Uber Rides",
@@ -2933,15 +2933,15 @@
         "Generates total net savings of ₹870",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.35,
+      "executionTimeMs": 0.27,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597085-l5wga",
-        "timestamp": "2026-08-27T13:33:17.085Z",
+        "traceId": "trace-1788267376038-c4063",
+        "timestamp": "2026-09-01T12:56:16.039Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
@@ -2975,14 +2975,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-atlas\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -3019,15 +3019,15 @@
         "Generates total net savings of ₹68",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.31,
+      "executionTimeMs": 0.24,
       "merchantResolved": true,
       "resolvedMerchantName": "IRCTC Train Booking",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597085-ubcr9",
-        "timestamp": "2026-08-27T13:33:17.086Z",
+        "traceId": "trace-1788267376039-43obl",
+        "timestamp": "2026-09-01T12:56:16.039Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IRCTC",
@@ -3061,14 +3061,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 23
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-cashback\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -3106,15 +3106,15 @@
         "Generates total net savings of ₹45",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.35,
+      "executionTimeMs": 0.3,
       "merchantResolved": true,
       "resolvedMerchantName": "BPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597086-patdy",
-        "timestamp": "2026-08-27T13:33:17.086Z",
+        "traceId": "trace-1788267376039-1z86k",
+        "timestamp": "2026-09-01T12:56:16.039Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BPCL Fuel Station",
@@ -3194,15 +3194,15 @@
         "Generates total net savings of ₹38",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.49,
+      "executionTimeMs": 0.32,
       "merchantResolved": true,
       "resolvedMerchantName": "HPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597086-1r1uu",
-        "timestamp": "2026-08-27T13:33:17.086Z",
+        "traceId": "trace-1788267376039-0bhle",
+        "timestamp": "2026-09-01T12:56:16.040Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "HPCL Fuel Station",
@@ -3237,14 +3237,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_bharat_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-hpcl-super-saver\", got\"Bharat Credit Card (hdfc_bharat_credit_card)\""
@@ -3282,15 +3282,15 @@
         "Generates total net savings of ₹12",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.36,
+      "executionTimeMs": 0.47,
       "merchantResolved": true,
       "resolvedMerchantName": "IndianOil Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597086-2h4jt",
-        "timestamp": "2026-08-27T13:33:17.087Z",
+        "traceId": "trace-1788267376040-jfhir",
+        "timestamp": "2026-09-01T12:56:16.040Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IndianOil Fuel Station",
@@ -3325,14 +3325,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_bharat_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-indian-oil\", got\"Bharat Credit Card (hdfc_bharat_credit_card)\""
@@ -3369,15 +3369,15 @@
         "Generates total net savings of ₹68",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.25,
+      "executionTimeMs": 0.33,
       "merchantResolved": true,
       "resolvedMerchantName": "BPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597087-1g2tc",
-        "timestamp": "2026-08-27T13:33:17.087Z",
+        "traceId": "trace-1788267376040-nqkkr",
+        "timestamp": "2026-09-01T12:56:16.040Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BPCL Fuel Station",
@@ -3455,15 +3455,15 @@
         "Generates total net savings of ₹14",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.26,
+      "executionTimeMs": 0.33,
       "merchantResolved": true,
       "resolvedMerchantName": "HPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597087-x8ze2",
-        "timestamp": "2026-08-27T13:33:17.087Z",
+        "traceId": "trace-1788267376040-i8otm",
+        "timestamp": "2026-09-01T12:56:16.041Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "HPCL Fuel Station",
@@ -3497,14 +3497,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_bharat_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-hpcl-super-saver\", got\"Bharat Credit Card (hdfc_bharat_credit_card)\""
@@ -3541,15 +3541,15 @@
         "Generates total net savings of ₹53",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.3,
+      "executionTimeMs": 0.36,
       "merchantResolved": true,
       "resolvedMerchantName": "IndianOil Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597087-rlne9",
-        "timestamp": "2026-08-27T13:33:17.088Z",
+        "traceId": "trace-1788267376041-8iawj",
+        "timestamp": "2026-09-01T12:56:16.041Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IndianOil Fuel Station",
@@ -3583,14 +3583,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pine_labs_hdfc_bank_pro_credit_card",
               "topCompositeScore": 25
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-indian-oil\", got\"Pine Labs HDFC Bank Pro Credit Card (hdfc_pine_labs_hdfc_bank_pro_credit_card)\""
@@ -3627,15 +3627,15 @@
         "Generates total net savings of ₹30",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.25,
+      "executionTimeMs": 0.35,
       "merchantResolved": true,
       "resolvedMerchantName": "BPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597088-kdyks",
-        "timestamp": "2026-08-27T13:33:17.088Z",
+        "traceId": "trace-1788267376041-mct41",
+        "timestamp": "2026-09-01T12:56:16.041Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BPCL Fuel Station",
@@ -3713,15 +3713,15 @@
         "Generates total net savings of ₹10",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.28,
+      "executionTimeMs": 0.38,
       "merchantResolved": true,
       "resolvedMerchantName": "HPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597088-9tcmb",
-        "timestamp": "2026-08-27T13:33:17.088Z",
+        "traceId": "trace-1788267376041-50jh7",
+        "timestamp": "2026-09-01T12:56:16.042Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "HPCL Fuel Station",
@@ -3755,14 +3755,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_bharat_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-hpcl-super-saver\", got\"Bharat Credit Card (hdfc_bharat_credit_card)\""
@@ -3799,15 +3799,15 @@
         "Generates total net savings of ₹48",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.32,
+      "executionTimeMs": 0.36,
       "merchantResolved": true,
       "resolvedMerchantName": "IndianOil Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597088-zk66h",
-        "timestamp": "2026-08-27T13:33:17.088Z",
+        "traceId": "trace-1788267376042-f6cg6",
+        "timestamp": "2026-09-01T12:56:16.042Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IndianOil Fuel Station",
@@ -3885,15 +3885,15 @@
         "Generates total net savings of ₹8",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.29,
+      "executionTimeMs": 0.43,
       "merchantResolved": true,
       "resolvedMerchantName": "BPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597088-tr9dr",
-        "timestamp": "2026-08-27T13:33:17.089Z",
+        "traceId": "trace-1788267376042-9472c",
+        "timestamp": "2026-09-01T12:56:16.043Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BPCL Fuel Station",
@@ -3971,15 +3971,15 @@
         "Generates total net savings of ₹23",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.29,
+      "executionTimeMs": 0.21,
       "merchantResolved": true,
       "resolvedMerchantName": "HPCL Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597089-1poas",
-        "timestamp": "2026-08-27T13:33:17.089Z",
+        "traceId": "trace-1788267376043-0c9g5",
+        "timestamp": "2026-09-01T12:56:16.043Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "HPCL Fuel Station",
@@ -4057,15 +4057,15 @@
         "Generates total net savings of ₹27",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.53,
+      "executionTimeMs": 0.25,
       "merchantResolved": true,
       "resolvedMerchantName": "IndianOil Fuel Station",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "fuel",
       "trace": {
-        "traceId": "trace-1787837597089-z4rc5",
-        "timestamp": "2026-08-27T13:33:17.090Z",
+        "traceId": "trace-1788267376043-7zfgf",
+        "timestamp": "2026-09-01T12:56:16.043Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "IndianOil Fuel Station",
@@ -4099,14 +4099,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_bharat_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-indian-oil\", got\"Bharat Credit Card (hdfc_bharat_credit_card)\""
@@ -4144,15 +4144,15 @@
         "Generates total net savings of ₹68",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.39,
+      "executionTimeMs": 0.27,
       "merchantResolved": true,
       "resolvedMerchantName": "Amazon.in",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597090-83xkh",
-        "timestamp": "2026-08-27T13:33:17.090Z",
+        "traceId": "trace-1788267376043-j987u",
+        "timestamp": "2026-09-01T12:56:16.043Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -4231,15 +4231,15 @@
         "Generates total net savings of ₹48",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.37,
+      "executionTimeMs": 0.27,
       "merchantResolved": true,
       "resolvedMerchantName": "Amazon.in",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597090-4wlni",
-        "timestamp": "2026-08-27T13:33:17.090Z",
+        "traceId": "trace-1788267376043-lql8k",
+        "timestamp": "2026-09-01T12:56:16.044Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -4273,14 +4273,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-amazon\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -4317,15 +4317,15 @@
         "Generates total net savings of ₹83",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.42,
+      "executionTimeMs": 0.26,
       "merchantResolved": true,
       "resolvedMerchantName": "Flipkart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597090-mmzmf",
-        "timestamp": "2026-08-27T13:33:17.091Z",
+        "traceId": "trace-1788267376044-2jtqm",
+        "timestamp": "2026-09-01T12:56:16.044Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Flipkart",
@@ -4360,14 +4360,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-cashback\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -4404,15 +4404,15 @@
         "Generates total net savings of ₹102",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.5,
+      "executionTimeMs": 0.38,
       "merchantResolved": true,
       "resolvedMerchantName": "Myntra Fashion",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597091-9l1xx",
-        "timestamp": "2026-08-27T13:33:17.091Z",
+        "traceId": "trace-1788267376044-e5drk",
+        "timestamp": "2026-09-01T12:56:16.044Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Myntra Fashion",
@@ -4491,15 +4491,15 @@
         "Generates total net savings of ₹18",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.51,
+      "executionTimeMs": 0.27,
       "merchantResolved": true,
       "resolvedMerchantName": "Amazon.in",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597091-lwimp",
-        "timestamp": "2026-08-27T13:33:17.092Z",
+        "traceId": "trace-1788267376044-g5z1w",
+        "timestamp": "2026-09-01T12:56:16.044Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -4533,14 +4533,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-amazon\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -4584,8 +4584,8 @@
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597092-g6t5u",
-        "timestamp": "2026-08-27T13:33:17.092Z",
+        "traceId": "trace-1788267376045-y4tql",
+        "timestamp": "2026-09-01T12:56:16.045Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Flipkart",
@@ -4663,15 +4663,15 @@
         "Generates total net savings of ₹63",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.31,
+      "executionTimeMs": 0.35,
       "merchantResolved": true,
       "resolvedMerchantName": "Myntra Fashion",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597092-zt4h6",
-        "timestamp": "2026-08-27T13:33:17.092Z",
+        "traceId": "trace-1788267376045-kxwl0",
+        "timestamp": "2026-09-01T12:56:16.045Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Myntra Fashion",
@@ -4749,15 +4749,15 @@
         "Generates total net savings of ₹27",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.18,
+      "executionTimeMs": 0.26,
       "merchantResolved": true,
       "resolvedMerchantName": "Amazon.in",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597092-n54w1",
-        "timestamp": "2026-08-27T13:33:17.093Z",
+        "traceId": "trace-1788267376045-ol0rt",
+        "timestamp": "2026-09-01T12:56:16.045Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -4791,14 +4791,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-amazon\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -4835,15 +4835,15 @@
         "Generates total net savings of ₹51",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.17,
+      "executionTimeMs": 0.19,
       "merchantResolved": true,
       "resolvedMerchantName": "Flipkart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597093-olihd",
-        "timestamp": "2026-08-27T13:33:17.093Z",
+        "traceId": "trace-1788267376045-6x43y",
+        "timestamp": "2026-09-01T12:56:16.046Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Flipkart",
@@ -4877,14 +4877,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-cashback\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -4921,15 +4921,15 @@
         "Generates total net savings of ₹44",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.24,
+      "executionTimeMs": 0.25,
       "merchantResolved": true,
       "resolvedMerchantName": "Myntra Fashion",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597093-k1vpp",
-        "timestamp": "2026-08-27T13:33:17.093Z",
+        "traceId": "trace-1788267376046-l7c3s",
+        "timestamp": "2026-09-01T12:56:16.046Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Myntra Fashion",
@@ -5008,15 +5008,15 @@
         "Generates total net savings of ₹98",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.34,
+      "executionTimeMs": 0.36,
       "merchantResolved": true,
       "resolvedMerchantName": "DMart Ready & Supermarket",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597093-mhazc",
-        "timestamp": "2026-08-27T13:33:17.093Z",
+        "traceId": "trace-1788267376046-v23y2",
+        "timestamp": "2026-09-01T12:56:16.046Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "DMart Ready & Supermarket",
@@ -5095,15 +5095,15 @@
         "Generates total net savings of ₹87",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.24,
+      "executionTimeMs": 0.27,
       "merchantResolved": true,
       "resolvedMerchantName": "Amazon.in",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597093-onc6e",
-        "timestamp": "2026-08-27T13:33:17.094Z",
+        "traceId": "trace-1788267376046-fdcy3",
+        "timestamp": "2026-09-01T12:56:16.046Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -5137,14 +5137,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-amazon\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -5181,15 +5181,15 @@
         "Generates total net savings of ₹123",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.25,
+      "executionTimeMs": 0.78,
       "merchantResolved": true,
       "resolvedMerchantName": "Flipkart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597094-vlqyu",
-        "timestamp": "2026-08-27T13:33:17.094Z",
+        "traceId": "trace-1788267376046-aj0he",
+        "timestamp": "2026-09-01T12:56:16.047Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Flipkart",
@@ -5223,14 +5223,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-cashback\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -5274,8 +5274,8 @@
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597094-ix76v",
-        "timestamp": "2026-08-27T13:33:17.094Z",
+        "traceId": "trace-1788267376047-vz9fl",
+        "timestamp": "2026-09-01T12:56:16.048Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Myntra Fashion",
@@ -5309,14 +5309,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-hdfc-regalia-gold\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -5360,8 +5360,8 @@
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597094-f0qtt",
-        "timestamp": "2026-08-27T13:33:17.094Z",
+        "traceId": "trace-1788267376048-102ov",
+        "timestamp": "2026-09-01T12:56:16.048Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -5439,15 +5439,15 @@
         "Generates total net savings of ₹36",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.2,
+      "executionTimeMs": 0.18,
       "merchantResolved": true,
       "resolvedMerchantName": "DMart Ready & Supermarket",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597094-iaeav",
-        "timestamp": "2026-08-27T13:33:17.094Z",
+        "traceId": "trace-1788267376048-7cflh",
+        "timestamp": "2026-09-01T12:56:16.048Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "DMart Ready & Supermarket",
@@ -5526,15 +5526,15 @@
         "Generates total net savings of ₹675",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.27,
+      "executionTimeMs": 0.28,
       "merchantResolved": true,
       "resolvedMerchantName": "Croma Electronics",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597094-q9h8w",
-        "timestamp": "2026-08-27T13:33:17.095Z",
+        "traceId": "trace-1788267376048-7x1qg",
+        "timestamp": "2026-09-01T12:56:16.048Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Croma Electronics",
@@ -5569,14 +5569,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-tata-neu-infinity\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -5614,15 +5614,15 @@
         "Generates total net savings of ₹1125",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.31,
+      "executionTimeMs": 0.32,
       "merchantResolved": true,
       "resolvedMerchantName": "Reliance Digital",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597095-z6s88",
-        "timestamp": "2026-08-27T13:33:17.095Z",
+        "traceId": "trace-1788267376048-4xmka",
+        "timestamp": "2026-09-01T12:56:16.048Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Reliance Digital",
@@ -5709,8 +5709,8 @@
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597095-jg6k1",
-        "timestamp": "2026-08-27T13:33:17.095Z",
+        "traceId": "trace-1788267376048-963pe",
+        "timestamp": "2026-09-01T12:56:16.049Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -5745,14 +5745,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-amazon\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -5789,15 +5789,15 @@
         "Generates total net savings of ₹188",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.3,
+      "executionTimeMs": 0.25,
       "merchantResolved": true,
       "resolvedMerchantName": "Croma Electronics",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597095-24rhw",
-        "timestamp": "2026-08-27T13:33:17.096Z",
+        "traceId": "trace-1788267376049-hlj6v",
+        "timestamp": "2026-09-01T12:56:16.049Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Croma Electronics",
@@ -5831,14 +5831,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-tata-neu-infinity\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -5875,15 +5875,15 @@
         "Generates total net savings of ₹150",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.41,
+      "executionTimeMs": 0.23,
       "merchantResolved": true,
       "resolvedMerchantName": "Reliance Digital",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597096-ld4v2",
-        "timestamp": "2026-08-27T13:33:17.096Z",
+        "traceId": "trace-1788267376049-jkemz",
+        "timestamp": "2026-09-01T12:56:16.049Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Reliance Digital",
@@ -5961,15 +5961,15 @@
         "Generates total net savings of ₹899",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.19,
+      "executionTimeMs": 0.2,
       "merchantResolved": true,
       "resolvedMerchantName": "Croma Electronics",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597096-3qotd",
-        "timestamp": "2026-08-27T13:33:17.096Z",
+        "traceId": "trace-1788267376049-couni",
+        "timestamp": "2026-09-01T12:56:16.049Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Croma Electronics",
@@ -6047,15 +6047,15 @@
         "Generates total net savings of ₹510",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.22,
+      "executionTimeMs": 0.23,
       "merchantResolved": true,
       "resolvedMerchantName": "Reliance Digital",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597096-woh2f",
-        "timestamp": "2026-08-27T13:33:17.096Z",
+        "traceId": "trace-1788267376049-pszce",
+        "timestamp": "2026-09-01T12:56:16.050Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Reliance Digital",
@@ -6089,14 +6089,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-hdfc-regalia-gold\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -6134,15 +6134,15 @@
         "Generates total net savings of ₹15",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.19,
+      "executionTimeMs": 0.18,
       "merchantResolved": true,
       "resolvedMerchantName": "Airtel Fiber Broadband",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597096-v93lg",
-        "timestamp": "2026-08-27T13:33:17.097Z",
+        "traceId": "trace-1788267376050-43q43",
+        "timestamp": "2026-09-01T12:56:16.050Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Airtel Fiber Broadband",
@@ -6177,14 +6177,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "icici_amazon_pay_icici_bank_credit_card_apply_online",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-airtel-axis\", got\"Amazon Pay ICICI Bank Credit Card – Apply Online (icici_amazon_pay_icici_bank_credit_card_apply_online)\""
@@ -6222,15 +6222,15 @@
         "Generates total net savings of ₹28",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.34,
+      "executionTimeMs": 0.37,
       "merchantResolved": true,
       "resolvedMerchantName": "Electricity Board (BESCOM / State)",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597097-00dak",
-        "timestamp": "2026-08-27T13:33:17.097Z",
+        "traceId": "trace-1788267376050-nvblp",
+        "timestamp": "2026-09-01T12:56:16.050Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Electricity Board (BESCOM / State)",
@@ -6309,15 +6309,15 @@
         "Generates total net savings of ₹12",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.18,
+      "executionTimeMs": 0.23,
       "merchantResolved": true,
       "resolvedMerchantName": "Airtel Fiber Broadband",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597097-g7iqv",
-        "timestamp": "2026-08-27T13:33:17.097Z",
+        "traceId": "trace-1788267376050-dl0qk",
+        "timestamp": "2026-09-01T12:56:16.050Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Airtel Fiber Broadband",
@@ -6402,8 +6402,8 @@
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597097-som6y",
-        "timestamp": "2026-08-27T13:33:17.097Z",
+        "traceId": "trace-1788267376050-3swe9",
+        "timestamp": "2026-09-01T12:56:16.051Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Electricity Board (BESCOM / State)",
@@ -6437,14 +6437,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_moneyback_credit_card",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-airtel-axis\", got\"MoneyBack Credit Card (hdfc_moneyback_credit_card)\""
@@ -6488,8 +6488,8 @@
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597097-cgliw",
-        "timestamp": "2026-08-27T13:33:17.097Z",
+        "traceId": "trace-1788267376051-d9n67",
+        "timestamp": "2026-09-01T12:56:16.051Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Airtel Fiber Broadband",
@@ -6567,15 +6567,15 @@
         "Generates total net savings of ₹19",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.24,
+      "executionTimeMs": 0.26,
       "merchantResolved": true,
       "resolvedMerchantName": "Electricity Board (BESCOM / State)",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597098-w4ata",
-        "timestamp": "2026-08-27T13:33:17.098Z",
+        "traceId": "trace-1788267376051-cf9m7",
+        "timestamp": "2026-09-01T12:56:16.051Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Electricity Board (BESCOM / State)",
@@ -6653,15 +6653,15 @@
         "Generates total net savings of ₹30",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.18,
+      "executionTimeMs": 0.28,
       "merchantResolved": true,
       "resolvedMerchantName": "Airtel Fiber Broadband",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597098-j454b",
-        "timestamp": "2026-08-27T13:33:17.098Z",
+        "traceId": "trace-1788267376051-yvhx6",
+        "timestamp": "2026-09-01T12:56:16.051Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Airtel Fiber Broadband",
@@ -6739,15 +6739,15 @@
         "Generates total net savings of ₹8",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.29,
+      "executionTimeMs": 0.24,
       "merchantResolved": true,
       "resolvedMerchantName": "Electricity Board (BESCOM / State)",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597098-pca2v",
-        "timestamp": "2026-08-27T13:33:17.098Z",
+        "traceId": "trace-1788267376051-kiol7",
+        "timestamp": "2026-09-01T12:56:16.052Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Electricity Board (BESCOM / State)",
@@ -6781,14 +6781,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "icici_amazon_pay_icici_bank_credit_card_apply_online",
               "topCompositeScore": 20
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-airtel-axis\", got\"Amazon Pay ICICI Bank Credit Card – Apply Online (icici_amazon_pay_icici_bank_credit_card_apply_online)\""
@@ -6825,15 +6825,15 @@
         "Generates total net savings of ₹6",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.29,
+      "executionTimeMs": 0.23,
       "merchantResolved": true,
       "resolvedMerchantName": "Electricity Board (BESCOM / State)",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597098-l8q8r",
-        "timestamp": "2026-08-27T13:33:17.099Z",
+        "traceId": "trace-1788267376052-85sbi",
+        "timestamp": "2026-09-01T12:56:16.052Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Electricity Board (BESCOM / State)",
@@ -6867,14 +6867,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "icici_amazon_pay_icici_bank_credit_card_apply_online",
               "topCompositeScore": 20
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-ace\", got\"Amazon Pay ICICI Bank Credit Card – Apply Online (icici_amazon_pay_icici_bank_credit_card_apply_online)\""
@@ -6918,8 +6918,8 @@
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597099-bayb5",
-        "timestamp": "2026-08-27T13:33:17.099Z",
+        "traceId": "trace-1788267376052-ipdqq",
+        "timestamp": "2026-09-01T12:56:16.052Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Airtel Fiber Broadband",
@@ -6997,15 +6997,15 @@
         "Generates total net savings of ₹12",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.22,
+      "executionTimeMs": 0.23,
       "merchantResolved": true,
       "resolvedMerchantName": "Electricity Board (BESCOM / State)",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597099-87lma",
-        "timestamp": "2026-08-27T13:33:17.099Z",
+        "traceId": "trace-1788267376052-itjb0",
+        "timestamp": "2026-09-01T12:56:16.052Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Electricity Board (BESCOM / State)",
@@ -7083,15 +7083,15 @@
         "Generates total net savings of ₹40",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.12,
+      "executionTimeMs": 0.13,
       "merchantResolved": true,
       "resolvedMerchantName": "Airtel Fiber Broadband",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597099-asy7r",
-        "timestamp": "2026-08-27T13:33:17.099Z",
+        "traceId": "trace-1788267376052-8yg4s",
+        "timestamp": "2026-09-01T12:56:16.052Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Airtel Fiber Broadband",
@@ -7176,8 +7176,8 @@
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597099-p4juy",
-        "timestamp": "2026-08-27T13:33:17.099Z",
+        "traceId": "trace-1788267376052-0tzgd",
+        "timestamp": "2026-09-01T12:56:16.053Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Electricity Board (BESCOM / State)",
@@ -7211,14 +7211,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_moneyback_credit_card",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-axis-ace\", got\"MoneyBack Credit Card (hdfc_moneyback_credit_card)\""
@@ -7256,15 +7256,15 @@
         "Generates total net savings of ₹280",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.23,
+      "executionTimeMs": 0.22,
       "merchantResolved": true,
       "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597099-smgyw",
-        "timestamp": "2026-08-27T13:33:17.099Z",
+        "traceId": "trace-1788267376053-lkg93",
+        "timestamp": "2026-09-01T12:56:16.053Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "LIC / HDFC ERGO Insurance",
@@ -7343,15 +7343,15 @@
         "Generates total net savings of ₹185",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.33,
+      "executionTimeMs": 0.22,
       "merchantResolved": true,
       "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597099-ek5os",
-        "timestamp": "2026-08-27T13:33:17.100Z",
+        "traceId": "trace-1788267376053-o6ecq",
+        "timestamp": "2026-09-01T12:56:16.053Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "LIC / HDFC ERGO Insurance",
@@ -7385,14 +7385,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_moneyback_credit_card",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-hdfc-infinia\", got\"MoneyBack Credit Card (hdfc_moneyback_credit_card)\""
@@ -7429,15 +7429,15 @@
         "Generates total net savings of ₹450",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.19,
+      "executionTimeMs": 0.2,
       "merchantResolved": true,
       "resolvedMerchantName": "Government GST & Tax Portal",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597100-y7xh0",
-        "timestamp": "2026-08-27T13:33:17.100Z",
+        "traceId": "trace-1788267376053-64z68",
+        "timestamp": "2026-09-01T12:56:16.053Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Government GST & Tax Portal",
@@ -7515,15 +7515,15 @@
         "Generates total net savings of ₹124",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.21,
+      "executionTimeMs": 0.27,
       "merchantResolved": true,
       "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597100-epl2i",
-        "timestamp": "2026-08-27T13:33:17.100Z",
+        "traceId": "trace-1788267376053-cdcn5",
+        "timestamp": "2026-09-01T12:56:16.054Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "LIC / HDFC ERGO Insurance",
@@ -7557,14 +7557,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_moneyback_credit_card",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-hdfc-infinia\", got\"MoneyBack Credit Card (hdfc_moneyback_credit_card)\""
@@ -7601,15 +7601,15 @@
         "Generates total net savings of ₹320",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.22,
+      "executionTimeMs": 0.23,
       "merchantResolved": true,
       "resolvedMerchantName": "Government GST & Tax Portal",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597100-td777",
-        "timestamp": "2026-08-27T13:33:17.100Z",
+        "traceId": "trace-1788267376054-3fzfb",
+        "timestamp": "2026-09-01T12:56:16.054Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Government GST & Tax Portal",
@@ -7687,15 +7687,15 @@
         "Generates total net savings of ₹500",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.23,
+      "executionTimeMs": 0.21,
       "merchantResolved": true,
       "resolvedMerchantName": "LIC / HDFC ERGO Insurance",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "utilities",
       "trace": {
-        "traceId": "trace-1787837597100-hz0h4",
-        "timestamp": "2026-08-27T13:33:17.101Z",
+        "traceId": "trace-1788267376054-xuawr",
+        "timestamp": "2026-09-01T12:56:16.054Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "LIC / HDFC ERGO Insurance",
@@ -7729,14 +7729,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_moneyback_credit_card",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-hdfc-infinia\", got\"MoneyBack Credit Card (hdfc_moneyback_credit_card)\""
@@ -7781,8 +7781,8 @@
       "categoryMatched": true,
       "inferredCategory": "medical",
       "trace": {
-        "traceId": "trace-1787837597101-eme67",
-        "timestamp": "2026-08-27T13:33:17.101Z",
+        "traceId": "trace-1788267376054-v8xwe",
+        "timestamp": "2026-09-01T12:56:16.054Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Apollo Pharmacy & Health",
@@ -7868,8 +7868,8 @@
       "categoryMatched": true,
       "inferredCategory": "medical",
       "trace": {
-        "traceId": "trace-1787837597101-pdyqi",
-        "timestamp": "2026-08-27T13:33:17.101Z",
+        "traceId": "trace-1788267376054-llzbj",
+        "timestamp": "2026-09-01T12:56:16.055Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Apollo Pharmacy & Health",
@@ -7903,14 +7903,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_moneyback_credit_card",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-simplyclick\", got\"MoneyBack Credit Card (hdfc_moneyback_credit_card)\""
@@ -7947,15 +7947,15 @@
         "Generates total net savings of ₹18",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.34,
+      "executionTimeMs": 0.32,
       "merchantResolved": true,
       "resolvedMerchantName": "Apollo Pharmacy & Health",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "medical",
       "trace": {
-        "traceId": "trace-1787837597101-b4ph1",
-        "timestamp": "2026-08-27T13:33:17.102Z",
+        "traceId": "trace-1788267376055-nrcgg",
+        "timestamp": "2026-09-01T12:56:16.055Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Apollo Pharmacy & Health",
@@ -7989,14 +7989,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "icici_amazon_pay_icici_bank_credit_card_apply_online",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-simplyclick\", got\"Amazon Pay ICICI Bank Credit Card – Apply Online (icici_amazon_pay_icici_bank_credit_card_apply_online)\""
@@ -8033,15 +8033,15 @@
         "Generates total net savings of ₹36",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.27,
+      "executionTimeMs": 0.28,
       "merchantResolved": true,
       "resolvedMerchantName": "Apollo Pharmacy & Health",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "medical",
       "trace": {
-        "traceId": "trace-1787837597102-32viu",
-        "timestamp": "2026-08-27T13:33:17.102Z",
+        "traceId": "trace-1788267376055-4tjtp",
+        "timestamp": "2026-09-01T12:56:16.055Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Apollo Pharmacy & Health",
@@ -8119,15 +8119,15 @@
         "Generates total net savings of ₹9",
         "Top discovery card recommendation for ICICI Bank"
       ],
-      "executionTimeMs": 0.23,
+      "executionTimeMs": 0.33,
       "merchantResolved": true,
       "resolvedMerchantName": "Apollo Pharmacy & Health",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "medical",
       "trace": {
-        "traceId": "trace-1787837597102-a1ppj",
-        "timestamp": "2026-08-27T13:33:17.102Z",
+        "traceId": "trace-1788267376055-2v90u",
+        "timestamp": "2026-09-01T12:56:16.056Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Apollo Pharmacy & Health",
@@ -8161,14 +8161,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "icici_amazon_pay_icici_bank_credit_card_apply_online",
               "topCompositeScore": 21
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-simplyclick\", got\"Amazon Pay ICICI Bank Credit Card – Apply Online (icici_amazon_pay_icici_bank_credit_card_apply_online)\""
@@ -8212,8 +8212,8 @@
       "categoryMatched": true,
       "inferredCategory": "entertainment",
       "trace": {
-        "traceId": "trace-1787837597102-fu1ag",
-        "timestamp": "2026-08-27T13:33:17.102Z",
+        "traceId": "trace-1788267376056-9imjx",
+        "timestamp": "2026-09-01T12:56:16.056Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BookMyShow",
@@ -8292,15 +8292,15 @@
         "Generates total net savings of ₹72",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.18,
+      "executionTimeMs": 0.2,
       "merchantResolved": true,
       "resolvedMerchantName": "BookMyShow",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "entertainment",
       "trace": {
-        "traceId": "trace-1787837597102-ujt6e",
-        "timestamp": "2026-08-27T13:33:17.103Z",
+        "traceId": "trace-1788267376056-u0r3o",
+        "timestamp": "2026-09-01T12:56:16.056Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BookMyShow",
@@ -8334,14 +8334,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-simplyclick\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -8378,15 +8378,15 @@
         "Generates total net savings of ₹18",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.18,
+      "executionTimeMs": 0.2,
       "merchantResolved": true,
       "resolvedMerchantName": "BookMyShow",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "entertainment",
       "trace": {
-        "traceId": "trace-1787837597103-dlo5i",
-        "timestamp": "2026-08-27T13:33:17.103Z",
+        "traceId": "trace-1788267376056-c963t",
+        "timestamp": "2026-09-01T12:56:16.056Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BookMyShow",
@@ -8464,15 +8464,15 @@
         "Generates total net savings of ₹33",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.18,
+      "executionTimeMs": 0.19,
       "merchantResolved": true,
       "resolvedMerchantName": "BookMyShow",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "entertainment",
       "trace": {
-        "traceId": "trace-1787837597103-4opob",
-        "timestamp": "2026-08-27T13:33:17.103Z",
+        "traceId": "trace-1788267376056-iqdys",
+        "timestamp": "2026-09-01T12:56:16.056Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BookMyShow",
@@ -8550,15 +8550,15 @@
         "Generates total net savings of ₹98",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.21,
+      "executionTimeMs": 0.19,
       "merchantResolved": true,
       "resolvedMerchantName": "BookMyShow",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "entertainment",
       "trace": {
-        "traceId": "trace-1787837597103-k8oeh",
-        "timestamp": "2026-08-27T13:33:17.103Z",
+        "traceId": "trace-1788267376056-ddmrq",
+        "timestamp": "2026-09-01T12:56:16.057Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "BookMyShow",
@@ -8592,14 +8592,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-sbi-simplyclick\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -8637,15 +8637,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.13,
+      "executionTimeMs": 0.14,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597103-6iytc",
-        "timestamp": "2026-08-27T13:33:17.103Z",
+        "traceId": "trace-1788267376057-pddzt",
+        "timestamp": "2026-09-01T12:56:16.057Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -8730,8 +8730,8 @@
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597103-394r5",
-        "timestamp": "2026-08-27T13:33:17.103Z",
+        "traceId": "trace-1788267376057-kr44r",
+        "timestamp": "2026-09-01T12:56:16.057Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "DMart Ready & Supermarket",
@@ -8810,15 +8810,15 @@
         "Generates total net savings of ₹1875",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.29,
+      "executionTimeMs": 0.16,
       "merchantResolved": true,
       "resolvedMerchantName": "Amazon.in",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597103-txjn9",
-        "timestamp": "2026-08-27T13:33:17.104Z",
+        "traceId": "trace-1788267376057-6yc2x",
+        "timestamp": "2026-09-01T12:56:16.057Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -8853,14 +8853,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 1,
+            "durationMs": 0,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 1
+        "totalDurationMs": 0
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-icici-amazon\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -8904,8 +8904,8 @@
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597104-85k0a",
-        "timestamp": "2026-08-27T13:33:17.104Z",
+        "traceId": "trace-1788267376057-l7kir",
+        "timestamp": "2026-09-01T12:56:16.057Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Amazon.in",
@@ -8983,15 +8983,15 @@
         "Generates total net savings of ₹1",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.16,
+      "executionTimeMs": 0.18,
       "merchantResolved": true,
       "resolvedMerchantName": "Uber Rides",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597104-ziqe6",
-        "timestamp": "2026-08-27T13:33:17.104Z",
+        "traceId": "trace-1788267376057-4ren1",
+        "timestamp": "2026-09-01T12:56:16.057Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Uber Rides",
@@ -9069,15 +9069,15 @@
         "Generates total net savings of ₹2175",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.17,
+      "executionTimeMs": 0.21,
       "merchantResolved": true,
       "resolvedMerchantName": "Croma Electronics",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597104-dnfb9",
-        "timestamp": "2026-08-27T13:33:17.104Z",
+        "traceId": "trace-1788267376057-s6gmd",
+        "timestamp": "2026-09-01T12:56:16.058Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Croma Electronics",
@@ -9111,14 +9111,14 @@
           },
           {
             "stageName": "Multi-Factor Scoring & Ranking",
-            "durationMs": 0,
+            "durationMs": 1,
             "details": {
               "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
         ],
-        "totalDurationMs": 0
+        "totalDurationMs": 1
       },
       "failureReasons": [
         "Card mismatch: Expected\"card-tata-neu-infinity\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
@@ -9159,15 +9159,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 1.63,
+      "executionTimeMs": 1.67,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597076-zdjsn",
-        "timestamp": "2026-08-27T13:33:17.077Z",
+        "traceId": "trace-1788267376028-jev48",
+        "timestamp": "2026-09-01T12:56:16.029Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy",
@@ -9216,53 +9216,53 @@
       ]
     },
     {
-      "scenarioId": "scenario-042",
-      "title": "IndianOil City Petrol Pump",
-      "category": "fuel",
-      "merchantInput": "IndianOil Fuel Station",
-      "amount": 1800,
+      "scenarioId": "scenario-055",
+      "title": "Flipkart Furniture Order",
+      "category": "shopping",
+      "merchantInput": "Flipkart",
+      "amount": 8200,
       "passed": false,
       "top1Match": false,
       "top3Match": false,
-      "actualWinnerId": "hdfc_bharat_credit_card",
-      "actualWinnerName": "Bharat Credit Card",
-      "expectedWinner": "card-axis-indian-oil",
+      "actualWinnerId": "hdfc_pixel_play_credit_card",
+      "actualWinnerName": "PIXEL Play Credit Card",
+      "expectedWinner": "card-sbi-cashback",
       "acceptableAlternatives": [
-        "card-bpcl-octane-sbi"
+        "card-icici-amazon"
       ],
       "actualTop3Ids": [
-        "hdfc_bharat_credit_card",
-        "hdfc_millennia_credit_card",
+        "hdfc_pixel_play_credit_card",
+        "hdfc_moneyback_credit_card",
         "hdfc_pine_labs_hdfc_bank_pro_credit_card"
       ],
-      "actualSavings": 27,
-      "expectedSavings": 72,
-      "savingsDiff": -45,
+      "actualSavings": 123,
+      "expectedSavings": 410,
+      "savingsDiff": -287,
       "confidence": 100,
       "minimumConfidence": 80,
       "confidencePassed": true,
       "reasoning": [
         "Effective 1.5% reward multiplier on spend",
-        "Generates total net savings of ₹27",
+        "Generates total net savings of ₹123",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.53,
+      "executionTimeMs": 0.78,
       "merchantResolved": true,
-      "resolvedMerchantName": "IndianOil Fuel Station",
+      "resolvedMerchantName": "Flipkart",
       "offerResolved": false,
       "categoryMatched": true,
-      "inferredCategory": "fuel",
+      "inferredCategory": "shopping",
       "trace": {
-        "traceId": "trace-1787837597089-z4rc5",
-        "timestamp": "2026-08-27T13:33:17.090Z",
+        "traceId": "trace-1788267376046-aj0he",
+        "timestamp": "2026-09-01T12:56:16.047Z",
         "mode": "wallet_optimisation",
         "input": {
-          "merchant": "IndianOil Fuel Station",
-          "amount": 1800,
+          "merchant": "Flipkart",
+          "amount": 8200,
           "mode": "wallet_optimisation",
           "ownedCardIds": [
-            "card-axis-indian-oil",
-            "card-bpcl-octane-sbi"
+            "card-sbi-cashback",
+            "card-icici-amazon"
           ],
           "userPrimaryGoal": "maximize_cashback",
           "transactionDate": "2026-07-27T00:00:00.000Z"
@@ -9272,9 +9272,9 @@
             "stageName": "Resolution & Context Building",
             "durationMs": 0,
             "details": {
-              "resolvedMerchant": "IndianOil Fuel Station",
+              "resolvedMerchant": "Flipkart",
               "matchType": "exact",
-              "applicableOffersCount": 1
+              "applicableOffersCount": 0
             }
           },
           {
@@ -9290,7 +9290,7 @@
             "stageName": "Multi-Factor Scoring & Ranking",
             "durationMs": 1,
             "details": {
-              "topCardId": "hdfc_bharat_credit_card",
+              "topCardId": "hdfc_pixel_play_credit_card",
               "topCompositeScore": 24
             }
           }
@@ -9298,7 +9298,7 @@
         "totalDurationMs": 1
       },
       "failureReasons": [
-        "Card mismatch: Expected\"card-axis-indian-oil\", got\"Bharat Credit Card (hdfc_bharat_credit_card)\""
+        "Card mismatch: Expected\"card-sbi-cashback\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
       ]
     },
     {
@@ -9334,15 +9334,15 @@
         "Top discovery card recommendation for Axis Bank",
         "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.51,
+      "executionTimeMs": 0.54,
       "merchantResolved": true,
       "resolvedMerchantName": "Swiggy Food & Instamart",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597077-gaygz",
-        "timestamp": "2026-08-27T13:33:17.077Z",
+        "traceId": "trace-1788267376030-48jqu",
+        "timestamp": "2026-09-01T12:56:16.030Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "Swiggy Instamart",
@@ -9391,11 +9391,11 @@
       ]
     },
     {
-      "scenarioId": "scenario-017",
-      "title": "MakeMyTrip Luxury Hotel Stay",
+      "scenarioId": "scenario-025",
+      "title": "MakeMyTrip Holiday Package",
       "category": "travel",
       "merchantInput": "MakeMyTrip",
-      "amount": 24000,
+      "amount": 35000,
       "passed": false,
       "top1Match": false,
       "top3Match": false,
@@ -9410,35 +9410,34 @@
         "hdfc_rupay_credit_card",
         "hdfc_moneyback_credit_card"
       ],
-      "actualSavings": 360,
-      "expectedSavings": 3600,
-      "savingsDiff": -3240,
+      "actualSavings": 525,
+      "expectedSavings": 5250,
+      "savingsDiff": -4725,
       "confidence": 100,
       "minimumConfidence": 85,
       "confidencePassed": true,
       "reasoning": [
         "Effective 1.5% reward multiplier on spend",
-        "Generates total net savings of ₹360",
+        "Generates total net savings of ₹525",
         "Top discovery card recommendation for HDFC Bank"
       ],
-      "executionTimeMs": 0.51,
+      "executionTimeMs": 0.54,
       "merchantResolved": true,
       "resolvedMerchantName": "MakeMyTrip",
       "offerResolved": false,
       "categoryMatched": true,
       "inferredCategory": "travel",
       "trace": {
-        "traceId": "trace-1787837597081-j2i5y",
-        "timestamp": "2026-08-27T13:33:17.082Z",
+        "traceId": "trace-1788267376037-s1rv8",
+        "timestamp": "2026-09-01T12:56:16.038Z",
         "mode": "wallet_optimisation",
         "input": {
           "merchant": "MakeMyTrip",
-          "amount": 24000,
+          "amount": 35000,
           "mode": "wallet_optimisation",
           "ownedCardIds": [
             "card-axis-atlas",
-            "card-hdfc-infinia",
-            "card-hdfc-regalia-gold"
+            "card-hdfc-infinia"
           ],
           "userPrimaryGoal": "maximize_cashback",
           "transactionDate": "2026-07-27T00:00:00.000Z"
@@ -9478,52 +9477,55 @@
       ]
     },
     {
-      "scenarioId": "scenario-047",
-      "title": "Amazon Books & Kindle Spend",
-      "category": "shopping",
-      "merchantInput": "Amazon.in",
-      "amount": 1200,
+      "scenarioId": "scenario-003",
+      "title": "Zomato Weekend Dinner",
+      "category": "dining",
+      "merchantInput": "Zomato",
+      "amount": 1500,
       "passed": false,
       "top1Match": false,
       "top3Match": false,
-      "actualWinnerId": "hdfc_pixel_play_credit_card",
-      "actualWinnerName": "PIXEL Play Credit Card",
-      "expectedWinner": "card-icici-amazon",
+      "actualWinnerId": "axis_lic_axis_bank_platinum_credit_card",
+      "actualWinnerName": "LIC Axis Bank Platinum Credit Card",
+      "expectedWinner": "card-airtel-axis",
       "acceptableAlternatives": [
+        "card-axis-ace",
         "card-sbi-cashback"
       ],
       "actualTop3Ids": [
-        "hdfc_pixel_play_credit_card",
-        "icici_amazon_pay_icici_bank_credit_card_apply_online",
-        "icici_icici_bank_hpcl_coral_credit_card_25_fuel_cashback"
+        "axis_lic_axis_bank_platinum_credit_card",
+        "axis_fibe_axis_bank_credit_card",
+        "axis_google_pay_flex_axis_bank_credit_card"
       ],
-      "actualSavings": 18,
-      "expectedSavings": 60,
-      "savingsDiff": -42,
-      "confidence": 100,
-      "minimumConfidence": 90,
+      "actualSavings": 23,
+      "expectedSavings": 150,
+      "savingsDiff": -127,
+      "confidence": 90,
+      "minimumConfidence": 80,
       "confidencePassed": true,
       "reasoning": [
         "Effective 1.5% reward multiplier on spend",
-        "Generates total net savings of ₹18",
-        "Top discovery card recommendation for HDFC Bank"
+        "Generates total net savings of ₹23",
+        "Top discovery card recommendation for Axis Bank",
+        "Lifetime free card with zero annual maintenance fee"
       ],
-      "executionTimeMs": 0.51,
+      "executionTimeMs": 0.5,
       "merchantResolved": true,
-      "resolvedMerchantName": "Amazon.in",
+      "resolvedMerchantName": "Zomato Food Delivery",
       "offerResolved": false,
       "categoryMatched": true,
-      "inferredCategory": "shopping",
+      "inferredCategory": "dining",
       "trace": {
-        "traceId": "trace-1787837597091-lwimp",
-        "timestamp": "2026-08-27T13:33:17.092Z",
+        "traceId": "trace-1788267376030-h0a0y",
+        "timestamp": "2026-09-01T12:56:16.031Z",
         "mode": "wallet_optimisation",
         "input": {
-          "merchant": "Amazon.in",
-          "amount": 1200,
+          "merchant": "Zomato",
+          "amount": 1500,
           "mode": "wallet_optimisation",
           "ownedCardIds": [
-            "card-icici-amazon",
+            "card-airtel-axis",
+            "card-axis-ace",
             "card-sbi-cashback"
           ],
           "userPrimaryGoal": "maximize_cashback",
@@ -9534,8 +9536,8 @@
             "stageName": "Resolution & Context Building",
             "durationMs": 0,
             "details": {
-              "resolvedMerchant": "Amazon.in",
-              "matchType": "exact",
+              "resolvedMerchant": "Zomato Food Delivery",
+              "matchType": "alias",
               "applicableOffersCount": 1
             }
           },
@@ -9552,7 +9554,7 @@
             "stageName": "Multi-Factor Scoring & Ranking",
             "durationMs": 1,
             "details": {
-              "topCardId": "hdfc_pixel_play_credit_card",
+              "topCardId": "axis_lic_axis_bank_platinum_credit_card",
               "topCompositeScore": 24
             }
           }
@@ -9560,7 +9562,7 @@
         "totalDurationMs": 1
       },
       "failureReasons": [
-        "Card mismatch: Expected\"card-icici-amazon\", got\"PIXEL Play Credit Card (hdfc_pixel_play_credit_card)\""
+        "Card mismatch: Expected\"card-airtel-axis\", got\"LIC Axis Bank Platinum Credit Card (axis_lic_axis_bank_platinum_credit_card)\""
       ]
     }
   ],

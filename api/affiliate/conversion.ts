@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabase } from '../../src/lib/supabase';
+import { supabaseAdmin as supabase } from '../admin/_utils/supabaseAdmin';
 import { CommissionCalculator } from '../../src/features/commerce/services/CommissionCalculator';
 import crypto from 'crypto';
 
@@ -15,22 +15,36 @@ interface ConversionPayload {
   partner_identity: string; // Used to confirm attribution
 }
 
-function verifyWebhookSignature(req: VercelRequest): boolean {
-  // In a real system, this would be an HMAC verification using a partner-specific secret.
-  // For this project, we use a single environment variable to simulate a secure connection.
-  const signature = req.headers['x-affiliate-signature'];
-  const expectedSecret = process.env.AFFILIATE_WEBHOOK_SECRET || 'test-secret';
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+const getRawBody = async (req: VercelRequest): Promise<Buffer> => {
+  return new Promise((resolve, reject) => {
+    let body = Buffer.alloc(0);
+    req.on('data', (chunk) => {
+      body = Buffer.concat([body, chunk]);
+    });
+    req.on('end', () => resolve(body));
+    req.on('error', reject);
+  });
+};
+
+function verifyWebhookSignature(signature: string | string[] | undefined, rawBody: Buffer): boolean {
+  const expectedSecret = process.env.AFFILIATE_WEBHOOK_SECRET;
   
-  if (!signature) return false;
+  if (!expectedSecret || !signature || typeof signature !== 'string') {
+    return false;
+  }
 
-  const bodyString = JSON.stringify(req.body);
-  const expectedSignature = crypto.createHmac('sha256', expectedSecret).update(bodyString).digest('hex');
+  const expectedSignature = crypto.createHmac('sha256', expectedSecret).update(rawBody).digest('hex');
 
-  // Time-safe string comparison
   try {
-    return crypto.timingSafeEqual(Buffer.from(signature as string), Buffer.from(expectedSignature));
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   } catch {
-    return false; // Different lengths or bad format
+    return false; 
   }
 }
 
@@ -39,12 +53,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 
+  if (!supabase) {
+    return res.status(500).json({ success: false, error: 'Database admin client not configured' });
+  }
+
+  let rawBody: Buffer;
+  try {
+    rawBody = await getRawBody(req);
+  } catch (e) {
+    return res.status(400).json({ success: false, error: 'Failed to read request body' });
+  }
+
   // 1. Webhook Authentication
-  if (!verifyWebhookSignature(req)) {
+  if (!verifyWebhookSignature(req.headers['x-affiliate-signature'], rawBody)) {
     return res.status(401).json({ success: false, error: 'Unauthorized webhook signature' });
   }
 
-  const payload = req.body as ConversionPayload;
+  let payload: ConversionPayload;
+  try {
+    payload = JSON.parse(rawBody.toString('utf8'));
+  } catch (e) {
+    return res.status(400).json({ success: false, error: 'Invalid JSON payload' });
+  }
 
   // 2. Payload Validation
   if (!payload.click_id || !payload.transaction_id || payload.order_value === undefined) {
@@ -73,15 +103,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 5. Check Idempotency (Attempt to find existing conversion)
-    const { data: existingConversion } = await supabase
+    const { data: existingConversion, error: existingErr } = await supabase
       .from('conversions')
-      .select('id, status')
+      .select('id, status, partner_id')
       .eq('external_transaction_id', payload.transaction_id)
-      .single();
+      .maybeSingle();
 
     let conversionId = existingConversion?.id;
 
     if (existingConversion) {
+      // Security: Ensure we aren't modifying another partner's conversion
+      if (existingConversion.partner_id !== trackingEvent.partner_id) {
+        return res.status(403).json({ success: false, error: 'Transaction belongs to a different partner' });
+      }
+
       // Idempotent Update
       if (existingConversion.status !== payload.status) {
         await supabase
@@ -115,10 +150,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .select('id')
       .single();
 
-    if (conversionError || !newConversion) {
-      throw new Error(conversionError?.message || 'Failed to insert conversion');
+    if (conversionError) {
+      // If a race condition caused a unique constraint violation on external_transaction_id,
+      // it's an idempotent success since the other request handled it.
+      if (conversionError.code === '23505') {
+        return res.status(200).json({ success: true, message: 'Conversion processed idempotently (race resolved)' });
+      }
+      throw new Error('Failed to insert conversion');
     }
-    conversionId = newConversion.id;
+    conversionId = newConversion?.id;
 
     // 7. Commission Calculation
     const { data: affiliateRel } = await supabase

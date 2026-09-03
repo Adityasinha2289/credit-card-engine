@@ -1,6 +1,6 @@
 # RenoCred Recommendation Evaluation Report
 
-**Timestamp**: 2026-08-27T13:33:17.107Z  
+**Timestamp**: 2026-09-01T12:56:16.059Z  
 **Total Scenarios Evaluated**: 100  
 **Quality Gate**: 🔴 FAILED  
 
@@ -45,12 +45,12 @@ Recommendation Evaluation Platform evaluated 100 benchmark scenarios with Top-1 
 
 | Category | Scenarios | Passed | Top-1 Acc | Top-3 Acc | Avg Conf | Avg Savings | Avg Time |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `dining` | 16 | 0 | 0% | 0% | 90.6% | ₹22 | 0.35 ms |
-| `travel` | 16 | 0 | 0% | 0% | 97.5% | ₹200 | 0.31 ms |
-| `fuel` | 12 | 0 | 0% | 0% | 100% | ₹31 | 0.33 ms |
-| `shopping` | 27 | 0 | 0% | 0% | 100% | ₹413 | 0.28 ms |
-| `utilities` | 19 | 0 | 0% | 0% | 100% | ₹117 | 0.22 ms |
-| `medical` | 5 | 0 | 0% | 0% | 100% | ₹26 | 0.3 ms |
+| `dining` | 16 | 0 | 0% | 0% | 90.6% | ₹22 | 0.36 ms |
+| `travel` | 16 | 0 | 0% | 0% | 97.5% | ₹200 | 0.34 ms |
+| `fuel` | 12 | 0 | 0% | 0% | 100% | ₹31 | 0.34 ms |
+| `shopping` | 27 | 0 | 0% | 0% | 100% | ₹413 | 0.27 ms |
+| `utilities` | 19 | 0 | 0% | 0% | 100% | ₹117 | 0.23 ms |
+| `medical` | 5 | 0 | 0% | 0% | 100% | ₹26 | 0.31 ms |
 | `entertainment` | 5 | 0 | 0% | 0% | 100% | ₹49 | 0.19 ms |
 
 ## Confidence Distribution
@@ -105,11 +105,11 @@ Recommendation Evaluation Platform evaluated 100 benchmark scenarios with Top-1 
 
 | Scenario ID | Merchant | Amount | Execution Time |
 | :--- | :--- | :---: | :---: |
-| `scenario-001` | Swiggy | ₹450 | **1.63 ms** |
-| `scenario-042` | IndianOil Fuel Station | ₹1800 | **0.53 ms** |
-| `scenario-002` | Swiggy Instamart | ₹1200 | **0.51 ms** |
-| `scenario-017` | MakeMyTrip | ₹24000 | **0.51 ms** |
-| `scenario-047` | Amazon.in | ₹1200 | **0.51 ms** |
+| `scenario-001` | Swiggy | ₹450 | **1.67 ms** |
+| `scenario-055` | Flipkart | ₹8200 | **0.78 ms** |
+| `scenario-002` | Swiggy Instamart | ₹1200 | **0.54 ms** |
+| `scenario-025` | MakeMyTrip | ₹35000 | **0.54 ms** |
+| `scenario-003` | Zomato | ₹1500 | **0.5 ms** |
 
 ## Failed Scenarios Breakdown
 

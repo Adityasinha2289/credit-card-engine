@@ -1,7 +1,7 @@
 import { RecommendationService } from '../recommendationService';
 import { ApiValidator } from './validator';
 import { MockRateLimiter, type RateLimiterHook } from './rateLimiter';
-import { MockClerkAuth, type AuthHook } from './auth';
+import { ClerkAuth, type AuthHook } from './auth';
 import type { ApiResponse } from './types';
 
 export class RecommendationApiController {
@@ -12,7 +12,7 @@ export class RecommendationApiController {
   constructor(
     service: RecommendationService = RecommendationService.getInstance(),
     rateLimiter: RateLimiterHook = new MockRateLimiter(),
-    auth: AuthHook = new MockClerkAuth()
+    auth: AuthHook = new ClerkAuth()
   ) {
     this.service = service;
     this.rateLimiter = rateLimiter;
@@ -46,7 +46,22 @@ export class RecommendationApiController {
     }
 
     // 2. Authentication Verification Check
-    await this.auth.verifyToken(authHeader);
+    const authResult = await this.auth.verifyToken(authHeader);
+    if (!authResult.authenticated) {
+      return {
+        statusCode: 401,
+        payload: {
+          success: false,
+          requestId,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: authResult.error || 'Authentication failed',
+          },
+          executionTimeMs: Date.now() - startTime,
+          timestamp: new Date().toISOString(),
+        },
+      };
+    }
 
     // 3. Payload Validation Check
     const validation = ApiValidator.validateRequest(body);

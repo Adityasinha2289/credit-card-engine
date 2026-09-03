@@ -12,7 +12,8 @@ export type TransactionCategory =
   | 'health'
   | 'transport'
   | 'subscriptions'
-  | 'other';
+  | 'other'
+  | 'fuel';
 
 export type TransactionType = 'debit' | 'credit' | 'refund';
 

@@ -1,4 +1,5 @@
-import type { CreditCardIntelligence, CardNetwork, RewardType, PremiumTier, TransactionCategory } from '../types';
+import type { CreditCardIntelligence, CardNetwork, RewardType, PremiumTier } from '../types';
+import type { TransactionCategory } from '../../dashboard/types/dashboard.types';
 import type { CreditCard } from '../../../../renocred-data/types';
 import type { CanonicalCard } from '../../../../renocred-data/types/canonical';
 import { DatasetNormalizer } from '../../../../renocred-data/normalizers/DatasetNormalizer';

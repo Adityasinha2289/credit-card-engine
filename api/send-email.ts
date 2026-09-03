@@ -100,7 +100,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       html: html,
     });
 
-    return res.status(200).json({ success: true, id: data.id || data.data?.id });
+    return res.status(200).json({ success: true, id: data.data?.id });
   } catch (error: any) {
     // Avoid exposing Resend secrets or stack traces
     console.error('[Email Service Error]', error.message);

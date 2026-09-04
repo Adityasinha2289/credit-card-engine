@@ -918,7 +918,13 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
     ),
     {
       name: 'WealthOS/DashboardStore',
-      enabled: import.meta.env.DEV,
+      enabled: (function() {
+        try {
+          return import.meta.env.DEV;
+        } catch (e) {
+          return typeof process !== 'undefined' && process.env ? process.env.NODE_ENV !== 'production' : false;
+        }
+      })(),
     },
   ),
 );

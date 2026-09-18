@@ -20,7 +20,7 @@ export function PublicFooter() {
 
   return (
     <>
-      <footer className="border-t border-white/5 bg-[#0f1115] py-16">
+      <footer className="border-t border-white/10 bg-[#030504] py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-10 md:gap-12">
 
@@ -49,7 +49,7 @@ export function PublicFooter() {
                 <li><Link to="/about" className="text-sm text-gray-400 hover:text-white transition-colors">About</Link></li>
                 <li><Link to="/methodology" className="text-sm text-gray-400 hover:text-white transition-colors">Methodology</Link></li>
                 <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                <li><Link to="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">Contact</Link></li>
               </ul>
             </nav>
 
@@ -70,11 +70,11 @@ export function PublicFooter() {
             <nav aria-label="Tools and calculators">
               <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-wider">Tools</h3>
               <ul className="space-y-4">
-                <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Compare Cards</a></li>
-                <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Rewards Calculator</a></li>
-                <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Savings Estimator</a></li>
-                <li><a href="#" onClick={handleProtectedLink} className="text-sm text-gray-400 hover:text-white transition-colors">Eligibility Checker</a></li>
-                <li><Link to="/app" className="text-sm text-brand-emerald font-semibold hover:text-brand-emerald-hover transition-colors">Open RenoCred App →</Link></li>
+                <li><Link to="/cards" className="text-sm text-gray-400 hover:text-white transition-colors">Compare Cards</Link></li>
+                <li><Link to="/calculators/credit-card-reward-calculator" className="text-sm text-gray-400 hover:text-white transition-colors">Rewards Calculator</Link></li>
+                <li><Link to="/calculators/annual-fee-break-even" className="text-sm text-gray-400 hover:text-white transition-colors">Savings Estimator</Link></li>
+                <li><Link to="/calculators/credit-utilization" className="text-sm text-gray-400 hover:text-white transition-colors">Eligibility Checker</Link></li>
+                <li><Link to="/app" className="text-sm text-semantic-brand font-semibold hover:text-semantic-brand-strong transition-colors">Open RenoCred App →</Link></li>
               </ul>
             </nav>
 
@@ -93,7 +93,7 @@ export function PublicFooter() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="mt-16 pt-8 border-t border-white/5 text-xs text-gray-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="mt-16 pt-8 border-t border-white/10 text-xs text-gray-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <p>&copy; {year} RenoCred. All rights reserved.</p>
             <p className="max-w-2xl text-left md:text-right">RenoCred provides informational and analytical tools. We are not acting as a financial advisor. Recommendations and comparisons do not guarantee outcomes. Credit card terms and eligibility can change. Users should verify product details with the official issuer.</p>
           </div>

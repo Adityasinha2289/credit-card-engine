@@ -1,5 +1,7 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { Suspense, lazy } from 'react';
+import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { BarChart3, Target, ShieldCheck, Zap, FileText } from 'lucide-react';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { cn } from '../../lib/utils';
@@ -21,7 +23,37 @@ const INSIGHTS_TABS: { id: InsightsTabId; label: string; icon: typeof BarChart3 
 ];
 
 export default function InsightsPage() {
-  const [activeTab, setActiveTab] = useState<InsightsTabId>('insights');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const profile = useDashboardStore(s => s.profile);
+  
+  // Re-order tabs based on user goal
+  const sortedTabs = React.useMemo(() => {
+    const tabs = [...INSIGHTS_TABS];
+    if (profile?.primaryGoal === 'Build Credit Score') {
+      const cibilIdx = tabs.findIndex(t => t.id === 'cibil');
+      if (cibilIdx > -1) {
+        const [cibil] = tabs.splice(cibilIdx, 1);
+        tabs.unshift(cibil);
+      }
+    } else if (profile?.primaryGoal === 'Save More Money') {
+      const budgetIdx = tabs.findIndex(t => t.id === 'budget');
+      if (budgetIdx > -1) {
+        const [budget] = tabs.splice(budgetIdx, 1);
+        tabs.unshift(budget);
+      }
+    }
+    return tabs;
+  }, [profile?.primaryGoal]);
+
+  const defaultTab = sortedTabs[0].id;
+  const activeTab = (searchParams.get('sub') as InsightsTabId) || defaultTab;
+
+  const setActiveTab = (tab: InsightsTabId) => {
+    setSearchParams(prev => {
+      prev.set('sub', tab);
+      return prev;
+    }, { replace: true });
+  };
 
   return (
     <PageContainer
@@ -29,7 +61,7 @@ export default function InsightsPage() {
       subtitle={activeTab === 'insights' ? 'Smart analysis of your spending patterns' : activeTab === 'budget' ? 'Track your credit health and budgets' : activeTab === 'report' ? 'Detailed breakdown of your monthly spending' : activeTab === 'simulator' ? 'See how your actions impact your credit score' : 'Your credit health report'}
     >
       <div className="flex gap-1 bg-surface-secondary/60 dark:bg-surface-elevated/30 rounded-2xl p-1 backdrop-blur-sm">
-        {INSIGHTS_TABS.map(({ id, label, icon: Icon }) => (
+        {sortedTabs.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}

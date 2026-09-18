@@ -14,6 +14,7 @@ import { useUser } from '@clerk/clerk-react';
 import { useProfileQuery, useUserCardsQuery } from '../../hooks/queries';
 import { useDashboardMutations } from '../../hooks/queries/useDashboardMutations';
 import { CardDetailsModal } from '../../features/dashboard/components/CardDetailsModal';
+import { UpiSimulator } from '../../features/dashboard/components/v3/UpiSimulator';
 
 export default function WalletPage() {
   const { user } = useUser();
@@ -32,6 +33,7 @@ export default function WalletPage() {
   const [analysisStatus, setAnalysisStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
   const [coverageData, setCoverageData] = useState<{name: string, value: number}[]>([]);
   const [topPaths, setTopPaths] = useState<{category: string, card: string, value: number}[]>([]);
+  const [optimizationGap, setOptimizationGap] = useState<any>(null);
   const [availableValue, setAvailableValue] = useState(0);
   const [coveragePercent, setCoveragePercent] = useState(0);
 
@@ -47,11 +49,7 @@ export default function WalletPage() {
         setAnalysisStatus('loading');
         const userId = profile?.id;
         if (!userId) return;
-        const results = await CommerceOptimizationService.optimizeCollection(userId);
-        
-        if (!mounted) return;
-        
-        const { isEmpty, coveragePercent, availableValue, coverageData, topPaths } = await loadWalletIntelligence(userId);
+        const { isEmpty, coveragePercent, availableValue, coverageData, topPaths, optimizationGap } = await loadWalletIntelligence(userId);
         
         if (isEmpty) {
           setAnalysisStatus('empty');
@@ -62,7 +60,8 @@ export default function WalletPage() {
         setAvailableValue(availableValue);
         setCoverageData(coverageData);
         setTopPaths(topPaths);
-        setAnalysisStatus('success');
+        setOptimizationGap(optimizationGap);
+        setAnalysisStatus('ready');
 
       } catch (err) {
         console.error('Failed to load wallet intelligence', err);
@@ -219,52 +218,50 @@ export default function WalletPage() {
                     </div>
                   </div>
                 ) : (
-                  userCards.map((card, idx) => {
-                    const isPreferred = idx === 0;
-                    return (
-                      <motion.div
-                        key={card.id}
-                        whileHover={{ y: -2 }}
-                        onClick={() => setSelectedCard(card)}
-                        className={cn(
-                          "group relative bg-white border border-gray-300 hover:border-[#2A9D5C]/20 hover:bg-gray-50 rounded-[24px] p-6 transition-all duration-300 overflow-hidden cursor-pointer",
-                          card.status !== 'active' && "opacity-60 grayscale"
-                        )}
-                      >
-                        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-                            <PhysicalCard card={card} variant="wallet" />
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-3">
-                                <h3 className="text-lg font-medium text-gray-900">{card.name || `${card.bank} ${card.network}`}</h3>
-                                {isPreferred && (
-                                  <span className="px-2 py-0.5 rounded bg-gray-100 text-[9px] text-[#2A9D5C] font-bold tracking-widest uppercase border border-[#2A9D5C]/20">
-                                    Preferred
-                                  </span>
-                                )}
+                  <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 gap-4 lg:gap-6 pb-6 md:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    {userCards.map((card, idx) => {
+                      const isPreferred = idx === 0;
+                      return (
+                        <motion.div
+                          key={card.id}
+                          whileHover={{ y: -4, scale: 1.02 }}
+                          whileTap={{ scale: 0.98, y: 0 }}
+                          onClick={() => setSelectedCard(card)}
+                          className={cn(
+                            "group relative rounded-[24px] transition-all duration-300 cursor-pointer snap-center shrink-0 w-[85%] md:w-auto",
+                            card.status !== 'active' && "opacity-60 grayscale"
+                          )}
+                        >
+                          <div className="relative flex flex-col justify-between h-full">
+                            <PhysicalCard card={card} variant="wallet" className="w-full h-auto object-contain drop-shadow-2xl" />
+                            
+                            {/* Desktop Hover Info Overlay */}
+                            <div className="absolute inset-0 bg-gray-900/90 rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-6 backdrop-blur-sm pointer-events-none sm:pointer-events-auto">
+                              <h3 className="font-bold text-lg mb-2">{card.name}</h3>
+                              <div className="space-y-2 text-sm text-center">
+                                <div className="flex justify-between w-full max-w-[200px] border-b border-white/20 pb-1">
+                                  <span className="text-gray-300">Reward Rate:</span>
+                                  <span className="font-semibold text-brand-emerald">{card.baseRewardRate || '1.5'}%</span>
+                                </div>
+                                <div className="flex justify-between w-full max-w-[200px] border-b border-white/20 pb-1">
+                                  <span className="text-gray-300">Limit:</span>
+                                  <span className="font-semibold">₹{(card.creditLimit || 50000).toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between w-full max-w-[200px] pt-1">
+                                  <span className="text-gray-300">Status:</span>
+                                  <span className="font-semibold text-brand-emerald">Active</span>
+                                </div>
                               </div>
-                              <p className="text-sm font-mono text-gray-600">•••• {card.pan.slice(-4)}</p>
-                              
-                              <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-300">
-                                <div className="text-xs text-gray-600 flex items-center gap-1.5">
-                                  <ShieldCheck size={14} className="text-[#2A9D5C]" />
-                                  Optimization Ready
-                                </div>
-                                <div className="text-xs text-gray-600 flex items-center gap-1.5">
-                                  <Activity size={14} />
-                                  {card.status === 'active' ? 'Active Status' : 'Inactive'}
-                                </div>
+                              <div className="mt-4 px-4 py-1.5 rounded-full bg-white/10 text-xs font-semibold uppercase tracking-wider backdrop-blur-md">
+                                Tap for details
                               </div>
                             </div>
+                            
                           </div>
-                          
-                          <div className="hidden sm:flex w-8 h-8 rounded-full bg-gray-50 border border-gray-300 items-center justify-center group-hover:bg-[#2A9D5C]/10 group-hover:border-[#2A9D5C]/30 transition-colors shrink-0">
-                            <ChevronRight size={16} className="text-gray-600 group-hover:text-[#2A9D5C]" />
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </section>
@@ -273,6 +270,9 @@ export default function WalletPage() {
           {/* RIGHT COLUMN: Coverage & Attention */}
           <div className="lg:col-span-5 space-y-8">
             
+            {/* P0.3: UPI SIMULATOR */}
+            <UpiSimulator />
+
             {/* OPTIMIZATION COVERAGE */}
             <section className="bg-white border border-gray-300 rounded-[24px] p-6 md:p-8 space-y-8">
               <div className="flex items-center gap-3">
@@ -286,6 +286,28 @@ export default function WalletPage() {
               </div>
               
               {renderCoverageMatrix()}
+
+              {/* ACTIONABLE GAP ANALYSIS */}
+              {optimizationGap && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{optimizationGap.category} Gap</h4>
+                      <p className="text-xs text-gray-600 mt-1">Your lowest coverage category ({optimizationGap.coverage}%).</p>
+                    </div>
+                  </div>
+                  <div className="bg-brand-forest-deep p-5 rounded-2xl flex flex-col sm:flex-row items-center gap-5">
+                    <div className="shrink-0 w-24">
+                      <PhysicalCard card={{ ...optimizationGap.card, pan: '•••• 1234', cardholderName: 'YOU' }} variant="compact" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h5 className="text-sm font-bold text-brand-cream">{optimizationGap.card.name}</h5>
+                      <p className="text-xs text-brand-cream/70 mt-1 leading-relaxed">{optimizationGap.why}</p>
+                      <button className="mt-3 bg-brand-cream text-brand-forest-deep px-4 py-2 rounded-lg text-xs font-bold hover:bg-white transition-colors">See Card</button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </section>
 
             {/* HOW RENOCRED USES YOUR WALLET */}

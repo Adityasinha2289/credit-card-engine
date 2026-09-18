@@ -90,6 +90,21 @@ export class MerchantResolver {
           inferredCategory: aliasMatch.category,
         };
       }
+      
+      let inferredCategory: TransactionCategory = defaultCategory || 'shopping';
+      if (input.includes('food') || input.includes('zomato') || input.includes('swiggy') || input.includes('dine') || input.includes('restaurant')) {
+        inferredCategory = 'dining';
+      } else if (input.includes('flight') || input.includes('hotel') || input.includes('trip') || input.includes('makemytrip') || input.includes('irctc') || input.includes('uber')) {
+        inferredCategory = 'travel';
+      } else if (input.includes('fuel') || input.includes('hpcl') || input.includes('iocl') || input.includes('bpcl') || input.includes('indianoil') || input.includes('electricity') || input.includes('bescom') || input.includes('broadband') || input.includes('airtel') || input.includes('insurance') || input.includes('lic') || input.includes('government') || input.includes('gst')) {
+        inferredCategory = 'utilities';
+      }
+      return {
+        merchant: undefined,
+        matchType: 'alias',
+        confidenceScore: 90,
+        inferredCategory,
+      };
     }
 
     // 3. Substring / Fuzzy match

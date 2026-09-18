@@ -129,6 +129,15 @@ export function BudgetingPanel() {
         </div>
         
         <div className="flex flex-col gap-3">
+          {budgets.length === 0 && (
+            <div className="panel-glass rounded-2xl p-6 flex flex-col items-center text-center justify-center min-h-[160px] border border-border-subtle bg-surface-primary/30">
+              <p className="text-2xl mb-2">🌊</p>
+              <p className="text-sm font-bold text-text-primary">0 budgets</p>
+              <p className="text-xs text-text-muted mt-1 max-w-[220px]">
+                Keep your spending liquid, or set a target when you're ready.
+              </p>
+            </div>
+          )}
           {budgets.map((budget) => {
             // Sync budget progress with actual recent spend in this category
             const recentSpend = transactions
@@ -240,12 +249,25 @@ export function BudgetingPanel() {
                   </div>
                 </div>
 
-                <div className="w-full h-2.5 bg-surface-secondary dark:bg-white/5 rounded-full overflow-hidden mt-1 relative">
+                <div className="w-full h-2.5 bg-surface-secondary dark:bg-white/5 rounded-full mt-2 relative group cursor-pointer">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 1, ease:"easeOut" }}
-                    className={cn("h-full rounded-full", barColor)}
+                    className={cn("h-full rounded-full absolute left-0 top-0 pointer-events-none", barColor)}
+                  />
+                  <input
+                    type="range"
+                    min={Math.max(100000, dynamicSpend)} // At least 1000 INR
+                    max={Math.max(10000000, dynamicSpend * 2)} // Up to 1L or 2x spend
+                    step={100000} // Steps of 1000 INR
+                    value={budget.limitAmount}
+                    onChange={(e) => {
+                      const newLimit = parseInt(e.target.value, 10);
+                      updateBudgetLimit(budget.id, newLimit);
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize"
+                    title="Drag to adjust budget limit"
                   />
                 </div>
                 

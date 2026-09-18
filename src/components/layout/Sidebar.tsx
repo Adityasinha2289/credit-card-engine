@@ -10,6 +10,7 @@ import {
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
 
 const PRIMARY_NAV = [
   { id: 'home',      path: '/app',          label: 'Home',      Icon: Squares2X2Icon },
@@ -25,6 +26,7 @@ const UTILITY_NAV = [
 
 export function Sidebar() {
   const profile = useDashboardStore((s) => s.profile);
+  const { isLoaded, user } = useUser();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -36,6 +38,7 @@ export function Sidebar() {
   };
 
   const getInitials = (name: string) => {
+    if (!name) return '';
     return name
       .split(' ')
       .map(n => n[0])
@@ -44,7 +47,7 @@ export function Sidebar() {
       .substring(0, 2);
   };
 
-  const userName = profile?.name || "Aditya Sinha";
+  const userName = profile?.name || (isLoaded && user ? user.fullName || user.firstName : '') || '';
   const userInitials = getInitials(userName);
 
   return (
@@ -146,12 +149,21 @@ export function Sidebar() {
             {userInitials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-medium text-gray-900 truncate mb-0.5">
-              {userName}
-            </p>
-            <p className="text-[10px] font-medium text-gray-600 truncate group-hover:text-gray-900 transition-colors">
-              View Profile →
-            </p>
+            {userName ? (
+              <>
+                <p className="text-[13px] font-medium text-gray-900 truncate mb-0.5">
+                  {userName}
+                </p>
+                <p className="text-[10px] font-medium text-gray-600 truncate group-hover:text-gray-900 transition-colors">
+                  View Profile →
+                </p>
+              </>
+            ) : (
+              <div className="flex flex-col gap-1.5 animate-pulse mt-1">
+                <div className="h-3 w-20 bg-gray-200 rounded"></div>
+                <div className="h-2 w-12 bg-gray-200 rounded"></div>
+              </div>
+            )}
           </div>
         </button>
       </div>

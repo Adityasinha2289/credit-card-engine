@@ -43,5 +43,7 @@ export interface CommerceOffer {
   validFrom: string;
   validUntil: string;
   eligibilityRules: any; // Mapped from JSON
+  internal_campaign_metadata?: any;
+  applicable_wallet_card_ids?: string[];
   status: string | null;
 }

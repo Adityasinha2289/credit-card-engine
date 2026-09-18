@@ -3,10 +3,6 @@ import { supabase, isBackendEnabled } from '../../../lib/supabase';
 import { FeatureEngine } from '../../feature-flags/featureEngine';
 import { CommerceMapper } from '../mappers';
 import type { CommerceCategory, CommercePartner, CommerceEntity, CommerceOffer } from '../types';
-import { MOCK_PARTNERS as OPTIMIZATION_MOCK_PARTNERS } from '../../optimization/mock/partners';
-import { MOCK_OFFERS } from '../../optimization/mock/offers';
-import { MOCK_PRODUCTS } from '../../lifestyle/mock/products';
-import { MOCK_PARTNERS as LIFESTYLE_MOCK_PARTNERS } from '../../lifestyle/mock/partners';
 
 export class CommerceRepositoryError extends Error {
   constructor(message: string, public readonly code?: string) {
@@ -41,31 +37,7 @@ export class CommerceRepository {
   // --- PARTNERS ---
   static async getPartners(categoryId?: string): Promise<CommercePartner[]> {
     if (this.useMock) {
-      const all = LIFESTYLE_MOCK_PARTNERS.map(p => ({
-        id: p.id,
-        slug: p.id,
-        name: p.name,
-        primaryCategoryId: p.category,
-        description: p.description || null,
-        logoUrl: p.imageUrl || null,
-        status: 'active'
-      }));
-      // Optimization has additional partners (Uber, Taj)
-      const opt = OPTIMIZATION_MOCK_PARTNERS.map(p => ({
-        id: p.id,
-        slug: p.id,
-        name: p.name,
-        primaryCategoryId: p.category,
-        description: null,
-        logoUrl: null,
-        status: 'active'
-      }));
-      const merged = [...all];
-      for (const o of opt) {
-        if (!merged.find(m => m.id === o.id)) merged.push(o);
-      }
-      if (categoryId) return merged.filter(m => m.primaryCategoryId === categoryId);
-      return merged;
+      return [];
     }
 
     let query = supabase!.from('partners').select('*').eq('status', 'active');
@@ -85,24 +57,10 @@ export class CommerceRepository {
     return data ? CommerceMapper.toPartner(data) : null;
   }
 
-  // --- ENTITIES ---
+  // --- PRODUCTS / ENTITIES ---
   static async getCommerceEntities(partnerId?: string): Promise<CommerceEntity[]> {
     if (this.useMock) {
-      const mock = MOCK_PRODUCTS.map(p => ({
-        id: p.id,
-        partnerId: p.partnerId,
-        categoryId: null,
-        entityType: 'product',
-        name: p.name,
-        basePrice: p.originalPrice,
-        currency: 'INR',
-        destinationPath: '',
-        imageUrl: p.imageUrl || null,
-        sku: null,
-        status: 'active'
-      }));
-      if (partnerId) return mock.filter(m => m.partnerId === partnerId);
-      return mock;
+      return [];
     }
     
     let query = supabase!.from('commerce_entities').select('*').eq('status', 'active');
@@ -113,32 +71,45 @@ export class CommerceRepository {
   }
 
   // --- OFFERS ---
-  static async getEligibleOffers(): Promise<CommerceOffer[]> {
+  /**
+   * getEligibleOffers has been updated in Stage 5 to route through the secure server-side orchestrator.
+   * This guarantees RLS safety, canonical wallet injection, and prevents N+1 queries.
+   */
+  static async getEligibleOffers(context?: { merchantId?: string, transactionAmount?: number }): Promise<CommerceOffer[]> {
     if (this.useMock) {
-      return MOCK_OFFERS.map(o => ({
-        id: o.id,
-        source: o.source as any,
-        offerType: o.type as any,
-        value: o.value,
-        title: o.name,
-        description: o.description,
-        minSpend: o.eligibility?.minSpend || null,
-        maxDiscount: o.eligibility?.maxDiscount || null,
-        validFrom: '2024-01-01',
-        validUntil: '2030-12-31',
-        eligibilityRules: o.eligibility,
-        status: 'active'
-      }));
+      return [];
     }
 
-    const { data, error } = await supabase!
-      .from('offers')
-      .select('id, source, offer_type, value, title, description, min_spend, max_discount, valid_from, valid_until, eligibility_rules, status')
-      .eq('status', 'active')
-      .gte('valid_until', new Date().toISOString());
+    try {
+      // Get auth token from Clerk or dashboard store dynamically
+      let token = '';
+      if (typeof window !== 'undefined' && window.Clerk && window.Clerk.session) {
+        token = await window.Clerk.session.getToken();
+      }
 
-    if (error) throw new CommerceRepositoryError('Failed to fetch offers', error.code);
-    return data.map(CommerceMapper.toOffer);
+      const response = await fetch('/api/offers/eligible', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(context || {})
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error?.message || 'Failed to fetch eligible offers');
+      }
+
+      return result.eligibleOffers;
+    } catch (error: any) {
+      console.error('[CommerceRepository] getEligibleOffers failed:', error);
+      throw new CommerceRepositoryError('Failed to fetch eligible offers from API', error.code);
+    }
   }
 }
 export * from './PaymentMethodRepository';

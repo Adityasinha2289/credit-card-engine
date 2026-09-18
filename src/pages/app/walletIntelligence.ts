@@ -1,6 +1,7 @@
 import { CommerceOptimizationService } from '../../features/commerce';
 import type { CommerceEntity } from '../../features/commerce/types';
 import type { OptimizationResult } from '../../features/optimization/types';
+import { recommendCards } from '../../features/finix/lib/recommendEngine';
 
 export async function loadWalletIntelligence(userId: string) {
   const results = await CommerceOptimizationService.optimizeCollection(userId);
@@ -48,11 +49,28 @@ export async function loadWalletIntelligence(userId: string) {
   
   const covPercent = catStats.size > 0 ? Math.round((coveredCategoriesCount / catStats.size) * 100) : 0;
   
+  let optimizationGap = null;
+  if (covData.length > 0) {
+    const lowest = covData[covData.length - 1];
+    if (lowest.value < 100) {
+       const recs = recommendCards({ primaryGoal: 'Maximise Cashback', spendCategories: [lowest.name as any], topCategories: [lowest.name as any], userSegment: 'default' }, []);
+       if (recs && recs.length > 0) {
+          optimizationGap = {
+             category: lowest.name,
+             coverage: lowest.value,
+             card: recs[0].card,
+             why: `Best fit for your ${lowest.name.toLowerCase()} spending gap.`
+          };
+       }
+    }
+  }
+
   return {
     isEmpty: allPaths.length === 0,
     coveragePercent: covPercent,
     availableValue: totalValueSum,
     coverageData: covData.slice(0, 4),
-    topPaths: allPaths.slice(0, 3)
+    topPaths: allPaths.slice(0, 3),
+    optimizationGap
   };
 }

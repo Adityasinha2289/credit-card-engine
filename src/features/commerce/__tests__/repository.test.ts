@@ -130,16 +130,25 @@ describe('Commerce Repository & Mapping Tests', () => {
       expect((domain as any).internal_campaign_metadata).toBeUndefined();
     });
 
-    it('should filter expired and inactive offers in database query', async () => {
-      const gteMock = vi.fn().mockResolvedValue({ data: [], error: null });
-      const eqMock = vi.fn().mockReturnValue({ gte: gteMock });
-      const selectMock = vi.fn().mockReturnValue({ eq: eqMock });
-      (supabase!.from as any).mockReturnValue({ select: selectMock });
+    it('should route getEligibleOffers through the server-side API', async () => {
+      // Mock global fetch
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue({
+          success: true,
+          eligibleOffers: [{ id: 'off-api', title: 'API Offer' }]
+        })
+      });
+      global.fetch = fetchMock;
 
-      await CommerceRepository.getEligibleOffers();
+      const result = await CommerceRepository.getEligibleOffers({ merchantId: 'uber' });
       
-      expect(eqMock).toHaveBeenCalledWith('status', 'active');
-      expect(gteMock).toHaveBeenCalled();
+      expect(fetchMock).toHaveBeenCalledWith('/api/offers/eligible', expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ merchantId: 'uber' })
+      }));
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('off-api');
     });
   });
 });

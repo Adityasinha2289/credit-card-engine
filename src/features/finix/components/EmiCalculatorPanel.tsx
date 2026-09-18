@@ -9,6 +9,7 @@ import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { CARD_DATASET } from '../data/cardDataset';
 import { getCardTheme } from '../config/cardThemeRegistry';
+import { DecisionCard } from '../../../components/shared/DecisionCard';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPERS
@@ -246,7 +247,7 @@ export function EmiCalculatorPanel() {
         </div>
 
         {/* Stat tiles */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5 font-mono">
           <StatTile label="Total Interest"  value={formatINR(totalInterest)}          icon={TrendingUp} colorVar="--color-copper-500" />
           <StatTile label="Processing Fee"   value={formatINR(processingFee)}          icon={Receipt}    colorVar="--color-steel-500" />
           <StatTile label="Total Payable"    value={formatINR(grandTotal)}             icon={Wallet}     colorVar="--color-brand-500" />
@@ -293,47 +294,12 @@ export function EmiCalculatorPanel() {
           </div>
         </div>
 
-        {/* Tenure with presets */}
-        <div className="flex flex-col gap-2.5 py-3 border-b border-white/[0.03]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-steel-500/[0.12]">
-                <Clock size={14} className="text-steel-500" />
-              </div>
-              <p className="text-sm font-semibold text-text-primary">Tenure</p>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/[0.04] rounded-xl px-3 py-1.5">
-              <span className="text-sm font-bold text-text-primary tabular-nums">{tenure}</span>
-              <span className="text-[10px] text-text-muted">months</span>
-            </div>
-          </div>
-          <div className="flex gap-1.5 flex-wrap">
-            {TENURE_PRESETS.map((m) => (
-              <button
-                key={m}
-                onClick={() => setTenure(m)}
-                className={cn(
-                  'text-[11px] font-bold px-3 py-1 rounded-full transition-all',
-                  tenure === m
-                    ? 'bg-brand-emerald text-white'
-                    : 'bg-white/[0.05] text-text-muted hover:text-text-secondary',
-                )}
-              >
-                {m}mo
-              </button>
-            ))}
-          </div>
-          <div className="relative">
-            <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-              <div className="h-full rounded-full bg-steel-500 transition-all duration-150" style={{ width: `${((tenure - 3) / (36 - 3)) * 100}%` }} />
-            </div>
-            <input
-              type="range" min={3} max={36} step={1} value={tenure}
-              onChange={(e) => setTenure(Number(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-          </div>
-        </div>
+        {/* Tenure with slider */}
+        <EmiSlider
+          label="Tenure (Months)" value={tenure} onChange={setTenure}
+          min={3} max={36} step={3} display={`${tenure} mo`} icon={Clock}
+          colorVar="--color-steel-500"
+        />
 
         <EmiSlider
           label="Interest Rate (p.a.)" value={rate} onChange={setRate}
@@ -348,21 +314,26 @@ export function EmiCalculatorPanel() {
       </div>
 
       {/* Which card should I use */}
-      <div className="panel-glass rounded-2xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-brand-emerald/15 flex items-center justify-center flex-shrink-0">
-              <CreditCard size={15} className="text-brand-emerald" />
-            </div>
-            <div>
-              <p className="text-sm font-display font-bold text-text-primary">Which card should I use?</p>
-              <p className="text-[11px] text-text-muted">Ranked by lowest EMI interest cost</p>
-            </div>
-          </div>
-        </div>
-
-        {rankedCards.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+      <div>
+        {rankedCards.length > 0 && bestId && (() => {
+          const best = rankedCards.find(r => r.card.id === bestId);
+          if (!best) return null;
+          
+          return (
+            <DecisionCard
+              title="Best Option"
+              bestFit={best.card.name || 'Credit Card'}
+              why={`Lowest interest rate at ${best.apr}% p.a.`}
+              tradeoff="Choosing EMI reduces your available credit limit by the full purchase amount immediately."
+              expectedValue={formatFullINR(best.cardEmi)}
+              actionText="View Options"
+              confidence={98}
+            />
+          );
+        })()}
+        
+        {rankedCards.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-10 text-center gap-3 panel-glass rounded-2xl p-5">
             <div className="w-14 h-14 rounded-2xl bg-brand-emerald-muted flex items-center justify-center">
               <CreditCard size={24} className="text-brand-emerald" />
             </div>
@@ -372,68 +343,6 @@ export function EmiCalculatorPanel() {
                 Add a card on the Dashboard to see which one gives you the cheapest EMI for this purchase.
               </p>
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2.5">
-            {rankedCards.map(({ card, bank, apr, cardEmi, cardInterest, availableRupees, covered }) => {
-              const isBest = card.id === bestId;
-              return (
-                <motion.div
-                  key={card.id}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={cn(
-                    'relative flex items-center gap-3 rounded-2xl border p-3 transition-all',
-                    isBest
-                      ? 'border-brand-emerald/25 bg-brand-emerald/[0.05]'
-                      : 'border-border-subtle bg-white/[0.01]',
-                  )}
-                >
-                  {/* Card face chip */}
-                  <div
-                    className="w-12 h-8 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden shadow-sm"
-                    style={{ background: `linear-gradient(135deg, ${getCardTheme(card.id).gradientFrom}, ${getCardTheme(card.id).gradientTo})` }}
-                  >
-                    <span className="text-[7px] font-black text-white/80 uppercase tracking-wide truncate px-1">
-                      {(bank || 'CARD').slice(0, 4)}
-                    </span>
-                  </div>
-
-                  {/* Name + meta */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-sm font-semibold text-text-primary truncate leading-tight">{card.label || 'Credit Card'}</p>
-                      {isBest && (
-                        <span className="flex items-center gap-0.5 bg-brand-emerald/15 text-brand-emerald text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded-full flex-shrink-0">
-                          <Trophy size={8} /> Best
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-text-muted">{apr}% p.a.</span>
-                      <span className="text-[10px] text-text-muted">·</span>
-                      {covered ? (
-                        <span className="flex items-center gap-1 text-[10px] text-profit">
-                          <CheckCircle2 size={9} /> {formatINR(availableRupees)} avail.
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-[10px] text-caution">
-                          <AlertTriangle size={9} /> Limit too low
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* EMI figure */}
-                  <div className="text-right flex-shrink-0">
-                    <p className={cn('text-sm font-bold tabular-nums', isBest ? 'text-brand-emerald' : 'text-text-primary')}>
-                      {formatFullINR(cardEmi)}
-                    </p>
-                    <p className="text-[10px] text-text-muted tabular-nums">+{formatINR(cardInterest)} int.</p>
-                  </div>
-                </motion.div>
-              );
-            })}
           </div>
         )}
       </div>

@@ -37,7 +37,8 @@ describe('Offer -> Optimization End-to-End Integrity Audit', () => {
       paymentMethodTypes: ['credit_card'],
       minSpend: 5000,
       maxDiscount: 1500
-    }
+    },
+    _eligibilityVerified: true, // Stage 6: Required for RankingEngine acceptance
   };
 
   describe('Eligibility Verification', () => {

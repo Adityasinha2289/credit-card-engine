@@ -2,27 +2,29 @@ import { SEO } from '../components/SEO';
 import { getOrganizationSchema, getWebSiteSchema } from '../lib/schemaBuilders';
 import { HeroSection } from '../components/home/HeroSection';
 import { WhatItDoesSection } from '../components/home/WhatItDoesSection';
-import { SmartRecommendations } from '../components/home/SmartRecommendations';
+import { RenoCredInActionSection } from '../components/home/RenoCredInActionSection';
+import { CardsAndRewardsSection } from '../components/home/CardsAndRewardsSection';
+import { MoneyAndLifestyleSection } from '../components/home/MoneyAndLifestyleSection';
 import { TrustSection } from '../components/home/TrustSection';
 import { CtaSection } from '../components/home/CtaSection';
 
 export function HomePage() {
   return (
-    <div className="flex-1 flex flex-col relative w-full bg-[#050505] text-white selection:bg-brand-emerald-glow font-sans">
+    <div className="flex flex-col w-full bg-black text-white selection:bg-semantic-brand/30">
       <SEO 
         title="RenoCred | Intelligent Financial Optimization"
-        description="RenoCred understands your cards, spending, and financial preferences to provide personalized recommendations. Stop leaving money on the table."
+        description="RenoCred automatically tracks your spending, categorizes your expenses, and tells you exactly which card to use to maximize your rewards."
         canonicalUrl="https://renocred.com/"
         schemaData={[getOrganizationSchema(), getWebSiteSchema()]}
       />
       
-      <main className="w-full flex flex-col">
-        <HeroSection />
-        <WhatItDoesSection />
-        <SmartRecommendations />
-        <TrustSection />
-        <CtaSection />
-      </main>
+      <HeroSection />
+      <WhatItDoesSection />
+      <RenoCredInActionSection />
+      <CardsAndRewardsSection />
+      <MoneyAndLifestyleSection />
+      <TrustSection />
+      <CtaSection />
     </div>
   );
 }

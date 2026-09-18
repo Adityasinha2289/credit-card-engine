@@ -44,6 +44,16 @@ export default {
           intelligence: 'var(--color-border-intelligence)',
         },
         
+        // EDITORIAL THEME
+        editorial: {
+          'deep-forest': '#0F2A1D',
+          'forest': '#375534',
+          'muted-sage': '#6B9071',
+          'soft-sage': '#AEC3B0',
+          'warm-cream': '#E3EED4',
+          'light-cream': '#F6F4EC',
+        },
+        
         // V3 OBSIDIAN FOUNDATION (Legacy)
         obsidian: '#070A08',
         canvas: {
@@ -99,6 +109,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['Plus Jakarta Sans', 'Inter', 'ui-sans-serif', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       fontSize: {

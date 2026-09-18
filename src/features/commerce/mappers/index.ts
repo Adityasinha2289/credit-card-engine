@@ -64,3 +64,27 @@ export class CommerceMapper {
     };
   }
 }
+
+export type PaymentMethodRow = {
+  id: string;
+  user_id: string;
+  type: string;
+  name: string;
+  provider: string;
+  metadata: Record<string, any>;
+  status: string;
+};
+
+export class PaymentMethodMapper {
+  static toDomain(row: PaymentMethodRow): any {
+    return {
+      id: row.id,
+      userId: row.user_id,
+      name: row.name,
+      status: row.status === 'active' ? 'active' : 'inactive',
+      type: row.type as any,
+      provider: row.provider,
+      metadata: row.metadata,
+    };
+  }
+}

@@ -13,7 +13,7 @@ dist-ssr
 *.local
 .env
 .env.*
-
+.gitlog_env
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

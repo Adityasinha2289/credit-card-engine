@@ -45,22 +45,28 @@ export function DashboardV3() {
         ledgerSummary={ledgerSummary} 
       />
 
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* Main Layout - 3 Tier Hierarchy */}
+      <div className="flex flex-col gap-10 items-stretch max-w-[1000px] mx-auto w-full">
         
-        {/* Left Column (Primary Focus) */}
-        <div className="lg:col-span-8 flex flex-col gap-8">
-          <QuickAskTaqdeer />
-          <SmartRecommendationV3 decision={decision} featuredCard={featuredCard} />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <SmartInsightsV3 alert={highestPriorityAlert} />
-            <RecentDecisionsV3 transactions={transactions} userCards={userCards} />
+        {/* TIER 1: PRIMARY ACTION / RECOMMENDATION */}
+        <section className="w-full animate-[fade-in-up_0.4s_ease-out_forwards]">
+          <div className="mb-4">
+            <h2 className="text-sm font-bold tracking-[0.15em] text-text-muted uppercase">What Should I Do Today?</h2>
           </div>
-        </div>
+          <SmartRecommendationV3 decision={decision} featuredCard={featuredCard} />
+        </section>
 
-        {/* Right Column (Secondary / Context) */}
-        <aside className="lg:col-span-4 flex flex-col gap-8 lg:sticky lg:top-24">
+        {/* TIER 2: SECONDARY - WALLET / OPTIMIZER */}
+        <section className="w-full animate-[fade-in-up_0.5s_ease-out_forwards]">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm font-bold tracking-[0.15em] text-text-muted uppercase">Your Wallet</h2>
+            <button 
+              onClick={() => setShowAddModal(true)}
+              className="text-xs font-bold text-brand-emerald hover:text-brand-400 transition-colors uppercase tracking-wider"
+            >
+              + Add Card
+            </button>
+          </div>
           <WalletSnapshotV3 
             userCards={userCards} 
             creditAccounts={creditAccounts} 
@@ -68,12 +74,22 @@ export function DashboardV3() {
             setActiveCardId={setActiveCardId}
             onAddCard={() => setShowAddModal(true)}
           />
-          <FinancialSnapshotV3 
-            health={health} 
-            ledgerSummary={ledgerSummary} 
-            recentWin={recentWin} 
-          />
-        </aside>
+        </section>
+
+        {/* TIER 3: TERTIARY - METRICS, TRANSACTIONS, HEALTH */}
+        <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 animate-[fade-in-up_0.6s_ease-out_forwards]">
+          <div className="flex flex-col gap-8">
+            <FinancialSnapshotV3 
+              health={health} 
+              ledgerSummary={ledgerSummary} 
+              recentWin={recentWin} 
+            />
+          </div>
+          <div className="flex flex-col gap-8">
+            <RecentDecisionsV3 transactions={transactions} userCards={userCards} />
+            <SmartInsightsV3 alert={highestPriorityAlert} />
+          </div>
+        </section>
 
       </div>
 

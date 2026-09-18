@@ -6,17 +6,26 @@ import { ExplanationEngine } from './explain';
 export class RankingEngine {
   /**
    * Evaluates all payment methods and offers, and ranks them to find the optimal recommendation.
+   *
+   * Stage 6 Safety Boundary:
+   * - Only offers with _eligibilityVerified === true are considered.
+   * - Offers lacking the marker are silently excluded to prevent unverified offers from entering ranking.
+   * - Deterministic tie-breaking uses offer.id and paymentMethodId for stable ordering.
+   * - NaN/Infinity scores are treated as zero to prevent undefined sort behavior.
    */
   public static rank(
     opportunity: SpendingOpportunity,
     paymentMethods: PaymentMethod[],
     allOffers: Offer[]
   ): { recommended: PaymentRecommendation | null; alternatives: PaymentRecommendation[] } {
+    // Stage 6: Defensive eligibility boundary — reject unverified offers
+    const verifiedOffers = allOffers.filter(offer => offer._eligibilityVerified === true);
+    
     const evaluatedMethods: PaymentRecommendation[] = [];
 
     for (const method of paymentMethods) {
-      // 1. Find all eligible offers for this payment method
-      const eligibleOffers = allOffers.filter(offer =>
+      // 1. Find all eligible offers for this payment method (optimization-level filtering)
+      const eligibleOffers = verifiedOffers.filter(offer =>
         EligibilityEngine.isOfferEligible(offer, opportunity, method)
       );
 
@@ -29,16 +38,29 @@ export class RankingEngine {
 
       for (const combination of validCombinations) {
         const benefit = BenefitCalculator.calculateBenefit(opportunity, combination);
-        if (benefit.totalValue > bestBenefit.totalValue) {
+        
+        // Stage 6: NaN/Infinity safety — treat malformed scores as 0
+        const safeTotal = Number.isFinite(benefit.totalValue) ? benefit.totalValue : 0;
+        const safeBestTotal = Number.isFinite(bestBenefit.totalValue) ? bestBenefit.totalValue : 0;
+        
+        if (safeTotal > safeBestTotal) {
           bestBenefit = benefit;
           bestCombination = combination;
-        } else if (benefit.totalValue === bestBenefit.totalValue) {
+        } else if (safeTotal === safeBestTotal) {
           // Tie breaker: Prefer upfront discount over deferred rewards
           const currentCashValue = benefit.merchantDiscount + benefit.bankDiscount + benefit.cashbackValue;
           const bestCashValue = bestBenefit.merchantDiscount + bestBenefit.bankDiscount + bestBenefit.cashbackValue;
           if (currentCashValue > bestCashValue) {
             bestBenefit = benefit;
             bestCombination = combination;
+          } else if (currentCashValue === bestCashValue) {
+            // Stage 6: Deterministic tie-break — lower alphabetical offer ID wins
+            const currentIds = combination.map(o => o.id).sort().join(',');
+            const bestIds = bestCombination.map(o => o.id).sort().join(',');
+            if (currentIds < bestIds) {
+              bestBenefit = benefit;
+              bestCombination = combination;
+            }
           }
         }
       }
@@ -59,17 +81,24 @@ export class RankingEngine {
 
     // 5. Rank all evaluated methods across the board
     evaluatedMethods.sort((a, b) => {
+      // Stage 6: NaN safety on final ranking
+      const aSavings = Number.isFinite(a.savings) ? a.savings : 0;
+      const bSavings = Number.isFinite(b.savings) ? b.savings : 0;
+      
       // Primary: Highest savings (total value)
-      if (b.savings !== a.savings) {
-        return b.savings - a.savings;
+      if (bSavings !== aSavings) {
+        return bSavings - aSavings;
       }
       
-      // Secondary: Lower effective cost (in case of ties on value, upfront discount lowers effective cost)
-      if (a.effectiveCost !== b.effectiveCost) {
-        return a.effectiveCost - b.effectiveCost;
+      // Secondary: Lower effective cost
+      const aEffective = Number.isFinite(a.effectiveCost) ? a.effectiveCost : Infinity;
+      const bEffective = Number.isFinite(b.effectiveCost) ? b.effectiveCost : Infinity;
+      if (aEffective !== bEffective) {
+        return aEffective - bEffective;
       }
 
-      return 0; // Equal
+      // Stage 6: Deterministic tie-break — stable sort by paymentMethodId
+      return a.paymentMethodId.localeCompare(b.paymentMethodId);
     });
 
     if (evaluatedMethods.length === 0) {

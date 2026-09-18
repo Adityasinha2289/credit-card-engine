@@ -76,6 +76,14 @@ export interface Offer {
   value: number; // For percentage, 10 = 10%. For flat, 500 = ₹500.
   source: OfferSource;
   eligibility: OfferEligibility;
+  /**
+   * Stage 6 Safety Marker.
+   * Set to true ONLY by CommerceOptimizationService.adaptOffer when the offer
+   * has already passed through the authoritative OfferEligibilityEngine.
+   * The RankingEngine MUST reject offers without this marker.
+   */
+  _eligibilityVerified?: boolean;
+  applicable_wallet_card_ids?: string[];
 }
 
 export interface BenefitBreakdown {

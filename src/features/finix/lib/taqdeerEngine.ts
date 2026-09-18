@@ -8,6 +8,8 @@
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../data/cardDataset';
 import { detectCategory, POPULAR_MERCHANTS } from '../data/merchantMap';
 import type { CardData } from '../../cards/types/card.types';
+import { evaluateTransaction, type TransactionEvaluationResult } from './evaluateTransaction';
+import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 
 export interface TaqdeerMessage {
   id: string;
@@ -15,6 +17,7 @@ export interface TaqdeerMessage {
   content: string;
   timestamp: Date;
   cards?: FinixCard[];
+  evaluation?: TransactionEvaluationResult;
 }
 
 // Helper to normalize card names for matching
@@ -304,6 +307,18 @@ ${bankCards.map((c, i) => `${i + 1}. **${c.name}** (Fee: ₹${c.annualFee})
       return { content: `I couldn't find any cards for that bank.` };
     },
   },
+  // 8. OFFERS & DEALS
+  {
+    name: 'offers',
+    test: (lower) => /\b(offer|offers|discount|discounts|deal|deals)\b/i.test(lower),
+    handler: () => ({
+      content: `🎁 **Credit Card Offers & Deals**
+
+I noticed you are looking for current offers!
+
+To see the most accurate and personalized offers for your cards, please visit the **Offers** tab in the main navigation. It cross-references your exact wallet with our live merchant database to show you exactly where you can save money today!`,
+    }),
+  },
 ];
 
 // Helper to get and validate the AI Backend URL
@@ -331,7 +346,7 @@ const getAiBackendUrl = (): string | null => {
 export async function generateTaqdeerResponse(
   query: string,
   userCards: CardData[] = [],
-): Promise<{ content: string; cards?: FinixCard[] }> {
+): Promise<{ content: string; cards?: FinixCard[]; evaluation?: TransactionEvaluationResult }> {
   const lower = query.toLowerCase().trim();
   const apiUrl = getAiBackendUrl();
   let debugInfo = "";
@@ -401,7 +416,7 @@ export async function generateTaqdeerResponse(
 
   // If no merchant was detected AND the query doesn't sound like a card query,
   // gracefully inform the user that the AI is offline or the query is out of scope.
-  if (!merchant && !/\b(card|spend|reward|cashback|buy|pay|offer|discount|wallet|best)\b/i.test(lower)) {
+  if (!merchant && !/\b(card|cards|spend|reward|rewards|cashback|buy|pay|offer|offers|discount|discounts|deal|deals|wallet|best)\b/i.test(lower)) {
     if (errors.length > 0) debugInfo = `\n\n*(PROD Debug: Backend API errors occurred: ${errors.join(" | ")})*`;
     else debugInfo = `\n\n*(PROD Debug: AI Backend is unreachable or returned no content)*`;
     
@@ -412,48 +427,41 @@ export async function generateTaqdeerResponse(
 
   const emoji = CATEGORY_EMOJIS[category] || '🍳';
   const displayCategory = CATEGORY_LABELS[category] || 'General spend';
+  const merchantStr = merchant || displayCategory;
 
-  // Find best card in user's wallet
-  let bestUserCard: CardData | null = null;
-  let maxUserRate = -1;
+  // Use the shared evaluator with a default amount if none provided
+  // In a real NLP flow we'd extract the amount. Let's assume ₹5000 as default for analysis.
+  const evalAmount = 5000;
+  const activeCardIds = userCards.map(c => c.id);
+  
+  const transactions = useDashboardStore.getState().transactions;
+  const context = { previousTransactions: transactions };
+  
+  const result = evaluateTransaction(merchantStr, evalAmount, activeCardIds, context);
 
-  userCards.forEach((uc) => {
-    const dc = CARD_DATASET.find((c) => c.id === uc.id);
-    if (dc) {
-      const rate = dc.rewards?.find((r) => r.category === category)?.rate ?? dc.baseRewardRate;
-      if (rate > maxUserRate) {
-        maxUserRate = rate;
-        bestUserCard = uc;
-      }
-    } else {
-      if (1 > maxUserRate) {
-        maxUserRate = 1;
-        bestUserCard = uc;
-      }
-    }
-  });
+  if (!result || !result.best) {
+    return {
+      content: `💡 **Wallet Recommendation:** Add cards to your wallet to analyze which one is best for ${merchantStr}.`
+    };
+  }
 
-  // Find absolute best card globally
+  const isOptimal = true; // Would compare against global best here if needed
   const bestGlobalCard = getBestCardForCategory(category);
   const maxGlobalRate = getCardRewardForCategory(bestGlobalCard, category);
+  const isActuallyOptimal = result.best.rewardRate >= maxGlobalRate;
+
+  let walletAdvice = `💳 **In Your Wallet:**
+You should pay with **${result.best.card.name}** which gives you **${result.best.rewardRate}%** rewards.
+${isActuallyOptimal ? '🟢 *This is the absolute best reward rate available for this transaction!*' : `🟡 *Optimization opportunity:* You are earning ${result.best.rewardRate}%, but you could earn **${maxGlobalRate}%** with **${bestGlobalCard.bank} ${bestGlobalCard.name}**.`}`;
+
+  if (result.best.isCapped) {
+    walletAdvice += `\n⚠️ *Note: ${result.best.limitations[0]}*`;
+  }
 
   const runners = CARD_DATASET
     .filter((c) => c.id !== bestGlobalCard.id)
     .sort((a, b) => getCardRewardForCategory(b, category) - getCardRewardForCategory(a, category))
     .slice(0, 2);
-
-  const merchantStr = merchant || displayCategory;
-
-  let walletAdvice ="";
-  if (userCards.length === 0) {
-    walletAdvice = `💡 **Wallet Recommendation:** Add cards to your wallet to analyze which one is best for ${merchantStr}.`;
-  } else if (bestUserCard) {
-    const uc = bestUserCard as CardData;
-    const isOptimal = maxUserRate >= maxGlobalRate;
-    walletAdvice = `💳 **In Your Wallet:**
-You should pay with **${uc.label || uc.id}** which gives you **${maxUserRate}%** rewards.
-${isOptimal ? '🟢 *This is the absolute best reward rate available for this transaction!*' : `🟡 *Optimization opportunity:* You are earning ${maxUserRate}%, but you could earn **${maxGlobalRate}%** with **${bestGlobalCard.bank} ${bestGlobalCard.name}**.`}`;
-  }
 
   return {
     content: `🏆 **Spend Optimization for ${merchantStr} (${displayCategory} ${emoji})**
@@ -466,6 +474,7 @@ ${runners.map((c, i) => `${i + 2}. **${c.bank} ${c.name}** — **${getCardReward
 
 💡 *Swipe your optimal card to maximize statement cashback and reward multipliers!*`,
     cards: [bestGlobalCard, ...runners],
+    evaluation: result
   };
 }
 

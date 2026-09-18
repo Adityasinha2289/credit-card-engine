@@ -1,10 +1,9 @@
 import type { Merchant, MerchantOffer, MerchantDataSource } from './types';
-import { MOCK_MERCHANTS, MOCK_OFFERS } from './mockMerchants';
 
 export class MerchantRepository implements MerchantDataSource {
   private static instance: MerchantRepository;
-  private merchants: Merchant[] = MOCK_MERCHANTS;
-  private offers: MerchantOffer[] = MOCK_OFFERS;
+  private merchants: Merchant[] = [];
+  private offers: MerchantOffer[] = [];
 
   public static getInstance(): MerchantRepository {
     if (!MerchantRepository.instance) {

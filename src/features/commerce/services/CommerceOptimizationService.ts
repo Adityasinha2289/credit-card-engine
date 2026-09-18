@@ -10,6 +10,11 @@ export class CommerceOptimizationService {
   /**
    * Adapts a CommerceOffer (DB Schema) to an Optimization Engine Offer (Math Schema).
    * It strictly preserves all eligibility rules and math structures without discarding values.
+   *
+   * Stage 6: This adapter is the ONLY code path that sets _eligibilityVerified = true.
+   * Because CommerceRepository.getEligibleOffers() routes through the server-side
+   * OfferEligibilityEngine (Stage 5), any offer reaching this adapter is already
+   * authoritatively eligible. The marker enables a defensive check inside the RankingEngine.
    */
   static adaptOffer(commerceOffer: CommerceOffer): Offer {
     return {
@@ -20,6 +25,8 @@ export class CommerceOptimizationService {
       value: commerceOffer.value,
       source: commerceOffer.source,
       eligibility: commerceOffer.eligibilityRules || {},
+      _eligibilityVerified: true,
+      applicable_wallet_card_ids: commerceOffer.applicable_wallet_card_ids,
     };
   }
 

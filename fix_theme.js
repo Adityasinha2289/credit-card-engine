@@ -15,7 +15,7 @@ try {
     { p: /text-white\/20/g, r: 'text-gray-400' },
     { p: /text-white\/10/g, r: 'text-gray-300' },
     { p: /text-white/g, r: 'text-gray-900' },
-    { p: /text-\[\#F2F4F2\]/g, r: 'text-gray-900' },
+    { p: /text-\[#F2F4F2\]/g, r: 'text-gray-900' },
     
     // Borders should be darker to look sharp
     { p: /border-gray-100/g, r: 'border-gray-300' },
@@ -35,8 +35,8 @@ try {
     { p: /bg-white\/\[0\.04\]/g, r: 'bg-gray-100' },
     
     // Typography contrast
-    { p: /text-\[\#737C77\]/g, r: 'text-gray-600' },
-    { p: /text-\[\#A0AAA5\]/g, r: 'text-gray-700' },
+    { p: /text-\[#737C77\]/g, r: 'text-gray-600' },
+    { p: /text-\[#A0AAA5\]/g, r: 'text-gray-700' },
     { p: /text-gray-500/g, r: 'text-gray-600' },
   ];
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { CommerceOptimizationService } from '../../features/commerce';
+import { WalletMerchantOffers } from '../../features/commerce/components/WalletMerchantOffers';
 import { cn } from '../../lib/utils';
 import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
 import type { CardData } from '../../features/cards/types/card.types';
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { recommendCards, type UserProfile } from '../../features/finix/lib/recommendEngine';
+import { evaluateTransaction } from '../../features/finix/lib/evaluateTransaction';
 import type { SpendCategory } from '../../features/finix/data/cardDataset';
 
 import { useUser } from '@clerk/clerk-react';
@@ -65,8 +67,9 @@ export default function HomePage() {
   const mainRec = recommendedCards[0];
   const altRecs = recommendedCards.slice(1, 3);
 
-  // Marketplace categories
-  const categories = [
+  const isYouth = profile?.userSegment === 'youth';
+
+  const defaultCategories = [
     { 
       id: 'travel', 
       label: 'Travel & Flights', 
@@ -98,40 +101,56 @@ export default function HomePage() {
       icon: Utensils, 
       path: '/app/marketplace/dining',
       image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=600&auto=format&fit=crop'
-    },
-    { 
-      id: 'learning', 
-      label: 'Learning', 
-      desc: 'Pay less, learn more with exclusive offers on courses.', 
-      icon: BookOpen, 
-      path: '/app/marketplace/learning',
-      image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=600&auto=format&fit=crop'
-    },
-    { 
-      id: 'debt', 
-      label: 'Debt', 
-      desc: 'Smart tools and offers to help you manage and repay better.', 
-      icon: Receipt, 
-      path: '/app/marketplace/debt',
-      image: 'https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?q=80&w=600&auto=format&fit=crop'
-    },
-    { 
-      id: 'investment', 
-      label: 'Investment', 
-      desc: 'Grow your wealth with partners and smart reward strategies.', 
-      icon: TrendingUp, 
-      path: '/app/marketplace/investment',
-      image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=600&auto=format&fit=crop'
-    },
-    { 
-      id: 'hobbies', 
-      label: 'Hobbies', 
-      desc: 'From gadgets to gear, rewards for what you love.', 
-      icon: Heart, 
-      path: '/app/marketplace/hobbies',
-      image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop'
-    },
+    }
   ];
+
+  const youthCategories = [
+    { id: 'date', label: 'Plan a Date', desc: 'Dining + movies + rides', icon: Utensils, path: '/app/marketplace/dining', image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=600&auto=format&fit=crop' },
+    { id: 'trip', label: 'Next Trip', desc: 'Flight + hostel + travel benefits', icon: Plane, path: '/app/marketplace/travel', image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop' },
+    { id: 'invest', label: 'Invest In Self', desc: 'Gym + courses + hobbies', icon: BookOpen, path: '/app/marketplace/learning', image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=600&auto=format&fit=crop' },
+    { id: 'boost', label: 'Lifestyle Boost', desc: 'Fashion + sneakers + tech', icon: ShoppingBag, path: '/app/marketplace/shopping', image: 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?q=80&w=600&auto=format&fit=crop' }
+  ];
+
+  const categories = isYouth ? youthCategories : defaultCategories;
+
+  // Compute Primary Action
+  const milestonesStore = useDashboardStore(s => s.milestones) || [];
+  const nearingMilestone = milestonesStore.find(m => (m.targetAmount - m.currentAmount) < 5000 && m.targetAmount > m.currentAmount);
+
+  let primaryAction: { title: string; description: string; actionText: string; path: string; icon: any } | null = null;
+  if (nearingMilestone) {
+    primaryAction = {
+      title: 'Milestone Approaching',
+      description: `You are ₹${nearingMilestone.targetAmount - nearingMilestone.currentAmount} away from unlocking ${nearingMilestone.rewardValue}.`,
+      actionText: 'View Details',
+      path: '/app/wallet',
+      icon: Sparkles
+    };
+  } else if (profile?.primaryGoal === 'Build Credit Score') {
+    primaryAction = {
+      title: 'Credit Health Check',
+      description: 'Keep your credit utilization below 30% this cycle to improve your score.',
+      actionText: 'Check Simulator',
+      path: '/app/credit/simulator',
+      icon: TrendingUp
+    };
+  } else if (profile?.primaryGoal === 'Travel Rewards') {
+    primaryAction = {
+      title: 'Upcoming Travel?',
+      description: 'Check out the best cards to maximize miles on your next flight.',
+      actionText: 'View Travel Cards',
+      path: '/app/credit/recommend',
+      icon: Plane
+    };
+  } else if (profile?.primaryGoal === 'Maximise Cashback') {
+    primaryAction = {
+      title: 'Cashback Optimization',
+      description: `Your highest spending category is ${profile?.spendCategories?.[0] || 'Dining'}. Ensure you're using the right card.`,
+      actionText: 'Analyze Spending',
+      path: '/app/wallet',
+      icon: Sparkles
+    };
+  }
 
   return (
     <PageContainer hideHeader className="gap-12 md:gap-16 relative selection:bg-[#2A9D5C]/30 selection:text-gray-900">
@@ -142,6 +161,24 @@ export default function HomePage() {
           {greeting}, {userName}
         </h1>
       </section>
+
+      {/* ── PRIORITY ACTION (If exists) ─────────────────────────────────────────── */}
+      {primaryAction && (
+        <section className="relative z-10 flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-100 cursor-pointer group" onClick={() => navigate(primaryAction!.path)}>
+          <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow flex items-start gap-4 group-hover:border-[#2A9D5C]/30">
+            <div className="w-10 h-10 rounded-full bg-[#2A9D5C]/10 flex items-center justify-center shrink-0">
+               <primaryAction.icon className="w-5 h-5 text-[#2A9D5C]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-bold text-gray-900 mb-1">{primaryAction.title}</h3>
+              <p className="text-sm text-gray-600 mb-3 leading-relaxed">{primaryAction.description}</p>
+              <button className="text-xs font-semibold text-[#2A9D5C] uppercase tracking-widest group-hover:text-gray-900 transition-colors flex items-center gap-1.5">
+                 {primaryAction.actionText} <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── 2. YOUR WALLET & 3. TODAY'S REWARDS ─────────────────────────── */}
       <section className="relative z-10 flex flex-col gap-4">
@@ -253,6 +290,20 @@ export default function HomePage() {
         </div>
       </section>
       )}
+
+      {/* ── 5. MERCHANT OFFERS (For Your Wallet) ───────────────────────── */}
+      <section className="relative z-10 flex flex-col gap-6 pt-8 md:pt-12 mt-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#2A9D5C] flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4" /> Merchant Offers
+            </h2>
+            <p className="text-xl md:text-2xl font-display font-medium text-gray-900 mt-2">Available with your cards</p>
+          </div>
+        </div>
+        
+        <WalletMerchantOffers />
+      </section>
 
       {/* ── 3. LIFESTYLE / DISCOVERY ────────────────────────────────── */}
       <section className="relative z-10 flex flex-col gap-6">
@@ -403,11 +454,29 @@ export default function HomePage() {
         <h2 className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-600 mb-1">Next for you</h2>
         
         <div className="flex flex-col w-full max-w-2xl bg-white border border-gray-200 shadow-sm rounded-2xl overflow-hidden">
-          {[
-            { id: 1, text: `Review your ${userCards.length} active cards` },
-            { id: 2, text: 'Upcoming bill in 4 days' },
-            { id: 3, text: `₹2,450 in rewards currently unused` },
-          ].map((action, i, arr) => (
+          {(() => {
+            const actions = [
+              { id: 1, text: `Review your ${userCards.length} active cards` },
+              { id: 2, text: 'Upcoming bill in 4 days' },
+              { id: 3, text: `₹2,450 in rewards currently unused` },
+            ];
+
+            const transactions = useDashboardStore.getState().transactions || [];
+            if (transactions.length > 0 && userCards.length > 1) {
+              const latestTx = transactions[0];
+              const context = { previousTransactions: transactions };
+              const userCardIds = userCards.map(c => c.id);
+              const evaluation = evaluateTransaction(latestTx.merchant, latestTx.amount / 100, userCardIds, context);
+              
+              if (evaluation && evaluation.best && evaluation.best.card.id !== latestTx.cardId && evaluation.delta > 0) {
+                 actions.unshift({
+                   id: 4,
+                   text: `Next time at ${latestTx.merchant}, use ${evaluation.best.card.name} to earn ₹${evaluation.delta.toFixed(2)} more.`
+                 });
+              }
+            }
+            
+            return actions.slice(0, 3).map((action, i, arr) => (
             <button 
               key={action.id}
               className={cn(
@@ -423,7 +492,7 @@ export default function HomePage() {
               </div>
               <ArrowRight className="w-4 h-4 text-transparent group-hover:text-[#2A9D5C] transition-all duration-300 -translate-x-2 group-hover:translate-x-0" />
             </button>
-          ))}
+          ))})()}
         </div>
       </section>
 

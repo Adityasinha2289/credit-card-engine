@@ -13,9 +13,9 @@ vi.mock('../../src/features/recommendation/api/auth', () => {
   };
 });
 
-const mockReq = (body: any, headers = {}) => {
+const mockReq = (body: any, headers = {}, method = 'POST') => {
   return {
-    method: 'POST',
+    method,
     body,
     headers
   } as unknown as VercelRequest;
@@ -31,10 +31,10 @@ const mockRes = () => {
 describe('Taqdeer API Proxy Security', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.GEMINI_API_KEY = 'test-gemini-key';
   });
 
   it('rejects invalid authentication', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini-key';
     const req = mockReq({ query: 'hello' }, { authorization: 'Bearer invalid' });
     const res = mockRes();
 
@@ -42,6 +42,16 @@ describe('Taqdeer API Proxy Security', () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: 'Invalid token' }));
+  });
+
+  it('rejects invalid request method', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini-key';
+    const req = mockReq({ query: 'hello' }, {}, 'GET');
+    const res = mockRes();
+
+    await handler(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(405);
   });
 
   it('fails safely if GEMINI_API_KEY is missing', async () => {

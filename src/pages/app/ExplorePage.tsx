@@ -1,5 +1,6 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { Search, BarChart3 } from 'lucide-react';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { cn } from '../../lib/utils';
@@ -16,7 +17,15 @@ const ANALYZE_TABS: { id: AnalyzeTabId; label: string; icon: typeof Search }[] =
 ];
 
 function AnalyzeTab() {
-  const [activeTab, setActiveTab] = useState<AnalyzeTabId>('recommend');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get('sub') as AnalyzeTabId) || 'recommend';
+
+  const setActiveTab = (tab: AnalyzeTabId) => {
+    setSearchParams(prev => {
+      prev.set('sub', tab);
+      return prev;
+    }, { replace: true });
+  };
 
   return (
     <PageContainer

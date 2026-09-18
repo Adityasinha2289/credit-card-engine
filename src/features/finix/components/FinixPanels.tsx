@@ -657,6 +657,7 @@ function SpendTrendChart({ debits }: { debits: any[] }) {
 export function InsightsPanel() {
   const transactions = useDashboardStore((s) => s.transactions) || [];
   const rewards = useDashboardStore((s) => s.rewards) || { cycleEarnings: 0 };
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const debits = transactions.filter((t) => t.type === 'debit');
   const totalSpend = debits.reduce((acc, t) => acc + t.amount, 0);
@@ -736,13 +737,40 @@ export function InsightsPanel() {
     });
   }
 
+  const topCategory = dynamicBreakdown.reduce((prev, current) => (prev.pct > current.pct) ? prev : current);
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Spend breakdown */}
+      {/* ── Interpretation Layer (P1 Gen Z framework) ── */}
+      <div className="panel-glass rounded-3xl p-6 bg-gradient-to-br from-brand-emerald/5 to-transparent border border-brand-emerald/10">
+        <div className="flex flex-col gap-5">
+          <div>
+            <p className="text-[10px] font-black text-brand-emerald uppercase tracking-widest mb-1">What Happened?</p>
+            <p className="text-2xl font-display font-bold text-text-primary tracking-tight">
+              You spent ₹{total.toLocaleString('en-IN', { maximumFractionDigits: 0 })} this cycle.
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-brand-emerald uppercase tracking-widest mb-1">Why?</p>
+            <p className="text-base font-medium text-text-secondary">
+              <span className="font-bold text-text-primary">{topCategory.pct}%</span> of your spend was concentrated in <span className="font-bold text-text-primary capitalize">{topCategory.category}</span>.
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-brand-emerald uppercase tracking-widest mb-1">What Should I Do?</p>
+            <p className="text-base font-medium text-text-secondary">
+              Check your <span className="font-bold text-text-primary">Smart Nudges</span> below to optimize your reward yields.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Spend breakdown - Interactive */}
       <div>
-        <p className="text-xs font-semibold tracking-widest uppercase text-text-muted mb-3">This Month's Spend</p>
+        <p className="text-xs font-semibold tracking-widest uppercase text-text-muted mb-3">Category Breakdown</p>
+        
         {/* Stacked bar */}
-        <div className="w-full h-3 rounded-full overflow-hidden flex gap-px mb-3">
+        <div className="w-full h-3 rounded-full overflow-hidden flex gap-px mb-4">
           {dynamicBreakdown.map((item) => (
             <motion.div
               key={item.category}
@@ -750,24 +778,72 @@ export function InsightsPanel() {
               initial={{ flex: 0 }}
               animate={{ flex: item.pct }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="h-full"
+              className="h-full cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => setSelectedCategory(selectedCategory === item.category.toLowerCase() ? null : item.category.toLowerCase())}
             />
           ))}
         </div>
-        <div className="flex flex-col gap-2.5">
-          {dynamicBreakdown.map((item) => (
-            <div key={item.category} className="flex items-center gap-2.5">
-              <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-              <p className="text-sm text-text-secondary flex-1">{item.category}</p>
-              <p className="text-xs text-text-muted">{item.pct}%</p>
-              <p className="text-sm font-semibold text-text-primary w-20 text-right">
-                ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
-            </div>
-          ))}
-          <div className="flex items-center pt-2 border-t border-border-subtle">
-            <p className="text-sm font-bold text-text-primary flex-1">Total</p>
-            <p className="text-sm font-bold text-text-primary">₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+        
+        <div className="flex flex-col gap-2">
+          {dynamicBreakdown.map((item) => {
+            const isSelected = selectedCategory === item.category.toLowerCase();
+            const categoryTxns = debits.filter(t => t.category === item.category.toLowerCase());
+            
+            return (
+              <div key={item.category} className="flex flex-col">
+                <button 
+                  onClick={() => setSelectedCategory(isSelected ? null : item.category.toLowerCase())}
+                  className={cn(
+                    "flex items-center gap-2.5 p-2 -mx-2 rounded-xl transition-colors text-left",
+                    isSelected ? "bg-surface-secondary dark:bg-white/[0.04]" : "hover:bg-surface-secondary/50 dark:hover:bg-white/[0.02]"
+                  )}
+                >
+                  <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                  <p className={cn("text-sm flex-1 transition-colors", isSelected ? "font-bold text-text-primary" : "text-text-secondary")}>
+                    {item.category}
+                  </p>
+                  <p className="text-xs text-text-muted">{item.pct}%</p>
+                  <p className="text-sm font-semibold text-text-primary w-20 text-right">
+                    ₹{item.amount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                  </p>
+                </button>
+
+                {/* Merchant Breakdown Dropdown */}
+                <AnimatePresence>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden ml-4 pl-4 border-l-2"
+                      style={{ borderColor: item.color + '40' }}
+                    >
+                      <div className="py-2 flex flex-col gap-2">
+                        {categoryTxns.length === 0 ? (
+                          <p className="text-xs text-text-muted">No transactions found.</p>
+                        ) : (
+                          categoryTxns.slice(0, 5).map(t => (
+                            <div key={t.id} className="flex items-center justify-between text-xs">
+                              <span className="text-text-secondary font-medium">{t.merchant}</span>
+                              <span className="text-text-primary font-bold">₹{(t.amount / 100).toLocaleString('en-IN')}</span>
+                            </div>
+                          ))
+                        )}
+                        {categoryTxns.length > 5 && (
+                          <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider mt-1">
+                            + {categoryTxns.length - 5} more
+                          </p>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+          <div className="flex items-center pt-3 pb-1 border-t border-border-subtle mt-1">
+            <p className="text-sm font-bold text-text-primary flex-1">Total Spent</p>
+            <p className="text-sm font-bold text-text-primary">₹{total.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
           </div>
         </div>
       </div>
@@ -789,7 +865,7 @@ export function InsightsPanel() {
           </div>
           <div>
             <p className="text-xs text-text-muted">Rewards earned</p>
-            <p className="text-sm font-bold text-brand-emerald">₹{rewards.cycleEarnings.toLocaleString('en-IN')}</p>
+            <p className="text-sm font-bold text-brand-emerald">₹{(rewards.cycleEarnings / 100).toLocaleString('en-IN')}</p>
           </div>
         </div>
       </div>

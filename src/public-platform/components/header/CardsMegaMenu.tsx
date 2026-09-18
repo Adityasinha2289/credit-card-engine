@@ -16,7 +16,7 @@ const categoryCards: Record<string, any[]> = {
     {
       id: 'rec-sbi',
       pan: '•••• •••• •••• 1234',
-      cardholderName: 'YOUR NAME',
+      cardholderName: '',
       expiry: '12/28',
       network: 'visa',
       bank: 'SBI Card',
@@ -30,7 +30,7 @@ const categoryCards: Record<string, any[]> = {
     {
       id: 'rec-hdfc-mill',
       pan: '•••• •••• •••• 5678',
-      cardholderName: 'YOUR NAME',
+      cardholderName: '',
       expiry: '05/27',
       network: 'mastercard',
       bank: 'HDFC Bank',
@@ -46,7 +46,7 @@ const categoryCards: Record<string, any[]> = {
     {
       id: 'rec-swiggy',
       pan: '•••• •••• •••• 9012',
-      cardholderName: 'YOUR NAME',
+      cardholderName: '',
       expiry: '11/26',
       network: 'mastercard',
       bank: 'HDFC Bank',
@@ -60,7 +60,7 @@ const categoryCards: Record<string, any[]> = {
     {
       id: 'rec-axis-ace',
       pan: '•••• •••• •••• 3456',
-      cardholderName: 'YOUR NAME',
+      cardholderName: '',
       expiry: '08/29',
       network: 'visa',
       bank: 'Axis Bank',
@@ -76,7 +76,7 @@ const categoryCards: Record<string, any[]> = {
     {
       id: 'rec-amex-plat',
       pan: '•••• •••••• •3456',
-      cardholderName: 'YOUR NAME',
+      cardholderName: '',
       expiry: '09/29',
       network: 'amex',
       bank: 'American Express',
@@ -90,7 +90,7 @@ const categoryCards: Record<string, any[]> = {
     {
       id: 'rec-atlas',
       pan: '•••• •••• •••• 7890',
-      cardholderName: 'YOUR NAME',
+      cardholderName: '',
       expiry: '03/28',
       network: 'visa',
       bank: 'Axis Bank',
@@ -106,7 +106,7 @@ const categoryCards: Record<string, any[]> = {
     {
       id: 'rec-bpcl',
       pan: '•••• •••• •••• 2468',
-      cardholderName: 'YOUR NAME',
+      cardholderName: '',
       expiry: '01/30',
       network: 'visa',
       bank: 'SBI Card',
@@ -129,12 +129,12 @@ export function CardsMegaMenu({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.98 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="absolute top-[calc(100%+1rem)] left-1/2 -translate-x-1/2 w-[800px] bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden flex"
+      className="absolute top-[calc(100%+1rem)] left-1/2 -translate-x-1/2 w-[800px] bg-editorial-light-cream border border-editorial-soft-sage/30 rounded-2xl shadow-xl overflow-hidden flex"
       onMouseLeave={onClose}
     >
       {/* Sidebar Categories */}
-      <div className="w-[280px] bg-gray-50 p-4 flex flex-col gap-1 border-r border-gray-200">
-        <div className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 px-3 pt-2">Explore by Category</div>
+      <div className="w-[280px] bg-editorial-warm-cream/50 p-4 flex flex-col gap-1 border-r border-editorial-soft-sage/30">
+        <div className="text-xs font-bold uppercase tracking-widest text-editorial-muted-sage mb-2 px-3 pt-2">Explore by Category</div>
         {categories.map((cat) => (
           <button
             key={cat.id}
@@ -145,18 +145,18 @@ export function CardsMegaMenu({ onClose }: { onClose: () => void }) {
             }}
             className={`w-full text-left px-3 py-3 rounded-xl flex items-start gap-3 transition-colors ${
               activeCategory === cat.id 
-                ? 'bg-semantic-brand-strong/10' 
-                : 'hover:bg-gray-200/50'
+                ? 'bg-editorial-soft-sage/20' 
+                : 'hover:bg-editorial-soft-sage/10'
             }`}
           >
-            <div className={`mt-0.5 ${activeCategory === cat.id ? 'text-semantic-brand-strong' : 'text-gray-400'}`}>
+            <div className={`mt-0.5 ${activeCategory === cat.id ? 'text-editorial-forest' : 'text-editorial-muted-sage'}`}>
               <cat.icon size={18} />
             </div>
             <div>
-              <div className={`text-sm font-medium mb-0.5 ${activeCategory === cat.id ? 'text-semantic-brand-strong' : 'text-gray-900'}`}>
+              <div className={`text-sm font-medium mb-0.5 ${activeCategory === cat.id ? 'text-editorial-forest' : 'text-editorial-deep-forest'}`}>
                 {cat.label}
               </div>
-              <div className="text-xs text-gray-500 line-clamp-1">{cat.desc}</div>
+              <div className="text-xs text-editorial-muted-sage line-clamp-1">{cat.desc}</div>
             </div>
           </button>
         ))}
@@ -165,7 +165,7 @@ export function CardsMegaMenu({ onClose }: { onClose: () => void }) {
           <Link 
             to="/cards" 
             onClick={onClose}
-            className="text-xs font-semibold text-semantic-brand-strong hover:text-emerald-400 flex items-center gap-1 transition-colors"
+            className="text-xs font-semibold text-editorial-forest hover:text-editorial-deep-forest flex items-center gap-1 transition-colors"
           >
             View all 130+ cards <ArrowRight size={14} />
           </Link>
@@ -173,13 +173,13 @@ export function CardsMegaMenu({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 p-8 bg-white relative overflow-hidden">
+      <div className="flex-1 p-8 bg-editorial-light-cream relative overflow-hidden">
         {/* Subtle background glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-semantic-brand-strong/10 via-transparent to-transparent opacity-60 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-editorial-soft-sage/30 via-transparent to-transparent opacity-60 pointer-events-none" />
         
         <div className="relative z-10 h-full flex flex-col">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-lg font-medium text-gray-900 capitalize flex items-center gap-2">
+            <h3 className="text-lg font-medium text-editorial-deep-forest capitalize flex items-center gap-2">
               Top Picks for {activeCategory}
             </h3>
           </div>

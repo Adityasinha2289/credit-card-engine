@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Scale, Wallet, ChevronRight, Search, X, Star,
@@ -6,7 +6,7 @@ import {
   HeartPulse, Car, Music, Tag, ExternalLink, Plus, Trophy, Check,
   CreditCard, ArrowRight, PlaneTakeoff, Info, Circle
 } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { cn } from '../../lib/utils';
@@ -98,8 +98,16 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
   const profile = useDashboardStore((s) => s.profile);
   const userCards = useDashboardStore((s) => s.userCards);
 
-  const [categories, setCategories] = useState<SpendCategory[]>([]);
-  const [wantsLounge, setWantsLounge] = useState(false);
+  const [categories, setCategories] = useState<SpendCategory[]>(() => {
+    if (profile?.spendCategories && profile.spendCategories.length > 0) {
+      return (profile.spendCategories as SpendCategory[]).slice(0, 4);
+    }
+    if (profile?.primaryGoal === 'Maximise Cashback') return ['dining', 'shopping'];
+    if (profile?.primaryGoal === 'Travel Rewards') return ['travel'];
+    return [];
+  });
+  
+  const [wantsLounge, setWantsLounge] = useState(() => profile?.primaryGoal === 'Travel Rewards');
   const [results, setResults] = useState<RecommendedCard[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -837,7 +845,18 @@ function MyWalletTab() {
 export default function CreditPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<CreditTab>('recommend');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const subTab = searchParams.get('sub') as CreditTab | null;
+  const initialTab = subTab && ['recommend', 'compare', 'wallet'].includes(subTab) ? subTab : 'recommend';
+  const [activeTab, _setActiveTab] = useState<CreditTab>(initialTab);
+
+  const setActiveTab = (tab: CreditTab) => {
+    _setActiveTab(tab);
+    setSearchParams((prev) => {
+      prev.set('sub', tab);
+      return prev;
+    }, { replace: true });
+  };
 
   React.useEffect(() => {
     const path = location.pathname;

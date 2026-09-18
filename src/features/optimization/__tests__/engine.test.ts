@@ -3,7 +3,50 @@ import { OptimizationEngine } from '../engine/optimizationEngine';
 import { BenefitCalculator } from '../engine/benefitCalculator';
 import { EligibilityEngine } from '../engine/eligibility';
 import { MOCK_PAYMENT_METHODS } from '../mock/paymentMethods';
-import { MOCK_OFFERS } from '../mock/offers';
+// Local mock offers fixture for isolated engine testing
+const MOCK_OFFERS: Offer[] = [
+  {
+    id: 'off-nike-10',
+    name: 'Nike 10% Discount',
+    description: '10% off on all Nike orders above ₹3000.',
+    type: 'percentage_discount',
+    value: 10,
+    source: 'merchant',
+    eligibility: {
+      partnerIds: ['part-nike'],
+      minSpend: 3000,
+      maxDiscount: 500,
+      mutuallyExclusiveSource: true,
+    },
+    _eligibilityVerified: true,
+  },
+  {
+    id: 'off-hdfc-dining-5x',
+    name: 'HDFC Diners 5X Rewards',
+    description: 'Earn 5X Reward Points on Dining.',
+    type: 'reward_multiplier',
+    value: 16.5,
+    source: 'bank',
+    eligibility: {
+      categories: ['dining'],
+      paymentMethodIds: ['pm-hdfc-diners'],
+    },
+    _eligibilityVerified: true,
+  },
+  {
+    id: 'off-sbi-online-5',
+    name: 'SBI Cashback',
+    description: '5% unlimited cashback on online spends.',
+    type: 'cashback',
+    value: 5,
+    source: 'bank',
+    eligibility: {
+      categories: ['shopping', 'travel', 'entertainment'],
+      paymentMethodIds: ['pm-sbi-cashback'],
+    },
+    _eligibilityVerified: true,
+  }
+];
 import type { Offer, SpendingOpportunity } from '../types';
 
 describe('Optimization Engine - Pure Domain', () => {
@@ -141,11 +184,13 @@ describe('Optimization Engine - Pure Domain', () => {
 
       const cashOffer: Offer = {
         id: 'off-cash', name: 'Cash', description: '', type: 'flat_discount', value: 100, source: 'bank', 
-        eligibility: { paymentMethodIds: ['pm-cash'] }
+        eligibility: { paymentMethodIds: ['pm-cash'] },
+        _eligibilityVerified: true,
       };
       const pointsOffer: Offer = {
         id: 'off-pts', name: 'Points', description: '', type: 'points', value: 400, source: 'bank', 
-        eligibility: { paymentMethodIds: ['pm-points'] }
+        eligibility: { paymentMethodIds: ['pm-points'] },
+        _eligibilityVerified: true,
       };
 
       const result = OptimizationEngine.optimizeSpending(opp, [pmA, pmB], [cashOffer, pointsOffer]);

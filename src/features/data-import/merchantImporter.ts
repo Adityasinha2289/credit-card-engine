@@ -2,7 +2,6 @@ import { BaseImporter } from './baseImporter';
 import { MerchantValidator } from './merchantValidator';
 import { MerchantMapper } from './merchantMapper';
 import { MerchantRepository } from '../merchant-intelligence/merchantRepository';
-import { MOCK_MERCHANTS } from '../merchant-intelligence/mockMerchants';
 import type { Merchant } from '../merchant-intelligence/types';
 import type { SupabaseMerchantRow } from './merchantTypes';
 import type { ValidationResult, ImporterOptions, ImportSummary } from './types';
@@ -37,13 +36,13 @@ export class MerchantImporter extends BaseImporter<Merchant, SupabaseMerchantRow
   }
 
   public static async importMerchants(
-    merchantsToImport: Merchant[] = MOCK_MERCHANTS,
+    merchantsToImport: Merchant[],
     options: ImporterOptions = {}
   ): Promise<ImportSummary> {
     return MerchantImporter.getInstance().importData(merchantsToImport, options);
   }
 
-  public static async runAndPrintReport(options: ImporterOptions = {}): Promise<ImportSummary> {
-    return MerchantImporter.getInstance().runAndPrintReport(MOCK_MERCHANTS, options);
+  public static async runAndPrintReport(merchantsToImport: Merchant[], options: ImporterOptions = {}): Promise<ImportSummary> {
+    return MerchantImporter.getInstance().runAndPrintReport(merchantsToImport, options);
   }
 }

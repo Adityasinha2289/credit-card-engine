@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Search, Check } from 'lucide-react';
 import { MASTER_CARD_DATASET } from '../../../finix/data/masterDataset';
 import { CreditCard as PhysicalCard } from '../../../cards/components/CreditCard';
+import { cn } from '../../../../lib/utils';
 
 interface CurrentCardsStepProps {
   onBack: () => void;
@@ -66,9 +67,10 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
         />
       </div>
 
-      {/* Card grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-14 max-h-[42vh] md:max-h-[45vh] overflow-y-auto pr-1"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: '#E5E7EB transparent' }}
+      {/* Card Carousel (Apple Wallet Style) */}
+      <div 
+        className="w-full flex overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-10 pt-4 gap-4 px-[10%]"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {filteredCards.map((card, idx) => {
           const isSelected = selectedCards.includes(card.id);
@@ -76,38 +78,44 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
           const networkKey = (card.network?.toLowerCase() === 'rupay' ? 'rupay' : card.network?.toLowerCase() || 'visa') as any;
 
           return (
-            <motion.button
+            <motion.div
               key={card.id}
-              onClick={() => toggleCard(card.id)}
-              whileHover={{ y: -3, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: 8 }}
+              className="snap-center shrink-0 w-[80%] max-w-[280px] relative flex flex-col items-center"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: Math.min(idx * 0.02, 0.3) }}
-              className="group relative p-4 rounded-[20px] flex flex-col items-center justify-between gap-3 transition-all duration-300 text-center overflow-hidden"
-              style={{
-                backgroundColor: isSelected ? '#F9FAFB' : '#FFFFFF',
-                border: `1px solid ${isSelected ? '#2A9D5C' : '#E5E7EB'}`,
-                boxShadow: isSelected ? '0 8px 24px rgba(42,157,92,0.18)' : 'none',
-              }}
+              transition={{ duration: 0.4, delay: Math.min(idx * 0.05, 0.4) }}
             >
-              {/* Checkmark indicator */}
-              <motion.div
-                className="absolute top-2.5 right-2.5 z-20 w-6 h-6 rounded-full flex items-center justify-center shadow-md"
-                initial={false}
-                animate={{
-                  opacity: isSelected ? 1 : 0,
-                  scale: isSelected ? 1 : 0.3,
-                  backgroundColor: isSelected ? '#2A9D5C' : 'transparent',
+              <motion.button
+                onClick={() => toggleCard(card.id)}
+                whileHover={{ y: -8 }}
+                whileTap={{ scale: 0.95, y: 0 }}
+                animate={{ 
+                  y: isSelected ? -20 : 0,
+                  scale: isSelected ? 1.05 : 1,
+                  filter: isSelected ? 'brightness(1.1)' : 'brightness(0.95)'
                 }}
-                transition={{ duration: 0.2 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                className="w-full relative rounded-3xl"
               >
-                <Check size={12} strokeWidth={3} color="#FFFFFF" />
-              </motion.div>
+                {/* Checkmark indicator */}
+                <motion.div
+                  className="absolute -top-3 -right-3 z-30 w-8 h-8 rounded-full flex items-center justify-center shadow-xl border-2 border-white"
+                  initial={false}
+                  animate={{
+                    opacity: isSelected ? 1 : 0,
+                    scale: isSelected ? 1 : 0.5,
+                    backgroundColor: isSelected ? '#2A9D5C' : 'transparent',
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Check size={16} strokeWidth={4} color="#FFFFFF" />
+                </motion.div>
 
-              {/* Miniature 2D Physical Card */}
-              <div className="w-full flex items-center justify-center pt-2 pb-1 relative">
-                <div className="w-full max-w-[240px] md:max-w-[200px] transition-transform duration-300 group-hover:scale-105">
+                {/* Physical Card Simulation */}
+                <div className={cn(
+                  "w-full transition-all duration-300 rounded-[24px]",
+                  isSelected ? "shadow-[0_20px_40px_rgba(42,157,92,0.3)]" : "shadow-xl"
+                )}>
                   <PhysicalCard
                     card={{
                       id: card.id,
@@ -124,21 +132,13 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
                     variant="compact"
                   />
                 </div>
+              </motion.button>
+              
+              <div className="mt-8 flex flex-col items-center">
+                <span className="text-sm font-bold text-gray-900 text-center">{card.name}</span>
+                <span className="text-xs font-medium text-gray-500 mt-1">{card.bank}</span>
               </div>
-
-              <div className="flex flex-col items-center w-full px-1 pb-1">
-                <span className="text-sm md:text-xs font-semibold text-center leading-snug line-clamp-1 mb-1 transition-colors"
-                  style={{ color: isSelected ? '#111827' : '#4B5563' }}
-                >
-                  {card.name}
-                </span>
-                <span className="text-[11px] md:text-[10px] text-center font-medium"
-                  style={{ color: isSelected ? '#2A9D5C' : '#6B7280' }}
-                >
-                  {card.bank} • {card.network}
-                </span>
-              </div>
-            </motion.button>
+            </motion.div>
           );
         })}
       </div>

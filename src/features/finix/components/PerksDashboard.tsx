@@ -210,8 +210,14 @@ export function PerksDashboard() {
                     </div>
                     
                     <div>
-                      <div className="flex justify-between text-[11px] mb-1.5 font-bold uppercase tracking-wider">
-                        <span className="text-text-secondary">{formatCents(dynamicAmount)}</span>
+                      <div className="flex justify-between text-[11px] mb-1.5 font-bold tracking-wider">
+                        <span className="text-text-secondary uppercase">
+                          {isCompleted ? (
+                            <span className="text-brand-emerald">Achieved!</span>
+                          ) : (
+                            <span>{formatCents(m.targetAmount - dynamicAmount)} away</span>
+                          )}
+                        </span>
                         <span className="text-text-muted">{formatCents(m.targetAmount)}</span>
                       </div>
                       <div className="w-full h-2.5 bg-surface-secondary dark:bg-white/5 rounded-full overflow-hidden">
@@ -242,38 +248,9 @@ export function PerksDashboard() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {offers.slice(0, 4).map((offer) => {
-                return (
-                  <motion.div
-                    key={offer.id}
-                    whileHover={{ y: -4 }}
-                    className="bg-surface-primary dark:bg-white/[0.02] border border-border-subtle  rounded-2xl p-4 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
-                  >
-                    {offer.discountPercentage >= 15 && (
-                      <div className="absolute top-0 right-0 bg-profit text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-xl z-10 flex items-center gap-1">
-                        <Percent size={10} />
-                        HOT
-                      </div>
-                    )}
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-zinc-700 to-zinc-900 flex items-center justify-center text-white font-bold shadow-md shrink-0 text-sm">
-                        {offer.merchantName.substring(0, 2).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-text-primary leading-tight">{offer.merchantName}</p>
-                        <p className="text-[10px] text-text-muted uppercase tracking-wider mt-0.5">{offer.category}</p>
-                      </div>
-                    </div>
-                    <p className="text-xs font-semibold text-text-secondary leading-snug mb-3">
-                      {offer.description}
-                    </p>
-                    <div className="flex items-center justify-between text-[10px] font-bold text-text-muted uppercase tracking-wider mt-auto pt-3 border-t border-border-subtle">
-                      <span className="flex items-center gap-1"><Calendar size={12}/> Ends {formatDate(offer.validUntil)}</span>
-                      <span className="flex items-center gap-1 text-brand-emerald">Redeem <ExternalLink size={10}/></span>
-                    </div>
-                  </motion.div>
-                );
-              })}
+              {offers.slice(0, 4).map((offer) => (
+                <OfferCard key={offer.id} offer={offer} userCards={userCards} />
+              ))}
             </div>
           </motion.div>
 
@@ -387,6 +364,12 @@ export function PerksDashboard() {
                         <p className="text-[9px] font-bold text-text-muted uppercase tracking-wider">{sub.billingCycle}</p>
                       </div>
                     </div>
+                    
+                    {sub.billingCycle === 'monthly' && (
+                      <div className="px-2 pb-1 text-[10px] font-medium text-text-muted">
+                        This costs you {formatCents(sub.amount * 12)} / year.
+                      </div>
+                    )}
                     
                     <div className="flex items-center justify-end border-t border-border-subtle  pt-2 mt-1">
                       <button
@@ -522,6 +505,72 @@ export function PerksDashboard() {
           </motion.div>
         </div>
       )}
+    </motion.div>
+  );
+}
+
+function OfferCard({ offer, userCards }: { offer: any, userCards: any[] }) {
+  const [expanded, setExpanded] = useState(false);
+  const [saved, setSaved] = useState(false);
+  
+  const formatDate = (dateStr: string) => {
+    return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short' }).format(new Date(dateStr));
+  };
+
+  return (
+    <motion.div
+      layout
+      whileHover={{ y: -4 }}
+      onClick={() => setExpanded(!expanded)}
+      className="bg-surface-primary dark:bg-white/[0.02] border border-border-subtle rounded-2xl p-4 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+    >
+      {offer.discountPercentage >= 15 && (
+        <div className="absolute top-0 right-0 bg-profit text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-xl z-10 flex items-center gap-1">
+          <Percent size={10} />
+          HOT
+        </div>
+      )}
+      <div className="flex items-start gap-3 mb-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-zinc-700 to-zinc-900 flex items-center justify-center text-white font-bold shadow-md shrink-0 text-sm">
+          {offer.merchantName.substring(0, 2).toUpperCase()}
+        </div>
+        <div className="flex-1 pr-4">
+          <p className="text-sm font-bold text-text-primary leading-tight">{offer.merchantName}</p>
+          <p className="text-[10px] text-text-muted uppercase tracking-wider mt-0.5">{offer.category}</p>
+        </div>
+        <button 
+          onClick={(e) => { e.stopPropagation(); setSaved(!saved); }}
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors z-20",
+            saved ? "bg-brand-emerald text-white" : "bg-surface-secondary text-text-muted hover:bg-white/10"
+          )}
+        >
+          <Star size={14} fill={saved ? "currentColor" : "none"} />
+        </button>
+      </div>
+      
+      <p className={cn("text-xs font-semibold text-text-secondary leading-snug mb-3 transition-all", !expanded && "line-clamp-2")}>
+        {offer.description}
+      </p>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-3 text-xs text-text-muted space-y-1 border-t border-border-subtle pt-2"
+          >
+            <p>Eligible Cards: {offer.eligibleCardIds?.map((id: string) => userCards.find((c: any) => c.id === id)?.name || id).join(', ') || 'All Cards'}</p>
+            <p>Max Discount: {formatCents(offer.maxDiscountAmount)}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex items-center justify-between text-[10px] font-bold text-text-muted uppercase tracking-wider mt-auto pt-3 border-t border-border-subtle">
+        <span className="flex items-center gap-1"><Calendar size={12}/> Ends {formatDate(offer.validUntil)}</span>
+        <span className="flex items-center gap-1 text-brand-emerald">Redeem <ExternalLink size={10}/></span>
+      </div>
     </motion.div>
   );
 }

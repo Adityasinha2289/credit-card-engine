@@ -25,10 +25,10 @@ export function WrongCardSection() {
   const Icon = activeScenario.icon;
 
   return (
-    <section className="relative w-full bg-[#050505] text-white overflow-hidden py-24 lg:py-32 flex items-center justify-center min-h-[750px] lg:min-h-[850px]">
+    <section className="relative w-full bg-editorial-deep-forest text-editorial-warm-cream overflow-hidden py-24 lg:py-32 flex items-center justify-center min-h-[750px] lg:min-h-[850px]">
       
       {/* Background Lighting */}
-      <div className="absolute top-1/2 right-[20%] -translate-y-1/2 w-[600px] h-[600px] bg-[#2A9D5C] blur-[200px] opacity-[0.04] pointer-events-none rounded-full" />
+      <div className="absolute top-1/2 right-[20%] -translate-y-1/2 w-[600px] h-[600px] bg-editorial-soft-sage blur-[200px] opacity-[0.05] pointer-events-none rounded-full" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#050505_100%)] pointer-events-none opacity-80" />
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]" />
 
@@ -36,13 +36,13 @@ export function WrongCardSection() {
         
         {/* LEFT CONTENT (5 COLUMNS) */}
         <div className="col-span-1 lg:col-span-5 flex flex-col items-start text-left w-full min-w-0">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111111] border border-white/[0.04] text-[10px] uppercase tracking-[0.2em] font-semibold text-gray-400 mb-8 shadow-sm">
-            <Sparkles className="w-3 h-3 text-[#2A9D5C]" />
-            <span className="text-gray-300">Intelligent Context</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-editorial-forest/40 border border-editorial-soft-sage/20 text-[10px] uppercase tracking-[0.2em] font-semibold text-editorial-muted-sage mb-8 shadow-sm">
+            <Sparkles className="w-3 h-3 text-editorial-soft-sage" />
+            <span className="text-editorial-warm-cream">Intelligent Context</span>
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-display font-medium mb-12 tracking-tight">
-            You're probably using the <span className="text-gray-500">wrong card</span>.
+          <h2 className="text-3xl md:text-5xl font-serif font-medium mb-12 tracking-tight">
+            You're probably using the <span className="text-editorial-soft-sage">wrong card</span>.
           </h2>
 
           <div className="w-full relative h-[220px]">
@@ -56,19 +56,19 @@ export function WrongCardSection() {
                 className="absolute inset-0 flex flex-col items-start w-full min-w-0"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center shrink-0">
-                    <Icon className="w-6 h-6 text-[#2A9D5C]" />
+                  <div className="w-12 h-12 rounded-2xl bg-editorial-forest/30 border border-editorial-soft-sage/20 flex items-center justify-center shrink-0">
+                    <Icon className="w-6 h-6 text-editorial-soft-sage" />
                   </div>
-                  <h3 className="text-[clamp(2rem,4vw,3rem)] font-display font-medium text-white tracking-tight leading-none break-words min-w-0">
+                  <h3 className="text-[clamp(2rem,4vw,3rem)] font-serif font-medium text-editorial-warm-cream tracking-tight leading-none break-words min-w-0">
                     {activeScenario.title}
                   </h3>
                 </div>
                 
-                <p className="text-[clamp(1.25rem,2vw,1.5rem)] font-light text-gray-500 tracking-tight mb-4">
+                <p className="text-[clamp(1.25rem,2vw,1.5rem)] font-light text-editorial-soft-sage tracking-tight mb-4">
                   {activeScenario.amount}
                 </p>
 
-                <p className="text-sm text-gray-400 leading-relaxed max-w-sm mb-6">
+                <p className="text-sm text-editorial-muted-sage leading-relaxed max-w-sm mb-6">
                   {activeScenario.desc}
                 </p>
 
@@ -76,7 +76,7 @@ export function WrongCardSection() {
                   {scenarios.map((s, idx) => (
                     <div 
                       key={s.id} 
-                      className={`h-1 rounded-full transition-all duration-500 ${idx === activeIndex ? 'w-8 bg-[#2A9D5C]' : 'w-2 bg-gray-800'}`}
+                      className={`h-1 rounded-full transition-all duration-500 ${idx === activeIndex ? 'w-8 bg-editorial-soft-sage' : 'w-2 bg-editorial-forest'}`}
                     />
                   ))}
                 </div>
@@ -108,7 +108,7 @@ export function WrongCardSection() {
               <div className="w-full h-full bg-black rounded-[53px] border-[10px] border-black overflow-hidden relative">
                 
                 {/* Screen Background */}
-                <div className="w-full h-full bg-[#050505] relative flex flex-col pt-12 px-5">
+                <div className="w-full h-full bg-editorial-light-cream relative flex flex-col pt-12 px-5">
                   
                   {/* Dynamic Island */}
                   <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[100px] h-[28px] bg-black rounded-full z-50 flex items-center justify-between px-2">
@@ -116,9 +116,9 @@ export function WrongCardSection() {
                   </div>
 
                   {/* Status Bar */}
-                  <div className="absolute top-3 left-6 text-[11px] font-medium text-white">9:41</div>
+                  <div className="absolute top-3 left-6 text-[11px] font-medium text-editorial-deep-forest">9:41</div>
                   <div className="absolute top-3 right-6 flex items-center gap-1">
-                    <div className="w-3 h-3 border border-white rounded-sm flex items-center justify-center"><div className="w-1.5 h-1.5 bg-white" /></div>
+                    <div className="w-3 h-3 border border-editorial-deep-forest rounded-sm flex items-center justify-center"><div className="w-1.5 h-1.5 bg-editorial-deep-forest" /></div>
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center relative">
@@ -134,21 +134,21 @@ export function WrongCardSection() {
                       >
                         {/* Mini Header Context Inside Phone */}
                         <div className="mb-6">
-                          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold mb-2">Checkout Details</p>
+                          <p className="text-[10px] text-editorial-muted-sage uppercase tracking-widest font-semibold mb-2">Checkout Details</p>
                           <div className="flex justify-between items-end">
-                            <h3 className="text-lg font-medium text-white tracking-tight break-words">{activeScenario.title}</h3>
-                            <h3 className="text-lg font-medium text-white tracking-tight">{activeScenario.amount}</h3>
+                            <h3 className="text-lg font-medium text-editorial-deep-forest tracking-tight break-words">{activeScenario.title}</h3>
+                            <h3 className="text-lg font-medium text-editorial-deep-forest tracking-tight">{activeScenario.amount}</h3>
                           </div>
-                          <div className="h-[1px] w-full bg-white/[0.05] mt-4" />
+                          <div className="h-[1px] w-full bg-editorial-soft-sage/20 mt-4" />
                         </div>
 
                         {/* 3D Recommendation Card */}
-                        <div className="bg-gradient-to-br from-[#121212] to-[#080808] rounded-[24px] p-5 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] ring-1 ring-white/[0.06] relative">
-                          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-[#2A9D5C]/0 via-[#2A9D5C]/40 to-[#2A9D5C]/0" />
+                        <div className="bg-gradient-to-br from-editorial-forest to-editorial-deep-forest rounded-[24px] p-5 shadow-[0_20px_50px_-10px_rgba(15,42,29,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] ring-1 ring-editorial-soft-sage/20 relative">
+                          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-editorial-soft-sage/0 via-editorial-soft-sage/40 to-editorial-soft-sage/0" />
                           
                           <div className="flex justify-between items-start mb-5">
                             <div>
-                              <p className="text-[#2A9D5C] text-[9px] font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1">
+                              <p className="text-editorial-warm-cream text-[9px] font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1">
                                 <Sparkles className="w-2.5 h-2.5" /> Best Choice
                               </p>
                               <p className="text-lg font-medium text-white tracking-tight">{activeScenario.card}</p>
@@ -157,19 +157,19 @@ export function WrongCardSection() {
 
                           <div className="space-y-2 mb-5">
                             <div className="flex justify-between items-center text-xs">
-                              <span className="text-gray-400 font-light">Rewards Generated</span>
+                              <span className="text-editorial-soft-sage font-light">Rewards Generated</span>
                               <span className="text-white font-medium">{activeScenario.rewards}</span>
                             </div>
                           </div>
 
-                          <div className="bg-[#2A9D5C]/10 rounded-xl p-3 border border-[#2A9D5C]/20 flex justify-between items-center mb-2">
-                            <span className="text-xs font-semibold text-[#2A9D5C]">Total Savings</span>
-                            <span className="text-lg font-bold text-[#2A9D5C]">{activeScenario.save}</span>
+                          <div className="bg-white/10 rounded-xl p-3 border border-white/20 flex justify-between items-center mb-2">
+                            <span className="text-xs font-semibold text-editorial-warm-cream">Total Savings</span>
+                            <span className="text-lg font-bold text-editorial-warm-cream">{activeScenario.save}</span>
                           </div>
 
-                          <div className="absolute -top-3 -right-3 bg-[#0A0A0A] border border-white/[0.1] rounded-full px-3 py-1 flex items-center gap-1.5 shadow-xl">
-                            <CheckCircle2 className="w-3 h-3 text-[#2A9D5C]" />
-                            <span className="text-[10px] font-bold text-white tracking-wider">{activeScenario.confidence}% CONFIDENCE</span>
+                          <div className="absolute -top-3 -right-3 bg-editorial-light-cream border border-editorial-soft-sage/30 rounded-full px-3 py-1 flex items-center gap-1.5 shadow-xl">
+                            <CheckCircle2 className="w-3 h-3 text-editorial-forest" />
+                            <span className="text-[10px] font-bold text-editorial-deep-forest tracking-wider">{activeScenario.confidence}% CONFIDENCE</span>
                           </div>
                         </div>
                       </motion.div>

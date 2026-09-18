@@ -125,7 +125,7 @@ function calcRewardPoints(
 ): number {
   if (amount <= 0) return 0;           // no points on refunds or credits
   const multiplier = multipliers[category] ?? 1;
-  return Math.floor((amount / 100) * multiplier);
+  return Math.floor((amount / 10000) * multiplier);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -318,7 +318,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             // 3. Update rewards ledger
             if (points > 0) {
               state.rewards.totalPoints   += points;
-              state.rewards.cycleEarnings += Math.floor(input.amount * 0.01); // 1% cash back base
+              state.rewards.cycleEarnings += Math.floor(input.amount * 0.01); // 1% cash back base (accrues in paise)
             }
           });
 

@@ -1,134 +1,103 @@
-import type { MerchantOffer } from '../merchant-intelligence/types';
+import type { RawOfferDataset } from './offerTypes';
 import type { ValidationError, ValidationResult } from './types';
-import { MerchantRepository } from '../merchant-intelligence/merchantRepository';
 
 export class OfferValidator {
-  public static validateDataset(offers: MerchantOffer[]): ValidationResult {
+  public static validateDataset(offers: RawOfferDataset[]): ValidationResult {
     const errors: ValidationError[] = [];
     const seenIds = new Set<string>();
-    const validMerchantIds = new Set<string>(
-      MerchantRepository.getInstance().getMerchants().map((m) => m.id)
-    );
 
     for (const offer of offers) {
+      const offerId = offer.identity?.offer_id;
+      const title = offer.identity?.title;
+
       // 1. Unique ID check
-      if (!offer.id || offer.id.trim() === '') {
+      if (!offerId || offerId.trim() === '') {
         errors.push({
-          cardId: offer.id || 'UNKNOWN',
-          field: 'id',
+          cardId: offerId || 'UNKNOWN',
+          field: 'identity.offer_id',
           message: 'Offer ID is required',
         });
-      } else if (seenIds.has(offer.id)) {
+        continue; // Critical failure for this record
+      } else if (seenIds.has(offerId)) {
         errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'id',
-          message: `Duplicate offer ID detected: '${offer.id}'`,
+          cardId: offerId,
+          cardName: title,
+          field: 'identity.offer_id',
+          message: `Duplicate offer ID detected: '${offerId}'`,
         });
       } else {
-        seenIds.add(offer.id);
+        seenIds.add(offerId);
       }
 
-      // 2. Referential integrity: Merchant exists check
-      if (!offer.merchantId || offer.merchantId.trim() === '') {
+      // 2. Title check
+      if (!title || title.trim() === '') {
         errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'merchantId',
-          message: 'Merchant ID is required for offer',
-        });
-      } else if (!validMerchantIds.has(offer.merchantId)) {
-        errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'merchantId',
-          message: `Referenced merchant ID '${offer.merchantId}' does not exist in Merchant repository`,
-        });
-      }
-
-      // 3. Title & Description checks
-      if (!offer.title || offer.title.trim() === '') {
-        errors.push({
-          cardId: offer.id,
-          field: 'title',
+          cardId: offerId,
+          field: 'identity.title',
           message: 'Offer title is required',
         });
       }
 
-      if (!offer.description || offer.description.trim() === '') {
+      // 3. Benefit checks
+      if (!offer.benefit?.benefit_type) {
         errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'description',
-          message: 'Offer description is required',
+          cardId: offerId,
+          cardName: title,
+          field: 'benefit.benefit_type',
+          message: 'Benefit type is required',
         });
       }
 
-      // 4. Discount type & value checks
-      if (!offer.discountType) {
+      if (offer.benefit?.maximum_benefit !== null && offer.benefit?.maximum_benefit !== undefined) {
+        if (typeof offer.benefit.maximum_benefit !== 'number' || offer.benefit.maximum_benefit < 0) {
+          errors.push({
+            cardId: offerId,
+            cardName: title,
+            field: 'benefit.maximum_benefit',
+            message: 'Maximum benefit must be a positive number',
+          });
+        }
+      }
+
+      // 4. Validity date check
+      if (offer.validity?.valid_until) {
+         if (isNaN(Date.parse(offer.validity.valid_until))) {
+          errors.push({
+            cardId: offerId,
+            cardName: title,
+            field: 'validity.valid_until',
+            message: 'Validity must be a valid ISO date string',
+          });
+         }
+      }
+      // 5. Quality metadata check
+      if (offer.data_quality === 'INVALID') {
         errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'discountType',
-          message: 'Discount type is required',
+          cardId: offerId,
+          cardName: title,
+          field: 'data_quality',
+          message: 'Record marked as INVALID by upstream extraction process',
         });
       }
 
-      if (typeof offer.discountValue !== 'number' || offer.discountValue <= 0) {
+      if (offer.lifecycle_status === 'EXPIRED') {
         errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'discountValue',
-          message: 'Discount value must be a positive number',
-        });
-      } else if (offer.discountType === 'percentage' && offer.discountValue > 100) {
-        errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'discountValue',
-          message: 'Percentage discount cannot exceed 100%',
+          cardId: offerId,
+          cardName: title,
+          field: 'lifecycle_status',
+          message: 'Record marked as EXPIRED by upstream extraction process',
         });
       }
 
-      // 5. Eligible cards check
-      if (!Array.isArray(offer.eligibleCards) || offer.eligibleCards.length === 0) {
+      if (offer.quality?.human_review_required === true) {
         errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'eligibleCards',
-          message: 'At least one eligible card or"all" must be specified',
+          cardId: offerId,
+          cardName: title,
+          field: 'quality.human_review_required',
+          message: 'Record marked as requiring human review',
         });
       }
 
-      // 6. Minimum spend check
-      if (typeof offer.minimumSpend !== 'number' || offer.minimumSpend < 0) {
-        errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'minimumSpend',
-          message: 'Minimum spend must be non-negative',
-        });
-      }
-
-      // 7. Validity date check
-      if (!offer.validity || isNaN(Date.parse(offer.validity))) {
-        errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'validity',
-          message: 'Validity must be a valid ISO date string',
-        });
-      }
-
-      // 8. Category check
-      if (!offer.category) {
-        errors.push({
-          cardId: offer.id,
-          cardName: offer.title,
-          field: 'category',
-          message: 'Offer category is required',
-        });
-      }
     }
 
     return {
@@ -137,3 +106,4 @@ export class OfferValidator {
     };
   }
 }
+

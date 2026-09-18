@@ -4,30 +4,7 @@ import { handleServiceError } from '../../../services/core/errorHandler';
 import { FeatureEngine } from '../../feature-flags/featureEngine';
 import type { PaymentMethod } from '../../optimization/types';
 import { CommerceRepositoryError } from './index';
-
-type PaymentMethodRow = {
-  id: string;
-  user_id: string;
-  type: string;
-  name: string;
-  provider: string;
-  metadata: Record<string, any>;
-  status: string;
-};
-
-export class PaymentMethodMapper {
-  static toDomain(row: PaymentMethodRow): PaymentMethod {
-    return {
-      id: row.id,
-      userId: row.user_id,
-      name: row.name,
-      status: row.status === 'active' ? 'active' : 'inactive',
-      type: row.type as any,
-      provider: row.provider,
-      metadata: row.metadata,
-    };
-  }
-}
+import { PaymentMethodMapper } from '../mappers';
 
 export class PaymentMethodRepository {
   private static get useMock(): boolean {

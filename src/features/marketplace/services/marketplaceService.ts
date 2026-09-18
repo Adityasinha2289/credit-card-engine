@@ -1,9 +1,5 @@
 import { supabase } from '../../../lib/supabase';
 import type { MarketplaceOffer } from '../types';
-import { TRAVEL_PARTNERS } from '../data/travelPartners';
-import { LIFESTYLE_PARTNERS } from '../data/lifestylePartners';
-import { SHOPPING_PARTNERS } from '../data/shoppingPartners';
-import { DINING_PARTNERS } from '../data/diningPartners';
 
 export class MarketplaceService {
   static async getOffersByCategory(
@@ -64,32 +60,7 @@ export class MarketplaceService {
 
       // 2. Legacy / Mock Support (for categories not yet migrated to mapping table or if migration not run)
       if (results.length === 0) {
-        // Mock data mapping
-        const MOCK_PARTNERS: Record<string, MarketplaceOffer[]> = {
-          'travel': TRAVEL_PARTNERS,
-          'lifestyle': LIFESTYLE_PARTNERS,
-          'shopping': SHOPPING_PARTNERS,
-          'dining': DINING_PARTNERS
-        };
-
-        if (MOCK_PARTNERS[categorySlug]) {
-          let fallbackData = MOCK_PARTNERS[categorySlug];
-          
-          if (subcategorySlug) {
-            fallbackData = fallbackData.filter((p: any) => p.subcategorySlug === subcategorySlug);
-          }
-          if (minorCategorySlug) {
-            fallbackData = fallbackData.filter((p: any) => p.minorCategorySlug === minorCategorySlug);
-          }
-
-          fallbackData.forEach((mock: any) => {
-            if (!seenPartners.has(mock.id)) {
-              seenPartners.add(mock.id);
-              results.push(mock);
-            }
-          });
-        }
-
+        // Mock data mapping removed as part of dummy data cleanup
         // Dining legacy fallback removed to prevent broken empty URL links from legacy db data
       }
 

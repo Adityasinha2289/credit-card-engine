@@ -81,26 +81,26 @@ export function InteractiveDemoSection() {
   };
 
   return (
-    <section className="w-full py-24 md:py-32 bg-[#050505] text-white relative overflow-hidden">
+    <section className="w-full py-24 md:py-32 bg-editorial-light-cream text-editorial-deep-forest relative overflow-hidden">
       
       {/* Background Lighting */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-brand-emerald rounded-full blur-[250px] opacity-[0.015] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-editorial-soft-sage rounded-full blur-[250px] opacity-[0.2] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col items-center">
         
         {/* Intro Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111] border border-white/[0.04] text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-6">
-            <Sparkles className="w-3.5 h-3.5 text-brand-emerald" />
-            <span className="text-white">TAQDEER AI Copilot</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-editorial-soft-sage/20 border border-editorial-soft-sage/30 text-[10px] font-bold tracking-widest uppercase text-editorial-forest mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-editorial-forest" />
+            <span className="text-editorial-deep-forest">TAQDEER AI Copilot</span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium mb-6 tracking-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium mb-6 tracking-tight text-editorial-deep-forest">
             Consult your financial analyst.
           </h2>
         </div>
 
         {/* The Workspace Container */}
-        <div className="w-full bg-[#0A0A0A] border border-white/[0.06] rounded-[2.5rem] shadow-2xl flex flex-col min-h-[700px] relative overflow-hidden">
+        <div className="w-full bg-editorial-deep-forest border border-editorial-soft-sage/30 rounded-[2.5rem] shadow-2xl flex flex-col min-h-[700px] relative overflow-hidden">
           
           <AnimatePresence mode="wait">
             {/* ============================================================== */}
@@ -118,22 +118,22 @@ export function InteractiveDemoSection() {
                 <div className="w-full max-w-3xl flex flex-col items-center text-center">
                   
                   {/* TAQDEER Mark & Headline */}
-                  <div className="w-14 h-14 rounded-2xl bg-[#111] border border-white/[0.08] flex items-center justify-center mb-8 shadow-2xl">
-                    <Sparkles className="w-6 h-6 text-brand-emerald" />
+                  <div className="w-14 h-14 rounded-2xl bg-editorial-forest/50 border border-editorial-soft-sage/20 flex items-center justify-center mb-8 shadow-2xl">
+                    <Sparkles className="w-6 h-6 text-editorial-soft-sage" />
                   </div>
                   
-                  <h3 className="text-4xl md:text-5xl font-display font-medium text-white mb-4 tracking-tight">
+                  <h3 className="text-4xl md:text-5xl font-serif font-medium text-editorial-warm-cream mb-4 tracking-tight">
                     What are you planning to buy?
                   </h3>
-                  <p className="text-gray-500 text-lg md:text-xl font-light mb-12">
+                  <p className="text-editorial-muted-sage text-lg md:text-xl font-light mb-12">
                     Describe any purchase. TAQDEER recommends exactly which card to use.
                   </p>
 
                   {/* HERO COMPOSER */}
                   <div className="w-full relative group mb-12 z-20">
-                    <div className="absolute inset-[-4px] bg-gradient-to-r from-brand-emerald/0 via-brand-emerald/20 to-brand-emerald/0 blur-xl rounded-[2.5rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                    <div className="absolute inset-[-4px] bg-gradient-to-r from-editorial-soft-sage/0 via-editorial-soft-sage/20 to-editorial-soft-sage/0 blur-xl rounded-[2.5rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
                     
-                    <div className="relative bg-[#0F0F0F] border border-white/[0.1] group-focus-within:border-white/[0.2] rounded-[2rem] shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
+                    <div className="relative bg-editorial-forest/30 border border-editorial-soft-sage/20 group-focus-within:border-editorial-soft-sage/40 rounded-[2rem] shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
                       <textarea
                         ref={heroTextareaRef}
                         value={query}
@@ -145,19 +145,19 @@ export function InteractiveDemoSection() {
                           }
                         }}
                         placeholder="Ask about a purchase..."
-                        className="w-full bg-transparent border-none outline-none text-white placeholder:text-gray-600 text-xl md:text-2xl font-light resize-none min-h-[80px] p-6 pb-2 no-scrollbar leading-relaxed"
+                        className="w-full bg-transparent border-none outline-none text-editorial-warm-cream placeholder:text-editorial-muted-sage text-xl md:text-2xl font-light resize-none min-h-[80px] p-6 pb-2 no-scrollbar leading-relaxed"
                         rows={1}
                         autoFocus
                       />
                       
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 pt-2 bg-[#0F0F0F]">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 pt-2 bg-transparent">
                         {/* Action Chips */}
                         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
                           {POPULAR_SCENARIOS.map((scenario) => (
                             <button
                               key={scenario}
                               onClick={() => executeQuery(scenario)}
-                              className="px-4 py-2 rounded-full bg-white/[0.03] hover:bg-white/[0.08] text-gray-400 hover:text-white text-sm font-medium transition-colors whitespace-nowrap"
+                              className="px-4 py-2 rounded-full bg-editorial-forest/40 hover:bg-editorial-forest text-editorial-muted-sage hover:text-editorial-warm-cream text-sm font-medium transition-colors whitespace-nowrap"
                             >
                               {scenario}
                             </button>
@@ -168,7 +168,7 @@ export function InteractiveDemoSection() {
                         <button
                           onClick={() => executeQuery(query)}
                           disabled={!query.trim()}
-                          className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shrink-0 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-lg self-end sm:self-auto"
+                          className="w-12 h-12 rounded-full bg-editorial-soft-sage text-editorial-deep-forest flex items-center justify-center shrink-0 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 transition-all shadow-lg self-end sm:self-auto"
                         >
                           <ArrowRight className="w-5 h-5" />
                         </button>
@@ -178,17 +178,17 @@ export function InteractiveDemoSection() {
 
                   {/* RECENT RECOMMENDATIONS */}
                   <div className="w-full text-left">
-                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-600 mb-6 pl-2">Recent Recommendations</p>
+                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-editorial-muted-sage mb-6 pl-2">Recent Recommendations</p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {RECENT_RECS.map((rec, i) => (
-                        <div key={i} className="bg-[#111] border border-white/[0.04] rounded-2xl p-5 flex flex-col justify-between hover:border-white/[0.08] transition-colors cursor-pointer group">
+                        <div key={i} className="bg-editorial-forest/30 border border-editorial-soft-sage/20 rounded-2xl p-5 flex flex-col justify-between hover:border-editorial-soft-sage/50 transition-colors cursor-pointer group">
                           <div>
-                            <div className="text-gray-400 text-xs font-medium mb-1">{rec.title}</div>
-                            <div className="text-white font-medium text-lg tracking-tight mb-4">{rec.card}</div>
+                            <div className="text-editorial-muted-sage text-xs font-medium mb-1">{rec.title}</div>
+                            <div className="text-editorial-warm-cream font-medium text-lg tracking-tight mb-4">{rec.card}</div>
                           </div>
-                          <div className="flex items-center justify-between border-t border-white/[0.04] pt-4 mt-2">
-                            <span className="text-xs text-gray-500">Saved</span>
-                            <span className="text-sm font-semibold text-success-emerald group-hover:text-white transition-colors">{rec.saved}</span>
+                          <div className="flex items-center justify-between border-t border-editorial-soft-sage/20 pt-4 mt-2">
+                            <span className="text-xs text-editorial-muted-sage">Saved</span>
+                            <span className="text-sm font-semibold text-editorial-soft-sage group-hover:text-editorial-warm-cream transition-colors">{rec.saved}</span>
                           </div>
                         </div>
                       ))}
@@ -214,14 +214,14 @@ export function InteractiveDemoSection() {
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 rounded-full border border-dashed border-white/[0.1]"
+                    className="absolute inset-0 rounded-full border border-dashed border-editorial-soft-sage/20"
                   />
                   <motion.div 
                     animate={{ rotate: -360 }}
                     transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-2 rounded-full border border-dashed border-brand-emerald/30"
+                    className="absolute inset-2 rounded-full border border-dashed border-editorial-soft-sage/40"
                   />
-                  <Sparkles className="w-8 h-8 text-brand-emerald animate-pulse" />
+                  <Sparkles className="w-8 h-8 text-editorial-soft-sage animate-pulse" />
                 </div>
 
                 <div className="flex flex-col items-start gap-4 w-full max-w-sm">
@@ -236,20 +236,20 @@ export function InteractiveDemoSection() {
                         animate={{ opacity: isActive || isDone ? 1 : 0.3, x: 0 }}
                         className="flex items-center gap-4 w-full"
                       >
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-[#111] border border-white/[0.1] shrink-0">
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center bg-editorial-forest/40 border border-editorial-soft-sage/20 shrink-0">
                           {isDone ? (
-                            <Check className="w-3 h-3 text-success-emerald" />
+                            <Check className="w-3 h-3 text-editorial-soft-sage" />
                           ) : isActive ? (
                             <motion.div 
                               animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
                               transition={{ duration: 1.5, repeat: Infinity }}
-                              className="w-1.5 h-1.5 rounded-full bg-brand-emerald" 
+                              className="w-1.5 h-1.5 rounded-full bg-editorial-soft-sage" 
                             />
                           ) : (
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-editorial-forest" />
                           )}
                         </div>
-                        <span className={`text-sm ${isActive ? 'text-white font-medium' : isDone ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <span className={`text-sm ${isActive ? 'text-editorial-warm-cream font-medium' : isDone ? 'text-editorial-muted-sage' : 'text-editorial-forest'}`}>
                           {stage}
                         </span>
                       </motion.div>
@@ -273,53 +273,53 @@ export function InteractiveDemoSection() {
                 <div className="flex-1 overflow-y-auto no-scrollbar p-6 md:p-10 pb-32">
                   <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
                     
-                    <div className="flex items-center justify-between w-full border-b border-white/[0.05] pb-4">
-                      <h3 className="text-lg font-display font-medium text-white flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-brand-emerald" />
+                    <div className="flex items-center justify-between w-full border-b border-editorial-soft-sage/20 pb-4">
+                      <h3 className="text-lg font-serif font-medium text-editorial-warm-cream flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-editorial-soft-sage" />
                         Financial Decision Report
                       </h3>
                       <button 
                         onClick={reset}
-                        className="text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-white transition-colors flex items-center gap-1"
+                        className="text-xs font-semibold uppercase tracking-wider text-editorial-muted-sage hover:text-editorial-warm-cream transition-colors flex items-center gap-1"
                       >
                         Reset Workspace <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
 
                     {/* Top Decision Card */}
-                    <div className="w-full bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-[2rem] p-1 shadow-2xl border border-white/[0.08] relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-emerald/40 to-transparent" />
+                    <div className="w-full bg-gradient-to-br from-editorial-forest to-editorial-forest/50 rounded-[2rem] p-1 shadow-2xl border border-editorial-soft-sage/20 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-editorial-soft-sage/40 to-transparent" />
                       
                       <div className="p-6 md:p-8">
                         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-4">
-                              <div className="px-3 py-1 rounded-full bg-success-emerald/10 border border-success-emerald/20 flex items-center gap-1.5">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-success-emerald" />
-                                <span className="text-[10px] font-bold text-success-emerald tracking-widest uppercase">98% Confidence</span>
+                              <div className="px-3 py-1 rounded-full bg-editorial-soft-sage/20 border border-editorial-soft-sage/30 flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-editorial-soft-sage" />
+                                <span className="text-[10px] font-bold text-editorial-soft-sage tracking-widest uppercase">98% Confidence</span>
                               </div>
-                              <span className="text-xs text-gray-500 font-medium">Optimal Recommendation</span>
+                              <span className="text-xs text-editorial-muted-sage font-medium">Optimal Recommendation</span>
                             </div>
                             
-                            <h3 className="text-4xl font-display font-bold text-white mb-2">
+                            <h3 className="text-4xl font-serif font-bold text-editorial-warm-cream mb-2">
                               {decision.cards?.[0]?.name || "Recommended Strategy"}
                             </h3>
                             
-                            <p className="text-gray-400 text-lg leading-relaxed max-w-xl mb-8">
+                            <p className="text-editorial-muted-sage text-lg leading-relaxed max-w-xl mb-8">
                               Based on current merchant categories and active network offers, this provides the highest absolute return for this transaction.
                             </p>
                           </div>
 
                           <div className="shrink-0 w-full lg:w-[280px]">
-                            <div className="w-full aspect-[1.58/1] rounded-2xl bg-gradient-to-br from-gray-800 to-black p-4 border border-white/[0.1] shadow-xl relative overflow-hidden flex flex-col justify-between">
+                            <div className="w-full aspect-[1.58/1] rounded-2xl bg-gradient-to-br from-editorial-deep-forest to-black p-4 border border-editorial-soft-sage/30 shadow-xl relative overflow-hidden flex flex-col justify-between">
                               <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay" />
                               <div className="flex justify-between items-start relative z-10">
-                                <CreditCard className="w-6 h-6 text-white/50" />
-                                <span className="text-[10px] font-mono text-white/30 tracking-widest">TAP TO PAY</span>
+                                <CreditCard className="w-6 h-6 text-editorial-warm-cream/50" />
+                                <span className="text-[10px] font-mono text-editorial-warm-cream/30 tracking-widest">TAP TO PAY</span>
                               </div>
                               <div className="relative z-10">
-                                <div className="text-sm font-medium text-white/80 mb-1">{decision.cards?.[0]?.bank || "Bank Name"}</div>
-                                <div className="text-lg font-bold text-white tracking-tight">{decision.cards?.[0]?.name || "Credit Card"}</div>
+                                <div className="text-sm font-medium text-editorial-warm-cream/80 mb-1">{decision.cards?.[0]?.bank || "Bank Name"}</div>
+                                <div className="text-lg font-bold text-editorial-warm-cream tracking-tight">{decision.cards?.[0]?.name || "Credit Card"}</div>
                               </div>
                             </div>
                           </div>
@@ -329,18 +329,18 @@ export function InteractiveDemoSection() {
 
                     {/* Detailed Explanation */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      <div className="lg:col-span-2 bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-white/[0.04]">
-                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                          <Activity className="w-4 h-4 text-brand-emerald" />
+                      <div className="lg:col-span-2 bg-editorial-forest/30 rounded-[1.5rem] p-6 md:p-8 border border-editorial-soft-sage/20">
+                        <h4 className="text-xs font-bold text-editorial-muted-sage uppercase tracking-widest mb-6 flex items-center gap-2">
+                          <Activity className="w-4 h-4 text-editorial-soft-sage" />
                           Decision Breakdown
                         </h4>
-                        <div className="prose prose-sm prose-invert max-w-none text-gray-400 leading-relaxed font-light text-base">
+                        <div className="prose prose-sm prose-invert max-w-none text-editorial-muted-sage leading-relaxed font-light text-base">
                           {decision.content.split('\n').map((line, i) => {
                             if (line.startsWith('•')) {
                               return (
                                 <div key={i} className="flex items-start gap-3 mb-4">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-emerald mt-2.5 shrink-0" />
-                                  <span className="text-gray-300">{line.replace('•', '').replace(/\*\*/g, '').trim()}</span>
+                                  <div className="w-1.5 h-1.5 rounded-full bg-editorial-soft-sage mt-2.5 shrink-0" />
+                                  <span className="text-editorial-warm-cream">{line.replace('•', '').replace(/\*\*/g, '').trim()}</span>
                                 </div>
                               );
                             }
@@ -350,17 +350,17 @@ export function InteractiveDemoSection() {
                         </div>
                       </div>
 
-                      <div className="bg-[#0F0F0F] rounded-[1.5rem] p-6 md:p-8 border border-white/[0.04]">
-                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                          <ShieldCheck className="w-4 h-4 text-brand-emerald" />
+                      <div className="bg-editorial-forest/30 rounded-[1.5rem] p-6 md:p-8 border border-editorial-soft-sage/20">
+                        <h4 className="text-xs font-bold text-editorial-muted-sage uppercase tracking-widest mb-6 flex items-center gap-2">
+                          <ShieldCheck className="w-4 h-4 text-editorial-soft-sage" />
                           Alternatives
                         </h4>
                         <div className="space-y-3">
                           {decision.cards?.slice(1, 4).map((card, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-[#111] border border-white/[0.02] hover:border-white/[0.08] transition-colors cursor-pointer">
+                            <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-editorial-forest/40 border border-editorial-soft-sage/10 hover:border-editorial-soft-sage/30 transition-colors cursor-pointer">
                               <div>
-                                <div className="text-sm font-medium text-gray-200">{card.name}</div>
-                                <div className="text-xs text-gray-500 mt-1">Yields ~{card.baseRewardRate}% return</div>
+                                <div className="text-sm font-medium text-editorial-warm-cream">{card.name}</div>
+                                <div className="text-xs text-editorial-muted-sage mt-1">Yields ~{card.baseRewardRate}% return</div>
                               </div>
                               <ChevronRight className="w-4 h-4 text-gray-600" />
                             </div>
@@ -375,10 +375,10 @@ export function InteractiveDemoSection() {
                 </div>
 
                 {/* Fixed Bottom Composer in Result State */}
-                <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A] to-transparent pt-20">
+                <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-editorial-deep-forest via-editorial-deep-forest to-transparent pt-20">
                   <div className="max-w-4xl mx-auto">
-                    <div className="relative bg-[#111] border border-white/[0.08] focus-within:border-white/[0.2] rounded-full shadow-2xl transition-all duration-300 flex items-center p-2 pl-6">
-                      <Search className="w-5 h-5 text-gray-500 shrink-0" />
+                    <div className="relative bg-editorial-forest border border-editorial-soft-sage/30 focus-within:border-editorial-soft-sage/60 rounded-full shadow-2xl transition-all duration-300 flex items-center p-2 pl-6">
+                      <Search className="w-5 h-5 text-editorial-muted-sage shrink-0" />
                       <textarea
                         ref={bottomTextareaRef}
                         value={query}
@@ -390,13 +390,13 @@ export function InteractiveDemoSection() {
                           }
                         }}
                         placeholder="Ask follow-up or new purchase..."
-                        className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-gray-600 py-3 px-4 text-base font-light resize-none h-[48px] no-scrollbar"
+                        className="flex-1 bg-transparent border-none outline-none text-editorial-warm-cream placeholder:text-editorial-muted-sage py-3 px-4 text-base font-light resize-none h-[48px] no-scrollbar"
                         rows={1}
                       />
                       <button
                         onClick={() => executeQuery(query)}
                         disabled={!query.trim()}
-                        className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-white text-black hover:bg-gray-200 disabled:bg-[#1A1A1A] disabled:text-gray-600 transition-all active:scale-95"
+                        className="w-10 h-10 shrink-0 flex items-center justify-center rounded-full bg-editorial-soft-sage text-editorial-deep-forest hover:scale-105 disabled:bg-editorial-forest disabled:text-editorial-muted-sage transition-all active:scale-95"
                       >
                         <ArrowRight className="w-4 h-4" />
                       </button>

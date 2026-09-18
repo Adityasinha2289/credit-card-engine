@@ -223,8 +223,12 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
   }
 
   return (
-    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-[#FAFBF9] p-4 lg:p-8">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] max-w-5xl w-full gap-8 items-center">
+    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-brand-cream p-4 lg:p-8 relative overflow-hidden">
+      {/* Decorative Blur Backgrounds */}
+      <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-brand-sage-soft/30 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-forest/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] max-w-6xl w-full gap-12 lg:gap-16 items-center relative z-10">
         {/* Left Side: Branding & Premium Dashboard Teaser */}
         <div className="flex flex-col gap-6 text-left">
           <div className="hidden lg:flex items-center gap-3">
@@ -232,20 +236,20 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
               <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />
             </div>
             <div>
-              <p className="text-2xl font-display font-bold text-gray-900 tracking-tight">
+              <p className="text-2xl font-display font-bold text-brand-forest-deep tracking-tight">
                 renocred
               </p>
-              <p className="text-[10px] font-semibold text-gray-600 tracking-[0.2em] uppercase">
+              <p className="text-[10px] font-semibold text-brand-sage-muted tracking-[0.2em] uppercase">
                 credit intelligence
               </p>
             </div>
           </div>
 
           <div>
-            <h1 className="text-4xl xl:text-5xl font-display font-extrabold text-gray-900 tracking-tight leading-tight">
-              Unlock the power of your <span className="bg-gradient-to-r from-[#2A9D5C] via-[#2A9D5C] to-emerald-400 text-transparent bg-clip-text">financial profile</span>.
+            <h1 className="text-4xl xl:text-6xl font-display font-bold text-brand-forest-deep tracking-tight leading-[1.1]">
+              Financial intelligence <br />for the <span className="italic text-brand-forest">next generation.</span>
             </h1>
-            <p className="hidden lg:block text-sm text-gray-600 mt-4 max-w-md leading-relaxed">
+            <p className="hidden lg:block text-[17px] text-brand-forest-deep/80 mt-6 max-w-md leading-relaxed">
               renocred evaluates your credit score, compares 130+ cards, and acts as your personal optimizer to maximize your rewards and savings.
             </p>
           </div>
@@ -335,10 +339,10 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
         {/* Right Side: Auth */}
         <motion.div
             ref={authPanelRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="bg-[#151515] border border-gray-700 rounded-[2rem] p-6 lg:p-8 w-full shadow-2xl relative flex flex-col items-center"
+            className="bg-brand-forest-deep border border-brand-forest-deep/20 rounded-[2.5rem] p-6 lg:p-8 w-full shadow-[0_20px_50px_rgba(15,42,29,0.3)] relative flex flex-col items-center"
           >
             {/* ── Header Row: Demo Button & Tab Switcher ── */}
             <div className="w-full flex justify-between items-center mb-6">
@@ -351,8 +355,8 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
                   className={cn(
                     'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
                     mode === 'signin'
-                      ? 'bg-[#2A9D5C] text-gray-900 shadow-lg border border-[#2A9D5C]/50'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-brand-cream text-brand-forest-deep shadow-lg'
+                      : 'text-brand-cream/60 hover:text-brand-cream'
                   )}
                 >
                   Sign In
@@ -365,8 +369,8 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
                   className={cn(
                     'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
                     mode === 'signup'
-                      ? 'bg-[#2A9D5C] text-gray-900 shadow-lg border border-[#2A9D5C]/50'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-brand-cream text-brand-forest-deep shadow-lg'
+                      : 'text-brand-cream/60 hover:text-brand-cream'
                   )}
                 >
                   Sign Up

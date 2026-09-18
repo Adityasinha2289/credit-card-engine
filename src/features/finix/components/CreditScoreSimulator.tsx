@@ -93,44 +93,7 @@ const C = {
 //  SLIDER INPUT
 // ─────────────────────────────────────────────────────────────────────────────
 
-function SimSlider({ label, value, onChange, min, max, step = 1, unit, icon: Icon, description, color }: {
-  label: string; value: number; onChange: (v: number) => void;
-  min: number; max: number; step?: number; unit?: string;
-  icon: typeof TrendingUp; description?: string; color?: string;
-}) {
-  const pct = ((value - min) / (max - min)) * 100;
-  const c = color ?? 'rgb(var(--color-steel-500))';
-  return (
-    <div className="flex flex-col gap-2 py-3 border-b border-white/[0.03] last:border-b-0">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `color-mix(in srgb, ${c} 14%, transparent)` }}>
-            <Icon size={14} style={{ color: c }} />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-text-primary">{label}</p>
-            {description && <p className="text-[10px] text-text-muted mt-0.5">{description}</p>}
-          </div>
-        </div>
-        <div className="flex items-center gap-1.5 bg-white/[0.04] rounded-xl px-3 py-1.5">
-          <span className="text-sm font-bold text-text-primary tabular-nums">{value}</span>
-          {unit && <span className="text-[10px] text-text-muted">{unit}</span>}
-        </div>
-      </div>
-      <div className="relative">
-        <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-          <div className="h-full rounded-full transition-all duration-150" style={{ width: `${pct}%`, backgroundColor: c }} />
-        </div>
-        <input
-          type="range"
-          min={min} max={max} step={step} value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        />
-      </div>
-    </div>
-  );
-}
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  IMPACT CHIP
@@ -287,77 +250,34 @@ export function CreditScoreSimulator() {
         </div>
       </div>
 
-      {/* Sliders */}
+      {/* What-If Scenarios */}
       <div className="panel-glass rounded-2xl p-5">
-        <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-3">Adjust Factors</p>
-
-        <SimSlider
-          label="Credit Utilization" value={params.utilization} onChange={(v) => set('utilization', v)}
-          min={0} max={100} unit="%" icon={PiggyBank}
-          description="% of total credit limit currently used"
-          color={params.utilization > 30 ? C.caution : C.profit}
-        />
-        <SimSlider
-          label="Missed Payments" value={params.missedPayments} onChange={(v) => set('missedPayments', v)}
-          min={0} max={12} icon={AlertTriangle}
-          description="Missed/late payments in last 12 months"
-          color={params.missedPayments > 0 ? C.loss : C.profit}
-        />
-        <SimSlider
-          label="Credit Age" value={params.creditAge} onChange={(v) => set('creditAge', v)}
-          min={1} max={120} unit="mo" icon={Clock}
-          description="Average age of all credit accounts"
-          color={C.steel}
-        />
-        <SimSlider
-          label="Total Accounts" value={params.totalAccounts} onChange={(v) => set('totalAccounts', v)}
-          min={1} max={15} icon={CreditCard}
-          description="Total credit cards + loan accounts"
-          color={C.steel}
-        />
-        <SimSlider
-          label="Hard Inquiries" value={params.hardInquiries} onChange={(v) => set('hardInquiries', v)}
-          min={0} max={10} icon={Zap}
-          description="Hard credit pulls in last 6 months"
-          color={params.hardInquiries >= 3 ? C.copper : C.steel}
-        />
-        <SimSlider
-          label="New Accounts" value={params.newAccounts} onChange={(v) => set('newAccounts', v)}
-          min={0} max={5} icon={RefreshCw}
-          description="Accounts opened in last 6 months"
-          color={params.newAccounts >= 3 ? C.copper : C.steel}
-        />
-        <SimSlider
-          label="Debt-to-Income" value={params.debtToIncome} onChange={(v) => set('debtToIncome', v)}
-          min={0} max={80} unit="%" icon={Landmark}
-          description="Total debt payments vs. monthly income"
-          color={params.debtToIncome > 40 ? C.loss : C.profit}
-        />
-
-        {/* Loan toggle */}
-        <div className="flex items-center justify-between py-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-brand-emerald/15">
-              <Landmark size={14} className="text-brand-emerald" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-text-primary">Active Loan</p>
-              <p className="text-[10px] text-text-muted">Having a loan improves credit mix</p>
-            </div>
-          </div>
-          <button
-            onClick={() => set('hasLoan', !params.hasLoan)}
-            className={cn(
-              'w-12 h-7 rounded-full p-0.5 transition-colors duration-200',
-              params.hasLoan ? 'bg-brand-emerald' : 'bg-white/[0.08]'
-            )}
-          >
-            <motion.div
-              animate={{ x: params.hasLoan ? 20 : 0 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              className="w-6 h-6 bg-white rounded-full shadow-md"
-            />
-          </button>
+        <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-3">What-If Scenarios</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[
+            { id: 'miss_payment', label: 'What if I miss a payment this month?', update: { missedPayments: params.missedPayments + 1 }, icon: AlertTriangle, color: 'text-loss', bg: 'bg-loss/10', border: 'border-loss/20' },
+            { id: 'spend_50k', label: 'What if I max out my card?', update: { utilization: Math.min(100, params.utilization + 50) }, icon: CreditCard, color: 'text-caution', bg: 'bg-caution/10', border: 'border-caution/20' },
+            { id: 'close_card', label: 'What if I close my oldest card?', update: { creditAge: Math.max(1, params.creditAge - 36), totalAccounts: Math.max(1, params.totalAccounts - 1) }, icon: RefreshCw, color: 'text-copper-500', bg: 'bg-copper-500/10', border: 'border-copper-500/20' },
+            { id: 'new_loan', label: 'What if I take a new personal loan?', update: { hasLoan: true, newAccounts: params.newAccounts + 1, hardInquiries: params.hardInquiries + 1, totalAccounts: params.totalAccounts + 1 }, icon: Landmark, color: 'text-brand-emerald', bg: 'bg-brand-emerald/10', border: 'border-brand-emerald/20' },
+            { id: 'clear_debt', label: 'What if I clear all my card debt?', update: { utilization: 0 }, icon: PiggyBank, color: 'text-profit', bg: 'bg-profit/10', border: 'border-profit/20' },
+            { id: 'apply_cards', label: 'What if I apply for 3 new cards?', update: { hardInquiries: params.hardInquiries + 3, newAccounts: params.newAccounts + 3 }, icon: Zap, color: 'text-copper-500', bg: 'bg-copper-500/10', border: 'border-copper-500/20' },
+          ].map((scenario) => {
+            const Icon = scenario.icon;
+            return (
+              <button
+                key={scenario.id}
+                onClick={() => setParams({ ...params, ...scenario.update })}
+                className="text-left flex items-start gap-3 p-4 rounded-2xl bg-surface-primary dark:bg-white/[0.02] border border-border-subtle hover:border-brand-emerald/40 transition-colors active:scale-95"
+              >
+                <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border", scenario.bg, scenario.color, scenario.border)}>
+                  <Icon size={18} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-text-primary leading-snug">{scenario.label}</p>
+                </div>
+              </button>
+            )
+          })}
         </div>
       </div>
 

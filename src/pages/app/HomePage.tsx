@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
+import { usePlanStore } from '../../features/plan/store/planStore';
 import { CommerceOptimizationService } from '../../features/commerce';
 import { WalletMerchantOffers } from '../../features/commerce/components/WalletMerchantOffers';
 import { cn } from '../../lib/utils';
@@ -9,7 +10,7 @@ import type { CardData } from '../../features/cards/types/card.types';
 import { 
   Search, Layers, CreditCard, Compass, Plane, Utensils, 
   ShoppingBag, CheckCircle2, ArrowRight, TrendingUp, 
-  Sparkles, AlertCircle, BookOpen, Receipt, Heart, Plus
+  Sparkles, AlertCircle, BookOpen, Receipt, Heart, Plus, Map as MapIcon
 } from 'lucide-react';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { recommendCards, type UserProfile } from '../../features/finix/lib/recommendEngine';
@@ -39,7 +40,7 @@ export default function HomePage() {
         if (!userId) return;
         const data = await CommerceOptimizationService.optimizeCollection(userId);
         const total = data.reduce((sum, { result }) => sum + result.savings, 0);
-        setSavings(total > 0 ? total : 12000);
+        setSavings(total > 0 ? total : 0);
       } catch (err) {
         console.error("Failed to load commerce data", err);
       }
@@ -150,6 +151,76 @@ export default function HomePage() {
       path: '/app/wallet',
       icon: Sparkles
     };
+  } else {
+    primaryAction = {
+      title: 'Plan a Trip',
+      description: 'Let us handle the details, budget, and maximizing rewards for your next escape.',
+      actionText: 'Start Planning',
+      path: '/app/plan',
+      icon: MapIcon
+    };
+  }
+
+  // Override primaryAction with active plan session if one exists
+  const { loadAllSessions, activeSessions } = usePlanStore();
+  const [history, setHistory] = useState<any[]>([]);
+  useEffect(() => {
+    if (profile?.id) {
+      loadAllSessions(profile.id).then(sessions => {
+        setHistory(sessions);
+      });
+    }
+  }, [profile?.id, loadAllSessions]);
+
+  const recentPlan = React.useMemo(() => {
+    const map = new Map<string, any>();
+    history.forEach(s => map.set(s.id, s));
+    Object.values(activeSessions).forEach(s => map.set(s.id, s));
+    const all = Array.from(map.values()).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    return all.find(s => s.status === 'draft' || s.status === 'generating');
+  }, [history, activeSessions]);
+
+  if (recentPlan) {
+    const renderDraftTitle = (session: any) => {
+      if (session.planType === 'trip') {
+        const dest = session.draft?.destination?.name || 'Unknown Destination';
+        return dest;
+      }
+      if (session.planType === 'romantic_date') {
+        return session.draft?.location ? `Date in ${session.draft.location}` : 'New Date Plan';
+      }
+      return `New ${session.planType.replace('_', ' ')} Plan`;
+    };
+
+    const renderDraftDetails = (session: any) => {
+      if (session.planType === 'trip') {
+        const ppl = session.draft?.travelers ? `${session.draft.travelers} people` : '';
+        const days = session.draft?.departureDate && session.draft?.returnDate 
+          ? `${Math.max(1, Math.ceil((new Date(session.draft.returnDate).getTime() - new Date(session.draft.departureDate).getTime()) / (1000 * 60 * 60 * 24)))} days` : '';
+        return [ppl, days].filter(Boolean).join(' · ');
+      }
+      if (session.planType === 'romantic_date') {
+        return session.draft?.vibe || '';
+      }
+      return '';
+    };
+
+    const PLAN_PATHS: Record<string, string> = {
+      'trip': '/app/plan/trip',
+      'romantic_date': '/app/plan/date',
+      'movie': '/app/plan/movie',
+      'weekend_escape': '/app/plan/weekend',
+      'food_day': '/app/plan/food',
+      'occasion': '/app/plan/occasion',
+    };
+
+    primaryAction = {
+      title: renderDraftTitle(recentPlan),
+      description: `${renderDraftDetails(recentPlan)} — Last saved: ${new Date(recentPlan.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
+      actionText: 'CONTINUE YOUR PLAN',
+      path: `${PLAN_PATHS[recentPlan.planType] || '/app/plan'}?session=${recentPlan.id}`,
+      icon: MapIcon
+    };
   }
 
   return (
@@ -164,7 +235,7 @@ export default function HomePage() {
 
       {/* ── PRIORITY ACTION (If exists) ─────────────────────────────────────────── */}
       {primaryAction && (
-        <section className="relative z-10 flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-100 cursor-pointer group" onClick={() => navigate(primaryAction!.path)}>
+        <section className="relative z-10 flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-100 cursor-pointer group" onClick={() => navigate({ pathname: primaryAction!.path, search: window.location.search })}>
           <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow flex items-start gap-4 group-hover:border-[#2A9D5C]/30">
             <div className="w-10 h-10 rounded-full bg-[#2A9D5C]/10 flex items-center justify-center shrink-0">
                <primaryAction.icon className="w-5 h-5 text-[#2A9D5C]" />
@@ -316,7 +387,7 @@ export default function HomePage() {
           {categories.slice(0, 4).map(cat => (
             <button 
               key={cat.id}
-              onClick={() => navigate(cat.path)}
+              onClick={() => navigate(`${cat.path}?new=true`)}
               className="group relative flex flex-col justify-end text-left h-[180px] sm:h-[340px] rounded-[16px] sm:rounded-[24px] overflow-hidden border border-gray-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-xl"
             >
               {/* Background Image Container (Full coverage) */}

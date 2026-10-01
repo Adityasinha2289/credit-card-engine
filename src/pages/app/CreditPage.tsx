@@ -6,7 +6,7 @@ import {
   HeartPulse, Car, Music, Tag, ExternalLink, Plus, Trophy, Check,
   CreditCard, ArrowRight, PlaneTakeoff, Info, Circle
 } from 'lucide-react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { cn } from '../../lib/utils';
@@ -122,7 +122,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
       annualIncome: profile?.salary || 1500000,
       cibilScore: profile?.creditScore || 750,
       topCategories: categories,
-      maxAnnualFee: 0,
+      maxAnnualFee: 50000, // Allow all cards by setting a high limit
       wantsLounge,
     };
     const newResults = recommendCards(userProfile, 5);
@@ -845,28 +845,16 @@ function MyWalletTab() {
 export default function CreditPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const subTab = searchParams.get('sub') as CreditTab | null;
-  const initialTab = subTab && ['recommend', 'compare', 'wallet'].includes(subTab) ? subTab : 'recommend';
-  const [activeTab, _setActiveTab] = useState<CreditTab>(initialTab);
-
-  const setActiveTab = (tab: CreditTab) => {
-    _setActiveTab(tab);
-    setSearchParams((prev) => {
-      prev.set('sub', tab);
-      return prev;
-    }, { replace: true });
-  };
-
-  React.useEffect(() => {
-    const path = location.pathname;
-    if (path.includes('/compare')) setActiveTab('compare');
-    else if (path.includes('/wallet')) setActiveTab('wallet');
-    else setActiveTab('recommend');
-  }, [location]);
+  
+  // Derive active tab purely from pathname
+  let activeTab: CreditTab = 'recommend';
+  if (location.pathname.includes('/compare')) {
+    activeTab = 'compare';
+  } else if (location.pathname.includes('/wallet')) {
+    activeTab = 'wallet';
+  }
 
   const handleTabChange = (id: CreditTab) => {
-    setActiveTab(id);
     navigate(`/app/credit/${id}`);
   };
 

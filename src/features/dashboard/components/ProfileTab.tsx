@@ -6,16 +6,9 @@ import { useDashboardStore } from '../store/dashboardStore';
 import type { UserSegment, PrimaryGoal, Occupation } from '../types/dashboard.types';
 import { PageContainer } from '../../../components/shared/PageContainer';
 import { ShareableScorecard } from './ShareableScorecard';
+import { PRIMARY_GOALS, normalizeGoal } from '../../../config/goals';
 
 const AVATAR_SEEDS = ['Atharva', 'Aria', 'Kabir', 'Zoe', 'Rohan', 'Elena'];
-
-const GOAL_LIST: PrimaryGoal[] = [
-  'Maximise Cashback',
-  'Travel Rewards',
-  'Save More Money',
-  'Build Credit Score',
-  'Earn Reward Points',
-];
 
 const OCCUPATION_LIST: Occupation[] = [
   'Student',
@@ -55,7 +48,9 @@ export function ProfileTab() {
   const [creditInput, setCreditInput] = useState(() => (profile?.creditScore || 750).toString());
 
   const [userSegment, setUserSegment] = useState<UserSegment>(profile?.userSegment || 'adult');
-  const [primaryGoal, setPrimaryGoal] = useState<PrimaryGoal>(profile?.primaryGoal || 'Maximise Cashback');
+  const [primaryGoal, setPrimaryGoal] = useState<PrimaryGoal>(
+    (normalizeGoal(profile?.primaryGoal) as PrimaryGoal) || 'maximize_rewards'
+  );
   const [occupation, setOccupation] = useState<Occupation | undefined>(profile?.occupation);
   const [isOccupationDropdownOpen, setIsOccupationDropdownOpen] = useState(false);
   const [city, setCity] = useState(profile?.city || '');
@@ -425,20 +420,20 @@ export function ProfileTab() {
               </div>
               
               <div className="flex flex-wrap gap-3">
-                {GOAL_LIST.map((goal) => (
+                {PRIMARY_GOALS.map((goal) => (
                   <button
-                    key={goal}
+                    key={goal.id}
                     type="button"
-                    onClick={() => setPrimaryGoal(goal)}
+                    onClick={() => setPrimaryGoal(goal.id as PrimaryGoal)}
                     className={cn(
                       "py-2.5 px-5 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
-                      primaryGoal === goal
+                      primaryGoal === goal.id
                         ? "bg-[#2A9D5C]/10 border-[#2A9D5C]/30 text-[#2A9D5C]"
                         : "bg-white border-gray-300 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     )}
                   >
-                    {primaryGoal === goal && <CheckCircle2 size={14} className="text-[#2A9D5C]" />}
-                    {goal}
+                    {primaryGoal === goal.id && <CheckCircle2 size={14} className="text-[#2A9D5C]" />}
+                    {goal.title}
                   </button>
                 ))}
               </div>

@@ -1,6 +1,7 @@
 import type { AppProfile } from '../dashboard/types/dashboard.types';
 import { useDashboardStore } from '../dashboard/store/dashboardStore';
 import type { PersonaModel, PersonaPreferences } from './types';
+import { normalizeGoal } from '../../../config/goals';
 
 /**
  * Calculates profile completeness percentage (0 to 100).
@@ -33,15 +34,15 @@ export function calculateProfileCompleteness(profile: AppProfile | null): number
  * Derives normalized persona preferences based on segment, primary goal, and profile attributes.
  */
 export function derivePersonaPreferences(profile: AppProfile | null): PersonaPreferences {
-  const goal = profile?.primaryGoal;
+  const goal = normalizeGoal(profile?.primaryGoal);
   const segment = profile?.userSegment;
 
   return {
-    cashback: goal === 'Maximise Cashback' || segment === 'adult',
-    travel: goal === 'Travel Rewards' || segment === 'youth',
-    savings: goal === 'Save More Money',
-    creditBuilding: goal === 'Build Credit Score',
-    rewardPoints: goal === 'Earn Reward Points',
+    cashback: goal === 'cashback' || segment === 'adult',
+    travel: goal === 'travel' || segment === 'youth',
+    savings: goal === 'save_money',
+    creditBuilding: goal === 'build_credit',
+    rewardPoints: goal === 'maximize_rewards',
   };
 }
 
@@ -97,7 +98,8 @@ export class PersonalizationEngine {
    * Helper: Get primary financial goal.
    */
   public static getPrimaryGoal(profile?: AppProfile | null) {
-    return this.getPersona(profile).primaryGoal;
+    const rawGoal = this.getPersona(profile).primaryGoal;
+    return normalizeGoal(rawGoal);
   }
 
   /**
@@ -120,15 +122,15 @@ export class PersonalizationEngine {
   public static getContextualSentence(profile?: AppProfile | null): string {
     const goal = this.getPrimaryGoal(profile);
     switch (goal) {
-      case 'Travel Rewards':
+      case 'travel':
         return"Let's help you earn more miles today.";
-      case 'Maximise Cashback':
+      case 'cashback':
         return"Let's maximise your cashback opportunities.";
-      case 'Save More Money':
+      case 'save_money':
         return 'Every smart payment saves money.';
-      case 'Build Credit Score':
+      case 'build_credit':
         return 'Small habits build strong credit.';
-      case 'Earn Reward Points':
+      case 'maximize_rewards':
         return"Let's unlock more rewards.";
       default:
         return"Let's optimize your financial journey today.";
@@ -141,15 +143,15 @@ export class PersonalizationEngine {
   public static getQuickActions(profile?: AppProfile | null): string[] {
     const goal = this.getPrimaryGoal(profile);
     switch (goal) {
-      case 'Travel Rewards':
+      case 'travel':
         return ['Find Travel Cards', 'Airport Lounge Benefits', 'Flight Offers'];
-      case 'Maximise Cashback':
+      case 'cashback':
         return ['Best Cashback Cards', 'Merchant Offers', 'Spending Optimizer'];
-      case 'Save More Money':
+      case 'save_money':
         return ['Lower Monthly Expenses', 'Bill Optimizer', 'EMI Calculator'];
-      case 'Build Credit Score':
+      case 'build_credit':
         return ['Credit Simulator', 'CIBIL Health Score', 'Utilization Tracker'];
-      case 'Earn Reward Points':
+      case 'maximize_rewards':
       default:
         return ['Reward Multipliers', 'Redeem Points', 'Merchant Offers'];
     }
@@ -161,15 +163,15 @@ export class PersonalizationEngine {
   public static getMotivationBanner(profile?: AppProfile | null): string {
     const goal = this.getPrimaryGoal(profile);
     switch (goal) {
-      case 'Travel Rewards':
+      case 'travel':
         return 'Your next trip starts with smarter spending.';
-      case 'Maximise Cashback':
+      case 'cashback':
         return 'Small savings become big rewards.';
-      case 'Build Credit Score':
+      case 'build_credit':
         return 'Maintain utilisation below 30%.';
-      case 'Save More Money':
+      case 'save_money':
         return 'Every smart choice compounds over time.';
-      case 'Earn Reward Points':
+      case 'maximize_rewards':
       default:
         return 'Maximize your points on every transaction.';
     }

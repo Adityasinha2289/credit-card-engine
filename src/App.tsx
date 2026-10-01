@@ -16,6 +16,10 @@ import { LoginScreen } from './features/dashboard/components/LoginScreen';
 import { AdminGuard } from './components/auth/AdminGuard';
 import { AdminLayout } from './components/layout/AdminLayout';
 
+// Demo import
+const DemoOnboarding = lazy(() => import('./features/onboarding/demo/DemoOnboarding').then(m => ({ default: m.DemoOnboarding })));
+import { DemoAppProvider } from './features/demo/DemoAppProvider';
+
 const HomePage = lazy(() => import('./pages/app/HomePage'));
 const WalletPage = lazy(() => import('./pages/app/WalletPage'));
 const CreditPage = lazy(() => import('./pages/app/CreditPage'));
@@ -29,6 +33,18 @@ const SettingsPage = lazy(() => import('./pages/app/SettingsPage'));
 const MarketplaceHome = lazy(() => import('./pages/marketplace/MarketplaceHome'));
 const CategoryPage = lazy(() => import('./pages/marketplace/CategoryPage'));
 const SubcategoryPage = lazy(() => import('./pages/marketplace/SubcategoryPage'));
+const PlanHubPage = lazy(() => import('./pages/app/PlanHubPage'));
+const TripPlannerPage = lazy(() => import('./pages/app/TripPlannerPage'));
+const DatePlannerPage = lazy(() => import('./pages/app/plan/DatePlannerPage'));
+const MoviePlannerPage = lazy(() => import('./pages/app/plan/MoviePlannerPage'));
+const WeekendPlannerPage = lazy(() => import('./pages/app/plan/WeekendPlannerPage'));
+const FoodPlannerPage = lazy(() => import('./pages/app/plan/FoodPlannerPage'));
+const OccasionPlannerPage = lazy(() => import('./pages/app/plan/OccasionPlannerPage'));
+
+// Money Imports
+const MoneyManagerPage = lazy(() => import('./pages/app/money/MoneyManagerPage'));
+const TransactionsPage = lazy(() => import('./pages/app/money/TransactionsPage'));
+const PaymentCoachPage = lazy(() => import('./pages/app/money/PaymentCoachPage'));
 
 // Lifestyle (Phase 5A Prototype) - Redirecting to marketplace
 const LifestyleHub = lazy(() => import('./pages/app/lifestyle/LifestyleHub'));
@@ -61,12 +77,14 @@ export default function App() {
   const hydrateFromSupabase = useDashboardStore((s) => s.hydrateFromSupabase);
   const [isHydratingFromSupabase, setIsHydratingFromSupabase] = useState(false);
 
+  const isProfileDemo = window.location.search.includes('demo=profile') || window.location.search.includes('demo=true');
+
   // Sync Supabase Client instance to store for actions
   useEffect(() => {
-    if (supabase) {
+    if (supabase && !isProfileDemo) {
       setSupabaseClient(supabase as any);
     }
-  }, [supabase, setSupabaseClient]);
+  }, [supabase, setSupabaseClient, isProfileDemo]);
 
   // Security: Reset store & clear query cache if user signs out or account changes
   useEffect(() => {
@@ -132,20 +150,32 @@ export default function App() {
 
   const isTestKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY?.includes('test');
   
-  if (!isHydrated || (!isLoaded && !isTestKey) || isHydratingFromSupabase) {
+  if (!isHydrated || (!isLoaded && !isTestKey && !isProfileDemo) || isHydratingFromSupabase) {
+    // Exception for demo mode which requires no hydration or loading
+    if (!window.location.search.includes('demo=onboarding') && !isProfileDemo) {
+      return (
+        <DashboardLayout
+          isDark={true}
+          onToggleTheme={() => {}}
+        >
+          <DashboardSkeleton />
+        </DashboardLayout>
+      );
+    }
+  }
+
+  // 0. Intercept Demo Onboarding
+  if (window.location.search.includes('demo=onboarding')) {
     return (
-      <DashboardLayout
-        isDark={true}
-        onToggleTheme={() => {}}
-      >
-        <DashboardSkeleton />
-      </DashboardLayout>
+      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-[#F9FAFB]" />}>
+        <DemoOnboarding />
+      </Suspense>
     );
   }
 
   // 1. If not signed in AND not using the demo, show LoginScreen (Clerk Auth View)
   const isDemo = import.meta.env.VITE_USE_DEMO_DATA === 'true';
-  if (!isSignedIn && !isDemo) {
+  if (!isSignedIn && !isDemo && !isProfileDemo) {
     return (
       <Routes>
         <Route path="/sign-in/*" element={<LoginScreen defaultMode="signin" />} />
@@ -159,7 +189,7 @@ export default function App() {
   const clerkMetadata = user?.unsafeMetadata as any;
   const isCompletedInClerk = clerkMetadata?.onboardingCompleted === true;
 
-  if (isSignedIn && (!profile || (!profile.onboardingCompleted && !isCompletedInClerk))) {
+  if (!isProfileDemo && isSignedIn && (!profile || (!profile.onboardingCompleted && !isCompletedInClerk))) {
     return (
       <Routes>
         <Route path="*" element={<LoginScreen defaultMode="signup" />} />
@@ -167,7 +197,7 @@ export default function App() {
     );
   }
 
-  return (
+  const appRoutes = (
     <Routes>
       {/* Customer App Routes */}
       <Route element={
@@ -189,6 +219,21 @@ export default function App() {
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        
+        {/* Plan Routes */}
+        <Route path="/plan" element={<PlanHubPage />} />
+        <Route path="/plan/trip" element={<TripPlannerPage />} />
+        <Route path="/plan/date" element={<DatePlannerPage />} />
+        <Route path="/plan/movie" element={<MoviePlannerPage />} />
+        <Route path="/plan/weekend" element={<WeekendPlannerPage />} />
+        <Route path="/plan/food" element={<FoodPlannerPage />} />
+        <Route path="/plan/occasion" element={<OccasionPlannerPage />} />
+        
+        {/* Money Routes */}
+        <Route path="/money" element={<MoneyManagerPage />} />
+        <Route path="/money/transactions" element={<TransactionsPage />} />
+        <Route path="/money/coach" element={<PaymentCoachPage />} />
+        
         
         {/* Marketplace Routes in Dashboard */}
         <Route path="marketplace" element={<MarketplaceHome />} />
@@ -224,4 +269,14 @@ export default function App() {
       <Route path="*" element={<Navigate to="/app" replace />} />
     </Routes>
   );
+
+  if (isProfileDemo) {
+    return (
+      <DemoAppProvider>
+        {appRoutes}
+      </DemoAppProvider>
+    );
+  }
+
+  return appRoutes;
 }

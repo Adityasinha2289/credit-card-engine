@@ -1,103 +1,51 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import {
-  CreditCard,
-  BookOpen,
-  X,
-  ChevronRight,
-  ChevronLeft,
-  Sparkles,
-  ShieldCheck,
-  Coins,
-  Compass,
-  PiggyBank,
-  Award,
-  Gift,
-  CheckCircle2,
-  MapPin,
-  Briefcase,
-} from 'lucide-react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, X, Sparkles } from 'lucide-react';
 import { SignIn, SignUp, useUser } from '@clerk/clerk-react';
 import { useDashboardStore } from '../store/dashboardStore';
-import type { AppProfile, UserSegment, PrimaryGoal, Occupation } from '../types/dashboard.types';
+import type { AppProfile, UserSegment, PrimaryGoal } from '../types/dashboard.types';
 import { cn } from '../../../lib/utils';
 import type { OnboardingState } from '../../onboarding/OnboardingFlow';
-import { lazy, Suspense } from 'react';
 import { MASTER_CARD_DATASET } from '../../finix/data/masterDataset';
+import { CARD_DATASET } from '../../finix/data/cardDataset';
+import { CreditCard } from '../../cards/components/CreditCard';
+import type { CardData, CardNetwork } from '../../cards/types/card.types';
+import { useNavigate } from 'react-router-dom';
 
 const OnboardingFlow = lazy(() => import('../../onboarding/OnboardingFlow').then(m => ({ default: m.OnboardingFlow })));
 
-const GOAL_OPTIONS: { id: PrimaryGoal; label: string; icon: any; description: string }[] = [
-  { id: 'Maximise Cashback', label: 'Maximise Cashback', icon: Coins, description: 'Get maximum cash returns on your daily expenses' },
-  { id: 'Travel Rewards', label: 'Travel Rewards', icon: Compass, description: 'Unlock lounge access, air miles & hotel perks' },
-  { id: 'Save More Money', label: 'Save More Money', icon: PiggyBank, description: 'Optimize annual fees and reduce interest charges' },
-  { id: 'Build Credit Score', label: 'Build Credit Score', icon: Award, description: 'Improve credit limits and CIBIL health rating' },
-  { id: 'Earn Reward Points', label: 'Earn Reward Points', icon: Gift, description: 'Multiply reward multipliers across categories' },
-];
-
-const OCCUPATION_OPTIONS: Occupation[] = [
-  'Student',
-  'Salaried',
-  'Self-employed',
-  'Business Owner',
-  'Other',
-];
-
-import { useNavigate } from 'react-router-dom';
+const finixToCardData = (idMatch: string, nameMatch: string): CardData => {
+  let finix = CARD_DATASET.find(c => c.id.toLowerCase().includes(idMatch.toLowerCase()));
+  if (!finix) {
+    finix = CARD_DATASET.find(c => c.name.toLowerCase().includes(nameMatch.toLowerCase())) || CARD_DATASET[0];
+  }
+  return {
+    id: finix.id,
+    pan: '•••• •••• •••• 1234',
+    cardholderName: 'RENO CRED',
+    expiry: '12/28',
+    network: (finix.network.toLowerCase() || 'visa') as CardNetwork,
+    bank: finix.bank,
+    status: 'active',
+    availableCredit: 500000,
+    creditLimit: 500000,
+    label: finix.name,
+  };
+};
 
 export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin' | 'signup' }) {
   const { isSignedIn, user } = useUser();
   const login = useDashboardStore((s) => s.login);
-  const resetStore = useDashboardStore((s) => s._reset);
   const [showBlog, setShowBlog] = useState(false);
   const [showLegal, setShowLegal] = useState<'privacy' | 'terms' | null>(null);
   const [mode, setMode] = useState<'signin' | 'signup'>(defaultMode);
-  const [livePreviewName, setLivePreviewName] = useState('');
   const authPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Sync mode with prop
   useEffect(() => {
     setMode(defaultMode);
   }, [defaultMode]);
 
-  const salary = 1500000;
-  const creditScore = 750;
-
-  // Premium 10/10 3D Hover Effect State
-  const [isHovered, setIsHovered] = useState(false);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { stiffness: 300, damping: 30, mass: 0.5 };
-  
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], ["17deg", "-17deg"]), springConfig);
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], ["-17deg", "17deg"]), springConfig);
-  
-  const glareX = useSpring(useTransform(mouseX, [-0.5, 0.5], ["100%", "0%"]), springConfig);
-  const glareY = useSpring(useTransform(mouseY, [-0.5, 0.5], ["100%", "0%"]), springConfig);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseXPos = e.clientX - rect.left;
-    const mouseYPos = e.clientY - rect.top;
-    mouseX.set(mouseXPos / width - 0.5);
-    mouseY.set(mouseYPos / height - 0.5);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  // Listen to hash changes to toggle between sign-in and sign-up
   useEffect(() => {
     const handleHash = () => {
       if (window.location.hash === '#sign-up') setMode('signup');
@@ -108,48 +56,8 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
-
-
-  // Mirror whatever is typed into Clerk's first-name field onto the card preview
-  useEffect(() => {
-    if (!authPanelRef.current) return;
-
-    const syncName = () => {
-      const firstNameInput = authPanelRef.current?.querySelector<HTMLInputElement>(
-        'input[name="firstName"], input[id*="firstName"], input[autocomplete="given-name"]'
-      );
-      if (firstNameInput) {
-        setLivePreviewName(firstNameInput.value);
-      }
-    };
-
-    // MutationObserver to detect when Clerk renders the input
-    const observer = new MutationObserver(() => {
-      const firstNameInput = authPanelRef.current?.querySelector<HTMLInputElement>(
-        'input[name="firstName"], input[id*="firstName"], input[autocomplete="given-name"]'
-      );
-      if (firstNameInput) {
-        firstNameInput.addEventListener('input', syncName);
-        // Initial value
-        syncName();
-      }
-    });
-
-    observer.observe(authPanelRef.current, { childList: true, subtree: true });
-
-    return () => {
-      observer.disconnect();
-      // Cleanup any lingering listeners by re-querying
-      authPanelRef.current?.querySelectorAll<HTMLInputElement>(
-        'input[name="firstName"], input[id*="firstName"], input[autocomplete="given-name"]'
-      ).forEach(el => el.removeEventListener('input', syncName));
-    };
-  }, [mode]);
-
   const handleOnboardingComplete = async (state: OnboardingState) => {
     const existingProfile = useDashboardStore.getState().profile;
-    
-    // Convert 18-22 to youth segment, else adult
     const calculatedSegment: UserSegment = state.age === '18–22' ? 'youth' : 'adult';
     
     const profile: AppProfile = existingProfile ? {
@@ -184,7 +92,6 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
       }).catch(console.error);
     }
     
-    // Process selected credit cards
     if (state.banks && state.banks.length > 0) {
       const store = useDashboardStore.getState();
       state.banks.forEach(cardId => {
@@ -209,237 +116,145 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
     }
   };
 
-  // During sign-up, show whatever is typed in real time; fall back to signed-in name or placeholder
-  const displayName = isSignedIn
-    ? (user?.fullName || user?.firstName || 'Your Name')
-    : (livePreviewName.trim() || 'Your Name');
-
   if (isSignedIn) {
     return (
-      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-surface-primary" />}>
+      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-editorial-light-cream" />}>
         <OnboardingFlow onComplete={handleOnboardingComplete} />
       </Suspense>
     );
   }
 
   return (
-    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-brand-cream p-4 lg:p-8 relative overflow-hidden">
-      {/* Decorative Blur Backgrounds */}
-      <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-brand-sage-soft/30 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-forest/10 blur-[120px] rounded-full pointer-events-none" />
+    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-editorial-light-cream p-4 lg:p-8 relative overflow-hidden text-editorial-deep-forest font-sans">
+      
+      {/* Editorial Decorative Elements */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-editorial-soft-sage/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-editorial-soft-sage/10 blur-[120px] rounded-full pointer-events-none" />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 max-w-[1100px] w-full gap-12 lg:gap-24 items-center relative z-10 mx-auto">
+        
+        {/* LEFT PANEL: Brand / Storytelling */}
+        <div className="hidden lg:flex flex-col gap-12 pt-8">
+           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+             <h1 className="text-4xl xl:text-5xl font-serif font-medium tracking-tight leading-[1.1] text-editorial-deep-forest mb-6">
+               Your wallet,<br/>finally working intelligently.
+             </h1>
+             <p className="text-editorial-muted-sage text-lg max-w-md font-light leading-relaxed">
+               Cards. Rewards. Offers.<br/>One place to make better money decisions.
+             </p>
+           </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_450px] max-w-6xl w-full gap-12 lg:gap-16 items-center relative z-10">
-        {/* Left Side: Branding & Premium Dashboard Teaser */}
-        <div className="flex flex-col gap-6 text-left">
-          <div className="hidden lg:flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(4,59,39,0.1)] overflow-hidden bg-white border border-gray-300">
-              <img src="/logo.jpg" alt="Renocred" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <p className="text-2xl font-display font-bold text-brand-forest-deep tracking-tight">
-                renocred
-              </p>
-              <p className="text-[10px] font-semibold text-brand-sage-muted tracking-[0.2em] uppercase">
-                credit intelligence
-              </p>
-            </div>
-          </div>
+           <motion.div 
+             initial={{ opacity: 0 }} 
+             animate={{ opacity: 1 }} 
+             transition={{ duration: 0.8, delay: 0.2 }}
+             className="relative"
+           >
+              {/* Product Visual: Card Stack */}
+              <div className="relative w-full max-w-[320px] h-[240px]">
+                 {/* Card 2 (Background) */}
+                 <motion.div 
+                   initial={{ x: -20, y: 20, rotate: -4 }}
+                   animate={{ x: -10, y: 10, rotate: -2 }}
+                   transition={{ duration: 1, delay: 0.5 }}
+                   className="absolute top-4 left-4 w-[280px] origin-center opacity-70 grayscale-[0.2]"
+                 >
+                    <CreditCard card={finixToCardData('sbi_cashback', 'Cashback')} variant="compact" />
+                 </motion.div>
 
-          <div>
-            <h1 className="text-4xl xl:text-6xl font-display font-bold text-brand-forest-deep tracking-tight leading-[1.1]">
-              Financial intelligence <br />for the <span className="italic text-brand-forest">next generation.</span>
-            </h1>
-            <p className="hidden lg:block text-[17px] text-brand-forest-deep/80 mt-6 max-w-md leading-relaxed">
-              renocred evaluates your credit score, compares 130+ cards, and acts as your personal optimizer to maximize your rewards and savings.
-            </p>
-          </div>
-
-          {/* Interactive Card Preview */}
-          <div className="hidden lg:block relative mt-4 w-full max-w-sm" style={{ perspective: '1200px' }}>
-            <motion.div
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              onMouseEnter={handleMouseEnter}
-              style={{
-                rotateX,
-                rotateY,
-                scale: isHovered ? 1.05 : 1,
-                transformStyle: 'preserve-3d',
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="relative h-56 rounded-2xl p-6 flex flex-col justify-between cursor-pointer w-full group"
-            >
-              {/* Main Card Background */}
-              <div 
-                className="absolute inset-0 rounded-2xl overflow-hidden transition-shadow duration-500"
-                style={{
-                  background: 'linear-gradient(145deg, rgba(31,82,71,0.25) 0%, rgba(15,41,36,0.6) 40%, rgba(10,28,24,0.85) 100%)',
-                  boxShadow: isHovered 
-                    ? `0 30px 60px -12px rgba(42,157,92,0.5), 0 1px 0 0 rgba(255,255,255,0.12) inset, -1px 0 0 0 rgba(255,255,255,0.06) inset, 1px 0 0 0 rgba(0,0,0,0.2) inset, 0 -1px 0 0 rgba(0,0,0,0.3) inset`
-                    : `0 10px 30px -5px rgba(0,0,0,0.5), 0 1px 0 0 rgba(255,255,255,0.08) inset, -1px 0 0 0 rgba(255,255,255,0.04) inset, 1px 0 0 0 rgba(0,0,0,0.2) inset, 0 -1px 0 0 rgba(0,0,0,0.3) inset`,
-                  border: '1px solid rgba(255,255,255,0.1)',
-                }}
-              >
-                {/* Dynamic Glare */}
-                <motion.div 
-                  className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"
-                  style={{
-                    background: "radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 50%)",
-                    left: glareX,
-                    top: glareY,
-                    width: '200%',
-                    height: '200%',
-                    x: '-50%',
-                    y: '-50%',
-                  }}
-                />
+                 {/* Card 1 (Foreground) */}
+                 <motion.div 
+                   initial={{ x: 20, y: -20, rotate: 4 }}
+                   animate={{ x: 0, y: 0, rotate: 0 }}
+                   transition={{ duration: 1, delay: 0.4 }}
+                   className="absolute top-0 left-0 w-[280px] origin-center drop-shadow-2xl z-10"
+                 >
+                    <CreditCard card={finixToCardData('hdfc_infinia', 'Infinia')} variant="compact" />
+                 </motion.div>
+                 
+                 {/* Intelligence Label */}
+                 <motion.div
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.6, delay: 1 }}
+                   className="absolute -right-8 bottom-4 bg-white/90 border border-editorial-soft-sage/20 rounded-xl p-4 shadow-xl z-20 backdrop-blur-md"
+                 >
+                    <div className="text-[10px] text-editorial-soft-sage font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                       <Sparkles className="w-3 h-3 text-editorial-forest" /> Potential Annual Value
+                    </div>
+                    <div className="text-xl font-mono text-editorial-deep-forest font-medium">₹1,250</div>
+                 </motion.div>
               </div>
-
-              {/* Ambient brand glow */}
-              <div className="absolute top-0 right-0 w-40 h-40 bg-brand-emerald-glow rounded-full blur-[80px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-700 mix-blend-screen" />
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-emerald-muted rounded-full blur-[60px] pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity duration-700 mix-blend-screen" />
-
-              <div className="relative z-10 flex justify-between items-start">
-                <div>
-                  <p className="text-xs text-brand-emerald tracking-[0.2em] uppercase font-bold">renocred select</p>
-                  <p className="text-[10px] text-text-muted mt-1">Virtual Credentials</p>
-                </div>
-                <div className="w-10 h-7 bg-brand-emerald-muted rounded-md backdrop-blur-sm border border-brand-emerald/15 flex items-center justify-center">
-                  <CreditCard size={16} className="text-brand-emerald" />
-                </div>
-              </div>
-
-              <div className="relative z-10">
-                {/* EMV Chip */}
-                <div className="w-8 h-6 rounded-[3px] bg-gradient-to-br from-[#d4af37]/30 to-[#d4af37]/15 border border-[#d4af37]/20 mb-3 grid grid-cols-2 grid-rows-2">
-                  <div className="border-r border-b border-[#d4af37]/15" />
-                  <div className="border-b border-[#d4af37]/15" />
-                  <div className="border-r border-[#d4af37]/15" />
-                  <div />
-                </div>
-
-                <p className="text-xs text-text-secondary font-mono tracking-[0.2em]">••••  ••••  ••••  4242</p>
-                <div className="flex justify-between items-end mt-3">
-                  <div>
-                    <p className="text-[9px] uppercase tracking-widest text-text-muted font-semibold">Cardholder</p>
-                    <p className="text-sm font-bold text-text-primary tracking-wide truncate max-w-[200px]">
-                      {displayName}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[9px] uppercase tracking-widest text-text-muted font-semibold">Credit Score</p>
-                    <p className="text-sm font-bold text-brand-emerald">{isSignedIn ? creditScore : '750'}</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+           </motion.div>
         </div>
 
-        {/* Right Side: Auth */}
-        <motion.div
+        {/* RIGHT PANEL: Auth Surface */}
+        <div className="w-full flex justify-center lg:justify-end py-4 lg:py-8">
+          <motion.div
             ref={authPanelRef}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="bg-brand-forest-deep border border-brand-forest-deep/20 rounded-[2.5rem] p-6 lg:p-8 w-full shadow-[0_20px_50px_rgba(15,42,29,0.3)] relative flex flex-col items-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-[440px] bg-white border border-editorial-soft-sage/20 rounded-[2rem] p-8 lg:p-10 shadow-[0_20px_50px_rgba(107,144,113,0.05)] relative flex flex-col"
           >
-            {/* ── Header Row: Demo Button & Tab Switcher ── */}
-            <div className="w-full flex justify-between items-center mb-6">
-            <div className="w-full flex justify-end items-center mb-6">
-                <button
-                  onClick={() => {
-                    setMode('signin');
-                    navigate('/app/sign-in');
-                  }}
-                  className={cn(
-                    'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
-                    mode === 'signin'
-                      ? 'bg-brand-cream text-brand-forest-deep shadow-lg'
-                      : 'text-brand-cream/60 hover:text-brand-cream'
-                  )}
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => {
-                    setMode('signup');
-                    navigate('/app/sign-up');
-                  }}
-                  className={cn(
-                    'px-6 py-2 rounded-full text-sm font-bold transition-all duration-200',
-                    mode === 'signup'
-                      ? 'bg-brand-cream text-brand-forest-deep shadow-lg'
-                      : 'text-brand-cream/60 hover:text-brand-cream'
-                  )}
-                >
-                  Sign Up
-                </button>
-              </div>
-            </div>
+             {/* Header Row */}
+             <div className="flex justify-between items-start mb-10">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-editorial-deep-forest text-white overflow-hidden shadow-sm">
+                    <img src="/logo.jpg" alt="RenoCred" className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-lg font-serif font-medium text-editorial-deep-forest">renocred</span>
+                </div>
 
-            {/* ── Clerk Auth Form ── */}
-            <div className="w-full">
-              {mode === 'signin' ? (
-                <SignIn routing="path" path="/app/sign-in" signUpUrl="/app/sign-up" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
-              ) : (
-                <SignUp routing="path" path="/app/sign-up" signInUrl="/app/sign-in" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
-              )}
-            </div>
-        </motion.div>
+                <div className="text-right pt-1 flex flex-col items-end gap-2">
+                   {mode === 'signin' ? (
+                      <button onClick={() => { setMode('signup'); navigate('/app/sign-up'); }} className="text-xs text-editorial-soft-sage hover:text-editorial-forest font-medium transition-colors">
+                        New here? <span className="underline underline-offset-2">Get Started</span>
+                      </button>
+                   ) : (
+                      <button onClick={() => { setMode('signin'); navigate('/app/sign-in'); }} className="text-xs text-editorial-soft-sage hover:text-editorial-forest font-medium transition-colors">
+                        Already have an account? <span className="underline underline-offset-2">Log In</span>
+                      </button>
+                   )}
+                   <button onClick={() => { window.location.href = '?demo=onboarding'; }} className="text-[10px] uppercase tracking-wider font-bold bg-[#2A9D5C]/10 text-[#2A9D5C] hover:bg-[#2A9D5C]/20 px-2 py-1 rounded-full transition-colors flex items-center gap-1">
+                     <Sparkles size={10} /> Preview onboarding
+                   </button>
+                </div>
+             </div>
+
+             <div className="mb-8">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={mode}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h2 className="text-2xl font-serif font-medium text-editorial-deep-forest mb-2">
+                       {mode === 'signin' ? "Welcome back." : "Start understanding your wallet."}
+                    </h2>
+                    <p className="text-sm text-editorial-muted-sage">
+                       {mode === 'signin' ? "Your wallet intelligence is ready." : "See which cards, rewards, and offers actually fit your spending."}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+             </div>
+
+             {/* Clerk Container - Styled to match RenoCred Editorial theme */}
+             <div className="w-full [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:shadow-none [&_.cl-card]:border-0 [&_.cl-card]:p-0 [&_.cl-card]:bg-transparent [&_.cl-header]:hidden [&_.cl-socialButtonsBlockButton]:border-editorial-soft-sage/30 [&_.cl-socialButtonsBlockButton]:text-editorial-deep-forest [&_.cl-socialButtonsBlockButton]:hover:bg-editorial-soft-sage/5 [&_.cl-socialButtonsBlockButton]:rounded-xl [&_.cl-socialButtonsBlockButton]:h-11 [&_.cl-dividerLine]:bg-editorial-soft-sage/20 [&_.cl-dividerText]:text-editorial-muted-sage [&_.cl-formFieldLabel]:text-editorial-deep-forest [&_.cl-formFieldLabel]:font-medium [&_.cl-formFieldInput]:border-editorial-soft-sage/30 [&_.cl-formFieldInput]:bg-editorial-light-cream/50 [&_.cl-formFieldInput]:rounded-xl [&_.cl-formFieldInput]:h-11 [&_.cl-formFieldInput]:text-editorial-deep-forest focus:[&_.cl-formFieldInput]:ring-1 focus:[&_.cl-formFieldInput]:ring-editorial-forest focus:[&_.cl-formFieldInput]:border-editorial-forest [&_.cl-formButtonPrimary]:bg-editorial-deep-forest [&_.cl-formButtonPrimary]:hover:bg-editorial-forest [&_.cl-formButtonPrimary]:rounded-xl [&_.cl-formButtonPrimary]:h-11 [&_.cl-formButtonPrimary]:font-medium [&_.cl-formButtonPrimary]:transition-colors [&_.cl-footer]:hidden [&_.cl-identityPreview]:bg-editorial-light-cream/50 [&_.cl-identityPreview]:border-editorial-soft-sage/30 [&_.cl-identityPreview]:rounded-xl [&_.cl-identityPreviewText]:text-editorial-deep-forest [&_.cl-identityPreviewEditButton]:text-editorial-forest [&_.cl-formFieldSuccessIcon]:text-editorial-forest [&_.cl-internal-2q60ed]:text-editorial-forest">
+                {mode === 'signin' ? (
+                  <SignIn routing="path" path="/app/sign-in" signUpUrl="/app/sign-up" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
+                ) : (
+                  <SignUp routing="path" path="/app/sign-up" signInUrl="/app/sign-in" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
+                )}
+             </div>
+
+          </motion.div>
+        </div>
       </div>
 
-      {/* Credit Blog Modal - Kept for aesthetics/future */}
-      <AnimatePresence>
-        {showBlog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowBlog(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            />
-            {/* Modal Body */}
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-lg bg-surface-secondary rounded-[2rem] p-6 shadow-2xl border border-border-subtle overflow-hidden flex flex-col max-h-[85vh] text-left"
-            >
-              <div className="flex items-center justify-between mb-4 border-b border-border-subtle pb-3">
-                <h3 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
-                  <BookOpen className="text-brand-emerald" size={18} /> Credit Health Guide
-                </h3>
-                <button
-                  onClick={() => setShowBlog(false)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-elevated transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto pr-2 text-sm leading-relaxed text-text-secondary flex flex-col gap-4">
-                <div>
-                  <h4 className="font-bold text-text-primary text-base">What is a CIBIL Credit Score?</h4>
-                  <p className="mt-1">
-                    Your CIBIL score is a 3-digit numeric summary of your credit history, rating your borrowing and repayment habits. It ranges from <strong>300 to 900</strong>.
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 pt-3 border-t border-border-subtle text-center">
-                <button
-                  onClick={() => setShowBlog(false)}
-                  className="px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(4,59,39,0.3)] bg-brand-emerald text-gray-900 font-bold border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27] hover:brightness-110 active:scale-[0.98] transition-all inline-block"
-                >
-                  Got It, Thanks!
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-      {/* Legal Modal */}
+      {/* Legal Modal logic maintained just in case */}
       <AnimatePresence>
         {showLegal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -448,52 +263,46 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowLegal(null)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
             />
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-lg bg-surface-secondary rounded-[2rem] p-6 shadow-2xl border border-border-subtle overflow-hidden flex flex-col max-h-[85vh] text-left"
+              className="relative w-full max-w-lg bg-white rounded-[2rem] p-6 shadow-2xl border border-editorial-soft-sage/20 overflow-hidden flex flex-col max-h-[85vh] text-left"
             >
-              <div className="flex items-center justify-between mb-4 border-b border-border-subtle pb-3">
-                <h3 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
-                  <BookOpen className="text-brand-emerald" size={18} /> {showLegal === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+              <div className="flex items-center justify-between mb-4 border-b border-editorial-soft-sage/20 pb-3">
+                <h3 className="text-lg font-serif font-medium text-editorial-deep-forest flex items-center gap-2">
+                  <BookOpen className="text-editorial-forest" size={18} /> {showLegal === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
                 </h3>
                 <button
                   onClick={() => setShowLegal(null)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-gray-100"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-editorial-muted-sage hover:text-editorial-deep-forest hover:bg-editorial-light-cream"
                 >
                   <X size={16} />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto pr-2 text-sm leading-relaxed text-text-secondary flex flex-col gap-4">
+              <div className="flex-1 overflow-y-auto pr-2 text-sm leading-relaxed text-editorial-muted-sage flex flex-col gap-4">
                 {showLegal === 'privacy' ? (
                   <div>
-                    <h4 className="font-bold text-text-primary text-base">Data Protection Commitment</h4>
+                    <h4 className="font-bold text-editorial-deep-forest text-base">Data Protection Commitment</h4>
                     <p className="mt-1">
-                      At Renocred, we take your privacy seriously. Your financial information (such as salary and CIBIL score) is used exclusively to power the Wallet Optimizer and Taqdeer AI to provide you with the most accurate credit card recommendations.
-                    </p>
-                    <p className="mt-2">
-                      We strictly <strong>do not sell, rent, or share</strong> your personal financial data with third-party advertisers or brokers. Your data is encrypted and stored securely.
+                      At Renocred, we take your privacy seriously. Your financial information is used exclusively to power the Wallet Optimizer.
                     </p>
                   </div>
                 ) : (
                   <div>
-                    <h4 className="font-bold text-text-primary text-base">Terms of Service</h4>
+                    <h4 className="font-bold text-editorial-deep-forest text-base">Terms of Service</h4>
                     <p className="mt-1">
-                      By using Renocred, you agree to our Terms of Service. The recommendations provided by Taqdeer AI and the Wallet Optimizer are for informational purposes only and do not constitute financial advice.
-                    </p>
-                    <p className="mt-2">
-                      Approval for any credit card is strictly at the discretion of the issuing bank. Renocred is not responsible for any rejected applications or changes to bank reward structures.
+                      By using Renocred, you agree to our Terms of Service. Recommendations are for informational purposes only.
                     </p>
                   </div>
                 )}
               </div>
-              <div className="mt-4 pt-3 border-t border-border-subtle text-center">
+              <div className="mt-4 pt-3 border-t border-editorial-soft-sage/20 text-center">
                 <button
                   onClick={() => setShowLegal(null)}
-                  className="px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(4,59,39,0.3)] bg-brand-emerald text-gray-900 font-bold border border-[#054a31] bg-gradient-to-b from-[#064d34] to-[#043b27] hover:brightness-110 active:scale-[0.98] transition-all inline-block"
+                  className="px-6 py-2 rounded-xl bg-editorial-deep-forest text-white hover:bg-editorial-forest transition-colors font-medium text-sm inline-block"
                 >
                   Close
                 </button>

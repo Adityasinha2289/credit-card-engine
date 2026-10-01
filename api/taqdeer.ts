@@ -30,12 +30,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-flash-latest'];
+    const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
     const prompt = `You are Taqdeer, an expert AI credit card & wealth advisor for the Indian market at RenoCred.
-User query:"${query}"
+User query: "${query}"
 User's wallet cards: ${JSON.stringify((userCards || []).map((c: any) => c.label || c.id))}
 
-Provide a short, direct, highly actionable response in 2-4 bullet points or paragraphs. Use emojis and markdown.`;
+Provide a direct, friendly, highly actionable response in 2-4 bullet points or short paragraphs. Use emojis and markdown.`;
 
     const errors: string[] = [];
 
@@ -67,10 +67,10 @@ Provide a short, direct, highly actionable response in 2-4 bullet points or para
       }
     }
 
-    console.error('All Gemini models failed:', errors);
-    return res.status(502).json({ success: false, error: 'AI Backend failed to generate a response', details: errors });
+    console.warn('All Gemini models unavailable, using client fallback:', errors);
+    return res.status(200).json({ success: false, fallback: true, error: 'AI Backend currently in offline mode' });
   } catch (err: any) {
     console.error('Taqdeer API Error:', err);
-    return res.status(500).json({ success: false, error: 'Internal Server Error' });
+    return res.status(200).json({ success: false, fallback: true, error: 'Internal Server Error' });
   }
 }

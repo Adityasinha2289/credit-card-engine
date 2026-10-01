@@ -38,13 +38,13 @@ export function PublicHeader() {
   const backgroundColor = useTransform(
     scrollY,
     [0, 50],
-    ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.75)']
+    ['rgba(246, 244, 236, 0)', 'rgba(246, 244, 236, 0.85)']
   );
   
   const borderBottomColor = useTransform(
     scrollY,
     [0, 50],
-    ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.1)']
+    ['rgba(15, 42, 29, 0)', 'rgba(15, 42, 29, 0.1)']
   );
 
   const paddingY = useTransform(
@@ -91,7 +91,7 @@ export function PublicHeader() {
           className="font-display font-bold text-xl tracking-tight flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md shrink-0"
         >
           <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover shrink-0" />
-          <span className={`transition-colors duration-200 whitespace-nowrap hidden sm:block text-white`}>RenoCred</span>
+          <span className={`transition-colors duration-200 whitespace-nowrap hidden sm:block text-editorial-deep-forest`}>RenoCred</span>
         </MotionLink>
         
         {/* Links */}
@@ -100,7 +100,7 @@ export function PublicHeader() {
             href="/#how-it-works" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-white/80 hover:text-white`}
+            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
           >
             Product
           </MotionAnchor>
@@ -114,9 +114,9 @@ export function PublicHeader() {
               to="/cards"
               whileHover={hoverPhysicsSecondary}
               whileTap={tapPhysicsSecondary}
-              className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 flex items-center gap-1 ${isCardsMenuOpen ? 'text-white' : 'text-white/80 hover:text-white'}`}
+              className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 flex items-center gap-1 ${isCardsMenuOpen ? 'text-editorial-forest' : 'text-editorial-deep-forest hover:text-editorial-forest'}`}
             >
-              Cards <ChevronDown size={14} className={`transition-transform duration-200 ${isCardsMenuOpen ? 'rotate-180 text-white' : ''}`} />
+              Cards <ChevronDown size={14} className={`transition-transform duration-200 ${isCardsMenuOpen ? 'rotate-180 text-semantic-brand-strong' : ''}`} />
             </MotionLink>
             <AnimatePresence>
               {isCardsMenuOpen && (
@@ -131,7 +131,7 @@ export function PublicHeader() {
             to="/calculators/credit-card-reward-calculator" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-white/80 hover:text-white`}
+            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
           >
             Rewards
           </MotionLink>
@@ -139,7 +139,7 @@ export function PublicHeader() {
             to="/cards" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-white/80 hover:text-white`}
+            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
           >
             Offers
           </MotionLink>
@@ -147,7 +147,7 @@ export function PublicHeader() {
             to="/calculators/credit-utilization" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-white/80 hover:text-white`}
+            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
           >
             Credit Health
           </MotionLink>
@@ -159,29 +159,29 @@ export function PublicHeader() {
             to="/cards"
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className={`hidden sm:block md:hidden text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-1 sm:px-2 py-1 text-white/80 hover:text-white`}
+            className={`hidden sm:block md:hidden text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-1 sm:px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
           >
             Explore Cards
           </MotionLink>
           <MotionLink 
-            to="/app#log-in" 
+            to="/app/sign-in" 
             whileHover={hoverPhysicsSecondary}
             whileTap={tapPhysicsSecondary}
-            className={`hidden md:block text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-white/80 hover:text-white`}
+            className={`hidden md:block text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
           >
             Log In
           </MotionLink>
           <MotionLink 
-            to="/app#sign-up" 
+            to="/app/sign-up" 
             whileHover={hoverPhysicsPrimary}
             whileTap={tapPhysicsPrimary}
-            className="bg-white text-black text-xs sm:text-sm font-semibold whitespace-nowrap py-1.5 px-3 sm:py-2 sm:px-4 md:py-2.5 md:px-6 rounded-full transition-all hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 shrink-0"
+            className="bg-editorial-deep-forest text-white text-xs sm:text-sm font-semibold whitespace-nowrap py-1.5 px-3 sm:py-2 sm:px-4 md:py-2.5 md:px-6 rounded-full transition-all hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2A9D5C]/50 shrink-0"
           >
             Get Started
           </MotionLink>
           
           <button 
-            className={`md:hidden p-2 -mr-2 transition-colors duration-200 text-white`}
+            className={`md:hidden p-2 -mr-2 transition-colors duration-200 text-editorial-deep-forest`}
             onClick={() => setIsMobileMenuOpen(true)}
           >
             <Menu className="w-6 h-6" />
@@ -198,15 +198,15 @@ export function PublicHeader() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black flex flex-col p-6"
+            className="fixed inset-0 z-[100] bg-editorial-light-cream flex flex-col p-6"
           >
             <div className="flex items-center justify-between mb-12">
               <div className="font-display font-bold text-xl tracking-tight flex items-center gap-2">
                 <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover" />
-                <span className="text-white">RenoCred</span>
+                <span className="text-editorial-deep-forest">RenoCred</span>
               </div>
               <button 
-                className="p-2 -mr-2 text-white/80 hover:text-white bg-white/10 rounded-full"
+                className="p-2 -mr-2 text-editorial-deep-forest hover:text-editorial-forest bg-black/5 rounded-full"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <X className="w-6 h-6" />
@@ -214,21 +214,21 @@ export function PublicHeader() {
             </div>
             
             <nav className="flex flex-col gap-6 text-xl font-medium">
-              <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-white/90 hover:text-white pb-4 border-b border-white/10">Product</a>
-              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-white/90 hover:text-white pb-4 border-b border-white/10 flex justify-between items-center">
+              <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Product</a>
+              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10 flex justify-between items-center">
                 Cards <ChevronDown size={20} className="-rotate-90" />
               </Link>
-              <Link to="/calculators/credit-card-reward-calculator" onClick={() => setIsMobileMenuOpen(false)} className="text-white/90 hover:text-white pb-4 border-b border-white/10">Rewards</Link>
-              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-white/90 hover:text-white pb-4 border-b border-white/10">Offers</Link>
-              <Link to="/calculators/credit-utilization" onClick={() => setIsMobileMenuOpen(false)} className="text-white/90 hover:text-white pb-4 border-b border-white/10">Credit Health</Link>
-              <Link to="/app#log-in" onClick={() => setIsMobileMenuOpen(false)} className="text-white/90 hover:text-white pb-4 border-b border-white/10">Log In</Link>
+              <Link to="/calculators/credit-card-reward-calculator" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Rewards</Link>
+              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Offers</Link>
+              <Link to="/calculators/credit-utilization" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Credit Health</Link>
+              <Link to="/app/sign-in" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Log In</Link>
             </nav>
             
             <div className="mt-auto mb-8">
               <Link 
-                to="/app#sign-up"
+                to="/app/sign-up"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full bg-white text-black text-lg font-semibold py-4 rounded-full flex items-center justify-center transition-all hover:bg-gray-200"
+                className="w-full bg-editorial-deep-forest text-white text-lg font-semibold py-4 rounded-full flex items-center justify-center transition-all hover:bg-editorial-forest"
               >
                 Get Started
               </Link>

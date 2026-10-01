@@ -23,7 +23,7 @@ const MOBILE_NAV = [
   { id: 'home',        path: '/app',            label: 'Home',        Icon: Squares2X2Icon },
   { id: 'credit',      path: '/app/credit',     label: 'Credit',      Icon: CreditCardIcon },
   { id: 'wallet',      path: '/app/wallet',     label: 'Wallet',      Icon: WalletIcon },
-  { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: ShoppingBagIcon },
+  { id: 'money',       path: '/app/money',      label: 'Money',       Icon: ShoppingBagIcon },
   { id: 'profile',     path: '/app/profile',    label: 'Profile',     Icon: UserCircleIcon },
 ];
 
@@ -76,7 +76,7 @@ export function DashboardLayout({
           return (
             <button
               key={item.id}
-              onClick={() => navigate(item.path)}
+              onClick={() => navigate({ pathname: item.path, search: location.search })}
               className="relative flex flex-1 flex-col items-center justify-center h-full transition-all duration-300 group"
             >
               {/* Animated Top Indicator */}

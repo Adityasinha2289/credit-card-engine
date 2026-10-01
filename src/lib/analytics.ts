@@ -32,6 +32,13 @@ type EventMap = {
   'App Opened': { source?: string };
   'Session Started': { sessionId?: string };
   'Feature Used': { featureName: string; tab?: string };
+
+  // Partners
+  'Partner Section Viewed': { partner: string };
+  'Partner Offer Clicked': { partner: string };
+  'Partner Offer Revealed': { partner: string };
+  'Partner Coupon Copied': { partner: string };
+  'Partner Order Clicked': { partner: string; url: string };
 };
 
 class AnalyticsService {

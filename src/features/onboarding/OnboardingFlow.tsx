@@ -7,7 +7,7 @@ import { FinancialGoalsStep } from './components/steps/FinancialGoalsStep';
 import { CurrentCardsStep } from './components/steps/CurrentCardsStep';
 import { FinancialProfileStep } from './components/steps/FinancialProfileStep';
 import { InitializationStep } from './components/steps/InitializationStep';
-import { FinalLoadingStep } from './components/steps/FinalLoadingStep';
+import { PersonalizedPreview } from './components/steps/PersonalizedPreview';
 import { useDashboardStore } from '../dashboard/store/dashboardStore';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -32,6 +32,7 @@ const TRANSITION_MESSAGES: Record<string, string> = {
 
 export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingState) => void }) {
   const [step, setStep] = useState(0); // 0: Welcome, 1-5: Steps
+  const [direction, setDirection] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionMessage, setTransitionMessage] = useState('');
   const [state, setState] = useState<OnboardingState>({});
@@ -41,6 +42,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
   }, [onComplete]);
 
   const transitionTo = useCallback((from: number, to: number, overrideMsg?: string) => {
+    setDirection(to > from ? 1 : -1);
     setStep(to);
   }, []);
 
@@ -88,9 +90,9 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
     return <InitializationStep onComplete={() => setStep(0)} />;
   }
 
-  // === Final loading (full-screen, no layout shell) ===
+  // === Final loading / Personalized Preview (full-screen, no layout shell) ===
   if (step === 6) {
-    return <FinalLoadingStep />;
+    return <PersonalizedPreview state={state} onComplete={() => handleFinish(state)} />;
   }
 
   // === Main onboarding steps (inside layout shell) ===
@@ -153,7 +155,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
             onContinue={(banks) => {
               const finalState = { ...state, banks };
               setState(finalState);
-              handleFinish(finalState);
+              goNext(5);
             }}
           />
         );
@@ -167,6 +169,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingS
       stepKey={`step-${step}`}
       currentStep={step}
       totalSteps={5}
+      direction={direction}
     >
       {renderStep()}
     </OnboardingLayout>

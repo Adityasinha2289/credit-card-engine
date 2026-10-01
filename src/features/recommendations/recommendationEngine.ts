@@ -36,7 +36,7 @@ export class DeterministicRuleProvider implements RecommendationProvider {
     }
 
     // Rule 2: Travel Goal & Travel Spend
-    if (persona.primaryGoal === 'Travel Rewards' || persona.preferences.travel) {
+    if (persona.primaryGoal === 'travel' || persona.preferences.travel) {
       recommendations.push({
         id: 'rec-travel-cards',
         title: 'Upgrade to a Premium Travel Credit Card',
@@ -100,7 +100,7 @@ export class DeterministicRuleProvider implements RecommendationProvider {
     }
 
     // Rule 6: Build Credit Score Goal
-    if (persona.primaryGoal === 'Build Credit Score' || persona.preferences.creditBuilding) {
+    if (persona.primaryGoal === 'build_credit' || persona.preferences.creditBuilding) {
       recommendations.push({
         id: 'rec-credit-builder',
         title: 'Credit Score Booster Strategy',

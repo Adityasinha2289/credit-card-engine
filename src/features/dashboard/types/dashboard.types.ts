@@ -106,11 +106,24 @@ export type AddTransactionInput = Omit<Transaction, 'id' | 'rewardPoints'>;
 export type UserSegment = 'youth' | 'adult';
 
 export type PrimaryGoal =
+  // Canonical Values
+  | 'maximize_rewards'
+  | 'save_money'
+  | 'travel'
+  | 'build_credit'
+  | 'cashback'
+  // Legacy Compatibility Values
   | 'Maximise Cashback'
   | 'Travel Rewards'
   | 'Save More Money'
   | 'Build Credit Score'
-  | 'Earn Reward Points';
+  | 'Earn Reward Points'
+  | 'Maximum Rewards'
+  | 'Travel Better'
+  | 'Premium Lifestyle'
+  | 'Cashback First'
+  | 'Airport Lounge Access'
+  | 'Luxury Shopping';
 
 export type Occupation =
   | 'Student'

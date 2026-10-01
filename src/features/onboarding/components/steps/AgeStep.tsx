@@ -38,11 +38,11 @@ export function AgeStep({ onBack, onContinue, initialValue }: AgeStepProps) {
 
   return (
     <div className="flex flex-col w-full">
-      <SectionHeading className="mb-3">
-        Which stage are you in?
+      <SectionHeading className="mb-3 font-display uppercase tracking-tight">
+        How do you see your money life?
       </SectionHeading>
       <SectionDescription className="mb-6 md:mb-12">
-        This helps TAQDEER recommend the right cards for you.
+        We'll use this to shape your experience.
       </SectionDescription>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 mb-8 md:mb-14">
@@ -53,23 +53,28 @@ export function AgeStep({ onBack, onContinue, initialValue }: AgeStepProps) {
             <motion.button
               key={stage.id}
               onClick={() => setSelectedStage(stage.id)}
-              whileHover={{ y: -3 }}
-              whileTap={{ scale: 0.985 }}
+              whileHover={{ y: -4, scale: 1.01 }}
+              whileTap={{ scale: 0.97 }}
               initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={{ 
+                opacity: 1, 
+                y: isSelected ? -4 : 0,
+                scale: isSelected ? 1.02 : 1
+              }}
               transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="relative p-5 md:p-7 rounded-[20px] text-left transition-all duration-400 overflow-hidden group flex flex-col min-h-[140px] md:min-h-[240px]"
+              className="relative p-5 md:p-7 rounded-[24px] text-left transition-all duration-400 overflow-hidden group flex flex-col min-h-[140px] md:min-h-[220px]"
               style={{
-                backgroundColor: isSelected ? '#F9FAFB' : '#FFFFFF',
-                border: `1px solid ${isSelected ? '#2A9D5C' : '#E5E7EB'}`,
-                boxShadow: isSelected ? '0 8px 30px rgba(42,157,92,0.14)' : 'none',
+                backgroundColor: isSelected ? '#FFFFFF' : '#F9FAFB',
+                border: `2px solid ${isSelected ? '#111827' : 'transparent'}`,
+                boxShadow: isSelected ? '0 12px 40px rgba(0,0,0,0.1)' : '0 2px 10px rgba(0,0,0,0.02)',
               }}
             >
-              {/* Left accent bar */}
+              {/* Subtle top accent bar */}
               <motion.div
-                style={{ backgroundColor: '#2A9D5C', transformOrigin: 'top' }}
+                className="absolute top-0 left-0 w-full h-1"
+                style={{ backgroundColor: '#111827', transformOrigin: 'left' }}
                 initial={false}
-                animate={{ scaleY: isSelected ? 1 : 0, opacity: isSelected ? 1 : 0 }}
+                animate={{ scaleX: isSelected ? 1 : 0, opacity: isSelected ? 1 : 0 }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
               />
 
@@ -93,10 +98,14 @@ export function AgeStep({ onBack, onContinue, initialValue }: AgeStepProps) {
                 {/* Checkmark */}
                 <motion.div
                   initial={false}
-                  animate={{ opacity: isSelected ? 1 : 0, scale: isSelected ? 1 : 0.5 }}
-                  transition={{ duration: 0.25 }}
+                  animate={{ 
+                    opacity: isSelected ? 1 : 0, 
+                    scale: isSelected ? 1 : 0.5,
+                    rotate: isSelected ? 0 : -45
+                  }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: '#2A9D5C' }}
+                  style={{ backgroundColor: '#111827' }}
                 >
                   <Check size={14} strokeWidth={3} color="#FFFFFF" />
                 </motion.div>

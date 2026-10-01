@@ -15,6 +15,7 @@ export function TopNav() {
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -47,7 +48,7 @@ export function TopNav() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/app/settings')}
+            onClick={() => navigate({ pathname: '/app/settings', search: location.search })}
             className="relative w-10 h-10 p-0 rounded-full hover:bg-transparent"
             aria-label="Settings"
           >

@@ -7,9 +7,27 @@ interface OnboardingLayoutProps {
   stepKey: string;
   currentStep: number;
   totalSteps: number;
+  direction?: number;
 }
 
-export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }: OnboardingLayoutProps) {
+export function OnboardingLayout({ children, stepKey, currentStep, totalSteps, direction = 1 }: OnboardingLayoutProps) {
+  const variants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 30 : -30,
+      opacity: 0,
+      scale: 0.98,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -30 : 30,
+      opacity: 0,
+      scale: 0.98,
+    }),
+  };
   return (
     <div className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-hidden"
       style={{ backgroundColor: '#FAFBF9' }}
@@ -41,25 +59,19 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }:
 
         {/* Progress — minimal line indicator */}
         {currentStep > 0 && totalSteps > 0 && (
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] font-medium tracking-wide"
-              style={{ color: '#6B7280' }}
+          <div className="flex items-center gap-3 md:gap-4">
+            <span className="text-[12px] font-bold tracking-widest"
+              style={{ color: '#111827' }}
             >
-              {currentStep} of {totalSteps}
+              {String(currentStep).padStart(2, '0')} <span style={{ color: '#9CA3AF' }}>/ {String(totalSteps).padStart(2, '0')}</span>
             </span>
-            <div className="flex gap-1.5">
-              {Array.from({ length: totalSteps }).map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="h-[3px] rounded-full"
-                  initial={false}
-                  animate={{
-                    width: i + 1 <= currentStep ? 24 : 12,
-                    backgroundColor: i + 1 <= currentStep ? '#2A9D5C' : '#E5E7EB',
-                  }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
-                />
-              ))}
+            <div className="w-16 md:w-24 h-1 bg-[#E5E7EB] rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-[#2A9D5C]"
+                initial={false}
+                animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              />
             </div>
           </div>
         )}
@@ -67,13 +79,15 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps }:
 
       {/* Main content */}
       <div className="relative z-10 w-full max-w-[720px] px-6 md:px-10 flex flex-col justify-center min-h-[500px]">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={stepKey}
-            initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             className="w-full"
           >
             {children}

@@ -1,0 +1,11 @@
+M	src/public-platform/components/PublicFooter.tsx
+M	src/public-platform/components/PublicHeader.tsx
+M	src/public-platform/components/home/CardsAndRewardsSection.tsx
+M	src/public-platform/components/home/CtaSection.tsx
+M	src/public-platform/components/home/HeroSection.tsx
+M	src/public-platform/components/home/MoneyAndLifestyleSection.tsx
+M	src/public-platform/components/home/RenoCredInActionSection.tsx
+M	src/public-platform/components/home/TrustSection.tsx
+M	src/public-platform/components/home/WhatItDoesSection.tsx
+M	src/public-platform/layouts/PublicLayout.tsx
+M	src/public-platform/pages/HomePage.tsx

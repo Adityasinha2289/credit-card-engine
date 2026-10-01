@@ -53,7 +53,7 @@ export class TaqdeerDeterministicRules implements DecisionReasoningProvider {
     }
 
     // Rule 3: Travel Goal Strategy
-    if (persona.primaryGoal === 'Travel Rewards') {
+    if (persona.primaryGoal === 'travel') {
       decisions.push({
         id: 'dec-travel-miles-boost',
         title: 'Activate Premium Travel Card & Lounge Access',
@@ -75,7 +75,7 @@ export class TaqdeerDeterministicRules implements DecisionReasoningProvider {
     }
 
     // Rule 4: Credit Score Building Strategy
-    if (persona.primaryGoal === 'Build Credit Score') {
+    if (persona.primaryGoal === 'build_credit') {
       decisions.push({
         id: 'dec-credit-score-guard',
         title: 'Cap Statement Utilization Under 30%',

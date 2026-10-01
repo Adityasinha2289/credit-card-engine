@@ -188,11 +188,17 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                   key="result"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col h-full gap-6 pb-4"
+                  className="flex flex-col h-full gap-4 pb-4"
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900">Recommendation</h3>
-                    <button onClick={reset} className="text-xs font-semibold text-brand-emerald">Reset</button>
+                    <h3 className="text-sm font-bold text-gray-900">
+                      {decision.evaluation?.best || (decision.cards && decision.cards.length > 0)
+                        ? 'Recommendation'
+                        : 'Taqdeer Insights'}
+                    </h3>
+                    <button onClick={reset} className="text-xs font-semibold text-brand-emerald hover:underline">
+                      Reset
+                    </button>
                   </div>
                   
                   {decision.evaluation && decision.evaluation.best ? (
@@ -215,19 +221,32 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                       confidence={98}
                       actionText="Use This Card"
                     />
-                  ) : (
-                    <div className="p-4 bg-gray-50 rounded-2xl text-sm text-gray-600">
-                      No matching cards found for this transaction.
-                    </div>
-                  )}
+                  ) : null}
 
                   <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-                    <h4 className="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-3">Rationale</h4>
+                    <h4 className="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-3">
+                      {decision.evaluation?.best || (decision.cards && decision.cards.length > 0)
+                        ? 'Rationale'
+                        : 'Analysis & Advice'}
+                    </h4>
                     <div className="prose prose-sm prose-gray max-w-none text-gray-700 text-[13px] leading-relaxed">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {decision.content}
                       </ReactMarkdown>
                     </div>
+                  </div>
+
+                  {/* Follow-up suggestion chips */}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {['Which card for Swiggy?', 'Airport lounge access', 'Wallet health', 'Zero Forex cards'].map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => handleSubmit(undefined, suggestion)}
+                        className="text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-white hover:text-brand-emerald border border-gray-200 hover:border-brand-emerald rounded-full px-3 py-1.5 transition-all shadow-xs"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
                   </div>
                 </motion.div>
               )}

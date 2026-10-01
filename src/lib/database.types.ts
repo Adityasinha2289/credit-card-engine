@@ -455,6 +455,25 @@ export interface Database {
         Insert: Partial<Database['public']['Tables']['processed_webhook_events']['Row']>;
         Update: Partial<Database['public']['Tables']['processed_webhook_events']['Row']>;
       };
+      planning_sessions: {
+        Row: {
+          id: string;
+          user_id: string;
+          plan_type: string;
+          status: string;
+          current_phase: number;
+          schema_version: number;
+          revision: number;
+          draft: Json;
+          selected_plan: Json | null;
+          created_at: string;
+          updated_at: string;
+          last_viewed_at: string;
+          completed_at: string | null;
+        };
+        Insert: Partial<Database['public']['Tables']['planning_sessions']['Row']>;
+        Update: Partial<Database['public']['Tables']['planning_sessions']['Row']>;
+      };
     };
   };
 }

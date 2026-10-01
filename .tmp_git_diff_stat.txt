@@ -1,0 +1,12 @@
+ src/public-platform/components/PublicFooter.tsx    |  64 ++---
+ src/public-platform/components/PublicHeader.tsx    |  46 ++--
+ .../components/home/CardsAndRewardsSection.tsx     |  30 +--
+ src/public-platform/components/home/CtaSection.tsx |  22 +-
+ .../components/home/HeroSection.tsx                | 298 +++++++++++++++------
+ .../components/home/MoneyAndLifestyleSection.tsx   |  38 +--
+ .../components/home/RenoCredInActionSection.tsx    |  72 ++---
+ .../components/home/TrustSection.tsx               |  18 +-
+ .../components/home/WhatItDoesSection.tsx          |  44 +--
+ src/public-platform/layouts/PublicLayout.tsx       |   2 +-
+ src/public-platform/pages/HomePage.tsx             |   2 +-
+ 11 files changed, 385 insertions(+), 251 deletions(-)

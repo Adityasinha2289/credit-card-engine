@@ -18,7 +18,7 @@ export function MoneyAndLifestyleSection() {
   const shoppingY = useTransform(scrollYProgress, [0, 1], [10, -10]);
 
   return (
-    <section ref={containerRef} className="py-24 bg-[#050505] text-white relative overflow-hidden">
+    <section ref={containerRef} className="py-20 bg-white text-editorial-deep-forest relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12 items-center">
@@ -26,14 +26,14 @@ export function MoneyAndLifestyleSection() {
           {/* LEFT: Money Tracker */}
           <div className="flex flex-col items-start relative">
             <FloatingObject delay={0.3} rotation={10} yOffset={5} duration={4} className="absolute -left-12 -top-12 z-0 hidden md:block">
-              <ShoppingBag className="w-16 h-16 text-white/10" />
+              <ShoppingBag className="w-16 h-16 text-editorial-soft-sage/30" />
             </FloatingObject>
 
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-[clamp(2.5rem,4vw,3.5rem)] font-display font-medium tracking-tight mb-6 leading-[1.1] z-10"
+              className="text-[clamp(2.5rem,4vw,3.5rem)] font-serif font-medium tracking-tight mb-6 leading-[1.1] z-10"
             >
               Your money<br/>doesn't live in a spreadsheet.
             </motion.h2>
@@ -42,7 +42,7 @@ export function MoneyAndLifestyleSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-xl font-display text-gray-400 italic mb-10 z-10"
+              className="text-xl font-serif text-editorial-forest italic mb-10 z-10"
             >
               It lives here.
             </motion.p>
@@ -52,40 +52,40 @@ export function MoneyAndLifestyleSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, type: "spring", stiffness: 100, damping: 20 }}
-              className="w-full max-w-sm bg-white/5 border border-white/10 rounded-3xl p-6 shadow-sm relative z-10 backdrop-blur-md"
+              className="w-full max-w-sm bg-editorial-light-cream border border-editorial-soft-sage/30 rounded-3xl p-6 shadow-sm relative z-10"
             >
-              <div className="absolute -top-3 -right-3 bg-semantic-brand text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md flex items-center gap-1 hover:scale-110 transition-transform cursor-default">
+              <div className="absolute -top-3 -right-3 bg-editorial-forest text-editorial-warm-cream text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md flex items-center gap-1 hover:scale-110 transition-transform cursor-default">
                 <Sparkles className="w-3 h-3" /> Demo View
               </div>
 
-              <h3 className="text-sm font-medium text-gray-400 mb-1">Monthly Spend</h3>
-              <p className="text-3xl font-bold mb-8 tracking-tight font-mono text-white">₹<NumberCounter from={20000} to={42850} delay={0.4} /></p>
+              <h3 className="text-sm font-medium text-editorial-muted-sage mb-1">Monthly Spend</h3>
+              <p className="text-3xl font-bold mb-8 tracking-tight font-mono text-editorial-deep-forest">₹<NumberCounter from={20000} to={42850} delay={0.4} /></p>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div className="flex items-center justify-between border-b border-editorial-soft-sage/20 pb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#0AB377]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-editorial-forest" />
                     <span className="text-sm font-medium">Dining</span>
                   </div>
                   <span className="text-sm font-bold font-mono">₹<NumberCounter from={0} to={8200} delay={0.6} /></span>
                 </div>
-                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div className="flex items-center justify-between border-b border-editorial-soft-sage/20 pb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#0DE699]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-editorial-deep-forest" />
                     <span className="text-sm font-medium">Travel</span>
                   </div>
                   <span className="text-sm font-bold font-mono">₹<NumberCounter from={0} to={12400} delay={0.7} /></span>
                 </div>
-                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div className="flex items-center justify-between border-b border-editorial-soft-sage/20 pb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#2A9D5C]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-editorial-soft-sage" />
                     <span className="text-sm font-medium">Shopping</span>
                   </div>
                   <span className="text-sm font-bold font-mono">₹<NumberCounter from={0} to={7650} delay={0.8} /></span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#0BCC88]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-editorial-muted-sage" />
                     <span className="text-sm font-medium">Bills</span>
                   </div>
                   <span className="text-sm font-bold font-mono">₹<NumberCounter from={0} to={9600} delay={0.9} /></span>
@@ -116,7 +116,7 @@ export function MoneyAndLifestyleSection() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.6 }}
-                className="absolute bottom-4 left-4 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-sm text-xs font-semibold text-white cursor-default hover:scale-105 transition-transform"
+                className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/20 shadow-sm text-xs font-semibold text-editorial-deep-forest cursor-default hover:scale-105 transition-transform"
               >
                 Save more on flights
               </motion.div>
@@ -141,7 +141,7 @@ export function MoneyAndLifestyleSection() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.8, type: "spring" }}
-                className="absolute top-4 right-4 bg-semantic-brand/20 border border-semantic-brand/30 backdrop-blur-md text-semantic-brand px-3 py-1.5 rounded-xl shadow-md text-xs font-semibold flex items-center gap-1 cursor-default hover:scale-105 transition-transform"
+                className="absolute top-4 right-4 bg-editorial-forest text-editorial-warm-cream px-3 py-1.5 rounded-xl shadow-md text-xs font-semibold flex items-center gap-1 cursor-default hover:scale-105 transition-transform"
               >
                 <Sparkles className="w-3 h-3" /> 5X here
               </motion.div>
@@ -150,7 +150,7 @@ export function MoneyAndLifestyleSection() {
             {/* Shopping Image */}
             <motion.div 
               style={shouldReduceMotion ? {} : { y: shoppingY }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] aspect-square rounded-3xl shadow-2xl z-40 border-4 border-black group"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] aspect-square rounded-3xl shadow-2xl z-40 border-4 border-white group"
             >
               <motion.div
                 initial={{ clipPath: "inset(50% 50% 50% 50%)" }}
@@ -166,7 +166,7 @@ export function MoneyAndLifestyleSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 1.0 }}
-                className="absolute bottom-3 right-3 bg-white/10 border border-white/20 backdrop-blur-md text-white px-2 py-1 rounded-lg shadow-sm text-[10px] font-bold cursor-default hover:-translate-y-1 transition-transform"
+                className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm text-editorial-deep-forest px-2 py-1 rounded-lg shadow-sm text-[10px] font-bold cursor-default hover:-translate-y-1 transition-transform"
               >
                 Offer unlocked
               </motion.div>

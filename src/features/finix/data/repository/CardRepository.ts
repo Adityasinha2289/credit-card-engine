@@ -4,7 +4,7 @@ import { AdapterCardDataSource } from './AdapterCardDataSource';
 import type { FinixCard } from '../cardDataset';
 
 // Feature Flag: Toggle between legacy dataset and new renocred-data package
-export const USE_NEW_DATASET = true;
+export const USE_NEW_DATASET = false;
 
 export class CardRepository {
   private static instance: CardRepository;

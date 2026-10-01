@@ -6,6 +6,7 @@ import {
   ShoppingBagIcon,
   UserCircleIcon,
   Cog6ToothIcon,
+  MapIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
@@ -16,6 +17,8 @@ const PRIMARY_NAV = [
   { id: 'home',      path: '/app',          label: 'Home',      Icon: Squares2X2Icon },
   { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCardIcon },
   { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: WalletIcon },
+  { id: 'money',     path: '/app/money',    label: 'Money',     Icon: ShoppingBagIcon },
+  { id: 'plan',      path: '/app/plan',     label: 'Plan',      Icon: MapIcon },
   { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: ShoppingBagIcon },
 ];
 
@@ -73,7 +76,7 @@ export function Sidebar() {
             return (
               <button
                 key={item.id}
-                onClick={() => navigate(item.path)}
+                onClick={() => navigate({ pathname: item.path, search: location.search })}
                 className={cn(
                   'group relative flex items-center gap-4 px-4 py-3 transition-all duration-150 w-full rounded-xl',
                   isActive
@@ -108,7 +111,7 @@ export function Sidebar() {
             return (
               <button
                 key={item.id}
-                onClick={() => navigate(item.path)}
+                onClick={() => navigate({ pathname: item.path, search: location.search })}
                 className={cn(
                   'group relative flex items-center gap-4 px-4 py-3 transition-all duration-150 w-full rounded-xl',
                   isActive
@@ -142,7 +145,7 @@ export function Sidebar() {
       <div className="px-4 pb-6 shrink-0 flex flex-col gap-2">
         {/* User Profile Block */}
         <button 
-          onClick={() => navigate('/app/profile')}
+          onClick={() => navigate({ pathname: '/app/profile', search: location.search })}
           className="flex items-center gap-3 p-3 rounded-2xl hover:bg-gray-100 transition-colors text-left group"
         >
           <div className="w-9 h-9 rounded-full bg-[#2A9D5C]/10 text-semantic-brand flex items-center justify-center shrink-0 border border-semantic-brand/20 font-semibold text-xs tracking-wider">

@@ -70,29 +70,48 @@ export interface IntentHandler {
 }
 
 const INTENT_REGISTRY: IntentHandler[] = [
-  // 1. GREETING & GENERAL HELP
+  // 1. GREETING & CASUAL CONVERSATION
   {
     name: 'greeting',
-    test: (lower) => /^(hi|hello|hey|greetings|help|who are you|what can you do|taqdeer)/i.test(lower),
-    handler: () => ({
-      content: `👋 **Hey! I'm Taqdeer, your Credit Intelligence Assistant!** 🤖
+    test: (lower) =>
+      /\b(hi|hello|hey|greetings|help|who are you|what can you do|taqdeer|wassup|what'?s up|whats up|sup|yo|howdy|hiya|how are you|good morning|good evening|good afternoon|namaste|morning|evening|bot|assistant|dwag|bro|dude|sup bro)\b/i.test(
+        lower
+      ),
+    handler: (_query, userCards, lower) => {
+      const isCasual = /\b(wassup|what'?s up|whats up|sup|yo|dwag|bro|dude)\b/i.test(lower);
+      const greetingHeader = isCasual
+        ? `👋 **Yo! All good here — ready to maximize your rewards!** 🚀`
+        : `👋 **Hey! I'm Taqdeer, your Credit Intelligence Assistant!** 🤖`;
 
-I am connected to your wallet and can analyze 130+ cards to help you maximize savings. Ask me questions like:
-• 🍳 *"Which card should I use at Swiggy?"*
-• ✈️ *"Which cards offer airport lounge access?"*
+      const walletCount = userCards.length;
+      const walletStatus =
+        walletCount > 0
+          ? `I'm connected to your **${walletCount} wallet card${walletCount > 1 ? 's' : ''}**.`
+          : `You currently have 0 cards linked in your wallet.`;
+
+      return {
+        content: `${greetingHeader}
+
+${walletStatus} I continuously analyze 130+ credit cards across India to help you get the highest cashback, miles, and lounge perks.
+
+**Try asking me:**
+• 🍳 *"Which card is best for Swiggy & Zomato?"*
+• ✈️ *"Which cards offer free airport lounge access?"*
+• 🌐 *"What are the best Zero Forex markup cards for abroad?"*
 • 💳 *"What is my wallet health score?"*
-• 💰 *"Show me lifetime free credit cards"*
-• 📈 *"How do I improve my CIBIL score?"*
+• 📱 *"Which RuPay cards give the best cashback on UPI?"*
+• 📈 *"How can I improve my CIBIL score quickly?"*
 
-What can I optimize for you today?`,
-    }),
+What purchase or strategy can I optimize for you?`,
+      };
+    },
   },
   // 2. DETECT CIBIL SCORE / CREDIT HEALTH
   {
     name: 'cibil_health',
-    test: (lower) => /\b(cibil|credit score|improve score|credit rating|my score|utilization|usage)\b/i.test(lower),
+    test: (lower) => /\b(cibil|credit score|improve score|credit rating|my score|utilization|usage|boost score)\b/i.test(lower),
     handler: (_query, userCards) => {
-      let utilizationMsg ="";
+      let utilizationMsg = "";
       if (userCards.length > 0) {
         const totalLimit = userCards.reduce((sum, c) => sum + c.creditLimit, 0) / 100;
         const totalAvail = userCards.reduce((sum, c) => sum + c.availableCredit, 0) / 100;
@@ -115,14 +134,14 @@ Your CIBIL score is evaluated based on these key factors:
 4. **Credit Mix (15%)** — A healthy mix of secured (loans) and unsecured (cards) debt.
 5. **New Inquiries (5%)** — Multiple credit searches within a short period trigger hard inquiries.${utilizationMsg}
 
-💡 **Tip:** Pay outstanding balances 3-5 days before the bill generation date so that a lower balance is reported to credit bureaus!`,
+💡 **Pro Tip:** Pay outstanding balances 3-5 days before the statement generation date so that a near-zero balance is reported to Experian/CIBIL!`,
       };
     },
   },
   // 3. WALLET HEALTH ANALYZER
   {
     name: 'wallet_health',
-    test: (lower) => /\b(wallet health|wallet score|wallet status|optimize wallet|my wallet|wallet analysis)\b/i.test(lower),
+    test: (lower) => /\b(wallet health|wallet score|wallet status|optimize wallet|my wallet|wallet analysis|portfolio)\b/i.test(lower),
     handler: (_query, userCards) => {
       if (userCards.length === 0) {
         return {
@@ -171,8 +190,8 @@ Please add one or more credit cards on the **Dashboard** home screen to evaluate
       if (!userCards.some(c => c.id.includes('amazon') || c.id.includes('shopping'))) {
         suggestions.push('• **Amazon Pay ICICI** (5% back on shopping for Prime members)');
       }
-      if (!userCards.some(c => c.id.includes('black') || c.id.includes('diners'))) {
-        suggestions.push('• **HDFC Diners Club Black** (Premium dining/travel multiplier up to 10%)');
+      if (!userCards.some(c => c.id.includes('black') || c.id.includes('diners') || c.id.includes('infinia'))) {
+        suggestions.push('• **HDFC Diners Club Black / Infinia** (Premium dining/travel multiplier up to 10-33%)');
       }
 
       return {
@@ -185,10 +204,38 @@ ${suggestions.length > 0 ? `🚀 **How to improve your score:**\nAdd one of thes
       };
     },
   },
-  // 4. AIRPORT LOUNGE ACCESS / TRAVEL
+  // 4. FOREX & INTERNATIONAL SPEND
+  {
+    name: 'forex_international',
+    test: (lower) => /\b(forex|international|foreign|zero forex|0 forex|fx markup|cross border|abroad|dollar|overseas|currency markup)\b/i.test(lower),
+    handler: () => {
+      const forexCards = CARD_DATASET.filter((c) => 
+        c.highlights.some(h => /forex|international|travel/i.test(h)) || 
+        c.name.toLowerCase().includes('atlas') || 
+        c.name.toLowerCase().includes('safari')
+      ).slice(0, 3);
+
+      return {
+        content: `🌐 **Zero Forex & International Travel Cards Guide**
+
+Standard credit cards charge **3.5% + 18% GST** (total ~4.13%) as forex markup fee on foreign currency transactions!
+
+🏆 **Top 0% to Low Forex Cards in India:**
+• **Scapia Federal Card**: **0% Forex markup** + unlimited domestic lounge access (on ₹5k monthly spend).
+• **Niyo Global / Equitas**: **0% Forex markup** on international POS & online transactions.
+• **RBL World Safari**: **0% Forex markup** on all foreign currency spends + travel insurance.
+• **Axis Atlas**: 2% reward rate on international flights/hotels, effective forex yield positive.
+• **IDFC FIRST WOW**: **0% Forex markup** (FD backed, lifetime free).
+
+💡 **Pro Tip:** Always choose to be billed in the **local currency** (EUR, USD, AED) at POS machines abroad to avoid dynamic currency conversion (DCC) extra charges!`,
+        cards: forexCards,
+      };
+    },
+  },
+  // 5. AIRPORT LOUNGE ACCESS
   {
     name: 'lounge_access',
-    test: (lower) => /\b(lounge|airport|flight|travel|trip|airline)\b/i.test(lower),
+    test: (lower) => /\b(lounge|lounges|airport lounge|domestic lounge|international lounge|priority pass|dreamfolks)\b/i.test(lower),
     handler: (_query, userCards) => {
       const userLoungeCards = userCards
         .map((uc) => {
@@ -201,7 +248,7 @@ ${suggestions.length > 0 ? `🚀 **How to improve your score:**\nAdd one of thes
         .sort((a, b) => (b.loungeAccess ?? 0) - (a.loungeAccess ?? 0))
         .slice(0, 3);
 
-      let userCardsMsg ="";
+      let userCardsMsg = "";
       if (userLoungeCards.length > 0) {
         userCardsMsg = `💳 **Lounge access in your wallet:**\n${userLoungeCards.map((c) => `• **${c.label}**: ${c.visits} complimentary visits/year`).join('\n')}\n\n`;
       } else {
@@ -214,20 +261,97 @@ ${suggestions.length > 0 ? `🚀 **How to improve your score:**\nAdd one of thes
 ${userCardsMsg}🏆 **Top cards in the market for lounge access:**
 ${topLoungeCards.map((c) => `• **${c.bank} ${c.name}**: ${c.loungeAccess} visits/year (Annual Fee: ₹${c.annualFee})`).join('\n')}
 
-💡 *Note: Most cards require a minimum spend of ₹10,000 to ₹35,000 in the previous calendar quarter to unlock complimentary lounge access visits.*`,
+💡 *Note: Most Indian banks now require a minimum spend of ₹10,000 to ₹35,000 in the previous calendar quarter to unlock complimentary lounge access visits.*`,
         cards: topLoungeCards,
       };
     },
   },
-  // 5. LIFETIME FREE CARDS / ANNUAL FEES
+  // 6. POP CULTURE & CELEBRITIES (e.g. Shah Rukh Khan, actors, movies)
+  {
+    name: 'celebrity_popculture',
+    test: (lower) => /\b(shahrukh|shah rukh|srk|salman|aamir|actor|bollywood|celebrity|virat|kohli|dhoni)\b/i.test(lower),
+    handler: (_query, _userCards, lower) => {
+      const isSRK = /\b(shahrukh|shah rukh|srk)\b/i.test(lower);
+      const title = isSRK ? `👑 **Shah Rukh Khan (SRK) — King Khan of Bollywood!** 🎬` : `⭐ **Bollywood & Pop Culture Spotlight** 🎬`;
+      
+      return {
+        content: `${title}
+
+${isSRK ? `Shah Rukh Khan is one of the world's biggest movie icons and the King of Romance!` : `A legendary icon in Indian entertainment!`}
+
+🎟️ **Planning to watch their next blockbuster on the big screen?**
+Here are the top credit cards to get **Buy 1 Get 1 Free (B1G1)** tickets on BookMyShow & PVR:
+• **Axis Neo / My Zone**: **Buy 1 Get 1 Free** on BookMyShow & Paytm Movies.
+• **RBL BookMyShow Play**: ₹500 off on movie bookings every month.
+• **ICICI Sapphiro / Rubyx**: **Buy 1 Get 1 Free** (up to 2 free tickets per month).
+• **Kotak PVR INOX**: Free PVR movie tickets on reaching spend milestones.
+
+💡 *Ask me: "Which cards offer Buy 1 Get 1 free on movie tickets?"*`,
+      };
+    },
+  },
+  // 7. MOVIE & ENTERTAINMENT
+  {
+    name: 'movie_entertainment',
+    test: (lower) => /\b(movie|movies|cinema|theatre|theater|pvr|inox|bookmyshow|bms|cinepolis)\b/i.test(lower),
+    handler: () => ({
+      content: `🎬 **Best Credit Cards for Movie Tickets (BookMyShow, PVR & INOX)**
+
+Never pay full price for movie tickets! Here are the best cards for cinema savings:
+
+🏆 **Top Movie & Entertainment Cards:**
+• **RBL Play Credit Card**: Free ₹500 discount every month on BookMyShow (on spending ₹5,000/month).
+• **Axis My Zone Credit Card**: **Buy 1 Get 1 Free** on Paytm Movies (up to ₹200 discount, 100% discount on 2nd ticket).
+• **ICICI Sapphiro Credit Card**: **Buy 1 Get 1 Free** on BookMyShow (up to ₹500 off on the second ticket, twice a month).
+• **Kotak PVR INOX Card**: Earn 1-2 free PVR tickets every month on monthly spend milestones.
+• **IndusInd Legend**: **Buy 1 Get 1 Free** on BookMyShow (up to 3 free tickets per month).
+
+💡 **Pro Tip:** Daily quotas for bank movie discounts reset at midnight or 10 AM. Book your weekend tickets early to claim the quota!`,
+    }),
+  },
+  // 8. JOKES & HUMOR
+  {
+    name: 'jokes_fun',
+    test: (lower) => /\b(joke|jokes|make me laugh|funny|humor|tell me a joke)\b/i.test(lower),
+    handler: () => ({
+      content: `😄 **Here's a financial joke for you:**
+
+*Why did the credit card go to therapy?*
+Because it had too much emotional baggage and couldn't stop *revolving* its balance at 42% APR! 💳😂
+
+*Pro Tip:* Don't let your credit balance revolve! Always pay the **Total Amount Due** to keep your interest rate at 0% and your CIBIL score high.
+
+What credit perk or purchase can I calculate for you today?`,
+    }),
+  },
+  // 9. ABOUT RENOCRED & TAQDEER
+  {
+    name: 'about_platform',
+    test: (lower) => /\b(renocred|about taqdeer|what is taqdeer|what is renocred|how do you work|how does taqdeer work)\b/i.test(lower),
+    handler: () => ({
+      content: `⚡ **About RenoCred & Taqdeer AI**
+
+**RenoCred** is India's premier credit card intelligence platform.
+**Taqdeer** is our smart AI decision engine designed to:
+• 🧠 **Maximize Cashback:** Instantly calculates exact reward points and merchant MCC rates across 130+ cards.
+• 💳 **Wallet Personalization:** Compares your connected cards against live bank rules.
+• ✈️ **Perks & Privileges:** Tracks airport lounge access, milestone bonuses, and fee waivers.
+
+Try asking:
+• *"Which card should I use for Amazon or Swiggy?"*
+• *"What are the best lifetime free cards?"*
+• *"Analyze my wallet health"*`,
+    }),
+  },
+  // 10. LIFETIME FREE CARDS / ANNUAL FEES
   {
     name: 'free_cards',
-    test: (lower) => /\b(free|annual fee|charges|lifetime free|waiver|no fee)\b/i.test(lower),
+    test: (lower) => /\b(free|annual fee|charges|lifetime free|ltf|waiver|no fee|zero fee)\b/i.test(lower),
     handler: () => {
       const freeCards = CARD_DATASET.filter((c) => c.annualFee === 0).slice(0, 4);
 
       return {
-        content: `💰 **Lifetime Free & Fee Waiver Recommendations**
+        content: `💰 **Lifetime Free (LTF) & Fee Waiver Recommendations**
 
 Avoid annual maintenance charges! Here are the top **Lifetime Free** credit cards (No annual fees ever):
 ${freeCards.map((c) => `• **${c.bank} ${c.name}**: Base reward rate ${c.baseRewardRate}% (Highlights: ${c.highlights.slice(0, 2).join(', ')})`).join('\n')}
@@ -240,7 +364,78 @@ Most premium credit cards waive the annual fee if you cross a specific spend mil
       };
     },
   },
-  // 6. CHECK FOR SPECIFIC CARD/BANK IN QUERY
+  // 6. FOREX & INTERNATIONAL SPEND
+  {
+    name: 'forex_international',
+    test: (lower) => /\b(forex|international|foreign|zero forex|fx markup|cross border|abroad|dollar|overseas)\b/i.test(lower),
+    handler: () => {
+      const forexCards = CARD_DATASET.filter((c) => 
+        c.highlights.some(h => /forex|international|travel/i.test(h)) || 
+        c.name.toLowerCase().includes('atlas') || 
+        c.name.toLowerCase().includes('safari')
+      ).slice(0, 3);
+
+      return {
+        content: `🌐 **Zero Forex & International Travel Cards Guide**
+
+Standard credit cards charge **3.5% + 18% GST** (total ~4.13%) as forex markup fee on international transactions!
+
+🏆 **Top 0% to Low Forex Cards in India:**
+• **Scapia Federal Card**: **0% Forex markup** + unlimited domestic lounge access (on ₹5k monthly spend).
+• **Niyo Global / Equitas**: **0% Forex markup** on international POS & online transactions.
+• **RBL World Safari**: **0% Forex markup** on all foreign currency spends + travel insurance.
+• **Axis Atlas**: 2% reward rate on international flights/hotels, effective forex yield positive.
+• **IDFC FIRST WOW**: **0% Forex markup** (FD backed, lifetime free).
+
+💡 **Pro Tip:** Always choose to be billed in the **local currency** (EUR, USD, AED) at POS machines abroad to avoid dynamic currency conversion (DCC) extra charges!`,
+        cards: forexCards,
+      };
+    },
+  },
+  // 7. RUPAY CREDIT CARDS ON UPI
+  {
+    name: 'rupay_upi',
+    test: (lower) => /\b(rupay|upi|gpay|phonepe|paytm upi|scan and pay|qr code|link upi)\b/i.test(lower),
+    handler: () => {
+      const rupayCards = CARD_DATASET.filter((c) => 
+        c.name.toLowerCase().includes('rupay') || 
+        c.name.toLowerCase().includes('neu') || 
+        c.highlights.some(h => /upi|rupay/i.test(h))
+      ).slice(0, 3);
+
+      return {
+        content: `📱 **RuPay Credit Cards on UPI Guide**
+
+You can link RuPay Credit Cards to Google Pay, PhonePe, Paytm, and BHIM to earn reward points directly on QR code merchant payments!
+
+🏆 **Top RuPay Cards for UPI Spending:**
+• **Tata Neu Infinity HDFC RuPay**: **1.5% NeuCoins on UPI payments** (up to 5% on Tata Neu ecosystem).
+• **Tata Neu Plus HDFC RuPay**: **1.0% NeuCoins on UPI payments**.
+• **Jupiter CSB Edge RuPay**: **2% cashback on UPI** across select categories.
+• **ICICI Coral RuPay**: Base rewards on UPI transactions + complimentary lounge access.
+
+💡 **Pro Tip:** UPI credit card payments are only valid on **Merchant QR codes (P2M)**, not peer-to-peer (P2P) transfers to personal phone numbers!`,
+        cards: rupayCards,
+      };
+    },
+  },
+  // 8. MINIMUM DUE & APR INTEREST WARNING
+  {
+    name: 'minimum_due',
+    test: (lower) => /\b(minimum due|interest rate|apr|finance charge|debt|late fee|revolving credit)\b/i.test(lower),
+    handler: () => ({
+      content: `⚠️ **The Minimum Due Trap & APR Explanation**
+
+Paying only the **"Minimum Amount Due"** is one of the costliest financial mistakes:
+
+1. **42% to 48% APR Interest:** Banks charge 3.5% to 4.0% interest **per month** (compounded daily) on the entire unpaid balance.
+2. **Loss of 50-Day Interest-Free Period:** Once you revolve a balance, ALL new purchases start accumulating interest from day one!
+3. **CIBIL Score Drop:** High outstanding utilization signals credit distress to CIBIL and Experian.
+
+💡 **Smart Solution:** Always set up **Auto-Debit for Total Amount Due (TAD)**. If facing temporary cash flow crunch, convert big purchases into a fixed low-interest EMI instead of revolving!`,
+    }),
+  },
+  // 9. CHECK FOR SPECIFIC CARD/BANK IN QUERY
   {
     name: 'specific_card',
     test: (lower) => {
@@ -280,7 +475,7 @@ ${userHasIt ? '' : `💡 *Cross-reference this card with your profile in the **A
       };
     },
   },
-  // 7. CHECK FOR BANK NAME ALONE
+  // 10. CHECK FOR BANK NAME ALONE
   {
     name: 'specific_bank',
     test: (lower) => {
@@ -307,7 +502,7 @@ ${bankCards.map((c, i) => `${i + 1}. **${c.name}** (Fee: ₹${c.annualFee})
       return { content: `I couldn't find any cards for that bank.` };
     },
   },
-  // 8. OFFERS & DEALS
+  // 11. OFFERS & DEALS
   {
     name: 'offers',
     test: (lower) => /\b(offer|offers|discount|discounts|deal|deals)\b/i.test(lower),
@@ -323,7 +518,7 @@ To see the most accurate and personalized offers for your cards, please visit th
 
 // Helper to get and validate the AI Backend URL
 const getAiBackendUrl = (): string | null => {
-  const envUrl = import.meta.env.VITE_AI_API_URL;
+  const envUrl = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_AI_API_URL : undefined;
   
   if (envUrl) {
     try {
@@ -336,8 +531,8 @@ const getAiBackendUrl = (): string | null => {
   }
 
   // Fallbacks
-  if (import.meta.env.DEV) {
-    return"http://localhost:8000/chat"; // Sensible development fallback
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV) {
+    return "http://localhost:8000/chat"; // Sensible development fallback
   }
 
   return null;
@@ -349,8 +544,6 @@ export async function generateTaqdeerResponse(
 ): Promise<{ content: string; cards?: FinixCard[]; evaluation?: TransactionEvaluationResult }> {
   const lower = query.toLowerCase().trim();
   const apiUrl = getAiBackendUrl();
-  let debugInfo = "";
-  const errors: string[] = [];
 
   try {
     let token: string | null = null;
@@ -376,11 +569,9 @@ export async function generateTaqdeerResponse(
       if (data.success && data.content) {
         return { content: data.content };
       }
-    } else {
-      errors.push(`Backend returned HTTP ${response.status}`);
     }
   } catch (err: any) {
-    errors.push(`Network Error (${err.message})`);
+    // Gracefully proceed to offline engine
   }
   if (apiUrl) {
     try {
@@ -392,7 +583,7 @@ export async function generateTaqdeerResponse(
       
       if (response.ok) {
         const data = await response.json();
-        if (data.intent !== "unknown") {
+        if (data.intent !== "unknown" && data.content) {
           return { content: data.content };
         }
       }
@@ -415,13 +606,19 @@ export async function generateTaqdeerResponse(
     : detectCategory(lower);
 
   // If no merchant was detected AND the query doesn't sound like a card query,
-  // gracefully inform the user that the AI is offline or the query is out of scope.
-  if (!merchant && !/\b(card|cards|spend|reward|rewards|cashback|buy|pay|offer|offers|discount|discounts|deal|deals|wallet|best)\b/i.test(lower)) {
-    if (errors.length > 0) debugInfo = `\n\n*(PROD Debug: Backend API errors occurred: ${errors.join(" | ")})*`;
-    else debugInfo = `\n\n*(PROD Debug: AI Backend is unreachable or returned no content)*`;
-    
+  // provide a clean, helpful guide without ugly technical error messages.
+  if (!merchant && !/\b(card|cards|spend|reward|rewards|cashback|buy|pay|offer|offers|discount|discounts|deal|deals|wallet|best|shopping|dining|hotel|flight|travel|bill)\b/i.test(lower)) {
     return {
-      content: `⚠️ **AI Brain Offline / Out of Scope**\n\nI couldn't reach my Gemini AI brain (or this query isn't about credit cards). \n\nHowever, my **Offline Engine** is fully active! Try asking me:\n• *"Which card is best for Swiggy?"*\n• *"Wallet health"*\n• *"Which cards have lounge access?"*${debugInfo}`
+      content: `👋 **Taqdeer Intelligence Assistant**
+
+I specialize in Indian credit cards, reward optimizations, and smart spending strategies.
+
+**Try asking me:**
+• 🍳 *"Which card is best for Swiggy or Zomato?"*
+• 🛒 *"Best card for Amazon & Flipkart shopping?"*
+• ✈️ *"Which cards offer free airport lounge access?"*
+• 💳 *"What is my wallet health score?"*
+• 🌐 *"Zero Forex markup cards for international trips"*`
     };
   }
 
@@ -436,18 +633,31 @@ export async function generateTaqdeerResponse(
   
   const transactions = useDashboardStore.getState().transactions;
   const context = { previousTransactions: transactions };
-  
   const result = evaluateTransaction(merchantStr, evalAmount, activeCardIds, context);
+  
+  const bestGlobalCard = getBestCardForCategory(category);
+  const maxGlobalRate = getCardRewardForCategory(bestGlobalCard, category);
+  const runners = CARD_DATASET
+    .filter((c) => c.id !== bestGlobalCard.id)
+    .sort((a, b) => getCardRewardForCategory(b, category) - getCardRewardForCategory(a, category))
+    .slice(0, 2);
 
   if (!result || !result.best) {
     return {
-      content: `💡 **Wallet Recommendation:** Add cards to your wallet to analyze which one is best for ${merchantStr}.`
+      content: `🏆 **Spend Optimization for ${merchantStr} (${displayCategory} ${emoji})**
+
+💳 **In Your Wallet:**
+• *You currently have 0 cards linked.* Add your cards to your wallet on the Dashboard to see personalized rankings from your own cards!
+
+🔥 **Top Cards in the Market for ${displayCategory}:**
+1. **${bestGlobalCard.bank} ${bestGlobalCard.name}** — **${maxGlobalRate}%** rewards
+${runners.map((c, i) => `${i + 2}. **${c.bank} ${c.name}** — **${getCardRewardForCategory(c, category)}%** rewards`).join('\n')}
+
+💡 *Link your cards to unlock instant real-time reward calculations for ${merchantStr}!*`,
+      cards: [bestGlobalCard, ...runners]
     };
   }
 
-  const isOptimal = true; // Would compare against global best here if needed
-  const bestGlobalCard = getBestCardForCategory(category);
-  const maxGlobalRate = getCardRewardForCategory(bestGlobalCard, category);
   const isActuallyOptimal = result.best.rewardRate >= maxGlobalRate;
 
   let walletAdvice = `💳 **In Your Wallet:**
@@ -457,11 +667,6 @@ ${isActuallyOptimal ? '🟢 *This is the absolute best reward rate available for
   if (result.best.isCapped) {
     walletAdvice += `\n⚠️ *Note: ${result.best.limitations[0]}*`;
   }
-
-  const runners = CARD_DATASET
-    .filter((c) => c.id !== bestGlobalCard.id)
-    .sort((a, b) => getCardRewardForCategory(b, category) - getCardRewardForCategory(a, category))
-    .slice(0, 2);
 
   return {
     content: `🏆 **Spend Optimization for ${merchantStr} (${displayCategory} ${emoji})**

@@ -2,3 +2,11 @@ api/**/*.test.ts
 api/**/*.spec.ts
 api/__tests__
 api/**/__tests__
+api/providers/hotels.ts
+api/providers/flights.ts
+api/providers/rail.ts
+api/recommendations.ts
+api/health.ts
+api/health-ai.ts
+api/send-email.ts
+api/admin/affiliate.ts

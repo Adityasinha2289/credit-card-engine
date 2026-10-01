@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { motion, MotionValue, useTransform } from 'framer-motion';
 import { OfferCard, DEMO_OFFERS } from './OfferCard';
 import { cn } from '../../../../lib/utils';

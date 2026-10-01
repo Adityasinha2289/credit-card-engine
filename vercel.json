@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "headers": [
         {
           "key": "Content-Security-Policy",
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "source": "/app/(.*)",
+      "source": "/app/:path*",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -46,7 +46,11 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]

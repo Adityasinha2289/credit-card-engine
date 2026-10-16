@@ -11,7 +11,8 @@
     "import:cards": "npx tsx scripts/importCards.ts",
     "import:merchants": "npx tsx scripts/importMerchants.ts",
     "import:offers": "npx tsx scripts/importOffers.ts",
-    "evaluate": "npx tsx scripts/evaluate.ts"
+    "evaluate": "npx tsx scripts/evaluate.ts",
+    "db:check": "node scripts/check-migrations.mjs"
   },
   "dependencies": {
     "@clerk/backend": "^3.16.1",
@@ -41,6 +42,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.3.7",
     "@sentry/vite-plugin": "^5.4.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",

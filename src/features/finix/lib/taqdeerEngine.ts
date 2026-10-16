@@ -8,8 +8,10 @@
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../data/cardDataset';
 import { detectCategory, POPULAR_MERCHANTS } from '../data/merchantMap';
 import type { CardData } from '../../cards/types/card.types';
-import { evaluateTransaction, type TransactionEvaluationResult } from './evaluateTransaction';
+import type { TransactionEvaluationResult } from './evaluateTransaction';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
+import { evaluatePayment } from '../../financial-engine/rewardsApi';
+import { deriveMonthlySpend } from '../../financial-engine/RewardsFacade';
 
 export interface TaqdeerMessage {
   id: string;
@@ -69,14 +71,25 @@ export interface IntentHandler {
   ) => { content: string; cards?: FinixCard[] };
 }
 
+const BANK_PATTERNS: [RegExp, string][] = [
+  [/\bhdfc\b/, 'hdfc'], [/\bsbi\b/, 'sbi'], [/\bicici\b/, 'icici'], [/\baxis\b/, 'axis'],
+  [/\byes bank\b/, 'yes bank'], [/\bindusind\b/, 'indusind'], [/\bcanara\b/, 'canara'], [/\brbl\b/, 'rbl'],
+  [/\bkotak\b/, 'kotak'], [/\bau (small finance )?bank\b/, 'au'], [/\b(bob|bank of baroda)\b/, 'bob'], [/\bpnb\b/, 'pnb'],
+];
+
 const INTENT_REGISTRY: IntentHandler[] = [
   // 1. GREETING & CASUAL CONVERSATION
   {
     name: 'greeting',
-    test: (lower) =>
-      /\b(hi|hello|hey|greetings|help|who are you|what can you do|taqdeer|wassup|what'?s up|whats up|sup|yo|howdy|hiya|how are you|good morning|good evening|good afternoon|namaste|morning|evening|bot|assistant|dwag|bro|dude|sup bro)\b/i.test(
-        lower
-      ),
+    // Only when the message IS a greeting / "what can you do". Previously any
+    // message containing words like "evening", "help" or "bot" got the greeting,
+    // e.g. "best card for dinner this evening".
+    test: (lower) => {
+      const words = lower.replace(/[^a-z' ]/g, ' ').trim().split(/\s+/).filter(Boolean);
+      if (/^(who are you|what can you do|what do you do|help|help me)\??$/.test(lower.trim())) return true;
+      return words.length <= 4 &&
+        /^(hi|hello|hey|hii+|greetings|wassup|what'?s up|whats up|sup|yo|howdy|hiya|how are you|good morning|good evening|good afternoon|namaste|namaskar|hey taqdeer|hi taqdeer|hello taqdeer)\b/.test(words.join(' '));
+    },
     handler: (_query, userCards, lower) => {
       const isCasual = /\b(wassup|what'?s up|whats up|sup|yo|dwag|bro|dude)\b/i.test(lower);
       const greetingHeader = isCasual
@@ -209,9 +222,9 @@ ${suggestions.length > 0 ? `🚀 **How to improve your score:**\nAdd one of thes
     name: 'forex_international',
     test: (lower) => /\b(forex|international|foreign|zero forex|0 forex|fx markup|cross border|abroad|dollar|overseas|currency markup)\b/i.test(lower),
     handler: () => {
-      const forexCards = CARD_DATASET.filter((c) => 
-        c.highlights.some(h => /forex|international|travel/i.test(h)) || 
-        c.name.toLowerCase().includes('atlas') || 
+      const forexCards = CARD_DATASET.filter((c) =>
+        c.highlights.some(h => /forex|international|travel/i.test(h)) ||
+        c.name.toLowerCase().includes('atlas') ||
         c.name.toLowerCase().includes('safari')
       ).slice(0, 3);
 
@@ -273,7 +286,7 @@ ${topLoungeCards.map((c) => `• **${c.bank} ${c.name}**: ${c.loungeAccess} visi
     handler: (_query, _userCards, lower) => {
       const isSRK = /\b(shahrukh|shah rukh|srk)\b/i.test(lower);
       const title = isSRK ? `👑 **Shah Rukh Khan (SRK) — King Khan of Bollywood!** 🎬` : `⭐ **Bollywood & Pop Culture Spotlight** 🎬`;
-      
+
       return {
         content: `${title}
 
@@ -346,7 +359,7 @@ Try asking:
   // 10. LIFETIME FREE CARDS / ANNUAL FEES
   {
     name: 'free_cards',
-    test: (lower) => /\b(free|annual fee|charges|lifetime free|ltf|waiver|no fee|zero fee)\b/i.test(lower),
+    test: (lower) => /\b(free cards?|annual fees?|joining fee|lifetime free|ltf|fee waiver|no (annual )?fee|zero fee)\b/i.test(lower),
     handler: () => {
       const freeCards = CARD_DATASET.filter((c) => c.annualFee === 0).slice(0, 4);
 
@@ -364,42 +377,14 @@ Most premium credit cards waive the annual fee if you cross a specific spend mil
       };
     },
   },
-  // 6. FOREX & INTERNATIONAL SPEND
-  {
-    name: 'forex_international',
-    test: (lower) => /\b(forex|international|foreign|zero forex|fx markup|cross border|abroad|dollar|overseas)\b/i.test(lower),
-    handler: () => {
-      const forexCards = CARD_DATASET.filter((c) => 
-        c.highlights.some(h => /forex|international|travel/i.test(h)) || 
-        c.name.toLowerCase().includes('atlas') || 
-        c.name.toLowerCase().includes('safari')
-      ).slice(0, 3);
-
-      return {
-        content: `🌐 **Zero Forex & International Travel Cards Guide**
-
-Standard credit cards charge **3.5% + 18% GST** (total ~4.13%) as forex markup fee on international transactions!
-
-🏆 **Top 0% to Low Forex Cards in India:**
-• **Scapia Federal Card**: **0% Forex markup** + unlimited domestic lounge access (on ₹5k monthly spend).
-• **Niyo Global / Equitas**: **0% Forex markup** on international POS & online transactions.
-• **RBL World Safari**: **0% Forex markup** on all foreign currency spends + travel insurance.
-• **Axis Atlas**: 2% reward rate on international flights/hotels, effective forex yield positive.
-• **IDFC FIRST WOW**: **0% Forex markup** (FD backed, lifetime free).
-
-💡 **Pro Tip:** Always choose to be billed in the **local currency** (EUR, USD, AED) at POS machines abroad to avoid dynamic currency conversion (DCC) extra charges!`,
-        cards: forexCards,
-      };
-    },
-  },
   // 7. RUPAY CREDIT CARDS ON UPI
   {
     name: 'rupay_upi',
     test: (lower) => /\b(rupay|upi|gpay|phonepe|paytm upi|scan and pay|qr code|link upi)\b/i.test(lower),
     handler: () => {
-      const rupayCards = CARD_DATASET.filter((c) => 
-        c.name.toLowerCase().includes('rupay') || 
-        c.name.toLowerCase().includes('neu') || 
+      const rupayCards = CARD_DATASET.filter((c) =>
+        c.name.toLowerCase().includes('rupay') ||
+        c.name.toLowerCase().includes('neu') ||
         c.highlights.some(h => /upi|rupay/i.test(h))
       ).slice(0, 3);
 
@@ -443,8 +428,10 @@ Paying only the **"Minimum Amount Due"** is one of the costliest financial mista
       return CARD_DATASET.some((c) => {
         const cardNormalized = normalizeText(c.name);
         const bankNormalized = normalizeText(c.bank);
-        return queryNormalized.includes(cardNormalized) || 
-          (queryNormalized.includes(bankNormalized) && queryNormalized.includes(normalizeText(c.name.replace(c.bank, ''))));
+        // c.name minus the bank can be '' (and ''.includes is always true) — require a real remainder.
+        const remainder = normalizeText(c.name.replace(c.bank, '').replace(/credit card/i, ''));
+        return queryNormalized.includes(cardNormalized) ||
+          (remainder.length >= 3 && queryNormalized.includes(bankNormalized) && queryNormalized.includes(remainder));
       });
     },
     handler: (_query, userCards, lower) => {
@@ -452,8 +439,10 @@ Paying only the **"Minimum Amount Due"** is one of the costliest financial mista
       const foundCard = CARD_DATASET.find((c) => {
         const cardNormalized = normalizeText(c.name);
         const bankNormalized = normalizeText(c.bank);
-        return queryNormalized.includes(cardNormalized) || 
-          (queryNormalized.includes(bankNormalized) && queryNormalized.includes(normalizeText(c.name.replace(c.bank, ''))));
+        // c.name minus the bank can be '' (and ''.includes is always true) — require a real remainder.
+        const remainder = normalizeText(c.name.replace(c.bank, '').replace(/credit card/i, ''));
+        return queryNormalized.includes(cardNormalized) ||
+          (remainder.length >= 3 && queryNormalized.includes(bankNormalized) && queryNormalized.includes(remainder));
       })!;
 
       const userHasIt = userCards.some((uc) => uc.id === foundCard.id);
@@ -478,14 +467,10 @@ ${userHasIt ? '' : `💡 *Cross-reference this card with your profile in the **A
   // 10. CHECK FOR BANK NAME ALONE
   {
     name: 'specific_bank',
-    test: (lower) => {
-      const banks = ['hdfc', 'sbi', 'icici', 'axis', 'yes bank', 'yes', 'indusind', 'canara', 'rbl', 'kotak', 'au', 'bob', 'pnb'];
-      return banks.some((b) => lower.includes(b));
-    },
+    // Whole words only: 'au' used to match "restaurant"/"because", 'yes' any "yes".
+    test: (lower) => BANK_PATTERNS.some(([re]) => re.test(lower)),
     handler: (_query, _userCards, lower) => {
-      const banks = ['hdfc', 'sbi', 'icici', 'axis', 'yes bank', 'yes', 'indusind', 'canara', 'rbl', 'kotak', 'au', 'bob', 'pnb'];
-      const matchedBank = banks.find((b) => lower.includes(b))!;
-      const bankNorm = matchedBank === 'yes' ? 'yes bank' : matchedBank;
+      const bankNorm = BANK_PATTERNS.find(([re]) => re.test(lower))![1];
       const bankCards = CARD_DATASET.filter((c) => c.bank.toLowerCase().includes(bankNorm)).slice(0, 3);
       if (bankCards.length > 0) {
         return {
@@ -516,171 +501,223 @@ To see the most accurate and personalized offers for your cards, please visit th
   },
 ];
 
-// Helper to get and validate the AI Backend URL
-const getAiBackendUrl = (): string | null => {
-  const envUrl = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_AI_API_URL : undefined;
-  
-  if (envUrl) {
-    try {
-      new URL(envUrl); // Validates URL format
-      return envUrl;
-    } catch (e) {
-      console.error(`Invalid VITE_AI_API_URL provided: ${envUrl}`);
-      return null;
-    }
-  }
+// ─────────────────────────────────────────────────────────────────────────────
+//  ROUTING: instant local answers first, grounded LLM for everything else
+// ─────────────────────────────────────────────────────────────────────────────
 
-  // Fallbacks
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV) {
-    return "http://localhost:8000/chat"; // Sensible development fallback
-  }
+export type TaqdeerAnswer = { content: string; cards?: FinixCard[]; evaluation?: TransactionEvaluationResult; source?: 'local' | 'ai' };
 
-  return null;
-};
+export interface TaqdeerOptions {
+  /** Previous turns (oldest first) for follow-up questions */
+  history?: { role: 'user' | 'ai'; content: string }[];
+  /** Receives streamed text as it arrives (LLM answers only) */
+  onToken?: (textSoFar: string) => void;
+  signal?: AbortSignal;
+  /** Never call the LLM (signed-out / public demo) */
+  localOnly?: boolean;
+}
 
-export async function generateTaqdeerResponse(
-  query: string,
-  userCards: CardData[] = [],
-): Promise<{ content: string; cards?: FinixCard[]; evaluation?: TransactionEvaluationResult }> {
+const AI_TIMEOUT_MS = 15_000;
+
+/** "₹4,500", "rs 2k", "1.5 lakh", "for 999" → rupees. null when no amount is mentioned. */
+export function parseAmount(query: string): number | null {
+  const m = query.toLowerCase().replace(/,/g, '').match(/(?:₹|rs\.?|inr|rupees?)\s*(\d+(?:\.\d+)?)\s*(k|thousand|l|lakh|lac)?\b|(\d+(?:\.\d+)?)\s*(k|thousand|lakh|lac|rupees?|rs)\b/);
+  if (!m) return null;
+  const num = parseFloat(m[1] ?? m[3]);
+  const unit = m[2] ?? m[4] ?? '';
+  const mult = /^(k|thousand)$/.test(unit) ? 1_000 : /^(l|lakh|lac)$/.test(unit) ? 100_000 : 1;
+  const v = num * mult;
+  return v > 0 && v < 1e8 ? v : null;
+}
+
+const SPEND_QUESTION = /\b(best card|which card|what card|card (for|to use)|use for|pay (for|with|at)|swipe|spend|spending|cashback on|rewards? on|buy|buying|purchase|order|ordering|book|booking)\b/i;
+
+/**
+ * Deterministic, instant answers. Returns null when the question needs the
+ * LLM (open-ended, comparative, "should I…", follow-ups, other languages).
+ */
+export function answerLocally(query: string, userCards: CardData[] = []): TaqdeerAnswer | null {
   const lower = query.toLowerCase().trim();
-  const apiUrl = getAiBackendUrl();
+  if (!lower) return null;
 
-  try {
-    let token: string | null = null;
-    if (typeof window !== 'undefined' && (window as any).Clerk && (window as any).Clerk.session) {
-      token = await (window as any).Clerk.session.getToken();
-    }
-    
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch('/api/taqdeer', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ query, userCards })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.success && data.content) {
-        return { content: data.content };
-      }
-    }
-  } catch (err: any) {
-    // Gracefully proceed to offline engine
-  }
-  if (apiUrl) {
-    try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, userCards })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.intent !== "unknown" && data.content) {
-          return { content: data.content };
-        }
-      }
-    } catch (error) {
-      // ignore
-    }
-  }
-
-  // Match query against intent registry
   const matchedIntent = INTENT_REGISTRY.find((intent) => intent.test(lower, query, userCards));
+  if (matchedIntent) return { ...matchedIntent.handler(query, userCards, lower), source: 'local' };
 
-  if (matchedIntent) {
-    return matchedIntent.handler(query, userCards, lower);
-  }
-
-  // 8. SPECIFIC MERCHANT OR GENERAL SPEND OPTIMIZATION (FALLBACK)
+  // Merchant / category spend question → exact wallet evaluation
   const merchant = extractMerchant(lower);
-  const category = merchant
-    ? detectCategory(merchant)
-    : detectCategory(lower);
-
-  // If no merchant was detected AND the query doesn't sound like a card query,
-  // provide a clean, helpful guide without ugly technical error messages.
-  if (!merchant && !/\b(card|cards|spend|reward|rewards|cashback|buy|pay|offer|offers|discount|discounts|deal|deals|wallet|best|shopping|dining|hotel|flight|travel|bill)\b/i.test(lower)) {
-    return {
-      content: `👋 **Taqdeer Intelligence Assistant**
-
-I specialize in Indian credit cards, reward optimizations, and smart spending strategies.
-
-**Try asking me:**
-• 🍳 *"Which card is best for Swiggy or Zomato?"*
-• 🛒 *"Best card for Amazon & Flipkart shopping?"*
-• ✈️ *"Which cards offer free airport lounge access?"*
-• 💳 *"What is my wallet health score?"*
-• 🌐 *"Zero Forex markup cards for international trips"*`
-    };
+  const category = merchant ? detectCategory(merchant) : detectCategory(lower);
+  if ((merchant || category !== 'other') && SPEND_QUESTION.test(lower)) {
+    return { ...spendAnswer(merchant, category, parseAmount(query), userCards), source: 'local' };
   }
+  return null;
+}
 
-  const emoji = CATEGORY_EMOJIS[category] || '🍳';
+function spendAnswer(merchant: string | null, category: SpendCategory, amount: number | null, userCards: CardData[]): TaqdeerAnswer {
+  const emoji = CATEGORY_EMOJIS[category] || '📌';
   const displayCategory = CATEGORY_LABELS[category] || 'General spend';
   const merchantStr = merchant || displayCategory;
+  // No amount in the question: evaluate per ₹1,000 so the numbers are easy to scale.
+  const evalAmount = amount ?? 1000;
+  const amountLabel = `₹${evalAmount.toLocaleString('en-IN')}`;
 
-  // Use the shared evaluator with a default amount if none provided
-  // In a real NLP flow we'd extract the amount. Let's assume ₹5000 as default for analysis.
-  const evalAmount = 5000;
-  const activeCardIds = userCards.map(c => c.id);
-  
   const transactions = useDashboardStore.getState().transactions;
-  const context = { previousTransactions: transactions };
-  const result = evaluateTransaction(merchantStr, evalAmount, activeCardIds, context);
-  
+  const result = evaluatePayment(merchantStr, evalAmount, userCards.map((c) => c.id), { previousTransactions: transactions, category });
+
   const bestGlobalCard = getBestCardForCategory(category);
   const maxGlobalRate = getCardRewardForCategory(bestGlobalCard, category);
   const runners = CARD_DATASET
     .filter((c) => c.id !== bestGlobalCard.id)
     .sort((a, b) => getCardRewardForCategory(b, category) - getCardRewardForCategory(a, category))
     .slice(0, 2);
+  const market = `🔥 **Top cards in the market for ${displayCategory}:**
+1. **${bestGlobalCard.name}** — ${maxGlobalRate}%
+${runners.map((c, i) => `${i + 2}. **${c.name}** — ${getCardRewardForCategory(c, category)}%`).join('\n')}`;
 
   if (!result || !result.best) {
     return {
-      content: `🏆 **Spend Optimization for ${merchantStr} (${displayCategory} ${emoji})**
+      content: `🏆 **${merchantStr} (${displayCategory} ${emoji})**
 
-💳 **In Your Wallet:**
-• *You currently have 0 cards linked.* Add your cards to your wallet on the Dashboard to see personalized rankings from your own cards!
+Add your cards to your wallet and I'll tell you exactly which one to use and what it earns.
 
-🔥 **Top Cards in the Market for ${displayCategory}:**
-1. **${bestGlobalCard.bank} ${bestGlobalCard.name}** — **${maxGlobalRate}%** rewards
-${runners.map((c, i) => `${i + 2}. **${c.bank} ${c.name}** — **${getCardRewardForCategory(c, category)}%** rewards`).join('\n')}
-
-💡 *Link your cards to unlock instant real-time reward calculations for ${merchantStr}!*`,
-      cards: [bestGlobalCard, ...runners]
+${market}`,
+      cards: [bestGlobalCard, ...runners],
     };
   }
 
-  const isActuallyOptimal = result.best.rewardRate >= maxGlobalRate;
-
-  let walletAdvice = `💳 **In Your Wallet:**
-You should pay with **${result.best.card.name}** which gives you **${result.best.rewardRate}%** rewards.
-${isActuallyOptimal ? '🟢 *This is the absolute best reward rate available for this transaction!*' : `🟡 *Optimization opportunity:* You are earning ${result.best.rewardRate}%, but you could earn **${maxGlobalRate}%** with **${bestGlobalCard.bank} ${bestGlobalCard.name}**.`}`;
-
-  if (result.best.isCapped) {
-    walletAdvice += `\n⚠️ *Note: ${result.best.limitations[0]}*`;
+  const best = result.best;
+  const approx = best.confidence !== 'EXACT' ? '~' : '';
+  const isActuallyOptimal = best.rewardRate >= maxGlobalRate;
+  let walletAdvice = `💳 **Use ${best.card.name}** — ${best.rewardRate}% on ${displayCategory.toLowerCase()} = **${approx}₹${best.cappedRewardValue.toFixed(best.cappedRewardValue < 10 ? 2 : 0)}** on ${amountLabel}.`;
+  if (result.secondBest && result.delta > 0) {
+    walletAdvice += `\nThat's ₹${result.delta.toFixed(result.delta < 10 ? 2 : 0)} more than ${result.secondBest.card.name}.`;
   }
+  walletAdvice += isActuallyOptimal
+    ? `\n🟢 No card in our catalog pays more for this.`
+    : `\n🟡 ${bestGlobalCard.name} would pay ${maxGlobalRate}% here (you don't hold it).`;
+  if (best.limitations[0]) walletAdvice += `\n⚠️ *${best.limitations[0]}*`;
 
   return {
-    content: `🏆 **Spend Optimization for ${merchantStr} (${displayCategory} ${emoji})**
+    content: `🏆 **${merchantStr} (${displayCategory} ${emoji})**
 
 ${walletAdvice}
 
-🔥 **Top Cards in the Market for ${displayCategory}:**
-1. **${bestGlobalCard.bank} ${bestGlobalCard.name}** — **${maxGlobalRate}%** rewards
-${runners.map((c, i) => `${i + 2}. **${c.bank} ${c.name}** — **${getCardRewardForCategory(c, category)}%** rewards`).join('\n')}
-
-💡 *Swipe your optimal card to maximize statement cashback and reward multipliers!*`,
+${market}`,
     cards: [bestGlobalCard, ...runners],
-    evaluation: result
+    evaluation: result,
   };
+}
+
+function genericHelp(): TaqdeerAnswer {
+  return {
+    source: 'local',
+    content: `👋 **Taqdeer**
+
+I can tell you which card to use for a purchase, compare cards, and explain fees, lounges and credit scores.
+
+**Try asking:**
+• 🍳 *"Which card for ₹1,200 on Swiggy?"*
+• ✈️ *"Which cards give free airport lounge access?"*
+• 💳 *"What is my wallet health score?"*
+• 🌐 *"Zero forex markup cards for a trip abroad"*`,
+  };
+}
+
+/** Monthly ₹ spend per category from the last 90 days — sent so the AI can personalise. */
+function spendSummary(): Partial<Record<SpendCategory, number>> | undefined {
+  try {
+    const { transactions } = useDashboardStore.getState();
+    if (!transactions.length) return undefined;
+    const { spend, assumed } = deriveMonthlySpend({ transactions });
+    return assumed ? undefined : spend;
+  } catch {
+    return undefined;
+  }
+}
+
+async function getSessionToken(): Promise<string | null> {
+  try {
+    const clerk = typeof window !== 'undefined' ? (window as any).Clerk : undefined;
+    return clerk?.session ? await clerk.session.getToken() : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Streams a grounded answer from /api/taqdeer. Resolves to null on any failure. */
+async function askAi(query: string, userCards: CardData[], opts: TaqdeerOptions): Promise<TaqdeerAnswer | null> {
+  const token = await getSessionToken();
+  if (!token) return null; // the LLM needs a session; signed-out users get local answers
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  opts.signal?.addEventListener('abort', () => controller.abort());
+  try {
+    const res = await fetch('/api/taqdeer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        query,
+        history: opts.history?.slice(-6),
+        walletCardIds: userCards.map((c) => c.id),
+        spendSummary: spendSummary(),
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok || !res.body) return null;
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let text = '';
+    let cardIds: string[] = [];
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let idx: number;
+      while ((idx = buffer.indexOf('\n\n')) >= 0) {
+        const raw = buffer.slice(0, idx).replace(/^data:\s*/, '');
+        buffer = buffer.slice(idx + 2);
+        if (!raw) continue;
+        const ev = JSON.parse(raw);
+        if (ev.error) return text ? { content: text, source: 'ai' } : null;
+        if (ev.t) {
+          text += ev.t;
+          opts.onToken?.(text);
+        }
+        if (ev.done) cardIds = ev.cards ?? [];
+      }
+    }
+    if (!text) return null;
+    const cards = cardIds.map((id) => CARD_DATASET.find((c) => c.id === id)).filter(Boolean) as FinixCard[];
+    return { content: text, cards: cards.slice(0, 3), source: 'ai' };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * 1. Instant local answer for well-understood questions (wallet math, lounges,
+ *    fees, CIBIL, a merchant/category spend) — no network, keeps cards/evaluation.
+ * 2. Otherwise a grounded, streamed AI answer (signed-in users).
+ * 3. If the AI is unavailable, the closest local answer or a short guide.
+ */
+export async function generateTaqdeerResponse(
+  query: string,
+  userCards: CardData[] = [],
+  opts: TaqdeerOptions = {},
+): Promise<TaqdeerAnswer> {
+  const isFollowUp = (opts.history?.length ?? 0) > 0 && query.trim().split(/\s+/).length <= 6;
+  const local = isFollowUp ? null : answerLocally(query, userCards);
+  if (local) return local;
+
+  if (!opts.localOnly) {
+    const ai = await askAi(query, userCards, opts);
+    if (ai) return ai;
+  }
+  return answerLocally(query, userCards) ?? genericHelp();
 }
 
 // Helper to look up best card globally for a category

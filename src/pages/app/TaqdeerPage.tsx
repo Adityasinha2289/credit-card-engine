@@ -1,110 +1,103 @@
-import React, { useState } from 'react';
-import { Sparkles, ArrowRight, User } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, User, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { PageContainer } from '../../components/shared/PageContainer';
-import { MOCK_DATE_ITINERARY } from '../../features/lifestyle/mock/datePlans';
+import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
+import { generateTaqdeerResponse } from '../../features/finix/lib/taqdeerEngine';
+
+type Msg = { role: 'user' | 'ai'; content: string; cards?: { id: string; name: string }[] };
+
+const SUGGESTIONS = [
+  'Which card should I use for ₹2,000 on Swiggy?',
+  'Is a premium travel card worth it for me?',
+  'How do I improve my CIBIL score?',
+  'Zero forex cards for a trip abroad',
+];
 
 export default function TaqdeerPage() {
+  const userCards = useDashboardStore((s) => s.userCards);
   const [query, setQuery] = useState('');
-  const [messages, setMessages] = useState([
-    { role: 'ai', content: "Hello! I'm Taqdeer. What are we planning today?" }
+  const [busy, setBusy] = useState(false);
+  const [messages, setMessages] = useState<Msg[]>([
+    { role: 'ai', content: "Hi! I'm Taqdeer. Ask me which card to use, whether a card is worth it, or anything about fees, rewards and credit scores." },
   ]);
-  const [showCanvas, setShowCanvas] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [messages]);
 
-    setMessages([...messages, { role: 'user', content: query }]);
+  const ask = async (text: string) => {
+    const q = text.trim();
+    if (!q || busy) return;
     setQuery('');
+    setBusy(true);
+    const history = messages.slice(1).map(({ role, content }) => ({ role, content }));
+    setMessages((m) => [...m, { role: 'user', content: q }, { role: 'ai', content: '' }]);
 
-    // Simulate AI parsing intent
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        content: "I've structured a Date Plan in Noida for ₹5,000. I also optimized the payments to maximize your HDFC Diners and Axis Ace rewards."
-      }]);
-      setShowCanvas(true);
-    }, 1500);
+    const updateLast = (patch: Partial<Msg>) =>
+      setMessages((m) => m.map((msg, i) => (i === m.length - 1 ? { ...msg, ...patch } : msg)));
+
+    try {
+      const res = await generateTaqdeerResponse(q, userCards, { history, onToken: (t) => updateLast({ content: t }) });
+      updateLast({ content: res.content, cards: res.cards?.slice(0, 3).map((c) => ({ id: c.id, name: c.name })) });
+    } catch {
+      updateLast({ content: "Sorry — I couldn't answer that right now. Please try again." });
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
-    <PageContainer title="Taqdeer AI" subtitle="Your Intelligent Financial Copilot">
-      <div className="flex flex-col-reverse lg:flex-row gap-6 min-h-[75vh]">
-        
-        {/* Left Side: Chat Interface */}
-        <div className="w-full lg:w-1/3 flex flex-col glass-panel rounded-3xl overflow-hidden border-border-subtle shrink-0 max-h-[75vh]">
-          <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden ${msg.role === 'ai' ? 'bg-brand-emerald/20 text-brand-emerald' : 'bg-surface-elevated text-text-muted'}`}>
-                  {msg.role === 'ai' ? <img src="/taqdeer-logo.png" alt="AI" className="w-full h-full object-cover" /> : <User size={16} />}
-                </div>
-                <div className={`max-w-[80%] p-4 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-surface-elevated text-text-primary rounded-tr-sm' : 'bg-brand-emerald/5 border border-brand-emerald/20 text-text-primary rounded-tl-sm'}`}>
-                  {msg.content}
-                </div>
+    <PageContainer title="Taqdeer AI" subtitle="Your card and money copilot">
+      <div className="flex flex-col glass-panel rounded-3xl overflow-hidden border-border-subtle max-w-3xl w-full mx-auto min-h-[70vh] max-h-[80vh]">
+        <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden ${msg.role === 'ai' ? 'bg-brand-emerald/20 text-brand-emerald' : 'bg-surface-elevated text-text-muted'}`}>
+                {msg.role === 'ai' ? <img src="/taqdeer-logo.png" alt="" className="w-full h-full object-cover" /> : <User size={16} />}
               </div>
-            ))}
-          </div>
-          <div className="p-4 border-t border-border-subtle bg-surface-base">
-            <form onSubmit={handleSubmit} className="relative">
-              <input 
-                type="text" 
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Plan a date for ₹5,000..." 
-                className="w-full bg-surface-elevated border border-border-subtle rounded-xl py-4 pl-4 pr-12 text-text-primary focus:outline-none focus:border-brand-emerald/50"
-              />
-              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-brand-emerald text-black flex items-center justify-center hover:bg-brand-400 transition-colors">
-                <ArrowRight size={18} />
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* Right Side: Visual Canvas Prototype */}
-        <div className={`w-full lg:w-2/3 glass-panel rounded-3xl p-6 border-brand-emerald/20 transition-all duration-700 ${showCanvas ? 'opacity-100 lg:translate-x-0' : 'opacity-0 lg:translate-x-8 pointer-events-none hidden lg:block'}`}>
-          <div className="h-full overflow-y-auto hide-scrollbar">
-            {showCanvas && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-xl font-display font-medium text-gray-900">{MOCK_DATE_ITINERARY.title}</h2>
-                  <span className="text-xs bg-brand-emerald/10 text-brand-emerald px-2 py-1 rounded font-bold tracking-wider uppercase">Generated</span>
-                </div>
-
-                <div className="space-y-4">
-                  {MOCK_DATE_ITINERARY.venues.map(venue => (
-                    <div key={venue.id} className="bg-surface-elevated/50 p-4 rounded-xl border border-border-subtle">
-                      <div className="flex justify-between items-start mb-3">
-                        <div>
-                          <p className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">{venue.time} • {venue.type}</p>
-                          <h3 className="font-medium text-text-primary">{venue.name} @ {venue.partnerName}</h3>
-                        </div>
-                        <span className="text-sm text-text-muted">₹{venue.originalCost.toLocaleString()}</span>
-                      </div>
-                      <div className="bg-brand-emerald/5 rounded-lg p-3 flex justify-between items-center text-sm">
-                        <span className="text-text-secondary">Best Card: <span className="text-gray-900 font-medium">{venue.recommendation.bestCard.bankName}</span></span>
-                        <span className="text-brand-emerald font-semibold">-₹{venue.recommendation.totalSavings.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-brand-emerald/10 border border-brand-emerald/30 p-5 rounded-2xl mt-8">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-text-secondary">Estimated Value</span>
-                    <span className="text-xl font-display font-bold text-gray-900">₹4,150</span>
+              <div className={`max-w-[85%] p-4 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-surface-elevated text-text-primary rounded-tr-sm' : 'bg-brand-emerald/5 border border-brand-emerald/20 text-text-primary rounded-tl-sm'}`}>
+                {msg.role === 'ai' && !msg.content ? (
+                  <Loader2 size={16} className="animate-spin text-brand-emerald" aria-label="Thinking" />
+                ) : msg.role === 'ai' ? (
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                   </div>
-                  <p className="text-xs text-text-muted text-right">You save ₹650</p>
-                </div>
-                
-                <button className="w-full bg-text-primary text-black py-3 rounded-xl font-medium mt-4">
-                  Confirm Plan
-                </button>
+                ) : (
+                  msg.content
+                )}
+                {msg.cards && msg.cards.length > 0 && (
+                  <p className="mt-3 text-[11px] text-text-muted">Cards referenced: {msg.cards.map((c) => c.name).join(' · ')}</p>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          ))}
+          {messages.length === 1 && (
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTIONS.map((s) => (
+                <button key={s} onClick={() => void ask(s)} className="text-xs px-3 py-1.5 rounded-full border border-border-subtle text-text-secondary hover:border-brand-emerald">
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+          <div ref={endRef} />
         </div>
-
+        <div className="p-4 border-t border-border-subtle bg-surface-base">
+          <form onSubmit={(e) => { e.preventDefault(); void ask(query); }} className="relative">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ask anything about cards, rewards or spending…"
+              aria-label="Ask Taqdeer"
+              className="w-full bg-surface-elevated border border-border-subtle rounded-xl py-4 pl-4 pr-12 text-text-primary focus:outline-none focus:border-brand-emerald/50"
+            />
+            <button type="submit" disabled={busy || !query.trim()} aria-label="Send" className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-brand-emerald text-black flex items-center justify-center hover:bg-brand-400 transition-colors disabled:opacity-40">
+              {busy ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={18} />}
+            </button>
+          </form>
+        </div>
       </div>
     </PageContainer>
   );

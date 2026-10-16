@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   Sparkles, ArrowRight, Activity, Clock, CheckCircle2, CreditCard, ShieldCheck, ChevronRight, Check, Search
 } from 'lucide-react';
 import { useDashboardStore } from '../../store/dashboardStore';
-import { generateTaqdeerResponse } from '../../../finix/lib/taqdeerEngine';
+import { generateTaqdeerResponse, type TaqdeerAnswer } from '../../../finix/lib/taqdeerEngine';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -17,11 +17,6 @@ const POPULAR_SCENARIOS = [
   'Netflix'
 ];
 
-const RECENT_RECS = [
-  { title: 'MacBook Pro', card: 'HDFC Infinia', saved: '₹10,490' },
-  { title: 'Dinner at Taj', card: 'Diners Club', saved: '₹450' },
-  { title: 'Dubai Flight', card: 'Axis Atlas', saved: '₹2,180' },
-];
 
 const LOADING_STAGES = [
   'Understanding purchase intent...',
@@ -35,12 +30,15 @@ const LOADING_STAGES = [
 
 export function QuickAskTaqdeer() {
   const userCards = useDashboardStore((s) => s.userCards);
-  
+
   const [query, setQuery] = useState('');
   const [appState, setAppState] = useState<'idle' | 'loading' | 'result'>('idle');
   const [loadingStage, setLoadingStage] = useState(0);
-  const [decision, setDecision] = useState<{ content: string; cards?: any[] } | null>(null);
-  
+  const [decision, setDecision] = useState<TaqdeerAnswer | null>(null);
+  const [history, setHistory] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
+  // Real answers from this session (the old list showed made-up savings to every user).
+  const [recent, setRecent] = useState<{ title: string; card: string; value?: string }[]>([]);
+
   const bottomTextareaRef = useRef<HTMLTextAreaElement>(null);
   const heroTextareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -56,7 +54,7 @@ export function QuickAskTaqdeer() {
     setQuery(text);
     setAppState('loading');
     setLoadingStage(0);
-    
+
     const stageInterval = setInterval(() => {
       setLoadingStage(prev => {
         if (prev >= LOADING_STAGES.length - 1) {
@@ -68,14 +66,26 @@ export function QuickAskTaqdeer() {
     }, 400);
 
     try {
-      const res = await generateTaqdeerResponse(text, userCards);
-      setTimeout(() => {
-        setDecision(res);
-        setAppState('result');
-      }, 3000);
-    } catch (e) {
-      setDecision({ content:"I couldn't process that request right now." });
+      // No artificial delay: local answers are instant and AI answers stream in.
+      const res = await generateTaqdeerResponse(text, userCards, {
+        history,
+        onToken: (partial) => {
+          setDecision({ content: partial, source: 'ai' });
+          setAppState('result');
+        },
+      });
+      setDecision(res);
       setAppState('result');
+      setHistory((h) => [...h, { role: 'user' as const, content: text }, { role: 'ai' as const, content: res.content }].slice(-6));
+      const best = res.evaluation?.best;
+      if (best) {
+        setRecent((r) => [{ title: text.slice(0, 40), card: best.card.name, value: `₹${best.cappedRewardValue.toFixed(0)}` }, ...r].slice(0, 3));
+      }
+    } catch (e) {
+      setDecision({ content: "I couldn't process that request right now." });
+      setAppState('result');
+    } finally {
+      clearInterval(stageInterval);
     }
   };
 
@@ -88,7 +98,7 @@ export function QuickAskTaqdeer() {
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto min-h-[600px] text-gray-900 h-full relative">
       <AnimatePresence mode="wait">
-        
+
         {/* ============================================================== */}
         {/* IDLE STATE: THE PREMIUM AI WORKSPACE */}
         {/* ============================================================== */}
@@ -102,12 +112,12 @@ export function QuickAskTaqdeer() {
             className="absolute inset-0 flex flex-col items-center justify-center p-4 md:p-8 w-full h-full"
           >
             <div className="w-full max-w-3xl flex flex-col items-center text-center mt-[-10vh]">
-              
+
               {/* TAQDEER Mark & Headline */}
               <div className="w-14 h-14 rounded-2xl bg-[#111] border border-gray-300 flex items-center justify-center mb-8 shadow-2xl">
                 <Sparkles className="w-6 h-6 text-[#2A9D5C]" />
               </div>
-              
+
               <h1 className="text-4xl md:text-5xl font-display font-medium text-gray-900 mb-4 tracking-tight">
                 What are you planning to buy?
               </h1>
@@ -118,7 +128,7 @@ export function QuickAskTaqdeer() {
               {/* HERO COMPOSER */}
               <div className="w-full relative group mb-12 z-20">
                 <div className="absolute inset-[-4px] bg-gradient-to-r from-[#2A9D5C]/0 via-[#2A9D5C]/20 to-[#2A9D5C]/0 blur-xl rounded-[2.5rem] opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                
+
                 <div className="relative bg-[#0F0F0F] border border-white/[0.1] group-focus-within:border-white/[0.2] rounded-[2rem] shadow-2xl transition-all duration-300 flex flex-col overflow-hidden">
                   <textarea
                     ref={heroTextareaRef}
@@ -135,7 +145,7 @@ export function QuickAskTaqdeer() {
                     rows={1}
                     autoFocus
                   />
-                  
+
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 pt-2 bg-[#0F0F0F]">
                     {/* Action Chips */}
                     <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 sm:pb-0">
@@ -149,7 +159,7 @@ export function QuickAskTaqdeer() {
                         </button>
                       ))}
                     </div>
-                    
+
                     {/* Submit Button */}
                     <button
                       onClick={() => executeQuery(query)}
@@ -164,17 +174,17 @@ export function QuickAskTaqdeer() {
 
               {/* RECENT RECOMMENDATIONS */}
               <div className="w-full text-left">
-                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-600 mb-6 pl-2">Recent Recommendations</p>
+                {recent.length > 0 && <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-600 mb-6 pl-2">Recent in this session</p>}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {RECENT_RECS.map((rec, i) => (
-                    <div key={i} className="bg-[#111] border border-border-subtle rounded-2xl p-5 flex flex-col justify-between hover:border-gray-300 transition-colors cursor-pointer group">
+                  {recent.map((rec, i) => (
+                    <div key={i} onClick={() => executeQuery(rec.title)} className="bg-[#111] border border-border-subtle rounded-2xl p-5 flex flex-col justify-between hover:border-gray-300 transition-colors cursor-pointer group">
                       <div>
                         <div className="text-gray-400 text-xs font-medium mb-1">{rec.title}</div>
                         <div className="text-gray-900 font-medium text-lg tracking-tight mb-4">{rec.card}</div>
                       </div>
                       <div className="flex items-center justify-between border-t border-border-subtle pt-4 mt-2">
-                        <span className="text-xs text-gray-600">Saved</span>
-                        <span className="text-sm font-semibold text-[#2A9D5C] group-hover:text-gray-900 transition-colors">{rec.saved}</span>
+                        <span className="text-xs text-gray-600">Earns</span>
+                        <span className="text-sm font-semibold text-[#2A9D5C] group-hover:text-gray-900 transition-colors">{rec.value}</span>
                       </div>
                     </div>
                   ))}
@@ -197,12 +207,12 @@ export function QuickAskTaqdeer() {
             className="absolute inset-0 flex flex-col items-center justify-center p-6 w-full h-full"
           >
             <div className="w-24 h-24 relative mb-12 flex items-center justify-center">
-              <motion.div 
+              <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease:"linear" }}
                 className="absolute inset-0 rounded-full border border-dashed border-white/[0.1]"
               />
-              <motion.div 
+              <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 12, repeat: Infinity, ease:"linear" }}
                 className="absolute inset-2 rounded-full border border-dashed border-[#2A9D5C]/30"
@@ -214,9 +224,9 @@ export function QuickAskTaqdeer() {
               {LOADING_STAGES.map((stage, idx) => {
                 const isActive = idx === loadingStage;
                 const isDone = idx < loadingStage;
-                
+
                 return (
-                  <motion.div 
+                  <motion.div
                     key={stage}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: isActive || isDone ? 1 : 0.3, x: 0 }}
@@ -226,10 +236,10 @@ export function QuickAskTaqdeer() {
                       {isDone ? (
                         <Check className="w-3 h-3 text-[#2A9D5C]" />
                       ) : isActive ? (
-                        <motion.div 
+                        <motion.div
                           animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
-                          className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C]" 
+                          className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C]"
                         />
                       ) : (
                         <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
@@ -258,13 +268,13 @@ export function QuickAskTaqdeer() {
             {/* Scrollable Results Area */}
             <div className="flex-1 overflow-y-auto no-scrollbar pb-32 pt-10">
               <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
-                
+
                 <div className="flex items-center justify-between w-full border-b border-border-subtle pb-4">
                   <h3 className="text-lg font-display font-medium text-gray-900 flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-[#2A9D5C]" />
                     Financial Decision Report
                   </h3>
-                  <button 
+                  <button
                     onClick={reset}
                     className="text-xs font-semibold uppercase tracking-wider text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-1"
                   >
@@ -275,7 +285,7 @@ export function QuickAskTaqdeer() {
                 {/* Top Decision Card */}
                 <div className="w-full bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-[2rem] p-1 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.05)] border border-gray-300 relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#2A9D5C]/40 to-transparent" />
-                  
+
                   <div className="p-6 md:p-8">
                     <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
                       <div className="flex-1">
@@ -286,11 +296,11 @@ export function QuickAskTaqdeer() {
                           </div>
                           <span className="text-xs text-gray-600 font-medium">Optimal Recommendation</span>
                         </div>
-                        
+
                         <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-2">
                           {decision.cards?.[0]?.name ||"Recommended Strategy"}
                         </h3>
-                        
+
                         <p className="text-gray-400 text-lg leading-relaxed max-w-xl mb-8">
                           Based on current merchant categories, your wallet configuration, and active network offers, this provides the highest absolute return for this transaction.
                         </p>

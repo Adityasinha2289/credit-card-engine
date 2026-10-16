@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, X, Sparkles, CreditCard, Bot, Zap, CheckCircle2 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
-import { generateTaqdeerResponse } from '../../finix/lib/taqdeerEngine';
+import { generateTaqdeerResponse, type TaqdeerAnswer } from '../../finix/lib/taqdeerEngine';
 import { DecisionCard } from '../../../components/shared/DecisionCard';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -12,6 +12,9 @@ interface TaqdeerDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// The engine's own confidence, not a fixed "98%".
+const CONFIDENCE_SCORE: Record<string, number> = { EXACT: 95, ESTIMATED: 75, LIMITED: 70, UNSUPPORTED: 40 };
 
 const LOADING_STAGES = [
   'Understanding purchase intent...',
@@ -24,8 +27,9 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
   const [query, setQuery] = useState('');
   const [appState, setAppState] = useState<'idle' | 'loading' | 'result'>('idle');
   const [loadingStage, setLoadingStage] = useState(0);
-  const [decision, setDecision] = useState<{ content: string; cards?: any[] } | null>(null);
-  
+  const [decision, setDecision] = useState<TaqdeerAnswer | null>(null);
+  const [history, setHistory] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
+
   const userCards = useDashboardStore(state => state.userCards);
 
   const handleSubmit = async (e?: React.FormEvent, presetQuery?: string) => {
@@ -48,14 +52,22 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
     }, 400);
 
     try {
-      const response = await generateTaqdeerResponse(finalQuery, userCards);
-      setTimeout(() => {
-        setDecision(response);
-        setAppState('result');
-      }, 1000); // reduced timeout for better UX
+      // Local answers are instant; AI answers stream token by token. No artificial delay.
+      const response = await generateTaqdeerResponse(finalQuery, userCards, {
+        history,
+        onToken: (partial) => {
+          setDecision({ content: partial, source: 'ai' });
+          setAppState('result');
+        },
+      });
+      setDecision(response);
+      setAppState('result');
+      setHistory((h) => [...h, { role: 'user' as const, content: finalQuery }, { role: 'ai' as const, content: response.content }].slice(-6));
     } catch (error) {
       setDecision({ content: 'I encountered an error while trying to generate a response. Please try again.' });
       setAppState('result');
+    } finally {
+      clearInterval(stageInterval);
     }
   };
 
@@ -63,6 +75,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
     setAppState('idle');
     setQuery('');
     setDecision(null);
+    setHistory([]);
   };
 
   return (
@@ -88,7 +101,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
               </div>
               <h2 className="text-xs font-bold text-gray-900 tracking-widest uppercase">TAQDEER</h2>
             </div>
-            <button 
+            <button
               onClick={onClose}
               className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-50 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
             >
@@ -98,10 +111,10 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
 
           {/* Main Content Area */}
           <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col hide-scrollbar relative">
-            
+
             <AnimatePresence mode="wait">
               {appState === 'idle' && (
-                <motion.div 
+                <motion.div
                   key="idle"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -138,7 +151,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
               )}
 
               {appState === 'loading' && (
-                <motion.div 
+                <motion.div
                   key="loading"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -146,7 +159,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                   className="flex flex-col items-center justify-center h-full gap-8"
                 >
                   <div className="w-16 h-16 relative flex items-center justify-center">
-                    <motion.div 
+                    <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 4, repeat: Infinity, ease:"linear" }}
                       className="absolute inset-0 rounded-full border border-dashed border-brand-emerald/30"
@@ -158,7 +171,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                       const isActive = idx === loadingStage;
                       const isDone = idx < loadingStage;
                       return (
-                        <motion.div 
+                        <motion.div
                           key={stage}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: isActive || isDone ? 1 : 0.3, x: 0 }}
@@ -184,7 +197,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
               )}
 
               {appState === 'result' && decision && (
-                <motion.div 
+                <motion.div
                   key="result"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -200,25 +213,25 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                       Reset
                     </button>
                   </div>
-                  
+
                   {decision.evaluation && decision.evaluation.best ? (
-                    <DecisionCard 
+                    <DecisionCard
                       title="Best Fit"
                       bestFit={decision.evaluation.best.card.name}
                       why={decision.evaluation.delta > 0 && decision.evaluation.secondBest ? `Using this card earns you +₹${decision.evaluation.delta.toFixed(2)} more than your next best option. ${decision.evaluation.best.limitations.length > 0 ? decision.evaluation.best.limitations[0] : ''}` : decision.evaluation.best.reason}
                       expectedValue={`${decision.evaluation.best.confidence !== 'EXACT' ? '~' : ''}₹${decision.evaluation.best.cappedRewardValue.toFixed(2)}`}
                       tradeoff={decision.evaluation.secondBest ? `Next best: ${decision.evaluation.secondBest.card.name} (${decision.evaluation.secondBest.confidence !== 'EXACT' ? '~' : ''}₹${decision.evaluation.secondBest.cappedRewardValue.toFixed(2)})` : undefined}
-                      confidence={98}
+                      confidence={CONFIDENCE_SCORE[decision.evaluation.best.confidence] ?? 60}
                       actionText="Use This Card"
                     />
                   ) : decision.cards && decision.cards.length > 0 ? (
-                    <DecisionCard 
+                    <DecisionCard
                       title="Best Fit"
                       bestFit={decision.cards[0].name}
-                      why={`Based on ${query}, this card provides the highest yield.`}
-                      expectedValue={`${decision.cards[0].baseRewardRate}% Yield`}
-                      tradeoff={`Annual fee: ₹${decision.cards[0].annualFee || 0}`}
-                      confidence={98}
+                      why={decision.source === 'ai' ? 'Card referenced in this answer.' : `Top match in our catalog for "${query}".`}
+                      expectedValue={`${decision.cards[0].baseRewardRate ?? '?'}% base`}
+                      tradeoff={decision.cards[0].annualFee === null ? 'Annual fee not confirmed' : `Annual fee: ₹${decision.cards[0].annualFee}`}
+                      confidence={60}
                       actionText="Use This Card"
                     />
                   ) : null}
@@ -251,21 +264,21 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
           </div>
 
           {/* Input Area */}
           <div className="p-4 shrink-0 bg-white border-t border-gray-100">
             <form onSubmit={(e) => handleSubmit(e)} className="relative">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Ask Taqdeer anything..." 
+                placeholder="Ask Taqdeer anything..."
                 className="w-full bg-gray-50 border border-gray-200 rounded-full py-4 pl-5 pr-14 text-[13px] font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald focus:bg-white transition-all shadow-inner"
               />
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={appState === 'loading' || !query.trim()}
                 className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gray-900 text-white hover:bg-brand-emerald disabled:opacity-50 disabled:hover:bg-gray-900 flex items-center justify-center transition-all shadow-md active:scale-95"
               >

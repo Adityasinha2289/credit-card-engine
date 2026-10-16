@@ -63,11 +63,13 @@ export function InteractiveDemoSection() {
     }, 400);
 
     try {
-      const res = await generateTaqdeerResponse(text, []);
+      // Public demo: on-device engine only (the LLM requires a signed-in session).
+      const res = await generateTaqdeerResponse(text, [], { localOnly: true });
+      // Short pause so the "thinking" animation reads as intended on the landing page.
       setTimeout(() => {
         setDecision(res);
         setAppState('result');
-      }, 3000);
+      }, 900);
     } catch (e) {
       setDecision({ content: "I couldn't process that request right now." });
       setAppState('result');

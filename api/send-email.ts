@@ -1,22 +1,9 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { Resend } from 'resend';
 import { ClerkAuth } from '../src/features/recommendation/api/auth';
 import { createClient } from '@supabase/supabase-js';
+import { TEMPLATES, sendEmail } from './_lib/email';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const auth = new ClerkAuth();
-
-
-const TEMPLATES: Record<string, (data: any) => { subject: string, html: string }> = {
-  welcome: (data) => ({
-    subject: `Welcome to RenoCred, ${data.name || 'User'}!`,
-    html: `<h1>Welcome to RenoCred, ${data.name || 'User'}!</h1><p>We are excited to help you maximize your credit card rewards.</p>`
-  }),
-  alert: (data) => ({
-    subject: `RenoCred Alert: ${data.title || 'Notification'}`,
-    html: `<h2>RenoCred Alert</h2><p>${data.message || 'You have a new notification.'}</p>`
-  })
-};
 
 // Simple rate limiter for authenticated users (1 per minute)
 const rateLimiter = new Map<string, number>();
@@ -93,14 +80,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new Error('Email service not configured');
     }
 
-    const data = await resend.emails.send({
-      from: 'Renocred <onboarding@resend.dev>',
-      to: [recipient],
-      subject: subject,
-      html: html,
-    });
+    const id = await sendEmail({ to: recipient, subject, html });
 
-    return res.status(200).json({ success: true, id: data.data?.id });
+    return res.status(200).json({ success: true, id });
   } catch (error: any) {
     // Avoid exposing Resend secrets or stack traces
     console.error('[Email Service Error]', error.message);

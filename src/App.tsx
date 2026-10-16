@@ -45,6 +45,7 @@ const OccasionPlannerPage = lazy(() => import('./pages/app/plan/OccasionPlannerP
 const MoneyManagerPage = lazy(() => import('./pages/app/money/MoneyManagerPage'));
 const TransactionsPage = lazy(() => import('./pages/app/money/TransactionsPage'));
 const PaymentCoachPage = lazy(() => import('./pages/app/money/PaymentCoachPage'));
+const SubscriptionsPage = lazy(() => import('./pages/app/money/SubscriptionsPage'));
 
 // Lifestyle (Phase 5A Prototype) - Redirecting to marketplace
 const LifestyleHub = lazy(() => import('./pages/app/lifestyle/LifestyleHub'));
@@ -233,6 +234,7 @@ export default function App() {
         <Route path="/money" element={<MoneyManagerPage />} />
         <Route path="/money/transactions" element={<TransactionsPage />} />
         <Route path="/money/coach" element={<PaymentCoachPage />} />
+        <Route path="/money/subscriptions" element={<SubscriptionsPage />} />
         
         
         {/* Marketplace Routes in Dashboard */}

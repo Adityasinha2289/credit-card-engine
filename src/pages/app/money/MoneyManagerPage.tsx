@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { useShallow } from 'zustand/shallow';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
 import { SafeToSpendEngine, CardDueEngine } from '../../../features/money/engines/SafeToSpendEngine';
-import { formatRupees, toPaise, daysUntil, isValidDate } from '../../../features/money/lib/moneyMath';
+import { formatRupees, toPaise } from '../../../features/money/lib/moneyMath';
+import { upcomingCharges } from '../../../features/subscriptions/reminderPlanner';
+import { istDate } from '../../../features/subscriptions/billingCycle';
 import { useIsDemo } from '../../../features/demo/DemoAppProvider';
 import { PageContainer } from '../../../components/shared/PageContainer';
 
@@ -57,11 +59,8 @@ export default function MoneyManagerPage() {
   const needsDueDate = cardDues.filter((c) => c.outstanding > 0 && !c.dueDate);
 
   const upcomingRenewals = useMemo(
-    () => subscriptions
-      .filter((s) => s.status === 'active' && isValidDate(s.nextBillingDate))
-      .map((s) => ({ sub: s, days: daysUntil(s.nextBillingDate) }))
-      .filter(({ days }) => days >= 0 && days <= UPCOMING_WINDOW_DAYS)
-      .sort((a, b) => a.days - b.days),
+    () => upcomingCharges(subscriptions, istDate(), UPCOMING_WINDOW_DAYS)
+      .map((u) => ({ sub: u.subscription, days: u.daysLeft, trial: u.kind === 'trial_ending' })),
     [subscriptions],
   );
 
@@ -169,7 +168,10 @@ export default function MoneyManagerPage() {
         {/* What Needs Attention */}
         {hasAttention && (
           <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Needs Attention</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Needs Attention</h3>
+              <Link to="/app/money/subscriptions" className="text-xs font-bold text-emerald-700">Subscriptions →</Link>
+            </div>
             <div className="space-y-3">
               {dueAlerts.map((due) => (
                 <div key={due.cardId} className="bg-red-50 p-4 rounded-2xl border border-red-100 flex justify-between items-center gap-4">
@@ -203,11 +205,11 @@ export default function MoneyManagerPage() {
                 </div>
               ))}
 
-              {upcomingRenewals.map(({ sub, days }) => (
+              {upcomingRenewals.map(({ sub, days, trial }) => (
                 <div key={sub.id} className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex justify-between items-center gap-4">
                   <div>
                     <p className="text-amber-900 font-medium">
-                      {sub.isFreeTrial ? `${sub.name} free trial converts to paid` : `${sub.name} renews`}{' '}
+                      {trial ? `${sub.name} free trial converts to paid` : `${sub.name} renews`}{' '}
                       {days === 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days} days`}
                     </p>
                     {sub.hasPriceHike && sub.previousAmount ? (
@@ -268,7 +270,7 @@ export default function MoneyManagerPage() {
         </section>
 
         {/* Quick Tools */}
-        <section className="grid grid-cols-2 gap-4">
+        <section className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Link to="/app/money/coach" className="bg-gray-900 p-5 rounded-3xl text-white block hover:bg-gray-800 transition-colors">
             <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mb-4">
               ✨
@@ -282,6 +284,17 @@ export default function MoneyManagerPage() {
             </div>
             <h3 className="font-medium text-gray-900 mb-1">Transactions</h3>
             <p className="text-xs text-gray-500">View recent activity</p>
+          </Link>
+          <Link to="/app/money/subscriptions" className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm block hover:shadow-md transition-shadow">
+            <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+              🔁
+            </div>
+            <h3 className="font-medium text-gray-900 mb-1">Subscriptions</h3>
+            <p className="text-xs text-gray-500">
+              {subscriptions.filter((s) => s.status === 'active').length > 0
+                ? `${subscriptions.filter((s) => s.status === 'active').length} tracked · reminders on`
+                : 'Track renewals & trials'}
+            </p>
           </Link>
         </section>
 

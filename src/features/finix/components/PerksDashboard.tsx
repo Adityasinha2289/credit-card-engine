@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, Gift, CreditCard, Tag, ShieldAlert, Plane, Hotel, Star, Sparkles, Percent, Calendar, ExternalLink } from 'lucide-react';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { cn, formatCents } from '../../../lib/utils';
 import { BankLogo } from '../../cards/components/BankLogo';
+import { addCycles, istDate, monthlyCost } from '../../subscriptions/billingCycle';
+import { effectiveNextCharge } from '../../subscriptions/reminderPlanner';
+import { getCancelUrl as presetCancelUrl } from '../../subscriptions/presets';
 
 const PARTNERS = [
   { id: 'vistara', name: 'Club Vistara', type: 'airline', ratio: 0.5, icon: Plane, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-500/10' },
@@ -35,18 +39,21 @@ export function PerksDashboard() {
   ];
 
   const handleAddRenewal = (preset: typeof PRESET_RENEWALS[0]) => {
-    if (userCards.length === 0) return;
     addSubscription({
       id: `sub-${Date.now()}`,
       name: preset.name,
       amount: preset.amount,
       billingCycle: preset.billingCycle,
-      nextBillingDate: new Date(Date.now() + 30 * 86400000).toISOString(),
+      // Next charge one full cycle from today (yearly plans renew in a year, not 30 days).
+      nextBillingDate: addCycles(istDate(), preset.billingCycle),
       status: 'active',
-      cardId: userCards[0].id,
+      // Billed via UPI / bank unless the user picks a card on the Subscriptions page.
+      cardId: '',
       category: preset.category,
       hasPriceHike: false,
       isFreeTrial: false,
+      reminderDays: preset.billingCycle === 'yearly' ? [7, 1] : [3, 1],
+      cancelUrl: presetCancelUrl(preset.name),
     });
     setShowAddRenewal(false);
     setIsCustomRenewal(false);
@@ -69,7 +76,8 @@ export function PerksDashboard() {
   
   // Strictly link to user's actual cards and only show active ones
   const milestones = rawMilestones.filter(m => userCards.some(c => c.id === m.cardId));
-  const subscriptions = rawSubscriptions.filter(s => userCards.some(c => c.id === s.cardId) && s.status === 'active');
+  // Subscriptions paid by UPI / bank have no card — they still count.
+  const subscriptions = rawSubscriptions.filter(s => s.status === 'active');
   const offers = rawOffers.filter(o => o.eligibleCardIds?.some(id => userCards.some(c => c.id === id)));
 
   const availablePoints = (rewards.totalPoints || 0) - (rewards.redeemedPoints || 0);
@@ -82,9 +90,10 @@ export function PerksDashboard() {
   };
 
   // Aggregated data
+  // Average monthly cost of every plan (a ₹1,499/yr plan adds ₹125/mo).
   const monthlySubs = subscriptions
-    .filter(s => s.status === 'active' && s.billingCycle === 'monthly')
-    .reduce((acc, s) => acc + s.amount, 0);
+    .reduce((acc, s) => acc + monthlyCost(s.amount, s.billingCycle), 0);
+  const today = istDate();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -150,12 +159,12 @@ export function PerksDashboard() {
               <div className="w-8 h-8 rounded-full bg-copper-500/10 flex items-center justify-center text-copper-500">
                 <CreditCard size={16} />
               </div>
-              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Monthly Subs</span>
+              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Subscriptions / month</span>
             </div>
             <p className="text-4xl font-display font-bold text-text-primary tracking-tight">
               {formatCents(monthlySubs)}
             </p>
-            <p className="text-sm font-medium text-text-muted mt-1">Across all cards</p>
+            <p className="text-sm font-medium text-text-muted mt-1">{subscriptions.length} active · <Link to="/app/money/subscriptions" className="underline">manage</Link></p>
           </div>
         </motion.div>
       </div>
@@ -324,6 +333,9 @@ export function PerksDashboard() {
                 const cancelSubscription = useDashboardStore.getState().cancelSubscription;
                 
                 const getCancelUrl = (name: string) => {
+                  if (sub.cancelUrl) return sub.cancelUrl;
+                  const known = presetCancelUrl(name);
+                  if (known) return known;
                   const lower = name.toLowerCase();
                   if (lower.includes('netflix')) return 'https://www.netflix.com/cancelplan';
                   if (lower.includes('spotify')) return 'https://www.spotify.com/account/cancel/';
@@ -355,7 +367,7 @@ export function PerksDashboard() {
                             {sub.hasPriceHike && <ShieldAlert size={12} className="text-red-500" />}
                           </div>
                           <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mt-0.5">
-                            {formatDate(sub.nextBillingDate)}
+                            {formatDate(effectiveNextCharge(sub, today) ?? sub.nextBillingDate)}
                           </p>
                         </div>
                       </div>
@@ -499,9 +511,6 @@ export function PerksDashboard() {
             </div>
             )}
             
-            {userCards.length === 0 && (
-              <p className="text-xs text-red-500 mt-4 text-center">You need to add a card first to track subscriptions.</p>
-            )}
           </motion.div>
         </div>
       )}

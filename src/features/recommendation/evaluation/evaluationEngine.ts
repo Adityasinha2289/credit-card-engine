@@ -24,6 +24,8 @@ export const DEFAULT_QUALITY_GATE_CONFIG: QualityGateConfig = {
   minAverageConfidence: 80, // 80%
   maxAllowedRegression: 5, // 5% max drop
   maxAverageResponseTimeMs: 50, // 50ms max avg execution time
+  minOfferResolutionAccuracy: 90, // offers are part of the recommendation; 0% must not pass
+  maxCalibrationError: 10, // confidence must mean something
 };
 
 export class EvaluationEngine {
@@ -102,6 +104,21 @@ export class EvaluationEngine {
     if (metrics.averageExecutionTimeMs > gateConfig.maxAverageResponseTimeMs) {
       gateFailures.push(
         `Average Response Time (${metrics.averageExecutionTimeMs}ms) exceeds threshold (${gateConfig.maxAverageResponseTimeMs}ms)`
+      );
+    }
+
+    const m: any = metrics;
+    if (gateConfig.minOfferResolutionAccuracy !== undefined && typeof m.offerResolutionAccuracy === 'number'
+        && m.offerResolutionAccuracy < gateConfig.minOfferResolutionAccuracy) {
+      gateFailures.push(
+        `Offer Resolution Accuracy (${m.offerResolutionAccuracy}%) is below configured threshold (${gateConfig.minOfferResolutionAccuracy}%)`
+      );
+    }
+    const calibration = typeof m.confidenceCalibration === 'number' ? m.confidenceCalibration
+      : undefined;
+    if (gateConfig.maxCalibrationError !== undefined && calibration !== undefined && calibration > gateConfig.maxCalibrationError) {
+      gateFailures.push(
+        `Confidence calibration error (${calibration}) exceeds threshold (${gateConfig.maxCalibrationError})`
       );
     }
 

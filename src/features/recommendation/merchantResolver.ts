@@ -1,6 +1,7 @@
 import { MerchantRepository } from '../merchant-intelligence/merchantRepository';
 import type { ResolvedMerchant } from './recommendationTypes';
 import type { TransactionCategory } from '../dashboard/types/dashboard.types';
+import { detectCategory } from '../finix/data/merchantMap';
 
 export class MerchantResolver {
   private static repo = MerchantRepository.getInstance();
@@ -91,14 +92,10 @@ export class MerchantResolver {
         };
       }
       
-      let inferredCategory: TransactionCategory = defaultCategory || 'shopping';
-      if (input.includes('food') || input.includes('zomato') || input.includes('swiggy') || input.includes('dine') || input.includes('restaurant')) {
-        inferredCategory = 'dining';
-      } else if (input.includes('flight') || input.includes('hotel') || input.includes('trip') || input.includes('makemytrip') || input.includes('irctc') || input.includes('uber')) {
-        inferredCategory = 'travel';
-      } else if (input.includes('fuel') || input.includes('hpcl') || input.includes('iocl') || input.includes('bpcl') || input.includes('indianoil') || input.includes('electricity') || input.includes('bescom') || input.includes('broadband') || input.includes('airtel') || input.includes('insurance') || input.includes('lic') || input.includes('government') || input.includes('gst')) {
-        inferredCategory = 'utilities';
-      }
+      // Shared taxonomy (word-boundary keyword map). Previously fuel stations were
+      // inferred as 'utilities' and Swiggy Instamart as dining.
+      const detected = detectCategory(input) as TransactionCategory;
+      const inferredCategory: TransactionCategory = detected !== 'other' ? detected : (defaultCategory || 'other');
       return {
         merchant: undefined,
         matchType: 'alias',

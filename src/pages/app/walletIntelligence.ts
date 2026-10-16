@@ -2,6 +2,13 @@ import { CommerceOptimizationService } from '../../features/commerce';
 import type { CommerceEntity } from '../../features/commerce/types';
 import type { OptimizationResult } from '../../features/optimization/types';
 import { recommendCards } from '../../features/finix/lib/recommendEngine';
+import type { SpendCategory } from '../../features/finix/data/cardDataset';
+import { TaxonomyResolver } from '../../features/financial-engine/taxonomy/TaxonomyResolver';
+
+const SPEND_CATEGORIES: SpendCategory[] = [
+  'dining', 'travel', 'groceries', 'entertainment', 'utilities', 'shopping',
+  'health', 'transport', 'fuel', 'subscriptions',
+];
 
 export async function loadWalletIntelligence(userId: string) {
   const results = await CommerceOptimizationService.optimizeCollection(userId);
@@ -28,7 +35,7 @@ export async function loadWalletIntelligence(userId: string) {
   let coveredCategoriesCount = 0;
   let totalValueSum = 0;
   const allPaths: {category: string, card: string, value: number}[] = [];
-  const covData: {name: string, value: number}[] = [];
+  const covData: {name: string, value: number, categoryId: string}[] = [];
   
   catStats.forEach((stats, cat) => {
     if (stats.coveredItems > 0) {
@@ -40,7 +47,8 @@ export async function loadWalletIntelligence(userId: string) {
     }
     covData.push({
        name: cat.charAt(0).toUpperCase() + cat.slice(1),
-       value: Math.round((stats.coveredItems / stats.totalItems) * 100)
+       value: Math.round((stats.coveredItems / stats.totalItems) * 100),
+       categoryId: cat,
     });
   });
   
@@ -53,14 +61,30 @@ export async function loadWalletIntelligence(userId: string) {
   if (covData.length > 0) {
     const lowest = covData[covData.length - 1];
     if (lowest.value < 100) {
-       const recs = recommendCards({ primaryGoal: 'Maximise Cashback', spendCategories: [lowest.name as any], topCategories: [lowest.name as any], userSegment: 'default' }, []);
-       if (recs && recs.length > 0) {
-          optimizationGap = {
-             category: lowest.name,
-             coverage: lowest.value,
-             card: recs[0].card,
-             why: `Best fit for your ${lowest.name.toLowerCase()} spending gap.`
-          };
+       // Commerce category ids ("food-dining", "Dining & Restaurants") → spend category.
+       const spendCategory = TaxonomyResolver.normalizeCategory(lowest.categoryId) as SpendCategory;
+       if (SPEND_CATEGORIES.includes(spendCategory)) {
+         const [best] = recommendCards({ topCategories: [spendCategory], wantsLounge: false }, 1);
+         if (best) {
+            optimizationGap = {
+               category: lowest.name,
+               coverage: lowest.value,
+               card: {
+                 id: best.id,
+                 name: best.name,
+                 label: best.name,
+                 bank: best.bank,
+                 network: best.network.toLowerCase(),
+                 status: 'active',
+                 gradientFrom: best.gradientFrom,
+                 gradientTo: best.gradientTo,
+                 availableCredit: 0,
+                 creditLimit: 0,
+                 expiry: '',
+               },
+               why: `Best fit for your ${lowest.name.toLowerCase()} spending gap.`
+            };
+         }
        }
     }
   }
@@ -69,7 +93,7 @@ export async function loadWalletIntelligence(userId: string) {
     isEmpty: allPaths.length === 0,
     coveragePercent: covPercent,
     availableValue: totalValueSum,
-    coverageData: covData.slice(0, 4),
+    coverageData: covData.slice(0, 4).map(({ name, value }) => ({ name, value })),
     topPaths: allPaths.slice(0, 3),
     optimizationGap
   };

@@ -1,0 +1,251 @@
+{
+  "description": "Hand-verified scenarios for RewardsFacade. Each expected value is computed by hand from the synthetic catalog below (shown in `why`), independently of any engine code or hard-coded scoring table. Run: npx vitest run src/features/financial-engine/__tests__/RewardsFacade.test.ts",
+  "catalog": [
+    {
+      "id": "ltf_basic",
+      "name": "LTF Basic",
+      "bank": "Bank A",
+      "network": "Visa",
+      "annualFee": 0,
+      "minIncome": 0,
+      "minCibil": 0,
+      "rewards": [],
+      "baseRewardRate": 1,
+      "highlights": []
+    },
+    {
+      "id": "dining_pro",
+      "name": "Dining Pro",
+      "bank": "Bank B",
+      "network": "Visa",
+      "annualFee": 2500,
+      "feeWaiverSpend": 300000,
+      "minIncome": 600000,
+      "minCibil": 750,
+      "rewards": [
+        {
+          "category": "dining",
+          "rate": 10,
+          "cap": 1000
+        }
+      ],
+      "baseRewardRate": 1,
+      "highlights": []
+    },
+    {
+      "id": "online_cashback",
+      "name": "Online Cashback",
+      "bank": "Bank C",
+      "network": "Mastercard",
+      "annualFee": 999,
+      "feeWaiverSpend": 200000,
+      "minIncome": 0,
+      "minCibil": 0,
+      "rewards": [
+        {
+          "category": "shopping",
+          "rate": 5,
+          "cap": 500
+        }
+      ],
+      "baseRewardRate": 1,
+      "highlights": []
+    },
+    {
+      "id": "fuel_saver",
+      "name": "Fuel Saver",
+      "bank": "Bank D",
+      "network": "RuPay",
+      "annualFee": 500,
+      "minIncome": 300000,
+      "minCibil": 0,
+      "rewards": [
+        {
+          "category": "fuel",
+          "rate": 4
+        }
+      ],
+      "baseRewardRate": 0.5,
+      "highlights": []
+    },
+    {
+      "id": "unknown_fee",
+      "name": "Mystery Fee",
+      "bank": "Bank E",
+      "network": "Visa",
+      "annualFee": null,
+      "minIncome": 0,
+      "minCibil": 0,
+      "rewards": [
+        {
+          "category": "travel",
+          "rate": 6
+        }
+      ],
+      "baseRewardRate": 1,
+      "highlights": []
+    }
+  ],
+  "bestCard": [
+    {
+      "id": "BC-01",
+      "amount": 5000,
+      "merchant": "Zomato",
+      "wallet": [
+        "ltf_basic",
+        "dining_pro"
+      ],
+      "expectBest": "dining_pro",
+      "expectReward": 500,
+      "expectSecond": "ltf_basic",
+      "why": "10% of 5000 = 500 (< 1000 cap) vs 1% = 50"
+    },
+    {
+      "id": "BC-02",
+      "amount": 20000,
+      "merchant": "Swiggy",
+      "wallet": [
+        "ltf_basic",
+        "dining_pro"
+      ],
+      "expectBest": "dining_pro",
+      "expectReward": 1000,
+      "why": "10% of 20000 = 2000, capped at 1000/month"
+    },
+    {
+      "id": "BC-03",
+      "amount": 5000,
+      "merchant": "Zomato",
+      "wallet": [
+        "ltf_basic",
+        "dining_pro"
+      ],
+      "historyDiningOnDiningPro": 8000,
+      "expectBest": "dining_pro",
+      "expectReward": 200,
+      "why": "8000 earlier this month earned 800 of the 1000 cap; 200 left"
+    },
+    {
+      "id": "BC-04",
+      "amount": 5000,
+      "merchant": "Zomato",
+      "wallet": [
+        "ltf_basic",
+        "dining_pro"
+      ],
+      "historyDiningOnDiningPro": 15000,
+      "expectBest": "ltf_basic",
+      "expectReward": 50,
+      "why": "Cap exhausted (1500 >= 1000) so Dining Pro earns 0; LTF Basic 1% = 50 wins"
+    },
+    {
+      "id": "BC-05",
+      "amount": 3000,
+      "merchant": "Indian Oil",
+      "wallet": [
+        "online_cashback",
+        "fuel_saver"
+      ],
+      "expectBest": "fuel_saver",
+      "expectReward": 120,
+      "why": "fuel 4% of 3000 = 120 vs base 1% = 30"
+    },
+    {
+      "id": "BC-06",
+      "amount": 3000,
+      "merchant": "Swiggy Instamart",
+      "wallet": [
+        "dining_pro",
+        "online_cashback"
+      ],
+      "expectBest": "online_cashback",
+      "expectReward": 30,
+      "why": "Instamart is groceries (not dining): both earn base 1% = 30; tie broken by lower fee (999 < 2500)"
+    }
+  ],
+  "recommend": [
+    {
+      "id": "RC-01",
+      "spend": {
+        "dining": 10000,
+        "other": 15000
+      },
+      "wallet": [],
+      "income": 900000,
+      "cibil": 780,
+      "expectTop": "dining_pro",
+      "expectNetExact": 13800,
+      "why": "Dining Pro: dining 10% of 10000 = 1000 (= cap) + other 1% of 15000 = 150 -> 1150/mo = 13800/yr; spend 300000/yr meets the 300000 waiver so the 2500 fee is waived -> net 13800. LTF Basic only earns (100+150)*12 = 3000."
+    },
+    {
+      "id": "RC-02",
+      "spend": {
+        "dining": 2000,
+        "other": 3000
+      },
+      "wallet": [],
+      "income": 900000,
+      "cibil": 780,
+      "expectTop": "ltf_basic",
+      "expectNetExact": 600,
+      "why": "Low spender: Dining Pro (200+30)*12 = 2760 - 2500 fee (60000/yr is below the waiver) = 260; LTF Basic (20+30)*12 = 600 with no fee -> LTF wins. The fee must be netted."
+    },
+    {
+      "id": "RC-03",
+      "spend": {
+        "dining": 10000,
+        "other": 15000
+      },
+      "wallet": [
+        "dining_pro"
+      ],
+      "income": 900000,
+      "cibil": 780,
+      "expectNotIn": [
+        "dining_pro"
+      ],
+      "why": "Already owned cards are never recommended"
+    },
+    {
+      "id": "RC-04",
+      "spend": {
+        "fuel": 5000
+      },
+      "wallet": [],
+      "income": 200000,
+      "cibil": 0,
+      "expectNotIn": [
+        "fuel_saver",
+        "dining_pro"
+      ],
+      "why": "Income 2L is below Fuel Saver's 3L and Dining Pro's 6L requirement -> ineligible"
+    },
+    {
+      "id": "RC-05",
+      "spend": {
+        "dining": 10000,
+        "other": 15000
+      },
+      "wallet": [],
+      "income": 0,
+      "cibil": 0,
+      "expectCaveatFor": "dining_pro",
+      "why": "Income/CIBIL unknown: Dining Pro is still recommended, but flagged as not confirmed"
+    },
+    {
+      "id": "RC-06",
+      "spend": {
+        "travel": 10000
+      },
+      "wallet": [],
+      "income": 900000,
+      "cibil": 780,
+      "maxAnnualFee": 1000,
+      "expectNotIn": [
+        "unknown_fee",
+        "dining_pro"
+      ],
+      "why": "A fee limit excludes cards whose fee is unknown or above the limit"
+    }
+  ]
+}

@@ -18,7 +18,11 @@ export const MERCHANT_CATEGORY_MAP: Record<string, SpendCategory> = {
   behrouz: 'dining',
   'baskin robbins': 'dining',
   naturals: 'dining',
-  blinkit: 'dining',
+  // Quick commerce is grocery spend, not dining (issuers code it as groceries/MCC 5411).
+  blinkit: 'groceries',
+  instamart: 'groceries',
+  'swiggy instamart': 'groceries',
+  'zepto cafe': 'dining',
   bigbasket: 'groceries',
   zepto: 'groceries',
   dunzo: 'groceries',
@@ -124,7 +128,8 @@ export const MERCHANT_CATEGORY_MAP: Record<string, SpendCategory> = {
   hpcl: 'fuel',
   iocl: 'fuel',
   'indian oil': 'fuel',
-  bharat: 'fuel',
+  // 'bharat' alone matched BharatPe / Bharat Matrimony etc.
+  'bharat petroleum': 'fuel',
   fuel: 'fuel',
   pump: 'fuel',
 
@@ -159,6 +164,7 @@ export const MERCHANT_CATEGORY_MAP: Record<string, SpendCategory> = {
 
   // Health
   apollo: 'health',
+  healthcare: 'health',
   medplus: 'health',
   netmeds: 'health',
   pharmeasy: 'health',
@@ -190,21 +196,27 @@ export const MERCHANT_CATEGORY_MAP: Record<string, SpendCategory> = {
   tataplay: 'utilities',
 };
 
+/** Keywords sorted longest-first so 'reliance digital' beats 'reliance', 'swiggy instamart' beats 'swiggy'. */
+const KEYWORDS_BY_LENGTH = Object.keys(MERCHANT_CATEGORY_MAP).sort((a, b) => b.length - a.length);
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const KEYWORD_PATTERNS = KEYWORDS_BY_LENGTH.map((k) => [k, new RegExp(`(^|[^a-z0-9])${escapeRe(k)}($|[^a-z0-9])`)] as const);
+
 /**
  * Detect the spend category for a given merchant name.
+ * Matches whole words / phrases only (longest first). The old two-way
+ * substring match sent "Max Healthcare" to shopping, "Reliance Digital" to
+ * groceries and made short inputs like "a" match almost anything.
  * Falls back to 'other' if no match is found.
  */
 export function detectCategory(merchantName: string): SpendCategory {
-  const lower = merchantName.toLowerCase().trim();
+  const lower = (merchantName || '').toLowerCase().trim();
+  if (!lower) return 'other';
 
   // Exact match
   if (MERCHANT_CATEGORY_MAP[lower]) return MERCHANT_CATEGORY_MAP[lower];
 
-  // Partial / keyword match
-  for (const [keyword, category] of Object.entries(MERCHANT_CATEGORY_MAP)) {
-    if (lower.includes(keyword) || keyword.includes(lower)) {
-      return category;
-    }
+  for (const [keyword, re] of KEYWORD_PATTERNS) {
+    if (re.test(lower)) return MERCHANT_CATEGORY_MAP[keyword];
   }
 
   return 'other';

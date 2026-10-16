@@ -11,11 +11,12 @@ import { useDashboardStore } from '../../features/dashboard/store/dashboardStore
 import { PageContainer } from '../../components/shared/PageContainer';
 import { cn } from '../../lib/utils';
 import {
-  recommendCards,
   CATEGORIES_LIST,
   type UserProfile,
   type RecommendedCard,
 } from '../../features/finix/lib/recommendEngine';
+import { recommendCardsFor } from '../../features/financial-engine/rewardsApi';
+import { normalizeGoal } from '../../config/goals';
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../../features/finix/data/cardDataset';
 import { getCardTheme } from '../../features/finix/config/cardThemeRegistry';
 import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
@@ -102,12 +103,13 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
     if (profile?.spendCategories && profile.spendCategories.length > 0) {
       return (profile.spendCategories as SpendCategory[]).slice(0, 4);
     }
-    if (profile?.primaryGoal === 'Maximise Cashback') return ['dining', 'shopping'];
-    if (profile?.primaryGoal === 'Travel Rewards') return ['travel'];
+    const goal = normalizeGoal(profile?.primaryGoal);
+    if (goal === 'cashback') return ['dining', 'shopping'];
+    if (goal === 'travel') return ['travel'];
     return [];
   });
   
-  const [wantsLounge, setWantsLounge] = useState(() => profile?.primaryGoal === 'Travel Rewards');
+  const [wantsLounge, setWantsLounge] = useState(() => normalizeGoal(profile?.primaryGoal) === 'travel');
   const [results, setResults] = useState<RecommendedCard[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -119,13 +121,14 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
 
   function handleRecommend() {
     const userProfile: UserProfile = {
-      annualIncome: profile?.salary || 1500000,
-      cibilScore: profile?.creditScore || 750,
+      annualIncome: profile?.salary || 0,
+      cibilScore: profile?.creditScore || 0,
       topCategories: categories,
-      maxAnnualFee: 50000, // Allow all cards by setting a high limit
+      maxAnnualFee: undefined, // no fee limit
       wantsLounge,
     };
-    const newResults = recommendCards(userProfile, 5);
+    const { transactions } = useDashboardStore.getState();
+    const newResults = recommendCardsFor(userProfile, 5, { transactions, walletCardIds: userCards.map((c) => c.id) });
     setResults(newResults);
     setHasSearched(true);
   }
@@ -141,11 +144,11 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
           <div className="flex flex-wrap gap-[1px] bg-white border border-white rounded-2xl overflow-hidden p-[1px]">
             <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px] rounded-tl-[15px] rounded-bl-[15px] md:rounded-bl-none">
               <span className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">Income</span>
-              <span className="text-sm text-gray-900 font-medium">{formatINR(profile?.salary || 1500000)}<span className="text-gray-600 font-normal text-xs">/yr</span></span>
+              <span className="text-sm text-gray-900 font-medium">{profile?.salary ? <>{formatINR(profile.salary)}<span className="text-gray-600 font-normal text-xs">/yr</span></> : <span className="text-gray-500">Not added</span>}</span>
             </div>
             <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px] rounded-tr-[15px] md:rounded-tr-none">
               <span className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">CIBIL</span>
-              <span className="text-sm text-gray-900 font-medium">{profile?.creditScore || 750}</span>
+              <span className="text-sm text-gray-900 font-medium">{profile?.creditScore || <span className="text-gray-500">Not added</span>}</span>
             </div>
             {profile?.primaryGoal && (
               <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px]">
@@ -297,6 +300,11 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                       </div>
 
                       <div className="p-8 md:p-10 flex flex-col items-center flex-1">
+                        {card.eligibilityReason && (
+                          <p className="w-full mb-6 text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 text-center">
+                            {card.eligibilityReason}
+                          </p>
+                        )}
                         <div className="mb-8 flex justify-center w-full">
                           <PhysicalCard card={card} variant="recommendation" recommended={true} />
                         </div>

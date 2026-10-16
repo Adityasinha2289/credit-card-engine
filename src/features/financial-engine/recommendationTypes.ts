@@ -19,19 +19,21 @@ export interface IncrementalWalletValue {
   grossCandidateAnnualReward: number; // Candidate annualized gross across user spending
   existingWalletBaselineAnnualReward: number; // Existing wallet annualized baseline across user spending
   annualGrossIncrementalReward: number; // Sum of category incremental rewards * 12
-  
+
   annualFee: number;
   annualFeeStatus: FeeStatus;
+  /** True when the user's estimated annual spend clears the card's fee-waiver threshold */
+  annualFeeWaived?: boolean;
   joiningFee: number;
-  
+
   firstYearNetValue: number; // annualGrossIncrementalReward - (annualFee + joiningFee) (if verified)
   steadyStateAnnualValue: number; // annualGrossIncrementalReward - annualFee (if verified)
   netAnnualValue: number; // Primary economic metric (= steadyStateAnnualValue)
-  
+
   categoryBreakdowns: CategoryValueBreakdown[];
   overlapLevel: OverlapLevel;
   overlapCategories: string[];
-  
+
   dataQuality: DataQualityState;
   warnings: string[];
   nonMonetizedBenefits: CardBenefit[];

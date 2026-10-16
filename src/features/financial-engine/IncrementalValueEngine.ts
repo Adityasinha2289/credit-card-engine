@@ -1,22 +1,22 @@
 import { FinancialTruthEngine } from './FinancialTruthEngine';
 import type { CandidateContext } from './CandidateGenerator';
 import type { UserContext } from './userContext';
-import type { 
-  IncrementalWalletValue, 
-  CategoryValueBreakdown, 
+import type {
+  IncrementalWalletValue,
+  CategoryValueBreakdown,
   DataQualityState,
   OverlapLevel,
   FeeStatus
 } from './recommendationTypes';
 
 export class IncrementalValueEngine {
-  
+
   public static calculate(
     candidate: CandidateContext,
     context: UserContext,
     baselines: Record<string, number>
   ): IncrementalWalletValue {
-    
+
     let totalMonthlyGrossCandidate = 0;
     let totalMonthlyBaseline = 0;
     let totalMonthlyIncremental = 0;
@@ -24,7 +24,7 @@ export class IncrementalValueEngine {
     const categoryBreakdowns: CategoryValueBreakdown[] = [];
     const warnings = new Set<string>();
     const overlapCategories: string[] = [];
-    
+
     let isMissingRedemption = false;
     let isMissingCaps = false;
 
@@ -48,7 +48,7 @@ export class IncrementalValueEngine {
       }
 
       const candidateReward = result.monetaryRewardValue;
-      
+
       // Step 5: Incremental Category Value = Max(0, candidateReward - baseline)
       // Clamping negative values ensures candidate is not penalized below zero incremental value
       const incrementalReward = Math.max(0, candidateReward - baseline);
@@ -75,24 +75,36 @@ export class IncrementalValueEngine {
     const annualGrossIncrementalReward = totalMonthlyIncremental * 12;
     const grossCandidateAnnualReward = totalMonthlyGrossCandidate * 12;
     const existingWalletBaselineAnnualReward = totalMonthlyBaseline * 12;
-    
+
     // Fee treatment (Steps 8 & 9)
     const annualFee = candidate.card.annualFee;
-    const annualFeeStatus: FeeStatus = (annualFee !== undefined && annualFee !== null && !isNaN(annualFee)) 
-      ? 'VERIFIED' 
+    const annualFeeStatus: FeeStatus = (annualFee !== undefined && annualFee !== null && !isNaN(annualFee))
+      ? 'VERIFIED'
       : 'UNKNOWN';
-      
+
     const joiningFee = (candidate.card.joiningFee !== undefined && candidate.card.joiningFee !== null && !isNaN(candidate.card.joiningFee))
       ? candidate.card.joiningFee
       : 0;
 
+    // Renewal fee waiver: most Indian cards waive the annual fee above a yearly spend.
+    // Without this, a card the user would never pay for was ranked as if they did.
+    const annualSpend = Object.values(context.spendingProfile)
+      .reduce((sum, c) => sum + Math.max(0, c.monthlySpend) * 12, 0);
+    const feeWaived = annualFeeStatus === 'VERIFIED'
+      && (annualFee as number) > 0
+      && !!candidate.card.feeWaiverSpend
+      && candidate.card.feeWaiverSpend > 0
+      && annualSpend >= candidate.card.feeWaiverSpend;
+    const effectiveAnnualFee = annualFeeStatus === 'VERIFIED' && !feeWaived ? (annualFee as number) : 0;
+    if (feeWaived) {
+      warnings.add(`Annual fee of ₹${annualFee} is waived at your estimated spend (₹${Math.round(annualSpend)}/yr ≥ ₹${candidate.card.feeWaiverSpend}).`);
+    }
+
     // First-year vs steady-state annual economics
-    const steadyStateAnnualValue = annualFeeStatus === 'VERIFIED'
-      ? annualGrossIncrementalReward - annualFee
-      : annualGrossIncrementalReward;
+    const steadyStateAnnualValue = annualGrossIncrementalReward - effectiveAnnualFee;
 
     const firstYearNetValue = annualFeeStatus === 'VERIFIED'
-      ? annualGrossIncrementalReward - (annualFee + joiningFee)
+      ? annualGrossIncrementalReward - (effectiveAnnualFee + joiningFee)
       : annualGrossIncrementalReward;
 
     // Primary ranking economic metric
@@ -123,6 +135,7 @@ export class IncrementalValueEngine {
       annualGrossIncrementalReward,
       annualFee: annualFeeStatus === 'VERIFIED' ? annualFee : 0,
       annualFeeStatus,
+      annualFeeWaived: feeWaived,
       joiningFee,
       firstYearNetValue,
       steadyStateAnnualValue,

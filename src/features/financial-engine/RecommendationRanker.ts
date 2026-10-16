@@ -6,24 +6,30 @@ import { IncrementalValueEngine } from './IncrementalValueEngine';
 import type { RecommendationResult, RecommendationReadiness, IncrementalWalletValue } from './recommendationTypes';
 
 export class RecommendationRanker {
-  
+
   public static rank(
     candidates: CandidateGenerationResult,
     context: UserContext,
     walletCards: FinancialCard[]
   ): RecommendationResult[] {
-    
+
     // 1. Establish the Wallet Baseline across user spending categories
     const baselines = BaselineWalletEngine.calculateBaselines(context, walletCards);
-    
-    // 2. Evaluate Incremental Value for all ELIGIBLE candidates (Exclude ALREADY_OWNED and INELIGIBLE)
+
+    // 2. Evaluate Incremental Value for ELIGIBLE and UNKNOWN-eligibility candidates.
+    //    (Excludes ALREADY_OWNED and INELIGIBLE.) Approval criteria are missing for most
+    //    real cards, so dropping UNKNOWN produced zero recommendations on real data; they
+    //    are ranked with an explicit caveat instead (confirmed-eligible wins ties).
     const results: RecommendationResult[] = [];
-    
-    for (const candidate of candidates.eligible) {
+
+    for (const candidate of [...candidates.eligible, ...(candidates.unknown ?? [])]) {
       const economicValue = IncrementalValueEngine.calculate(candidate, context, baselines);
-      
+
       const readiness: RecommendationReadiness = this.determineReadiness(economicValue);
       const reasons = this.generateReasons(economicValue, candidate);
+      if (candidate.eligibility.status === 'UNKNOWN') {
+        reasons.unshift('Eligibility not confirmed: we could not check this card\'s approval criteria against your profile.');
+      }
 
       results.push({
         card: candidate.card,
@@ -52,12 +58,19 @@ export class RecommendationRanker {
 
       const tierDiff = tierB - tierA;
       if (tierDiff !== 0) return tierDiff;
-      
+
+
       const netValDiff = b.economicValue.netAnnualValue - a.economicValue.netAnnualValue;
       if (netValDiff !== 0) return netValDiff;
 
       const grossIncDiff = b.economicValue.annualGrossIncrementalReward - a.economicValue.annualGrossIncrementalReward;
       if (grossIncDiff !== 0) return grossIncDiff;
+
+      // Tie-break: confirmed-eligible before unconfirmed (value decides first; the
+      // caveat is shown on the card either way).
+      const eligA = a.eligibility.status === 'ELIGIBLE' ? 1 : 0;
+      const eligB = b.eligibility.status === 'ELIGIBLE' ? 1 : 0;
+      if (eligB !== eligA) return eligB - eligA;
 
       return a.card.id.localeCompare(b.card.id);
     });
@@ -106,7 +119,7 @@ export class RecommendationRanker {
 
   public static generateReasons(value: IncrementalWalletValue, candidate: CandidateContext): string[] {
     const reasons: string[] = [];
-    
+
     if (value.dataQuality === 'INCOMPLETE') {
       reasons.push('This card requires additional financial data (e.g., redemption value) to calculate true economic value.');
       if (value.warnings.length > 0) {
@@ -126,7 +139,7 @@ export class RecommendationRanker {
         const annualExisting = cat.existingBaselineReward * 12;
         const annualCandidate = cat.candidateGrossReward * 12;
         const annualInc = cat.annualIncrementalReward;
-        
+
         reasons.push(`Your existing wallet earns approximately ₹${annualExisting.toFixed(0)}/year on ${cat.categoryId}.`);
         reasons.push(`This card could generate approximately ₹${annualCandidate.toFixed(0)}/year on your ${cat.categoryId} spend.`);
         reasons.push(`Estimated incremental value for ${cat.categoryId}: +₹${annualInc.toFixed(0)}/year.`);
@@ -148,7 +161,7 @@ export class RecommendationRanker {
     } else {
       reasons.push('Annual fee: Not disclosed in verified database.');
     }
-    
+
     // Net incremental value
     if (value.netAnnualValue > 0) {
       reasons.push(`Estimated net incremental value: +₹${value.netAnnualValue.toFixed(0)}/year.`);

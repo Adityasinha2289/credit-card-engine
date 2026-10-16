@@ -14,8 +14,9 @@ import {
   Sparkles, AlertCircle, BookOpen, Receipt, Heart, Plus, Map as MapIcon
 } from 'lucide-react';
 import { PageContainer } from '../../components/shared/PageContainer';
-import { recommendCards, type UserProfile } from '../../features/finix/lib/recommendEngine';
-import { evaluateTransaction } from '../../features/finix/lib/evaluateTransaction';
+import { type UserProfile } from '../../features/finix/lib/recommendEngine';
+import { recommendCardsFor, evaluatePayment } from '../../features/financial-engine/rewardsApi';
+import { normalizeGoal } from '../../config/goals';
 import type { SpendCategory } from '../../features/finix/data/cardDataset';
 
 import { useUser } from '@clerk/clerk-react';
@@ -57,13 +58,14 @@ export default function HomePage() {
   // Dynamic Recommendations based on User Profile
   const recommendedCards = React.useMemo(() => {
     const userProfile: UserProfile = {
-      annualIncome: profile?.salary || 1500000,
-      cibilScore: profile?.creditScore || 750,
+      annualIncome: profile?.salary || 0,
+      cibilScore: profile?.creditScore || 0,
       topCategories: (profile?.spendCategories || []) as SpendCategory[],
-      maxAnnualFee: 50000, // No strict limit to show the best cards
-      wantsLounge: profile?.primaryGoal === 'Travel Rewards',
+      maxAnnualFee: undefined, // no fee limit
+      wantsLounge: normalizeGoal(profile?.primaryGoal) === 'travel',
     };
-    return recommendCards(userProfile, 3);
+    const { transactions, userCards: wallet } = useDashboardStore.getState();
+    return recommendCardsFor(userProfile, 3, { transactions, walletCardIds: wallet.map((c) => c.id) });
   }, [profile?.salary, profile?.creditScore, profile?.spendCategories, profile?.primaryGoal]);
 
   const mainRec = recommendedCards[0];
@@ -541,7 +543,7 @@ export default function HomePage() {
               const latestTx = transactions[0];
               const context = { previousTransactions: transactions };
               const userCardIds = userCards.map(c => c.id);
-              const evaluation = evaluateTransaction(latestTx.merchant, latestTx.amount / 100, userCardIds, context);
+              const evaluation = evaluatePayment(latestTx.merchant, latestTx.amount / 100, userCardIds, context);
               
               if (evaluation && evaluation.best && evaluation.best.card.id !== latestTx.cardId && evaluation.delta > 0) {
                  actions.unshift({

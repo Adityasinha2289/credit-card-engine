@@ -205,18 +205,20 @@ function mapCategories(canonical: CanonicalCard): TransactionCategory[] {
 
   // Collect from cashback categories
   for (const c of canonical.cashback.categories) {
-    const l = c.toLowerCase();
+    const l = (c || '').toLowerCase().trim();
+    if (!l) continue;
     for (const vc of validCategories) {
-      if (l.includes(vc) || vc.includes(l)) categoriesSet.add(vc);
+      if (l.includes(vc)) categoriesSet.add(vc);
     }
   }
 
   // Collect from earning rules
   if (canonical.rewards.earningRules) {
     for (const r of canonical.rewards.earningRules) {
-      const l = r.category.toLowerCase();
+      const l = (r.category || '').toLowerCase().trim();
+      if (!l) continue;
       for (const vc of validCategories) {
-        if (l.includes(vc) || vc.includes(l)) categoriesSet.add(vc);
+        if (l.includes(vc)) categoriesSet.add(vc);
       }
     }
   }

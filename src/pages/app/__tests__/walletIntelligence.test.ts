@@ -93,3 +93,17 @@ describe('Wallet Intelligence Calculator', () => {
     expect(result.topPaths[0].card).not.toBe('Axis Vistara');
   });
 });
+
+describe('Wallet Intelligence optimization gap', () => {
+  it('recommends a real card for the weakest category (regression: wrong call shape always returned nothing)', async () => {
+    (CommerceOptimizationService.optimizeCollection as any).mockResolvedValue([
+      { entity: { categoryId: 'dining' }, result: { totalValue: 500, bestCard: { name: 'A' } } },
+      { entity: { categoryId: 'travel' }, result: { totalValue: 0, bestCard: null } },
+    ]);
+    const result = await loadWalletIntelligence('u-1');
+    expect(result.optimizationGap).not.toBeNull();
+    expect(result.optimizationGap!.category).toBe('Travel');
+    expect(result.optimizationGap!.card.name).toBeTruthy();
+    expect(result.optimizationGap!.card.network).toBe(result.optimizationGap!.card.network.toLowerCase());
+  });
+});

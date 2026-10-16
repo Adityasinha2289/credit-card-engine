@@ -24,11 +24,11 @@ import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { analytics } from '../../../lib/analytics';
 import {
-  recommendCards,
   CATEGORIES_LIST,
   type UserProfile,
   type RecommendedCard,
 } from '../lib/recommendEngine';
+import { recommendCardsFor } from '../../financial-engine/rewardsApi';
 import type { SpendCategory } from '../data/cardDataset';
 import { TactileChip } from '../../../components/shared/TactileChip';
 import { DecisionCard } from '../../../components/shared/DecisionCard';
@@ -159,8 +159,9 @@ function ResultCard({
 
 export function RecommenderPanel() {
   const profile = useDashboardStore((s) => s.profile);
-  const userSalary = profile?.salary || 1500000;
-  const userCibil = profile?.creditScore || 750;
+  // 0 = unknown: the engine then skips approval gates and labels results "not confirmed".
+  const userSalary = profile?.salary || 0;
+  const userCibil = profile?.creditScore || 0;
 
   const [step, setStep] = useState(0);
   const [categories, setCategories] = useState<SpendCategory[]>([]);
@@ -191,7 +192,9 @@ export function RecommenderPanel() {
     // Map goals to categories and lounge prefs
     let mappedCategories: SpendCategory[] = [];
     let mappedLounge = false;
-    let mappedFeeLimit = 0;
+    // No fee limit unless the user asked for low fees (0 used to mean "lifetime-free only",
+    // which hid every card with a fee above ₹500 from this panel).
+    let mappedFeeLimit: number | undefined = undefined;
 
     if (activeGoals.includes('cashback')) mappedCategories.push('shopping', 'dining', 'groceries');
     if (activeGoals.includes('travel')) { mappedCategories.push('travel'); mappedLounge = true; }
@@ -209,7 +212,8 @@ export function RecommenderPanel() {
       maxAnnualFee: mappedFeeLimit,
       wantsLounge: mappedLounge,
     };
-    const newResults = recommendCards(userProfile);
+    const { transactions, userCards } = useDashboardStore.getState();
+    const newResults = recommendCardsFor(userProfile, 5, { transactions, walletCardIds: userCards.map((c) => c.id) });
     setResults(newResults);
     setStep(1);
   }

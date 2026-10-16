@@ -24,12 +24,12 @@ export class RewardCalculator {
     let effectiveRate = rawRate;
     const reasoning: string[] = [];
 
-    // 2. Category match bonus (only if card has confirmed percentage reward or category match)
+    // 2. Category match. No invented uplift: the old code added +2% to any matching
+    //    category without data saying the card pays more there.
     const isCategoryMatch = card.categories.includes(category);
     if (isCategoryMatch) {
       if (isExplicitPercentage) {
-        effectiveRate += 2.0;
-        reasoning.push(`Accelerated ${effectiveRate}% reward rate on ${category}`);
+        reasoning.push(`${effectiveRate}% reward rate (card lists ${category} as a reward category)`);
       } else {
         reasoning.push(`Category match on ${category} (${card.rewardRate})`);
       }
@@ -65,15 +65,14 @@ export class RewardCalculator {
     // 4. Calculate total expected savings in Rupees
     const baseSavings = Math.round((amount * effectiveRate) / 100);
     const expectedSavings = baseSavings + offerBonusValue;
-    const expectedRewardPoints = Math.round(expectedSavings * 2);
+    // Points can't be derived from rupee savings without a per-card conversion; don't invent it.
+    const expectedRewardPoints = 0;
 
-    // 5. Rank score formula
+    // 5. Rank score: what this payment actually earns. (No +50 "premium" boost —
+    //    it outweighed a ₹10,000 fee and biased every result toward premium cards.)
     let rankScore = expectedSavings * 10 + effectiveRate * 5;
-    if (card.premiumTier === 'super_premium' || card.premiumTier === 'premium') {
-      rankScore += 50;
-    }
     if (card.annualFee !== null && card.annualFee > 0) {
-      rankScore -= Math.round(card.annualFee * 0.001);
+      rankScore -= Math.round(card.annualFee * 0.001); // tie-break only
     }
 
     return {

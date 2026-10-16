@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, Zap } from 'lucide-react';
 import { useDashboardStore } from '../../store/dashboardStore';
 import { DecisionCard } from '../../../../components/shared/DecisionCard';
-import { evaluateTransaction } from '../../../finix/lib/evaluateTransaction';
+import { evaluatePayment } from '../../../financial-engine/rewardsApi';
 
 export function UpiSimulator() {
   const [merchant, setMerchant] = useState('');
@@ -24,7 +24,7 @@ export function UpiSimulator() {
     const transactions = useDashboardStore.getState().transactions;
     const context = { previousTransactions: transactions };
 
-    return evaluateTransaction(merchant, amount, activeCardIds, context);
+    return evaluatePayment(merchant, amount, activeCardIds, context);
   }, [merchant, amountStr, userCards]);
 
   return (

@@ -57,9 +57,12 @@ function normalizeCategory(category: string): SpendCategory {
     'shopping', 'health', 'transport', 'fuel', 'subscriptions', 'other'
   ];
   
-  const lower = category.toLowerCase();
+  const lower = (category || '').toLowerCase().trim();
+  if (!lower) return 'other';
+  // One-way match: 'Dining & Food' → dining. The reverse check (vc.includes(lower))
+  // made an empty or short string match every category.
   for (const vc of validCategories) {
-    if (lower.includes(vc) || vc.includes(lower)) {
+    if (lower.includes(vc)) {
       return vc;
     }
   }

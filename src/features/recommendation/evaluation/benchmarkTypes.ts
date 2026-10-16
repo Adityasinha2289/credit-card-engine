@@ -150,6 +150,10 @@ export interface QualityGateConfig {
   minAverageConfidence: number; // e.g. 80
   maxAllowedRegression: number; // max allowable percentage drop in top-1 accuracy (e.g. 5)
   maxAverageResponseTimeMs: number; // max allowable avg execution time e.g. 50ms
+  /** Fail when offer resolution accuracy is below this (0-100). The old gate ignored it and "passed" at 0%. */
+  minOfferResolutionAccuracy?: number;
+  /** Fail when confidence calibration error exceeds this (points). */
+  maxCalibrationError?: number;
 }
 
 export interface EvaluationReport {

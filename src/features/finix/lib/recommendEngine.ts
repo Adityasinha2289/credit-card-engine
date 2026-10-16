@@ -18,10 +18,13 @@ import { CARD_DATASET, type FinixCard, type SpendCategory } from '../data/cardDa
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface UserProfile {
-  annualIncome: number;          // INR
-  cibilScore: number;            // 300–900
+  /** INR per year. 0 / undefined = unknown → approval criteria are not checked (and we say so). */
+  annualIncome?: number;
+  /** 300–900. 0 / undefined = unknown. */
+  cibilScore?: number;
   topCategories: SpendCategory[]; // ordered by priority
-  maxAnnualFee: number;          // INR, 0 = free only
+  /** INR. undefined = no limit, 0 = lifetime-free only. */
+  maxAnnualFee?: number;
   wantsLounge: boolean;
   /** Optional estimated monthly spend per category (INR) — used for spend tier scoring */
   monthlySpend?: Partial<Record<SpendCategory, number>>;
@@ -30,6 +33,7 @@ export interface UserProfile {
 export interface RecommendedCard extends FinixCard {
   matchScore: number;
   matchPercent: number;
+  /** Set when we could not confirm approval criteria or the fee. */
   eligibilityReason?: string;
 }
 
@@ -63,24 +67,50 @@ function spendTierScore(monthlySpend: Partial<Record<SpendCategory, number>>): n
 //  CARD SCORER
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Returns -1 when the card must be excluded, otherwise its score. */
+function gate(card: FinixCard, profile: UserProfile): { excluded: boolean; caveats: string[] } {
+  const caveats: string[] = [];
+  const income = profile.annualIncome && profile.annualIncome > 0 ? profile.annualIncome : undefined;
+  const cibil = profile.cibilScore && profile.cibilScore > 0 ? profile.cibilScore : undefined;
+
+  // Approval criteria: only gate on what we actually know.
+  if (card.minIncome > 0) {
+    if (income === undefined) caveats.push('income not checked');
+    else if (card.minIncome > income) return { excluded: true, caveats };
+  }
+  if (card.minCibil > 0) {
+    if (cibil === undefined) caveats.push('credit score not checked');
+    else if (card.minCibil > cibil) return { excluded: true, caveats };
+  }
+
+  // Fee limit: an unknown fee can't be shown as within the user's limit.
+  if (profile.maxAnnualFee !== undefined) {
+    if (card.annualFee === null) return { excluded: true, caveats };
+    if (profile.maxAnnualFee === 0 && card.annualFee !== 0) return { excluded: true, caveats };
+    if (profile.maxAnnualFee > 0 && card.annualFee > profile.maxAnnualFee) return { excluded: true, caveats };
+  } else if (card.annualFee === null) {
+    caveats.push('annual fee not confirmed');
+  }
+  return { excluded: false, caveats };
+}
+
 function scoreCard(card: FinixCard, profile: UserProfile): number {
-  // ── Hard eligibility gates ────────────────────────────────────────────────
-  if (card.minIncome > profile.annualIncome) return -1;
-  if (card.minCibil  > profile.cibilScore)   return -1;
-  if (profile.maxAnnualFee === 0 && card.annualFee !== 0) return -1;
-  if (profile.maxAnnualFee > 0 && card.annualFee !== null && card.annualFee > profile.maxAnnualFee) return -1;
+  const income = profile.annualIncome && profile.annualIncome > 0 ? profile.annualIncome : undefined;
+  const cibil = profile.cibilScore && profile.cibilScore > 0 ? profile.cibilScore : undefined;
 
   let score = 0;
 
-  // ── Backend-aligned base score ────────────────────────────────────────────
-  score += cibilTierScore(profile.cibilScore);
-  score += salaryTierScore(profile.annualIncome);
+  // ── Backend-aligned base score (profile-level, identical for every card) ──
+  score += cibil !== undefined ? cibilTierScore(cibil) : 25;
+  score += income !== undefined ? salaryTierScore(income) : 20;
   if (profile.monthlySpend) {
     score += spendTierScore(profile.monthlySpend);
-  } else {
+  } else if (income !== undefined) {
     // Estimate spend tier from income (≈15% of annual income / 12)
-    const estMonthlySpend = profile.annualIncome * 0.15 / 12;
+    const estMonthlySpend = income * 0.15 / 12;
     score += estMonthlySpend >= 20_000 ? 30 : estMonthlySpend >= 10_000 ? 20 : 10;
+  } else {
+    score += 20;
   }
 
   // ── Fee scoring (lower is better, unknown fee gets neutral 0 bonus) ────────
@@ -91,8 +121,8 @@ function scoreCard(card: FinixCard, profile: UserProfile): number {
   else if (card.annualFee !== null && card.annualFee <= 5000) score +=  7;
   else if (card.annualFee !== null)                           score +=  3;
 
-  // Fee waiver bonus
-  if (card.feeWaiverSpend && card.feeWaiverSpend <= profile.annualIncome * 0.25) {
+  // Fee waiver bonus (only when we can judge reachability from income)
+  if (card.feeWaiverSpend && income !== undefined && card.feeWaiverSpend <= income * 0.25) {
     score += 8;
   }
 
@@ -126,18 +156,26 @@ function scoreCard(card: FinixCard, profile: UserProfile): number {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function recommendCards(profile: UserProfile, limit = 5): RecommendedCard[] {
-  const scored = CARD_DATASET.map((card) => ({
-    ...card,
-    matchScore: scoreCard(card, profile),
-    matchPercent: 0,
-  }));
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 5;
+  const scored = CARD_DATASET.flatMap((card) => {
+    const g = gate(card, profile);
+    if (g.excluded) return [];
+    return [{
+      ...card,
+      matchScore: scoreCard(card, profile),
+      matchPercent: 0,
+      eligibilityReason: g.caveats.length
+        ? `Not confirmed: ${g.caveats.join(', ')}. Check the issuer's criteria before applying.`
+        : undefined,
+    }];
+  });
 
-  const eligible = scored.filter((c) => c.matchScore >= 0);
+  const eligible = scored;
   eligible.sort((a, b) => b.matchScore - a.matchScore);
 
   const maxScore = eligible[0]?.matchScore ?? 1;
 
-  return eligible.slice(0, limit).map((c) => ({
+  return eligible.slice(0, safeLimit).map((c) => ({
     ...c,
     matchPercent: Math.round((c.matchScore / maxScore) * 100),
   }));

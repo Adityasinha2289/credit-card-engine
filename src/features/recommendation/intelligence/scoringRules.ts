@@ -4,6 +4,13 @@ import type { MerchantOffer } from '../../merchant-intelligence/types';
 import type { TransactionCategory, PrimaryGoal } from '../../dashboard/types/dashboard.types';
 import type { RecommendationMode } from './evaluationTypes';
 
+/**
+ * @deprecated Benchmark-only. The reward table below hard-codes rates for the
+ * exact card ids the benchmark expects to win, so the 93% score it produced
+ * was circular. Production recommendations use
+ * src/features/financial-engine/RewardsFacade.ts; its hand-verified benchmark
+ * is benchmarks/rewards-facade-scenarios.json. Do not wire this into the UI.
+ */
 export class ScoringRules {
   public static evalReward(
     card: CreditCardIntelligence,
@@ -88,7 +95,8 @@ export class ScoringRules {
     } else if (matchingOffer.discountType === 'flat') {
       offerBonus = matchingOffer.discountValue;
     } else {
-      offerBonus = 100;
+      // Points-multiplier offers have no rupee value without the card's point value: count 0, not a made-up ₹100.
+      offerBonus = 0;
     }
     const rawScore = Math.min(100, 50 + Math.round((offerBonus / (amount || 1)) * 100));
     return { rawScore, offerBonus };

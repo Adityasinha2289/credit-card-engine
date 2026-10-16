@@ -17,9 +17,9 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
 import { timingSafeEqual } from 'node:crypto';
-import { ClerkAuth } from '../src/features/recommendation/api/auth';
-import { sendEmail } from './_lib/email';
-import { runReminderJob, supabaseReminderStore, type PushMessage, type PushSubRow } from './_lib/reminderJob';
+import { ClerkAuth } from '../src/features/recommendation/api/auth.js';
+import { sendEmail } from './_lib/email.js';
+import { runReminderJob, supabaseReminderStore, type PushMessage, type PushSubRow } from './_lib/reminderJob.js';
 
 const auth = new ClerkAuth();
 const testPushLimiter = new Map<string, number>();

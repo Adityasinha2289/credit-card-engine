@@ -1,8 +1,8 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin, isUuid, pick } from './_utils/auth';
+import { requireAdmin, isUuid, pick } from './_utils/auth.js';
 
 const PARTNER_FIELDS = ['name', 'slug', 'description', 'logo_url', 'website_url', 'is_sponsored', 'status', 'primary_category_id'] as const;
-import { supabaseAdmin } from './_utils/supabaseAdmin';
+import { supabaseAdmin } from './_utils/supabaseAdmin.js';
 
 export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
   if (!supabaseAdmin) {

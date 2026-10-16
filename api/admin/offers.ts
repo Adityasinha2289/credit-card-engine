@@ -1,8 +1,8 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin, isUuid, pick } from './_utils/auth';
+import { requireAdmin, isUuid, pick } from './_utils/auth.js';
 
 const OFFER_FIELDS = ['source', 'offer_type', 'value', 'title', 'description', 'min_spend', 'max_discount', 'valid_from', 'valid_until', 'status', 'eligibility_rules'] as const;
-import { supabaseAdmin } from './_utils/supabaseAdmin';
+import { supabaseAdmin } from './_utils/supabaseAdmin.js';
 
 export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
   if (!supabaseAdmin) {

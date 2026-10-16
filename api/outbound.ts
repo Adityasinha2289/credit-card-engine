@@ -13,9 +13,9 @@
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { randomUUID } from 'node:crypto';
-import { ClerkAuth } from '../src/features/recommendation/api/auth';
-import { supabaseAdmin } from './admin/_utils/supabaseAdmin';
-import { isUuid } from './admin/_utils/auth';
+import { ClerkAuth } from '../src/features/recommendation/api/auth.js';
+import { supabaseAdmin } from './admin/_utils/supabaseAdmin.js';
+import { isUuid } from './admin/_utils/auth.js';
 
 const auth = new ClerkAuth();
 

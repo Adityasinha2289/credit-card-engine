@@ -17,7 +17,7 @@ import type {
 } from '../types/dashboard.types';
 import type { CardData } from '../../cards/types/card.types';
 import type { SavingsGoal } from '../../money/types';
-import { isValidDate } from '../../money/lib/moneyMath';
+import { isValidDate } from '../../money/lib/moneyMath.js';
 
 type Row = Record<string, any>;
 

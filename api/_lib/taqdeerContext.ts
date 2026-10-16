@@ -10,9 +10,9 @@
  * Imports the plain legacy dataset directly (not CARD_DATASET), so the
  * serverless bundle does not pull in the 10 MB canonical JSON.
  */
-import { MASTER_CARD_DATASET } from '../../src/features/finix/data/masterDataset';
+import { MASTER_CARD_DATASET } from '../../src/features/finix/data/masterDataset.js';
 import type { FinixCard, SpendCategory } from '../../src/features/finix/data/cardDataset';
-import { detectCategory } from '../../src/features/finix/data/merchantMap';
+import { detectCategory } from '../../src/features/finix/data/merchantMap.js';
 
 const CATEGORY_WORDS: Record<SpendCategory, string[]> = {
   dining: ['dining', 'food', 'restaurant', 'zomato', 'swiggy', 'eat', 'khana'],

@@ -12,7 +12,8 @@
     "import:merchants": "npx tsx scripts/importMerchants.ts",
     "import:offers": "npx tsx scripts/importOffers.ts",
     "evaluate": "npx tsx scripts/evaluate.ts",
-    "db:check": "node scripts/check-migrations.mjs"
+    "db:check": "node scripts/check-migrations.mjs",
+    "api:check": "node scripts/check-api-esm.mjs"
   },
   "dependencies": {
     "@clerk/backend": "^3.16.1",

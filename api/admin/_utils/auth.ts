@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { verifyToken, createClerkClient } from '@clerk/backend';
-import { authorizedParties } from '../../../src/features/recommendation/api/auth';
+import { authorizedParties } from '../../../src/features/recommendation/api/auth.js';
 
 export interface AdminAuthResult {
   authorized: boolean;

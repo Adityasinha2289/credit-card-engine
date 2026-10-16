@@ -22,8 +22,8 @@
  */
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createHash } from 'node:crypto';
-import { ClerkAuth } from '../src/features/recommendation/api/auth';
-import { buildGrounding, SYSTEM_INSTRUCTION } from './_lib/taqdeerContext';
+import { ClerkAuth } from '../src/features/recommendation/api/auth.js';
+import { buildGrounding, SYSTEM_INSTRUCTION } from './_lib/taqdeerContext.js';
 
 const auth = new ClerkAuth();
 

@@ -6,7 +6,7 @@
  * function for email / push, so both always agree.
  */
 import type { Subscription } from '../dashboard/types/dashboard.types';
-import { daysBetween, rollForward, toCalendarDate, yearlyCost } from './billingCycle';
+import { daysBetween, rollForward, toCalendarDate, yearlyCost } from './billingCycle.js';
 
 export type ReminderKind = 'renewal' | 'annual_renewal' | 'trial_ending' | 'price_hike';
 

@@ -11,10 +11,10 @@
  *  • Push respects quiet hours; dead push endpoints (404/410) are removed.
  */
 import type { Subscription } from '../../src/features/dashboard/types/dashboard.types';
-import { mapSubscriptionRow } from '../../src/features/dashboard/store/rowMappers';
-import { planReminders, isQuietTime, DEFAULT_REMINDER_PREFERENCES, type Reminder } from '../../src/features/subscriptions/reminderPlanner';
-import { addDays, istDate, rollForward, toCalendarDate } from '../../src/features/subscriptions/billingCycle';
-import { renewalDigestEmail } from './email';
+import { mapSubscriptionRow } from '../../src/features/dashboard/store/rowMappers.js';
+import { planReminders, isQuietTime, DEFAULT_REMINDER_PREFERENCES, type Reminder } from '../../src/features/subscriptions/reminderPlanner.js';
+import { addDays, istDate, rollForward, toCalendarDate } from '../../src/features/subscriptions/billingCycle.js';
+import { renewalDigestEmail } from './email.js';
 
 export type Channel = 'email' | 'push';
 

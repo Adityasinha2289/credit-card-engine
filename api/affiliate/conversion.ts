@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAdmin as supabase } from '../admin/_utils/supabaseAdmin';
-import { CommissionCalculator } from '../../src/features/commerce/services/CommissionCalculator';
+import { supabaseAdmin as supabase } from '../admin/_utils/supabaseAdmin.js';
+import { CommissionCalculator } from '../../src/features/commerce/services/CommissionCalculator.js';
 import crypto from 'crypto';
 
 // Minimal payload expected from network postback

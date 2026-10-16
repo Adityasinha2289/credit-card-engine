@@ -1,9 +1,9 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { ClerkAuth } from '../../src/features/recommendation/api/auth';
-import { supabaseAdmin } from '../admin/_utils/supabaseAdmin';
-import { OfferEligibilityEngine, OfferEligibilityContext } from '../../src/features/commerce/services/OfferEligibilityEngine';
-import { CommerceMapper, PaymentMethodMapper } from '../../src/features/commerce/mappers';
-import { CommerceOffer } from '../../src/features/commerce/types';
+import { ClerkAuth } from '../../src/features/recommendation/api/auth.js';
+import { supabaseAdmin } from '../admin/_utils/supabaseAdmin.js';
+import { OfferEligibilityEngine, OfferEligibilityContext } from '../../src/features/commerce/services/OfferEligibilityEngine.js';
+import { CommerceMapper, PaymentMethodMapper } from '../../src/features/commerce/mappers/index.js';
+import { CommerceOffer } from '../../src/features/commerce/types/index.js';
 
 const auth = new ClerkAuth();
 

@@ -1,5 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from './_utils/auth';
+import { requireAdmin, isUuid, pick } from './_utils/auth';
+
+const ENTITY_FIELDS = ['partner_id', 'category_id', 'entity_type', 'name', 'description', 'sku', 'image_url', 'base_price', 'currency', 'destination_path', 'is_sponsored', 'status'] as const;
 import { supabaseAdmin } from './_utils/supabaseAdmin';
 
 export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
@@ -7,7 +9,10 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
     return res.status(500).json({ success: false, error: 'Database admin client not configured' });
   }
 
-  const id = req.query.id as string;
+  const id = req.query.id as string | undefined;
+  if (id !== undefined && !isUuid(id)) {
+    return res.status(400).json({ success: false, error: 'Invalid id' });
+  }
   const validTypes = ['product', 'service', 'experience', 'subscription', 'booking', 'venue'];
   const validStatuses = ['active', 'inactive', 'out_of_stock'];
 
@@ -31,7 +36,7 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
 
   if (req.method === 'POST') {
     const { partner_id, name, entity_type, base_price, destination_path, status } = req.body;
-    
+
     if (!partner_id || !name || !entity_type || base_price === undefined || !destination_path) {
       return res.status(400).json({ success: false, error: 'Missing required fields' });
     }
@@ -50,7 +55,7 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
 
     const { data, error } = await supabaseAdmin
       .from('commerce_entities')
-      .insert(req.body)
+      .insert(pick(req.body, ENTITY_FIELDS))
       .select()
       .single();
 
@@ -61,16 +66,13 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
   if (req.method === 'PATCH') {
     if (!id) return res.status(400).json({ success: false, error: 'Missing entity ID' });
 
-    const updates = { ...req.body };
-    delete updates.id;
-    delete updates.created_at;
-    delete updates.updated_at;
-    delete updates.last_verified_at;
+    const updates: Record<string, any> = pick(req.body, ENTITY_FIELDS);
+    if (Object.keys(updates).length === 0) return res.status(400).json({ success: false, error: 'No updatable fields' });
 
     if (updates.base_price !== undefined && updates.base_price < 0) {
       return res.status(400).json({ success: false, error: 'Price cannot be negative' });
     }
-    
+
     if (updates.entity_type && !validTypes.includes(updates.entity_type)) {
        return res.status(400).json({ success: false, error: 'Invalid entity type' });
     }

@@ -30,7 +30,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const userId = authResult.userId;
-    const { merchantId, transactionAmount, location, transactionType, channel } = req.body;
+    const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+    const { merchantId, transactionAmount, location, transactionType, channel } = body;
+
+    const optionalString = (v: unknown, max: number) => v === undefined || v === null || (typeof v === 'string' && v.length <= max);
+    if (!optionalString(merchantId, 120) || !optionalString(location, 80) || !optionalString(transactionType, 40) || !optionalString(channel, 40)) {
+      return res.status(400).json({ success: false, error: { code: 'BAD_REQUEST', message: 'Invalid context fields' } });
+    }
+    if (transactionAmount !== undefined && transactionAmount !== null &&
+        (typeof transactionAmount !== 'number' || !Number.isFinite(transactionAmount) || transactionAmount < 0)) {
+      return res.status(400).json({ success: false, error: { code: 'BAD_REQUEST', message: 'transactionAmount must be a non-negative number' } });
+    }
 
     if (!supabaseAdmin) {
       throw new Error('Database admin client not configured');
@@ -71,11 +81,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new Error('Database error fetching offers');
     }
 
-    const allOffers: CommerceOffer[] = offersData.map(CommerceMapper.toOffer);
-    
-    // The mapper normally strips internal_campaign_metadata for safety. 
-    // Wait! Let's check CommerceMapper.toOffer! 
-    // If it strips metadata, the engine won't get it. We need to preserve it here.
+    // The mapper strips internal_campaign_metadata; the engine needs it, so it is
+    // re-attached here and removed again before anything is returned.
     const candidates = offersData.map(row => {
       const offer = CommerceMapper.toOffer(row);
       // Inject internal_campaign_metadata securely here for the engine
@@ -102,7 +109,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     for (const offer of candidates) {
       const result = OfferEligibilityEngine.evaluate(offer, context);
-      
+
       // Preserve internal reasons for debugging (if admin/debug enabled), but we don't expose them globally
       evaluationDebug[offer.id] = result;
 
@@ -129,9 +136,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   } catch (err: any) {
     console.error('[EligibleAPI] Fatal Error:', err);
-    return res.status(500).json({ 
-      success: false, 
-      error: { code: 'INTERNAL_SERVER_ERROR', message: err.message || 'An unexpected error occurred' }
+    return res.status(500).json({
+      success: false,
+      error: { code: 'INTERNAL_SERVER_ERROR', message: 'An unexpected error occurred' }
     });
   }
 }

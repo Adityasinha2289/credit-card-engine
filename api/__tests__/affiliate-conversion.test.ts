@@ -49,7 +49,7 @@ describe('Affiliate Webhook Security', () => {
     vi.clearAllMocks();
     process.env.AFFILIATE_WEBHOOK_SECRET = 'test-secret-123';
     
-    mockSingle.mockResolvedValue({ data: { id: 'track-1', partner_id: 'partner-1' }, error: null });
+    mockSingle.mockResolvedValue({ data: { id: '33333333-3333-4333-8333-333333333333', partner_id: 'partner-1' }, error: null });
     mockMaybeSingle.mockResolvedValue({ data: null, error: null });
   });
 
@@ -58,7 +58,7 @@ describe('Affiliate Webhook Security', () => {
   };
 
   const validBody = JSON.stringify({
-    click_id: 'track-1',
+    click_id: '33333333-3333-4333-8333-333333333333',
     transaction_id: 'tx-123',
     order_value: 100,
     currency: 'INR',
@@ -99,7 +99,7 @@ describe('Affiliate Webhook Security', () => {
   });
 
   it('rejects malformed payload', async () => {
-    const malformed = JSON.stringify({ click_id: 'track-1' });
+    const malformed = JSON.stringify({ click_id: '33333333-3333-4333-8333-333333333333' });
     const sig = generateSignature(malformed);
     const req = mockReq(malformed, { 'x-affiliate-signature': sig });
     const res = mockRes();

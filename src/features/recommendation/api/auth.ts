@@ -1,5 +1,12 @@
 import { verifyToken } from '@clerk/backend';
 
+/** Origins allowed to present session tokens (CLERK_AUTHORIZED_PARTIES, comma-separated). */
+export function authorizedParties(): string[] | undefined {
+  const raw = typeof process !== 'undefined' ? process.env.CLERK_AUTHORIZED_PARTIES : undefined;
+  const list = raw?.split(',').map((s) => s.trim()).filter(Boolean);
+  return list && list.length ? list : undefined;
+}
+
 export interface AuthVerificationResult {
   authenticated: boolean;
   userId?: string;
@@ -23,7 +30,7 @@ export class ClerkAuth implements AuthHook {
     }
 
     try {
-      const verifiedClaims = await verifyToken(token, { secretKey });
+      const verifiedClaims = await verifyToken(token, { secretKey, authorizedParties: authorizedParties() });
       return { authenticated: true, userId: verifiedClaims.sub };
     } catch (err: any) {
       console.error('Failed to verify clerk token:', err.message || err);

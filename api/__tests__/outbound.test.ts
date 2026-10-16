@@ -1,43 +1,41 @@
-import handler from '../outbound';
-import { CommerceRepository } from '../../src/features/commerce/repositories';
-import { supabase } from '../../src/lib/supabase';
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// Mock dependencies
-vi.mock('../../src/features/commerce/repositories');
-vi.mock('../../src/features/commerce', () => ({
-  CommerceOptimizationService: {
-    optimizeEntity: vi.fn().mockResolvedValue({ savings: 1000 })
-  }
+const ENTITY = '11111111-1111-4111-8111-111111111111';
+const PARTNER = '22222222-2222-4222-8222-222222222222';
+
+const state = vi.hoisted(() => ({
+  entity: null as any,
+  partner: null as any,
+  affiliate: null as any,
+  inserts: [] as any[],
 }));
-vi.mock('../../src/lib/supabase', () => ({
-  supabase: {
-    from: vi.fn().mockReturnThis(),
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn(),
-    insert: vi.fn()
+
+vi.mock('../admin/_utils/supabaseAdmin', () => {
+  const query = (table: string) => {
+    const chain: any = {
+      select: () => chain,
+      eq: () => chain,
+      maybeSingle: async () => ({
+        data: table === 'commerce_entities' ? state.entity : table === 'partners' ? state.partner : state.affiliate,
+        error: null,
+      }),
+      insert: async (row: any) => { state.inserts.push({ table, row }); return { error: null }; },
+    };
+    return chain;
+  };
+  return { supabaseAdmin: { from: (t: string) => query(t) } };
+});
+
+vi.mock('../../src/features/recommendation/api/auth', () => ({
+  ClerkAuth: class {
+    verifyToken = vi.fn(async (h?: string) => (h === 'Bearer good' ? { authenticated: true, userId: 'user-1' } : { authenticated: false }));
   },
-  isBackendEnabled: true
-}));
-vi.mock('@clerk/backend', () => ({
-  verifyToken: vi.fn(async (token) => {
-    if (token === 'some-token') {
-      return { sub: 'user-clerk-verified' };
-    }
-    throw new Error('jwt malformed');
-  })
 }));
 
-const mockReq = (body: any, headers = {}) => {
-  return {
-    method: 'POST',
-    body,
-    headers
-  } as unknown as VercelRequest;
-};
+import handler, { resolveDestination } from '../outbound';
 
+const mockReq = (body: any, headers: any = {}, method = 'POST') => ({ method, body, headers } as unknown as VercelRequest);
 const mockRes = () => {
   const res = {} as VercelResponse;
   res.status = vi.fn().mockReturnValue(res);
@@ -45,89 +43,71 @@ const mockRes = () => {
   return res;
 };
 
-describe('Outbound API Security & Logic', () => {
+describe('Outbound API', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    process.env.CLERK_SECRET_KEY = 'test-secret-key';
+    state.entity = { id: ENTITY, partner_id: PARTNER, destination_path: '/deals/1', base_price: 999, status: 'active' };
+    state.partner = { id: PARTNER, slug: 'acme', website_url: 'https://acme.example', status: 'active' };
+    state.affiliate = null;
+    state.inserts = [];
   });
 
   it('rejects non-POST methods', async () => {
-    const req = mockReq({}, {});
-    req.method = 'GET';
     const res = mockRes();
-
-    await handler(req, res);
-
+    await handler(mockReq({}, {}, 'GET'), res);
     expect(res.status).toHaveBeenCalledWith(405);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
   });
 
-  it('rejects missing commerceEntityId', async () => {
-    const req = mockReq({ placement: 'shop' }, {});
+  it('rejects a missing entity id', async () => {
     const res = mockRes();
-
-    await handler(req, res);
-
+    await handler(mockReq({ placement: 'shop' }), res);
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  it('returns 404 for invalid entity', async () => {
-    vi.spyOn(CommerceRepository, 'getCommerceEntities').mockResolvedValue([]);
-    const req = mockReq({ commerceEntityId: 'invalid' }, {});
+  it('404s for unknown or malformed entity ids', async () => {
     const res = mockRes();
-
-    await handler(req, res);
-
+    await handler(mockReq({ commerceEntityId: 'invalid' }), res);
     expect(res.status).toHaveBeenCalledWith(404);
+    state.entity = null;
+    const res2 = mockRes();
+    await handler(mockReq({ commerceEntityId: ENTITY }), res2);
+    expect(res2.status).toHaveBeenCalledWith(404);
   });
 
-  it('generates demo link without clickId for unauthenticated requests', async () => {
-    vi.spyOn(CommerceRepository, 'getCommerceEntities').mockResolvedValue([
-      { id: 'valid-id', partnerId: 'partner-id', basePrice: 100, status: 'active', name: 'Test Entity', currency: 'INR', entityType: 'product', destinationPath: '', categoryId: 'cat1' }
-    ]);
-    vi.spyOn(CommerceRepository, 'getPartnerById').mockResolvedValue({
-      id: 'partner-id', name: 'Partner', slug: 'partner', status: 'active', primaryCategoryId: 'cat1'
-    });
-
-    const req = mockReq({ commerceEntityId: 'valid-id' }); // No auth header
+  it('redirects signed-out users to the partner without tracking (no placeholder domain)', async () => {
     const res = mockRes();
-
-    await handler(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-      success: true,
-      clickId: null // Crucial: no click ID for demo user
-    }));
-    // Should NOT have called supabase insert
-    expect(supabase.from).not.toHaveBeenCalledWith('tracking_events');
+    await handler(mockReq({ commerceEntityId: ENTITY }), res);
+    expect(res.json).toHaveBeenCalledWith({ success: true, url: 'https://acme.example/deals/1', clickId: null });
+    expect(state.inserts).toHaveLength(0);
   });
 
-  it('generates production tracking link for authenticated users', async () => {
-    vi.spyOn(CommerceRepository, 'getCommerceEntities').mockResolvedValue([
-      { id: 'valid-id', partnerId: 'partner-id', basePrice: 100, status: 'active', name: 'Test Entity', currency: 'INR', entityType: 'product', destinationPath: '', categoryId: 'cat1' }
-    ]);
-    vi.spyOn(CommerceRepository, 'getPartnerById').mockResolvedValue({
-      id: 'partner-id', name: 'Partner', slug: 'partner', status: 'active', primaryCategoryId: 'cat1'
-    });
-    
-    const mockSupabaseQuery = supabase.from('affiliate_relationships').select('*').eq('partner_id', 'partner-id').eq('status', 'active');
-    (mockSupabaseQuery.single as any).mockResolvedValue({
-      data: { tracking_template: 'https://affiliate.example.com?click_id={{CLICK_ID}}' }
-    });
-
-    const req = mockReq({ commerceEntityId: 'valid-id' }, { authorization: 'Bearer some-token' });
+  it('uses the affiliate template and records the click for signed-in users', async () => {
+    state.affiliate = { tracking_template_url: 'https://aff.example/c?click={{CLICK_ID}}&e={{ENTITY_ID}}' };
     const res = mockRes();
+    await handler(mockReq({ commerceEntityId: ENTITY, placement: 'shop_grid' }, { authorization: 'Bearer good' }), res);
+    const body = (res.json as any).mock.calls[0][0];
+    expect(body.success).toBe(true);
+    expect(body.url).toBe(`https://aff.example/c?click=${body.clickId}&e=${ENTITY}`);
+    expect(state.inserts).toEqual([expect.objectContaining({
+      table: 'tracking_events',
+      row: expect.objectContaining({ id: body.clickId, user_id: 'user-1', source_placement: 'shop_grid', partner_id: PARTNER }),
+    })]);
+  });
 
-    await handler(req, res);
+  it('refuses non-https destinations', async () => {
+    state.partner.website_url = null;
+    state.entity.destination_path = 'javascript:alert(1)';
+    const res = mockRes();
+    await handler(mockReq({ commerceEntityId: ENTITY }), res);
+    expect(res.status).toHaveBeenCalledWith(422);
+  });
+});
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-      success: true,
-      clickId: expect.any(String)
-    }));
-
-    // Should have generated clickId and saved to tracking events
-    expect(supabase.from).toHaveBeenCalledWith('tracking_events');
+describe('resolveDestination', () => {
+  it('prefers a valid affiliate template, then absolute destination, then partner site', () => {
+    expect(resolveDestination({ clickId: 'c', entityId: 'e', trackingTemplate: 'http://insecure/{{CLICK_ID}}', destinationPath: 'https://shop.example/x' }))
+      .toBe('https://shop.example/x');
+    expect(resolveDestination({ clickId: 'c', entityId: 'e', partnerWebsite: 'https://p.example', destinationPath: '/a' }))
+      .toBe('https://p.example/a');
+    expect(resolveDestination({ clickId: 'c', entityId: 'e' })).toBeNull();
   });
 });

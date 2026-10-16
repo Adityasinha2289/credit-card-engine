@@ -21,11 +21,15 @@ export const config = {
   },
 };
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MAX_BODY_BYTES = 64 * 1024;
+
 const getRawBody = async (req: VercelRequest): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
     let body = Buffer.alloc(0);
     req.on('data', (chunk) => {
       body = Buffer.concat([body, chunk]);
+      if (body.length > MAX_BODY_BYTES) reject(new Error('Body too large'));
     });
     req.on('end', () => resolve(body));
     req.on('error', reject);
@@ -34,7 +38,7 @@ const getRawBody = async (req: VercelRequest): Promise<Buffer> => {
 
 function verifyWebhookSignature(signature: string | string[] | undefined, rawBody: Buffer): boolean {
   const expectedSecret = process.env.AFFILIATE_WEBHOOK_SECRET;
-  
+
   if (!expectedSecret || !signature || typeof signature !== 'string') {
     return false;
   }
@@ -44,7 +48,7 @@ function verifyWebhookSignature(signature: string | string[] | undefined, rawBod
   try {
     return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   } catch {
-    return false; 
+    return false;
   }
 }
 
@@ -77,12 +81,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // 2. Payload Validation
-  if (!payload.click_id || !payload.transaction_id || payload.order_value === undefined) {
+  if (!payload || !payload.click_id || !payload.transaction_id || payload.order_value === undefined) {
     return res.status(400).json({ success: false, error: 'Malformed payload' });
+  }
+  if (typeof payload.order_value !== 'number' || !Number.isFinite(payload.order_value)) {
+    return res.status(400).json({ success: false, error: 'order_value must be a number' });
   }
   if (payload.order_value < 0) {
     return res.status(400).json({ success: false, error: 'Negative order value not permitted' });
   }
+  const status = payload.status ?? 'pending';
+  if (!['pending', 'confirmed', 'rejected'].includes(status)) {
+    return res.status(400).json({ success: false, error: 'Invalid status' });
+  }
+  if (payload.currency !== undefined && !/^[A-Z]{3}$/.test(payload.currency)) {
+    return res.status(400).json({ success: false, error: 'Invalid currency' });
+  }
+  if (!UUID_RE.test(String(payload.click_id))) {
+    return res.status(404).json({ success: false, error: 'Tracking event not found' });
+  }
+  if (String(payload.transaction_id).length > 255) {
+    return res.status(400).json({ success: false, error: 'transaction_id too long' });
+  }
+  const occurredAt = payload.occurred_at && !Number.isNaN(Date.parse(payload.occurred_at))
+    ? new Date(payload.occurred_at).toISOString()
+    : new Date().toISOString();
 
   try {
     // 3. Attribution Resolution (Locate tracking event)
@@ -118,19 +141,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       // Idempotent Update
-      if (existingConversion.status !== payload.status) {
-        await supabase
+      if (existingConversion.status !== status) {
+        const { error: updErr } = await supabase
           .from('conversions')
-          .update({ status: payload.status, updated_at: new Date().toISOString() })
+          .update({ status })
           .eq('id', existingConversion.id);
+        if (updErr) throw new Error(`update conversion: ${updErr.message}`);
 
-        // If status changed to rejected, we void the commission
-        if (payload.status === 'rejected') {
-          await supabase
-            .from('commissions')
-            .update({ status: 'voided', updated_at: new Date().toISOString() })
-            .eq('conversion_id', existingConversion.id);
-        }
+        // A rejected sale voids its commission; a re-confirmed one reinstates it.
+        const commissionStatus = status === 'rejected' ? 'voided' : 'pending';
+        const { error: comErr } = await supabase
+          .from('commissions')
+          .update({ status: commissionStatus })
+          .eq('conversion_id', existingConversion.id)
+          .in('status', status === 'rejected' ? ['pending', 'adjusted'] : ['voided']);
+        if (comErr) throw new Error(`update commission: ${comErr.message}`);
       }
       return res.status(200).json({ success: true, message: 'Conversion updated idempotently' });
     }
@@ -144,8 +169,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         external_transaction_id: payload.transaction_id,
         order_value: payload.order_value,
         currency: payload.currency || 'INR',
-        status: payload.status || 'pending',
-        converted_at: payload.occurred_at || new Date().toISOString(),
+        status,
+        converted_at: occurredAt,
       })
       .select('id')
       .single();
@@ -161,12 +186,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     conversionId = newConversion?.id;
 
     // 7. Commission Calculation
+    // At most one active relationship per partner (enforced by a unique index).
     const { data: affiliateRel } = await supabase
       .from('affiliate_relationships')
       .select('commission_model, commission_terms')
       .eq('partner_id', trackingEvent.partner_id)
       .eq('status', 'active')
-      .single();
+      .maybeSingle();
 
     if (affiliateRel) {
       const expectedCommission = CommissionCalculator.calculateExpectedCommission(
@@ -175,15 +201,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         affiliateRel.commission_terms
       );
 
-      const commissionStatus = payload.status === 'rejected' ? 'voided' : 'pending';
+      const commissionStatus = status === 'rejected' ? 'voided' : 'pending';
 
-      await supabase
+      const { error: commissionError } = await supabase
         .from('commissions')
         .insert({
           conversion_id: conversionId,
           expected_commission: expectedCommission,
           status: commissionStatus
         });
+      // The conversion is recorded either way; a missing commission must be visible in logs.
+      if (commissionError) console.error('[conversion] commission insert failed:', commissionError.message);
     }
 
     return res.status(200).json({ success: true, message: 'Conversion processed successfully' });

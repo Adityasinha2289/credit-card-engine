@@ -160,7 +160,7 @@ async function upsertUserProfile(supabaseClient: any, profile: any, contextMessa
 
   const fullPayload = {
     id: profile.id,
-    email: profile.email,
+    email: profile.email || null, // unique column: never store ''
     name: profile.name,
     phone: profile.phone,
     avatar_url: profile.avatar,
@@ -178,7 +178,7 @@ async function upsertUserProfile(supabaseClient: any, profile: any, contextMessa
 
   const corePayload = {
     id: profile.id,
-    email: profile.email,
+    email: profile.email || null, // unique column: never store ''
     name: profile.name,
     phone: profile.phone,
     avatar_url: profile.avatar,
@@ -234,13 +234,15 @@ const budgetWriteTimers = new Map<string, ReturnType<typeof setTimeout>>();
 const BUDGET_WRITE_DEBOUNCE_MS = 600;
 
 // Optional columns added by 20261016* migrations. Writes retry without them.
+// Columns that older schemas lacked; writes retry without them on PGRST204.
 const SUBSCRIPTION_OPTIONAL_COLUMNS = [
-  'status', 'next_billing_on', 'is_free_trial', 'trial_ends_on', 'has_price_hike',
+  'status', 'is_free_trial', 'trial_ends_on', 'has_price_hike',
   'previous_amount', 'reminder_days', 'source', 'cancel_url',
 ];
 
 function subscriptionToRow(s: Subscription, userId: string, userCardRowId: string | null) {
-  const nextOn = s.nextBillingDate ? toIstDateString(s.nextBillingDate) : null;
+  // next_billing_on is required: fall back to one cycle from today if the caller didn't set it.
+  const nextOn = s.nextBillingDate ? toIstDateString(s.nextBillingDate) : toIstDateString(new Date(Date.now() + 30 * 86_400_000));
   return {
     id: s.id,
     user_id: userId,
@@ -248,7 +250,6 @@ function subscriptionToRow(s: Subscription, userId: string, userCardRowId: strin
     name: s.name,
     amount: s.amount,
     billing_cycle: s.billingCycle,
-    next_billing_date: nextOn ?? '',
     icon: s.icon ?? null,
     category: s.category,
     status: s.status,

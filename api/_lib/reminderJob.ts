@@ -213,7 +213,7 @@ export function supabaseReminderStore(db: any): ReminderStore {
       return out;
     },
     async setNextBillingOn(id, date) {
-      must(await db.from('subscriptions').update({ next_billing_on: date, next_billing_date: date }).eq('id', id), 'roll subscription');
+      must(await db.from('subscriptions').update({ next_billing_on: date }).eq('id', id), 'roll subscription');
     },
     async users(ids) {
       return must(await db.from('users').select('id, email, name').in('id', ids), 'load users') ?? [];

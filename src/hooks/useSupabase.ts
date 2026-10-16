@@ -5,6 +5,7 @@ import type { Database } from '../lib/database.types';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const useNativeClerk = import.meta.env.VITE_SUPABASE_CLERK_NATIVE === 'true';
 
 export function useSupabase() {
   const { getToken } = useAuth();
@@ -20,6 +21,16 @@ export function useSupabase() {
       return null;
     }
 
+    // Native Clerk ↔ Supabase integration (Supabase dashboard → Auth → Third-party
+    // → Clerk, and "Supabase" enabled in Clerk). The plain session token is
+    // accepted directly; no "supabase" JWT template is needed.
+    if (useNativeClerk) {
+      return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+        accessToken: async () => (await getTokenRef.current()) ?? null,
+      });
+    }
+
+    // Legacy: Clerk "supabase" JWT template signed with the Supabase JWT secret.
     return createClient<Database>(supabaseUrl, supabaseAnonKey, {
       global: {
         fetch: async (url, options = {}) => {

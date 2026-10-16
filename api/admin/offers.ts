@@ -1,5 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from './_utils/auth';
+import { requireAdmin, isUuid, pick } from './_utils/auth';
+
+const OFFER_FIELDS = ['source', 'offer_type', 'value', 'title', 'description', 'min_spend', 'max_discount', 'valid_from', 'valid_until', 'status', 'eligibility_rules'] as const;
 import { supabaseAdmin } from './_utils/supabaseAdmin';
 
 export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
@@ -7,7 +9,10 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
     return res.status(500).json({ success: false, error: 'Database admin client not configured' });
   }
 
-  const id = req.query.id as string;
+  const id = req.query.id as string | undefined;
+  if (id !== undefined && !isUuid(id)) {
+    return res.status(400).json({ success: false, error: 'Invalid id' });
+  }
 
   const validSources = ['merchant', 'bank', 'card_network', 'renocred'];
   const validTypes = ['percentage_discount', 'flat_discount', 'cashback', 'points', 'miles'];
@@ -28,22 +33,22 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
   }
 
   if (req.method === 'POST') {
-    const { 
-      source, offer_type, value, title, description, 
-      min_spend, max_discount, valid_from, valid_until, 
-      status, eligibility_rules 
+    const {
+      source, offer_type, value, title, description,
+      min_spend, max_discount, valid_from, valid_until,
+      status, eligibility_rules
     } = req.body;
-    
+
     if (!source || !offer_type || value === undefined || !title || !valid_from || !valid_until) {
       return res.status(400).json({ success: false, error: 'Missing required fields' });
     }
 
     if (!validSources.includes(source)) return res.status(400).json({ success: false, error: 'Invalid source' });
     if (!validTypes.includes(offer_type)) return res.status(400).json({ success: false, error: 'Invalid offer type' });
-    
+
     if (value < 0) return res.status(400).json({ success: false, error: 'Value cannot be negative' });
     if (offer_type === 'percentage_discount' && value > 100) return res.status(400).json({ success: false, error: 'Percentage cannot exceed 100' });
-    
+
     if (min_spend !== undefined && min_spend < 0) return res.status(400).json({ success: false, error: 'min_spend cannot be negative' });
     if (max_discount !== undefined && max_discount < 0) return res.status(400).json({ success: false, error: 'max_discount cannot be negative' });
 
@@ -76,21 +81,18 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
   if (req.method === 'PATCH') {
     if (!id) return res.status(400).json({ success: false, error: 'Missing offer ID' });
 
-    const updates = { ...req.body };
-    // Prevent overriding system fields
-    delete updates.id;
-    delete updates.created_at;
-    delete updates.updated_at;
-    delete updates.internal_campaign_metadata;
+    // Allow-list: system fields and internal_campaign_metadata are never client-writable.
+    const updates: Record<string, any> = pick(req.body, OFFER_FIELDS);
+    if (Object.keys(updates).length === 0) return res.status(400).json({ success: false, error: 'No updatable fields' });
 
     if (updates.source && !validSources.includes(updates.source)) return res.status(400).json({ success: false, error: 'Invalid source' });
     if (updates.offer_type && !validTypes.includes(updates.offer_type)) return res.status(400).json({ success: false, error: 'Invalid offer type' });
-    
+
     if (updates.value !== undefined && updates.value < 0) return res.status(400).json({ success: false, error: 'Value cannot be negative' });
     if (updates.offer_type === 'percentage_discount' && updates.value > 100) return res.status(400).json({ success: false, error: 'Percentage cannot exceed 100' });
     // Also check if we are updating value without updating offer_type, which might conflict.
     // In a real app we'd fetch the existing to validate cross-field constraints, but here we enforce if explicitly provided.
-    
+
     if (updates.min_spend !== undefined && updates.min_spend < 0) return res.status(400).json({ success: false, error: 'min_spend cannot be negative' });
     if (updates.max_discount !== undefined && updates.max_discount < 0) return res.status(400).json({ success: false, error: 'max_discount cannot be negative' });
 

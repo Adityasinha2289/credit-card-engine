@@ -1,5 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from './_utils/auth';
+import { requireAdmin, isUuid, pick } from './_utils/auth';
+
+const PARTNER_FIELDS = ['name', 'slug', 'description', 'logo_url', 'website_url', 'is_sponsored', 'status', 'primary_category_id'] as const;
 import { supabaseAdmin } from './_utils/supabaseAdmin';
 
 export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
@@ -7,7 +9,10 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
     return res.status(500).json({ success: false, error: 'Database admin client not configured' });
   }
 
-  const id = req.query.id as string;
+  const id = req.query.id as string | undefined;
+  if (id !== undefined && !isUuid(id)) {
+    return res.status(400).json({ success: false, error: 'Invalid id' });
+  }
 
   if (req.method === 'GET') {
     if (id) {
@@ -22,7 +27,7 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
 
   if (req.method === 'POST') {
     const { name, slug, description, logo_url, is_sponsored, status, primary_category_id } = req.body;
-    
+
     if (!name || !slug) {
       return res.status(400).json({ success: false, error: 'Name and slug are required' });
     }
@@ -33,7 +38,7 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
 
     const { data, error } = await supabaseAdmin
       .from('partners')
-      .insert({ name, slug, description, logo_url, is_sponsored, status, primary_category_id })
+      .insert(pick({ name, slug, description, logo_url, website_url: req.body?.website_url, is_sponsored, status, primary_category_id }, PARTNER_FIELDS))
       .select()
       .single();
 
@@ -49,15 +54,13 @@ export default requireAdmin(async (req: VercelRequest, res: VercelResponse) => {
   if (req.method === 'PATCH') {
     if (!id) return res.status(400).json({ success: false, error: 'Missing partner ID' });
 
-    const updates = { ...req.body };
-    delete updates.id;
-    delete updates.created_at;
-    delete updates.updated_at;
+    const updates: Record<string, any> = pick(req.body, PARTNER_FIELDS);
+    if (Object.keys(updates).length === 0) return res.status(400).json({ success: false, error: 'No updatable fields' });
 
     if (updates.status && !['active', 'inactive'].includes(updates.status)) {
       return res.status(400).json({ success: false, error: 'Invalid status' });
     }
-    
+
     const { data, error } = await supabaseAdmin
       .from('partners')
       .update(updates)

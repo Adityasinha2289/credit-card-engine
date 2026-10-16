@@ -113,7 +113,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // onboarding, this must not reset onboarding_completed or profile data.
       check(await supabaseAdmin.from('users').upsert({
         id: userId,
-        email: primaryEmail,
+        email: primaryEmail || null,
         name: fullName,
         avatar_url: imageUrl,
         phone: primaryPhone,
@@ -123,7 +123,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } else if (eventType === 'user.updated') {
       // ONLY update Clerk-owned identity fields. DO NOT overwrite RenoCred financial profile fields.
       check(await supabaseAdmin.from('users').update({
-        email: primaryEmail,
+        email: primaryEmail || null,
         name: fullName,
         avatar_url: imageUrl,
         phone: primaryPhone,
@@ -131,12 +131,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }).eq('id', userId), 'update user');
       console.log(`[Clerk Webhook] Updated user identity for ${userId}`);
     } else if (eventType === 'user.deleted') {
-      // Safe Deactivation Policy: Mark user as deactivated rather than hard cascading financial data deletion
-      check(await supabaseAdmin.from('users').update({
-        phone: 'DEACTIVATED',
-        updated_at: new Date().toISOString(),
-      }).eq('id', userId), 'deactivate user');
-      console.log(`[Clerk Webhook] Deactivated user ${userId}`);
+      // Account deleted in Clerk → erase the user's data (right to erasure). The
+      // schema cascades every personal table; affiliate conversions are kept
+      // for accounting with the click reference nulled (no personal data).
+      check(await supabaseAdmin.from('users').delete().eq('id', userId), 'erase user');
+      console.log(`[Clerk Webhook] Erased user ${userId}`);
     }
 
     // 5. Mark Event as Processed — only reached when the write above succeeded,

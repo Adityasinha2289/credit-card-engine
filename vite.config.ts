@@ -67,22 +67,43 @@ export default defineConfig(({ mode }) => {
     ],
     build: {
       sourcemap: true,
-      modulePreload: false,
-      rollupOptions: {
+      // Preload a lazy route's dependencies in parallel with the route chunk
+      // instead of discovering them one round trip at a time.
+      modulePreload: { polyfill: false },
+      rolldownOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
-              return 'vendor-react';
-            }
-            if (id.includes('node_modules/framer-motion') || id.includes('node_modules/lucide-react') || id.includes('node_modules/recharts')) {
-              return 'vendor-ui';
-            }
-            if (id.includes('node_modules/sonner') || id.includes('node_modules/zustand') || id.includes('node_modules/immer') || id.includes('node_modules/clsx') || id.includes('node_modules/tailwind-merge')) {
-              return 'vendor-utils';
-            }
-          }
-        }
-      }
+          // Rolldown groups also capture each matched module's dependencies, so
+          // the order matters: groups with a higher priority claim shared
+          // packages (React, zustand's use-sync-external-store) first. With the
+          // old single manualChunks function React itself ended up inside the
+          // charts chunk, forcing ~390 KB of recharts onto every page.
+          codeSplitting: {
+            groups: [
+              {
+                name: 'vendor-react',
+                test: /[\/]node_modules[\/](react|react-dom|react-router|react-router-dom|scheduler|react-is)[\/]/,
+                priority: 40,
+              },
+              {
+                name: 'vendor-utils',
+                test: /[\/]node_modules[\/](sonner|zustand|immer|clsx|tailwind-merge|use-sync-external-store)[\/]/,
+                priority: 30,
+              },
+              {
+                name: 'vendor-ui',
+                test: /[\/]node_modules[\/](framer-motion|motion-dom|motion-utils|lucide-react)[\/]/,
+                priority: 20,
+              },
+              {
+                // Charts are only used on a few app screens and the Methodology page.
+                name: 'vendor-charts',
+                test: /[\/]node_modules[\/](recharts|d3-[^\/]+|victory-vendor|internmap|decimal\.js-light|es-toolkit|reselect|redux|@reduxjs|eventemitter3)[\/]/,
+                priority: 10,
+              },
+            ],
+          },
+        },
+      },
     }
   }
 })

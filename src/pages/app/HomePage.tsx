@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { SharpenProfileCard } from '../../features/onboarding/components/SharpenProfileCard';
 import { useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { usePlanStore } from '../../features/plan/store/planStore';
@@ -232,6 +233,9 @@ export default function HomePage() {
           {greeting}, {userName}
         </h1>
       </section>
+
+      {/* ── OPTIONAL PROFILE DETAILS (asked here instead of blocking onboarding) ── */}
+      <SharpenProfileCard />
 
       {/* ── PRIORITY ACTION (If exists) ─────────────────────────────────────────── */}
       {primaryAction && (

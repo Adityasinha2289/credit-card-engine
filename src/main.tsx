@@ -5,28 +5,30 @@ import './index.css'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PublicLayout } from './public-platform/layouts/PublicLayout';
 import { HomePage } from './public-platform/pages/HomePage';
-import { AboutPage } from './public-platform/pages/AboutPage';
-import { ContactPage } from './public-platform/pages/ContactPage';
-import { MethodologyPage } from './public-platform/pages/MethodologyPage';
-import { EditorialPolicyPage } from './public-platform/pages/EditorialPolicyPage';
-import { AffiliateDisclosurePage } from './public-platform/pages/AffiliateDisclosurePage';
-import { PrivacyPage } from './public-platform/pages/PrivacyPage';
-import { TermsPage } from './public-platform/pages/TermsPage';
-import { BusinessPartnerPage } from './public-platform/pages/BusinessPartnerPage';
-import { DisclaimerPage } from './public-platform/pages/DisclaimerPage';
 import { NotFoundPage } from './public-platform/pages/NotFoundPage';
-import { CardsDirectoryPage } from './public-platform/pages/CardsDirectoryPage';
-import { CardDetailPage } from './public-platform/pages/CardDetailPage';
 
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Toaster } from 'sonner'
 import { ScrollToTop } from './components/ScrollToTop'
 
-import { RewardCalculatorPage } from './public-platform/pages/calculators/RewardCalculatorPage';
-import { BreakEvenCalculatorPage } from './public-platform/pages/calculators/BreakEvenCalculatorPage';
-import { CreditUtilizationPage } from './public-platform/pages/calculators/CreditUtilizationPage';
 
 // Lazy loaded boundaries
+// Only the landing page ships in the entry chunk; every other public page
+// (and its data / chart dependencies) loads on navigation.
+const AboutPage = lazy(() => import('./public-platform/pages/AboutPage').then((m) => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./public-platform/pages/ContactPage').then((m) => ({ default: m.ContactPage })));
+const MethodologyPage = lazy(() => import('./public-platform/pages/MethodologyPage').then((m) => ({ default: m.MethodologyPage })));
+const EditorialPolicyPage = lazy(() => import('./public-platform/pages/EditorialPolicyPage').then((m) => ({ default: m.EditorialPolicyPage })));
+const AffiliateDisclosurePage = lazy(() => import('./public-platform/pages/AffiliateDisclosurePage').then((m) => ({ default: m.AffiliateDisclosurePage })));
+const PrivacyPage = lazy(() => import('./public-platform/pages/PrivacyPage').then((m) => ({ default: m.PrivacyPage })));
+const TermsPage = lazy(() => import('./public-platform/pages/TermsPage').then((m) => ({ default: m.TermsPage })));
+const BusinessPartnerPage = lazy(() => import('./public-platform/pages/BusinessPartnerPage').then((m) => ({ default: m.BusinessPartnerPage })));
+const DisclaimerPage = lazy(() => import('./public-platform/pages/DisclaimerPage').then((m) => ({ default: m.DisclaimerPage })));
+const CardsDirectoryPage = lazy(() => import('./public-platform/pages/CardsDirectoryPage').then((m) => ({ default: m.CardsDirectoryPage })));
+const CardDetailPage = lazy(() => import('./public-platform/pages/CardDetailPage').then((m) => ({ default: m.CardDetailPage })));
+const RewardCalculatorPage = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
+const BreakEvenCalculatorPage = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
+const CreditUtilizationPage = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
 const AuthenticatedAppWrapper = lazy(() => import('./components/AuthenticatedAppWrapper'));
 const CompareRouter = lazy(() => import('./public-platform/pages/CompareRouter'));
 

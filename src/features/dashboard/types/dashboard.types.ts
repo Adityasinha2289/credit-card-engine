@@ -146,6 +146,10 @@ export interface AppProfile {
   spendCategories?: string[];
   occupation?: Occupation;
   city?: string;
+  /** e.g. '18-22' | '23-30' | '31-45' | '46+' — asked in-app, optional */
+  ageBand?: string;
+  /** e.g. 'unknown' | '<650' | '650-699' | '700-749' | '750+' — asked in-app, optional */
+  cibilBand?: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -172,6 +172,8 @@ async function upsertUserProfile(supabaseClient: any, profile: any, contextMessa
     spend_categories: profile.spendCategories,
     city: profile.city,
     occupation: profile.occupation,
+    age_band: profile.ageBand,
+    cibil_band: profile.cibilBand,
   };
 
   const corePayload = {
@@ -1120,6 +1122,8 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                spendCategories: baseData.spend_categories || metaProfile.spendCategories || get().profile?.spendCategories || [],
                city: baseData.city || metaProfile.city || get().profile?.city || 'Mumbai',
                occupation: baseData.occupation || metaProfile.occupation || get().profile?.occupation || 'Salaried',
+               ageBand: baseData.age_band || metaProfile.ageBand || undefined,
+               cibilBand: baseData.cibil_band || metaProfile.cibilBand || undefined,
             };
 
             const userCardsRow: any[] | null = (walletRes as any)?.data ?? null;

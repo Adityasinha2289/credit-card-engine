@@ -1,36 +1,34 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, X, Sparkles } from 'lucide-react';
-import { SignIn, SignUp, useUser } from '@clerk/clerk-react';
+import { SignIn, SignUp, GoogleOneTap, useUser } from '@clerk/clerk-react';
 import { useDashboardStore } from '../store/dashboardStore';
 import type { AppProfile, UserSegment, PrimaryGoal } from '../types/dashboard.types';
 import { cn } from '../../../lib/utils';
 import type { OnboardingState } from '../../onboarding/OnboardingFlow';
-import { MASTER_CARD_DATASET } from '../../finix/data/masterDataset';
-import { CARD_DATASET } from '../../finix/data/cardDataset';
 import { CreditCard } from '../../cards/components/CreditCard';
 import type { CardData, CardNetwork } from '../../cards/types/card.types';
 import { useNavigate } from 'react-router-dom';
 
 const OnboardingFlow = lazy(() => import('../../onboarding/OnboardingFlow').then(m => ({ default: m.OnboardingFlow })));
 
-const finixToCardData = (idMatch: string, nameMatch: string): CardData => {
-  let finix = CARD_DATASET.find(c => c.id.toLowerCase().includes(idMatch.toLowerCase()));
-  if (!finix) {
-    finix = CARD_DATASET.find(c => c.name.toLowerCase().includes(nameMatch.toLowerCase())) || CARD_DATASET[0];
-  }
-  return {
-    id: finix.id,
-    pan: '•••• •••• •••• 1234',
-    cardholderName: 'RENO CRED',
-    expiry: '12/28',
-    network: (finix.network.toLowerCase() || 'visa') as CardNetwork,
-    bank: finix.bank,
-    status: 'active',
-    availableCredit: 500000,
-    creditLimit: 500000,
-    label: finix.name,
-  };
+// Decorative cards on the sign-in screen. Static on purpose: importing the
+// card catalog here put ~90 KB of data on the critical path of the auth page.
+const showcaseCard = (id: string, bank: string, label: string, network: CardNetwork): CardData => ({
+  id,
+  pan: '•••• •••• •••• 1234',
+  cardholderName: 'RENO CRED',
+  expiry: '12/28',
+  network,
+  bank,
+  status: 'active',
+  availableCredit: 500000,
+  creditLimit: 500000,
+  label,
+});
+const SHOWCASE_CARDS = {
+  sbi: showcaseCard('sbi_cashback', 'SBI Card', 'Cashback SBI Card', 'visa'),
+  hdfc: showcaseCard('hdfc_infinia', 'HDFC Bank', 'Infinia Metal', 'visa'),
 };
 
 export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin' | 'signup' }) {
@@ -72,8 +70,9 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
       email: user?.primaryEmailAddress?.emailAddress || '',
       phone: user?.primaryPhoneNumber?.phoneNumber || 'XXXXXXXXXX',
       avatar: user?.imageUrl || `https://api.dicebear.com/9.x/notionists/svg?seed=User&backgroundColor=f8f9fa`,
-      salary: state.salary || 1500000,
-      creditScore: state.creditScore || 750,
+      // Unknown until the user chooses to tell us — never invent an income or score.
+      salary: state.salary || 0,
+      creditScore: state.creditScore || 0,
       userSegment: calculatedSegment,
       primaryGoal: (state.goal as PrimaryGoal) || 'Maximise Cashback',
       spendCategories: state.priorities,
@@ -94,10 +93,12 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
     
     if (state.banks && state.banks.length > 0) {
       const store = useDashboardStore.getState();
-      state.banks.forEach(cardId => {
+      // Loaded on demand: the onboarding chunk already has it, the sign-in page doesn't need it.
+      const { MASTER_CARD_DATASET } = await import('../../finix/data/masterDataset');
+      await Promise.all(state.banks.map(cardId => {
         const fullCard = MASTER_CARD_DATASET.find(c => c.id === cardId);
         if (fullCard) {
-          store.addUserCard({
+          return store.addUserCard({
             id: fullCard.id,
             pan: fullCard.first4Digits + ' **** **** ' + Math.floor(1000 + Math.random() * 9000),
             cardholderName: profile.name,
@@ -112,7 +113,8 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
             gradientTo: fullCard.gradientTo || '#2a5298',
           });
         }
-      });
+        return Promise.resolve();
+      }));
     }
   };
 
@@ -159,7 +161,7 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
                    transition={{ duration: 1, delay: 0.5 }}
                    className="absolute top-4 left-4 w-[280px] origin-center opacity-70 grayscale-[0.2]"
                  >
-                    <CreditCard card={finixToCardData('sbi_cashback', 'Cashback')} variant="compact" />
+                    <CreditCard card={SHOWCASE_CARDS.sbi} variant="compact" />
                  </motion.div>
 
                  {/* Card 1 (Foreground) */}
@@ -169,7 +171,7 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
                    transition={{ duration: 1, delay: 0.4 }}
                    className="absolute top-0 left-0 w-[280px] origin-center drop-shadow-2xl z-10"
                  >
-                    <CreditCard card={finixToCardData('hdfc_infinia', 'Infinia')} variant="compact" />
+                    <CreditCard card={SHOWCASE_CARDS.hdfc} variant="compact" />
                  </motion.div>
                  
                  {/* Intelligence Label */}
@@ -201,7 +203,7 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
              <div className="flex justify-between items-start mb-10">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-editorial-deep-forest text-white overflow-hidden shadow-sm">
-                    <img src="/logo.jpg" alt="RenoCred" className="w-full h-full object-cover" />
+                    <img src="/icons/icon-192.png" alt="RenoCred" width={40} height={40} className="w-full h-full object-cover" />
                   </div>
                   <span className="text-lg font-serif font-medium text-editorial-deep-forest">renocred</span>
                 </div>
@@ -240,6 +242,12 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
                   </motion.div>
                 </AnimatePresence>
              </div>
+
+             {/* One-tap Google sign-in/up: a single click for returning Google users.
+                 Requires Google enabled in the Clerk dashboard (opt-in via env). */}
+             {import.meta.env.VITE_GOOGLE_ONE_TAP === 'true' && (
+               <GoogleOneTap signInForceRedirectUrl="/app" signUpForceRedirectUrl="/app" cancelOnTapOutside={false} />
+             )}
 
              {/* Clerk Container - Styled to match RenoCred Editorial theme */}
              <div className="w-full [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:shadow-none [&_.cl-card]:border-0 [&_.cl-card]:p-0 [&_.cl-card]:bg-transparent [&_.cl-header]:hidden [&_.cl-socialButtonsBlockButton]:border-editorial-soft-sage/30 [&_.cl-socialButtonsBlockButton]:text-editorial-deep-forest [&_.cl-socialButtonsBlockButton]:hover:bg-editorial-soft-sage/5 [&_.cl-socialButtonsBlockButton]:rounded-xl [&_.cl-socialButtonsBlockButton]:h-11 [&_.cl-dividerLine]:bg-editorial-soft-sage/20 [&_.cl-dividerText]:text-editorial-muted-sage [&_.cl-formFieldLabel]:text-editorial-deep-forest [&_.cl-formFieldLabel]:font-medium [&_.cl-formFieldInput]:border-editorial-soft-sage/30 [&_.cl-formFieldInput]:bg-editorial-light-cream/50 [&_.cl-formFieldInput]:rounded-xl [&_.cl-formFieldInput]:h-11 [&_.cl-formFieldInput]:text-editorial-deep-forest focus:[&_.cl-formFieldInput]:ring-1 focus:[&_.cl-formFieldInput]:ring-editorial-forest focus:[&_.cl-formFieldInput]:border-editorial-forest [&_.cl-formButtonPrimary]:bg-editorial-deep-forest [&_.cl-formButtonPrimary]:hover:bg-editorial-forest [&_.cl-formButtonPrimary]:rounded-xl [&_.cl-formButtonPrimary]:h-11 [&_.cl-formButtonPrimary]:font-medium [&_.cl-formButtonPrimary]:transition-colors [&_.cl-footer]:hidden [&_.cl-identityPreview]:bg-editorial-light-cream/50 [&_.cl-identityPreview]:border-editorial-soft-sage/30 [&_.cl-identityPreview]:rounded-xl [&_.cl-identityPreviewText]:text-editorial-deep-forest [&_.cl-identityPreviewEditButton]:text-editorial-forest [&_.cl-formFieldSuccessIcon]:text-editorial-forest [&_.cl-internal-2q60ed]:text-editorial-forest">

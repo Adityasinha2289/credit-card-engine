@@ -7,6 +7,27 @@ const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+/**
+ * Svix signs the exact bytes it sent. Re-serialising a parsed body can change
+ * key order / whitespace / unicode escapes and break verification, so read the
+ * raw stream when it's available (@vercel/node only parses req.body lazily,
+ * on first access).
+ */
+async function readRawBody(req: VercelRequest): Promise<string> {
+  const anyReq = req as any;
+  if (typeof anyReq.on === 'function' && anyReq.readable && !anyReq.readableEnded) {
+    const chunks: Buffer[] = [];
+    for await (const chunk of anyReq) chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+    if (chunks.length > 0) return Buffer.concat(chunks).toString('utf8');
+  }
+  const body = anyReq.body;
+  return typeof body === 'string' ? body : Buffer.isBuffer(body) ? body.toString('utf8') : JSON.stringify(body ?? {});
+}
+
+function check(result: { error: any }, what: string) {
+  if (result.error) throw new Error(`${what}: ${result.error.message}`);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -34,7 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 2. Verify Webhook Signature
   let payload: any;
   try {
-    const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+    const rawBody = await readRawBody(req);
     const wh = new Webhook(webhookSecret);
     payload = wh.verify(rawBody, {
       'svix-id': svixId,
@@ -88,35 +109,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 4. Handle Specific Event Types
     if (eventType === 'user.created') {
-      await supabaseAdmin.from('users').upsert({
+      // Identity fields only: if the client already created the row during
+      // onboarding, this must not reset onboarding_completed or profile data.
+      check(await supabaseAdmin.from('users').upsert({
         id: userId,
         email: primaryEmail,
         name: fullName,
         avatar_url: imageUrl,
         phone: primaryPhone,
         updated_at: new Date().toISOString(),
-      });
+      }), 'upsert user');
       console.log(`[Clerk Webhook] Created user ${userId} (${primaryEmail})`);
     } else if (eventType === 'user.updated') {
       // ONLY update Clerk-owned identity fields. DO NOT overwrite RenoCred financial profile fields.
-      await supabaseAdmin.from('users').update({
+      check(await supabaseAdmin.from('users').update({
         email: primaryEmail,
         name: fullName,
         avatar_url: imageUrl,
         phone: primaryPhone,
         updated_at: new Date().toISOString(),
-      }).eq('id', userId);
+      }).eq('id', userId), 'update user');
       console.log(`[Clerk Webhook] Updated user identity for ${userId}`);
     } else if (eventType === 'user.deleted') {
       // Safe Deactivation Policy: Mark user as deactivated rather than hard cascading financial data deletion
-      await supabaseAdmin.from('users').update({
+      check(await supabaseAdmin.from('users').update({
         phone: 'DEACTIVATED',
         updated_at: new Date().toISOString(),
-      }).eq('id', userId);
+      }).eq('id', userId), 'deactivate user');
       console.log(`[Clerk Webhook] Deactivated user ${userId}`);
     }
 
-    // 5. Mark Event as Processed in Database (Idempotency Record)
+    // 5. Mark Event as Processed — only reached when the write above succeeded,
+    // so a failed write returns 500 and Svix retries it.
     await supabaseAdmin.from('processed_webhook_events').insert({
       event_id: eventId,
       event_type: eventType,
@@ -127,6 +151,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ status: 'success', event_id: eventId, event_type: eventType });
   } catch (err: any) {
     console.error(`[Clerk Webhook Processing Exception] ${eventType}:`, err);
-    return res.status(500).json({ error: 'Internal processing error', message: err.message });
+    return res.status(500).json({ error: 'Internal processing error' });
   }
 }

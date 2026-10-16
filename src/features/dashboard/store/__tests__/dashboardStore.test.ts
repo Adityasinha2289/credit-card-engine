@@ -125,7 +125,8 @@ describe('Dashboard Store Security & State Leakage', () => {
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        order: vi.fn().mockResolvedValue({ data: [] }),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue({ data: [] }),
         maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'user-B', name: 'User B', total_reward_points: 100 }, error: null }),
         single: vi.fn().mockResolvedValue({ data: {}, error: null })
       })
@@ -155,7 +156,8 @@ describe('Dashboard Store Security & State Leakage', () => {
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        order: vi.fn().mockResolvedValue({ data: [] }),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue({ data: [] }),
         maybeSingle: vi.fn().mockResolvedValue({ data: { id: 'user-B', name: 'Fresh B', total_reward_points: 100 }, error: null }),
         single: vi.fn().mockResolvedValue({ data: {}, error: null })
       })
@@ -176,6 +178,11 @@ describe('Dashboard Store Security & State Leakage', () => {
     // Simulate active session
     store.login({ id: 'user-A', name: 'User A' } as any);
     store.setActiveCard('card-123');
+    useDashboardStore.setState({
+      budgets: [{ id: 'b1', category: 'dining', limitAmount: 100, currentSpend: 0, period: 'monthly' }],
+      subscriptions: [{ id: 's1' } as any],
+      goals: [{ id: 'g1' } as any],
+    });
     
     // Logout
     store.logout();
@@ -183,8 +190,11 @@ describe('Dashboard Store Security & State Leakage', () => {
     // Verify state is cleared
     const state = useDashboardStore.getState();
     expect(state.profile).toBeNull();
-    expect(state.activeCardId).toBe('');
+    expect(state.activeCardId).toBeNull();
     expect(state.currentSessionId).toBeNull();
+    expect(state.budgets).toEqual([]);
+    expect(state.subscriptions).toEqual([]);
+    expect(state.goals).toEqual([]);
     
     // Verify localStorage has no sensitive data
     const stored = JSON.parse(localStorage.getItem('renocred-dashboard-v5') || '{}');

@@ -1,37 +1,59 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
-import { PaymentDecisionEngine, PaymentContext, PaymentRecommendation } from '../../../features/money/engines/PaymentDecisionEngine';
+import { PaymentDecisionEngine, type PaymentContext, type PaymentRecommendation } from '../../../features/money/engines/PaymentDecisionEngine';
+import type { SpendCategory } from '../../../features/finix/data/cardDataset';
+import { useIsDemo } from '../../../features/demo/DemoAppProvider';
 import { PageContainer } from '../../../components/shared/PageContainer';
 
+const CATEGORIES: { value: SpendCategory | 'auto'; label: string }[] = [
+  { value: 'auto', label: 'Detect from merchant' },
+  { value: 'dining', label: 'Food & Dining' },
+  { value: 'groceries', label: 'Groceries' },
+  { value: 'shopping', label: 'Shopping' },
+  { value: 'travel', label: 'Travel' },
+  { value: 'transport', label: 'Transport' },
+  { value: 'fuel', label: 'Fuel' },
+  { value: 'utilities', label: 'Bills & Utilities' },
+  { value: 'entertainment', label: 'Entertainment' },
+  { value: 'other', label: 'Other' },
+];
+
+const CONFIDENCE_LABEL: Record<string, string> = {
+  EXACT: 'Exact',
+  ESTIMATED: 'Estimate',
+  LIMITED: 'Estimate',
+  UNSUPPORTED: 'Low confidence',
+};
+
 export default function PaymentCoachPage() {
-  const { userCards, creditAccounts } = useDashboardStore();
-  const isDemoMode = new URLSearchParams(window.location.search).get('demo') !== null || import.meta.env.VITE_USE_DEMO_DATA === 'true';
+  const userCards = useDashboardStore((s) => s.userCards);
+  const creditAccounts = useDashboardStore((s) => s.creditAccounts);
+  const transactions = useDashboardStore((s) => s.transactions);
+  const isDemo = useIsDemo();
   const [amount, setAmount] = useState('');
   const [merchant, setMerchant] = useState('');
-  const [category, setCategory] = useState('Food & Dining');
+  const [category, setCategory] = useState<SpendCategory | 'auto'>('auto');
   const [merchantType, setMerchantType] = useState<'P2M' | 'P2P'>('P2M');
   const [result, setResult] = useState<PaymentRecommendation | null>(null);
 
-  const categories = ['Food & Dining', 'Shopping', 'Transport', 'Travel', 'Bills & Utilities', 'Entertainment'];
-
   const handleAnalyze = () => {
-    if (!amount) return;
-    
+    const rupees = parseFloat(amount);
+    if (!(rupees > 0)) return;
+
     const context: PaymentContext = {
-      amount: parseFloat(amount),
-      merchant: merchant || 'Unknown Merchant',
-      category: merchantType === 'P2P' ? 'P2P Transfers' : category,
+      amount: rupees,
+      merchant: merchant.trim(),
+      category: category === 'auto' ? undefined : category,
       merchantType,
     };
 
-    const recommendation = PaymentDecisionEngine.evaluate(context, userCards, creditAccounts, isDemoMode);
-    setResult(recommendation);
+    setResult(PaymentDecisionEngine.evaluate(context, userCards, creditAccounts, { isDemo, history: transactions }));
   };
 
   const getInstrumentName = (id: string) => {
     if (id === 'bank_upi') return 'Bank Account (UPI)';
     const card = userCards.find(c => c.id === id);
-    return card ? card.name : 'Unknown';
+    return card ? (card.label || card.bank || 'Card') : 'Card';
   };
 
   return (
@@ -84,10 +106,10 @@ export default function PaymentCoachPage() {
                   <label className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2 block">Category</label>
                   <select 
                     value={category}
-                    onChange={e => setCategory(e.target.value)}
+                    onChange={e => setCategory(e.target.value as SpendCategory | 'auto')}
                     className="w-full text-lg border-b border-gray-200 focus:border-gray-900 focus:ring-0 px-0 py-2 bg-transparent outline-none transition-colors"
                   >
-                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                   </select>
                 </div>
               </>
@@ -95,7 +117,7 @@ export default function PaymentCoachPage() {
 
             <button 
               onClick={handleAnalyze}
-              disabled={!amount}
+              disabled={!(parseFloat(amount) > 0) || (merchantType === 'P2M' && !merchant.trim() && category === 'auto')}
               className="w-full mt-6 bg-emerald-600 text-white font-medium py-3 rounded-full hover:bg-emerald-700 transition-colors disabled:opacity-50"
             >
               Analyze Payment
@@ -108,7 +130,7 @@ export default function PaymentCoachPage() {
             <div className="flex justify-between items-start mb-4">
               <h3 className="font-display text-lg font-medium text-gray-900">Recommendation</h3>
               <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-500 px-2 py-1 rounded">
-                {result.source}
+                {result.source === 'DEMO' ? 'Demo · ' : ''}{CONFIDENCE_LABEL[result.confidence] ?? result.confidence}
               </span>
             </div>
             
@@ -118,7 +140,7 @@ export default function PaymentCoachPage() {
               
               {result.estimatedRewardValue && result.estimatedRewardValue > 0 ? (
                 <p className="text-sm font-medium text-emerald-600 mt-2">
-                  Estimated {result.source} Reward: ₹{result.estimatedRewardValue.toFixed(0)}
+                  Estimated reward: ₹{result.estimatedRewardValue.toFixed(result.estimatedRewardValue < 10 ? 2 : 0)}
                 </p>
               ) : null}
             </div>
@@ -138,7 +160,12 @@ export default function PaymentCoachPage() {
             {result.alternativeMethodId && (
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-1">Alternative</p>
-                <p className="text-sm font-medium text-gray-900">{getInstrumentName(result.alternativeMethodId)}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {getInstrumentName(result.alternativeMethodId)}
+                  {result.alternativeRewardValue !== undefined && (
+                    <span className="text-gray-500 font-normal"> · ₹{result.alternativeRewardValue.toFixed(result.alternativeRewardValue < 10 ? 2 : 0)}</span>
+                  )}
+                </p>
               </div>
             )}
           </div>

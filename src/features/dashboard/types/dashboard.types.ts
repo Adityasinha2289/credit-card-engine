@@ -76,7 +76,7 @@ export interface CreditAccount {
   currentBalance: number;
   /** Minimum payment due in cents */
   minimumPaymentDue: number;
-  /** Payment due date as ISO-8601 */
+  /** Payment due date as ISO-8601, or '' when the user hasn't set one */
   paymentDueDate: string;
   /** Last payment amount in cents */
   lastPaymentAmount: number;
@@ -152,18 +152,32 @@ export interface AppProfile {
 //  SUBSCRIPTION & MILESTONE TYPES
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type BillingCycle = 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+
 export interface Subscription {
   id: string;
   name: string;
+  /** Amount charged per cycle, in paise */
   amount: number;
-  billingCycle: 'monthly' | 'yearly';
+  billingCycle: BillingCycle;
+  /** Next charge date, ISO-8601 (date or datetime) */
   nextBillingDate: string;
   status: 'active' | 'cancelled' | 'paused';
+  /** Catalog card id the subscription is billed to ('' when unknown / UPI) */
   cardId: string;
+  /** user_cards row id (what subscriptions.card_id references in the DB) */
+  userCardRowId?: string;
   category: string;
   hasPriceHike: boolean;
+  /** Previous per-cycle amount in paise, when a price hike was detected */
   previousAmount?: number;
   isFreeTrial: boolean;
+  /** ISO date the free trial converts to paid */
+  trialEndsOn?: string;
+  /** Days before renewal to remind, e.g. [3, 1] */
+  reminderDays?: number[];
+  source?: 'manual' | 'detected';
+  cancelUrl?: string;
   logo?: string;
   icon?: string;
 }

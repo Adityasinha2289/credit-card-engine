@@ -82,7 +82,9 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
       merchant: result.merchant,
       amount: String(result.amount / 100),
       category: result.category,
-      cardId: result.cardId || selectedCardId,
+      // Only pre-select a card when the SMS proved it (last 4 digits matched).
+      cardId: result.cardId ?? '',
+      type: result.type,
       date: result.date,
     });
   }
@@ -99,8 +101,8 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
       amount: Math.round(parsedAmt * 100),
       date: parsedData.date || new Date().toISOString(),
       category: parsedData.category,
-      type: 'debit',
-      cardId: parsedData.cardId || selectedCardId,
+      type: parsedData.type || 'debit',
+      cardId: parsedData.cardId || '',
       pending: false,
     };
     addTransaction(input);
@@ -321,12 +323,15 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                   </div>
                   {/* Card Select */}
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold text-text-secondary">Matched Card</label>
+                    <label className="text-[10px] font-bold text-text-secondary">
+                      {parsedData.cardId ? 'Matched Card' : 'Paid with'}
+                    </label>
                     <select
                       value={parsedData.cardId}
                       onChange={(e) => setParsedData({ ...parsedData, cardId: e.target.value })}
                       className="input-premium py-1.5 text-xs bg-surface-primary"
                     >
+                      <option value="">Bank account / UPI</option>
                       {userCards.map((c) => (
                         <option key={c.id} value={c.id}>
                           {c.label || 'Credit Card'} (..{c.pan.slice(-4)})
@@ -334,6 +339,23 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                <div className="flex gap-1 bg-surface-secondary dark:bg-gray-100 p-1 rounded-xl" role="group" aria-label="Direction">
+                  {([['debit', 'Spent'], ['refund', 'Refund'], ['credit', 'Received']] as const).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setParsedData({ ...parsedData, type: value })}
+                      aria-pressed={parsedData.type === value}
+                      className={cn(
+                        'flex-1 text-[10px] font-semibold py-1 rounded-lg transition-all',
+                        parsedData.type === value ? 'bg-surface dark:bg-surface-raised text-brand-emerald shadow-sm' : 'text-text-muted',
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="flex items-center justify-end gap-2 border-t border-border-subtle dark:border-white/[0.03] pt-2">
@@ -430,23 +452,23 @@ interface TransactionFeedProps {
   className?: string;
 }
 
-import { useUser } from '@clerk/clerk-react';
-import { useTransactionsQuery } from '../../../hooks/queries';
-
 export function TransactionFeed({ limit = 12, className }: TransactionFeedProps) {
-  const { user } = useUser();
-  const { data: transactionsQuery } = useTransactionsQuery(user?.id);
-  const allTransactionsStore = useDashboardStore(
+  // The store is hydrated on sign-in and updated optimistically by every
+  // mutation, so it is the one source of truth for the feed. (Reading a
+  // separate React Query cache here hid newly added transactions until reload.)
+  const allTransactions = useDashboardStore(
     useShallow((s) => s.transactions),
   );
-  const allTransactions = transactionsQuery ?? allTransactionsStore;
   const activeCardId = useDashboardStore((s) => s.activeCardId);
   const [showForm, setShowForm] = useState(false);
 
   const [timeFilter, setTimeFilter] = useState<'all' | 'week' | 'month' | 'custom'>('all');
 
   // Filter to the active card, then by time, then cap at limit
-  const activeCardTransactions = allTransactions.filter((t) => !t.cardId || t.cardId === activeCardId);
+  const activeCardTransactions = allTransactions
+    .filter((t) => !t.cardId || !activeCardId || t.cardId === activeCardId)
+    .slice()
+    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
   
   const now = new Date();
   const filteredTransactions = activeCardTransactions.filter(t => {

@@ -4,6 +4,8 @@ import type { Transaction } from '../../dashboard/types/dashboard.types';
 
 export interface TransactionContext {
   previousTransactions?: Transaction[];
+  /** Use this category instead of inferring one from the merchant name */
+  category?: SpendCategory;
 }
 
 export type ConfidenceLevel = 'EXACT' | 'ESTIMATED' | 'LIMITED' | 'UNSUPPORTED';
@@ -78,11 +80,11 @@ export function evaluateTransaction(
   userCardIds: string[],
   context?: TransactionContext
 ): TransactionEvaluationResult | null {
-  if (!merchant || isNaN(amountInInr) || amountInInr <= 0 || userCardIds.length === 0) {
+  if ((!merchant && !context?.category) || isNaN(amountInInr) || amountInInr <= 0 || userCardIds.length === 0) {
     return null;
   }
 
-  const category = detectCategory(merchant);
+  const category = context?.category ?? detectCategory(merchant);
   let globalConfidence: ConfidenceLevel = 'EXACT';
 
   const evaluated: CardEvaluation[] = userCardIds.map((cardId) => {

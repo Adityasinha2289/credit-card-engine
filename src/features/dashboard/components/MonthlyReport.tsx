@@ -11,6 +11,7 @@ import { useDashboardStore } from '../store/dashboardStore';
 import { CARD_DATASET } from '../../finix/data/cardDataset';
 import { analytics } from '../../../lib/analytics';
 import { getCardTheme } from '../../finix/config/cardThemeRegistry';
+import { isSpend, isRefund, istParts } from '../../money/lib/moneyMath';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  CONSTANTS
@@ -55,27 +56,25 @@ function useMonthlyData(year: number, month: number) {
   const budgets        = useDashboardStore((s) => s.budgets);
 
   return useMemo(() => {
-    const monthTxns = transactions.filter((t) => {
-      const d = new Date(t.date);
-      return d.getFullYear() === year && d.getMonth() === month;
-    });
+    // Months are calendar months in IST; card bill payments are neither spend nor refunds.
+    const inMonth = (iso: string, y: number, m: number) => {
+      const p = istParts(iso);
+      return p.year === y && p.month === m;
+    };
+    const monthTxns = transactions.filter((t) => inMonth(t.date, year, month));
+    const pm = month === 0 ? 11 : month - 1;
+    const py = month === 0 ? year - 1 : year;
+    const prevMonthTxns = transactions.filter((t) => inMonth(t.date, py, pm));
 
-    const prevMonthTxns = transactions.filter((t) => {
-      const d = new Date(t.date);
-      const pm = month === 0 ? 11 : month - 1;
-      const py = month === 0 ? year - 1 : year;
-      return d.getFullYear() === py && d.getMonth() === pm;
-    });
-
-    const debits  = monthTxns.filter((t) => t.amount > 0);
-    const credits = monthTxns.filter((t) => t.amount < 0);
+    const debits  = monthTxns.filter(isSpend).map((t) => ({ ...t, amount: Math.abs(t.amount) }));
+    const credits = monthTxns.filter(isRefund);
 
     const totalSpend    = debits.reduce((s, t) => s + t.amount, 0) / 100;
-    const totalRefunds  = Math.abs(credits.reduce((s, t) => s + t.amount, 0)) / 100;
-    const netSpend      = totalSpend - totalRefunds;
+    const totalRefunds  = credits.reduce((s, t) => s + Math.abs(t.amount), 0) / 100;
+    const netSpend      = Math.max(0, totalSpend - totalRefunds);
 
-    const prevDebits    = prevMonthTxns.filter((t) => t.amount > 0);
-    const prevTotalSpend = prevDebits.reduce((s, t) => s + t.amount, 0) / 100;
+    const prevDebits    = prevMonthTxns.filter(isSpend);
+    const prevTotalSpend = prevDebits.reduce((s, t) => s + Math.abs(t.amount), 0) / 100;
     const spendChange   = prevTotalSpend > 0 ? ((totalSpend - prevTotalSpend) / prevTotalSpend) * 100 : 0;
 
     const pointsEarned  = debits.reduce((s, t) => s + (t.rewardPoints || 0), 0);
@@ -134,12 +133,16 @@ function useMonthlyData(year: number, month: number) {
     const maxDayTotal = Math.max(...dayTotals, 1);
 
     // Budget utilization
-    const budgetStatus = budgets.map((b) => ({
-      category: b.category,
-      limit: b.limitAmount / 100,
-      spent: b.currentSpend / 100,
-      pct: b.limitAmount > 0 ? Math.round((b.currentSpend / b.limitAmount) * 100) : 0,
-    }));
+    const budgetStatus = budgets.map((b) => {
+      const spent = catMap[b.category]?.total ?? 0; // rupees, this month
+      const limit = b.limitAmount / 100;
+      return {
+        category: b.category,
+        limit,
+        spent,
+        pct: limit > 0 ? Math.round((spent / limit) * 100) : 0,
+      };
+    });
 
     const totalLimit = creditAccounts.reduce((s, a) => s + a.totalLimit / 100, 0);
     const totalBal   = creditAccounts.reduce((s, a) => s + a.currentBalance / 100, 0);

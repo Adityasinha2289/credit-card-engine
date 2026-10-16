@@ -66,7 +66,8 @@ export const demoCreditAccounts: CreditAccount[] = demoCards.map((card) => ({
   totalLimit: card.creditLimit,
   currentBalance: 1200000, // 12,000.00 in cents
   minimumPaymentDue: 150000, // 1,500.00 in cents
-  paymentDueDate: '2026-10-01T00:00:00.000Z',
+  // Due 9 days from today so the demo never shows a stale/overdue bill.
+  paymentDueDate: new Date(Date.now() + 9 * 86_400_000).toISOString(),
   lastPaymentAmount: 0,
   lastPaymentDate: null,
   apr: 0.1999,
@@ -167,20 +168,28 @@ export const demoOffers: MerchantOffer[] = [
 // SUBSCRIPTIONS & BUDGETS
 // -----------------------------------------------------------------------------
 import { Subscription, CategoryBudget } from '../dashboard/types/dashboard.types';
+import type { SavingsGoal } from '../money/types';
+
+// All amounts in PAISE (₹1 = 100), matching the rest of the store.
+const inDays = (d: number) => new Date(Date.now() + d * 86_400_000).toISOString();
 
 export const demoSubscriptions: Subscription[] = [
-  { id: 'sub_netflix', name: 'Netflix', amount: 649, billingCycle: 'monthly', nextBillingDate: '2026-10-02T00:00:00Z', category: 'Subscriptions', cardId: 'hdfc_diners_club_black', status: 'active', hasPriceHike: false, isFreeTrial: false },
-  { id: 'sub_spotify', name: 'Spotify', amount: 119, billingCycle: 'monthly', nextBillingDate: '2026-09-28T00:00:00Z', category: 'Subscriptions', cardId: 'sbi_cashback', status: 'active', hasPriceHike: false, isFreeTrial: false },
-  { id: 'sub_gym', name: 'Cult.fit', amount: 1200, billingCycle: 'monthly', nextBillingDate: '2026-10-05T00:00:00Z', category: 'Education', cardId: 'icici_amazon_pay', status: 'active', hasPriceHike: false, isFreeTrial: false },
-  { id: 'sub_prime', name: 'Amazon Prime', amount: 1499, billingCycle: 'yearly', nextBillingDate: '2026-12-15T00:00:00Z', category: 'Subscriptions', cardId: 'icici_amazon_pay', status: 'active', hasPriceHike: false, isFreeTrial: false },
+  { id: 'sub_netflix', name: 'Netflix', amount: 64900, billingCycle: 'monthly', nextBillingDate: inDays(2), category: 'entertainment', cardId: 'hdfc_diners_club_black', status: 'active', hasPriceHike: true, previousAmount: 49900, isFreeTrial: false, reminderDays: [3, 1] },
+  { id: 'sub_spotify', name: 'Spotify', amount: 11900, billingCycle: 'monthly', nextBillingDate: inDays(12), category: 'entertainment', cardId: 'sbi_cashback', status: 'active', hasPriceHike: false, isFreeTrial: false, reminderDays: [3, 1] },
+  { id: 'sub_gym', name: 'Cult.fit', amount: 120000, billingCycle: 'monthly', nextBillingDate: inDays(5), category: 'health', cardId: 'icici_amazon_pay', status: 'active', hasPriceHike: false, isFreeTrial: true, trialEndsOn: inDays(5), reminderDays: [3, 1] },
+  { id: 'sub_prime', name: 'Amazon Prime', amount: 149900, billingCycle: 'yearly', nextBillingDate: inDays(60), category: 'shopping', cardId: 'icici_amazon_pay', status: 'active', hasPriceHike: false, isFreeTrial: false, reminderDays: [7, 1] },
 ];
 
 export const demoBudgets: CategoryBudget[] = [
-  { id: 'b_food', category: 'dining', limitAmount: 8000, currentSpend: 6400, period: 'monthly' },
-  { id: 'b_shopping', category: 'shopping', limitAmount: 7000, currentSpend: 5900, period: 'monthly' },
-  { id: 'b_transport', category: 'transport', limitAmount: 4000, currentSpend: 3200, period: 'monthly' },
-  { id: 'b_entertainment', category: 'entertainment', limitAmount: 3000, currentSpend: 2100, period: 'monthly' },
-  { id: 'b_subs', category: 'subscriptions', limitAmount: 2000, currentSpend: 1500, period: 'monthly' }
+  { id: 'b_food', category: 'dining', limitAmount: 800000, currentSpend: 0, period: 'monthly' },
+  { id: 'b_shopping', category: 'shopping', limitAmount: 700000, currentSpend: 0, period: 'monthly' },
+  { id: 'b_transport', category: 'transport', limitAmount: 400000, currentSpend: 0, period: 'monthly' },
+  { id: 'b_entertainment', category: 'entertainment', limitAmount: 300000, currentSpend: 0, period: 'monthly' },
+];
+
+export const demoGoals: SavingsGoal[] = [
+  { id: 'g_goa', goal: 'Goa Trip', targetAmount: 2500000, currentAmount: 1500000, monthlyContribution: 500000, deadline: inDays(70) },
+  { id: 'g_emergency', goal: 'Emergency Fund', targetAmount: 15000000, currentAmount: 11000000, monthlyContribution: 1000000, deadline: null },
 ];
 
 // -----------------------------------------------------------------------------
@@ -202,6 +211,7 @@ export function seedDemoStore() {
     creditAccounts: demoCreditAccounts,
     subscriptions: demoSubscriptions,
     budgets: demoBudgets,
+    goals: demoGoals,
     activeCardId: demoCards.length > 0 ? demoCards[0].id : null,
     
     // Set rewards ledger based on profile

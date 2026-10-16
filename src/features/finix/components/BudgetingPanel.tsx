@@ -3,7 +3,8 @@ import { Target, ShieldCheck, HeartPulse, MoreVertical, Edit2, Trash2 } from 'lu
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { cn, formatCents } from '../../../lib/utils';
 import type { TransactionCategory } from '../../dashboard/types/dashboard.types';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { summarizeMonth } from '../../money/lib/moneyMath';
 
 export function BudgetingPanel() {
   const budgets = useDashboardStore((s) => s.budgets) || [];
@@ -30,8 +31,13 @@ export function BudgetingPanel() {
     { category: 'entertainment', label: 'Entertainment', defaultLimit: 500000 },
   ];
 
+  // Budgets are monthly: progress = this month's spend in the category (IST), not all-time.
+  const monthSpend = useMemo(() => summarizeMonth(transactions).byCategory, [transactions]);
+  const budgetedCategories = new Set(budgets.map((b) => b.category));
+
   const handleAddBudget = (category: TransactionCategory, limitAmount: number) => {
-    addBudget({
+    // The store rejects (and explains) a second budget for the same category.
+    void addBudget({
       id: `budget-${Date.now()}`,
       category,
       limitAmount,
@@ -139,13 +145,8 @@ export function BudgetingPanel() {
             </div>
           )}
           {budgets.map((budget) => {
-            // Sync budget progress with actual recent spend in this category
-            const recentSpend = transactions
-              .filter(t => t.type === 'debit' && t.category === budget.category && !t.pending)
-              .reduce((sum, t) => sum + t.amount, 0);
-              
-            const dynamicSpend = budget.currentSpend + recentSpend;
-            const progress = Math.min(100, (dynamicSpend / budget.limitAmount) * 100);
+            const dynamicSpend = monthSpend[budget.category] ?? 0;
+            const progress = budget.limitAmount > 0 ? Math.min(100, (dynamicSpend / budget.limitAmount) * 100) : 0;
             const isNearLimit = progress > 85;
             const isOverLimit = progress >= 100;
             
@@ -166,7 +167,7 @@ export function BudgetingPanel() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-text-primary capitalize">{budget.category}</p>
-                      <p className="text-[10px] text-text-muted uppercase tracking-wider">{budget.period}</p>
+                      <p className="text-[10px] text-text-muted uppercase tracking-wider">{budget.period || 'monthly'} · this month</p>
                     </div>
                   </div>
                   
@@ -356,7 +357,7 @@ export function BudgetingPanel() {
             ) : (
               <div className="flex flex-col gap-3">
                 <p className="text-sm font-medium text-text-secondary mb-2">Popular Options:</p>
-              {PRESET_BUDGETS.map((preset) => (
+              {PRESET_BUDGETS.filter((preset) => !budgetedCategories.has(preset.category)).map((preset) => (
                 <button
                   key={preset.category}
                   onClick={() => handleAddBudget(preset.category, preset.defaultLimit)}

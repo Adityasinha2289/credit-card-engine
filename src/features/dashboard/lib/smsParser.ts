@@ -6,12 +6,15 @@
 
 import type { CardData } from '../../cards/types/card.types';
 import { detectCategory } from '../../../features/finix/data/merchantMap';
-import type { TransactionCategory } from '../types/dashboard.types';
+import type { TransactionCategory, TransactionType } from '../types/dashboard.types';
 
 export interface ParsedSms {
   merchant: string;
-  amount: number; // in cents (rupee × 100)
+  amount: number; // in paise (rupee × 100), always positive
+  /** debit = purchase; refund = reversal/cashback; credit = money received */
+  type: TransactionType;
   category: TransactionCategory;
+  /** null when we couldn't confidently match one of the user's cards — ask the user */
   cardId: string | null;
   /** last 4 digits found in SMS, used for matching */
   last4: string | null;
@@ -49,26 +52,47 @@ function extractAmount(sms: string): number | null {
 
 const MERCHANT_PATTERNS = [
   //"at MERCHANT" or"at MERCHANT on"
-  /\bat\s+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+for|\s+ref|\.|\n|$)/i,
+  /\bat\s+([A-Za-z0-9&'.\-\s]{2,30}?)(?:\s+on|\s+via|\s+for|\s+ref|\.|\n|$)/i,
   //"to MERCHANT" (e.g. UPI transfers)
-  /\bto\s+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
+  /\bto\s+([A-Za-z0-9&'.\-\s]{2,30}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
   //"for MERCHANT"
-  /\bfor\s+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
+  /\bfor\s+([A-Za-z0-9&'.\-\s]{2,30}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
   //"@ MERCHANT"
-  /@\s*([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
+  /@\s*([A-Za-z0-9&'.\-\s]{2,30}?)(?:\s+on|\s+via|\s+ref|\.|\n|$)/i,
   // Merchant: MERCHANT
-  /Merchant[:\s]+([A-Za-z0-9&'.\-\s]{2,30?}?)(?:\.|,|\n|$)/i,
+  /Merchant[:\s]+([A-Za-z0-9&'.\-\s]{2,30}?)(?:\.|,|\n|$)/i,
+  //"from MERCHANT" (refunds / credits)
+  /\bfrom\s+([A-Za-z0-9&'.\-\s]{2,30}?)(?:\s+on|\s+via|\s+ref|\s+(?:has\s+been\s+)?(?:credited|processed|initiated)|\s+to\b|\.|,|\n|$)/i,
 ];
+
+/** Captures that are clearly not a merchant ("your A/c", "card XX1234", …). */
+const NOT_A_MERCHANT = /^(your|you|a\/?c|ac|acct|account|card|the|bank|upi|vpa|xx|\*+)\b|^[x*\d\s]+$/i;
 
 function extractMerchant(sms: string): string | null {
   for (const re of MERCHANT_PATTERNS) {
     const m = sms.match(re);
     if (m?.[1]) {
-      const cleaned = m[1].trim().replace(/\s+/g, ' ');
-      if (cleaned.length >= 2) return cleaned;
+      const cleaned = m[1].trim().replace(/\s+/g, ' ').replace(/[.\-]+$/, '');
+      if (cleaned.length >= 2 && !NOT_A_MERCHANT.test(cleaned)) return cleaned;
     }
   }
   return null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  DIRECTION
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DEBIT_SIGNAL = /\b(debit(?:ed)?|spent|used|charged|withdrawn|purchase|paid|sent)\b/i;
+const REFUND_SIGNAL = /\b(refund(?:ed)?|revers(?:al|ed)|cashback|chargeback)\b/i;
+const CREDIT_SIGNAL = /\b(credited|received|deposited)\b/i;
+
+export function detectDirection(sms: string): TransactionType {
+  if (REFUND_SIGNAL.test(sms)) return 'refund';
+  // "Rs 500 debited from A/c … and credited to X" is a debit for the user.
+  if (DEBIT_SIGNAL.test(sms)) return 'debit';
+  if (CREDIT_SIGNAL.test(sms)) return 'credit';
+  return 'debit';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -140,10 +164,14 @@ function extractDate(sms: string): string {
 //  CARD MATCHING
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Only return a card when the SMS proves it. A bank-account SMS (A/c XX1234)
+ * must never silently land on someone's credit card.
+ */
 function matchCard(last4: string | null, userCards: CardData[]): string | null {
-  if (!last4) return userCards[0]?.id ?? null;
-  const match = userCards.find((c) => c.pan && c.pan.endsWith(last4));
-  return match?.id ?? userCards[0]?.id ?? null;
+  if (!last4) return null;
+  const match = userCards.find((c) => c.pan && c.pan.replace(/\D/g, '').endsWith(last4));
+  return match?.id ?? null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -159,9 +187,9 @@ export function parseSmsText(raw: string, userCards: CardData[]): ParsedSms | nu
   if (!sms) return null;
 
   // Must have at least a debit/spent/used/charged signal OR a clear amount pattern
-  const hasDebitSignal = /\b(debit|spent|used|charged|debited|purchase|payment|withdrawn)\b/i.test(sms);
+  const hasSignal = DEBIT_SIGNAL.test(sms) || REFUND_SIGNAL.test(sms) || CREDIT_SIGNAL.test(sms) || /\bpayment\b/i.test(sms);
   const hasAmount = AMOUNT_PATTERNS.some((re) => re.test(sms));
-  if (!hasDebitSignal && !hasAmount) return null;
+  if (!hasSignal && !hasAmount) return null;
 
   const amount = extractAmount(sms);
   if (!amount) return null;
@@ -170,9 +198,10 @@ export function parseSmsText(raw: string, userCards: CardData[]): ParsedSms | nu
   const last4 = extractLast4(sms);
   const cardId = matchCard(last4, userCards);
   const date = extractDate(sms);
-  const category = detectCategory(merchant) as TransactionCategory;
+  const type = detectDirection(sms);
+  const category = (merchant === 'Unknown Merchant' ? 'other' : detectCategory(merchant)) as TransactionCategory;
 
-  return { merchant, amount, category, cardId, last4, date };
+  return { merchant, amount, type, category, cardId, last4, date };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

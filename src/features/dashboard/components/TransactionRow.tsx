@@ -72,7 +72,8 @@ export const TransactionRow = memo(function TransactionRow({
   isNew = false,
 }: TransactionRowProps) {
   const { merchant, amount, date, category, type, pending, rewardPoints } = transaction;
-  const style  = CATEGORY_STYLES[category];
+  // Unknown / legacy categories from the DB must not crash the feed.
+  const style  = CATEGORY_STYLES[category] ?? CATEGORY_STYLES.other;
   const Icon   = style.Icon;
 
   const isCredit  = type === 'credit' || type === 'refund';

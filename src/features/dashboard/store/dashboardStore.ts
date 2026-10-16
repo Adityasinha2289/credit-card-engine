@@ -18,14 +18,27 @@ import type {
 } from '../types/dashboard.types';
 
 import type { CardData } from '../../cards/types/card.types';
+import type { SavingsGoal } from '../../money/types';
 import { ProfileService } from '../../../services/profile/ProfileService';
 import { WalletService } from '../../../services/wallet/WalletService';
+import { CARD_PAYMENT_MERCHANT, istParts } from '../../money/lib/moneyMath';
+import {
+  mapTransactionRow,
+  mapBudgetRow,
+  mapSubscriptionRow,
+  mapCreditAccountRow,
+  mapUserCardRow,
+  mapGoalRow,
+} from './rowMappers';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { toast } from 'sonner';
+
+/** Max transactions loaded on hydration. Older history is fetched on demand. */
+export const HYDRATION_TXN_LIMIT = 200;
 
 /** Helper to execute and handle Supabase database operations */
 async function safeDbWrite<T>(
@@ -37,10 +50,10 @@ async function safeDbWrite<T>(
     if (error) {
       console.error(`[DB Error] ${contextMessage}:`, error);
       // Suppress schema cache column mismatch errors from user-facing toasts
-      if (error.code !== 'PGRST204' && !error.message?.includes('schema cache')) {
+      if (!isMissingSchemaError(error)) {
         // Suppress catalog out-of-sync errors for new dataset
         if (!error.message?.includes('user_cards_card_id_fkey')) {
-          toast.error(`Database Error: ${error.message || contextMessage}`);
+          toast.error(`Couldn't save: ${error.message || contextMessage}`);
         } else {
           console.warn(`[DB Warning] Ignored user_cards_card_id_fkey error - backend cards table out of sync with frontend catalog.`);
         }
@@ -50,9 +63,95 @@ async function safeDbWrite<T>(
     return data;
   } catch (err: any) {
     console.error(`[DB Exception] ${contextMessage}:`, err);
-    toast.error(`Network or Database Exception: ${err.message || contextMessage}`);
+    toast.error(`Network error: ${err.message || contextMessage}`);
     return null;
   }
+}
+
+/** A column / table / function the client knows about isn't deployed yet. */
+function isMissingSchemaError(error: any): boolean {
+  if (!error) return false;
+  const code = error.code;
+  const msg = String(error.message || '');
+  return (
+    code === 'PGRST204' || // column not in schema cache
+    code === 'PGRST205' || // table not in schema cache
+    code === '42P01' ||    // undefined_table
+    code === '42703' ||    // undefined_column
+    msg.includes('schema cache')
+  );
+}
+
+function isMissingFunctionError(error: any): boolean {
+  if (!error) return false;
+  return (
+    error.code === 'PGRST202' ||
+    error.code === '42883' ||
+    /could not find the function/i.test(String(error.message || ''))
+  );
+}
+
+type RpcOutcome<T = any> =
+  | { status: 'ok'; data: T }
+  | { status: 'missing' }
+  | { status: 'error'; error: any };
+
+/**
+ * Call an RPC, distinguishing "not deployed" (silently fall back) from a real
+ * failure (surface it, do NOT silently write through a fallback path).
+ */
+async function callRpc<T = any>(client: any, fn: string, args: Record<string, unknown>): Promise<RpcOutcome<T>> {
+  try {
+    const { data, error } = await client.rpc(fn, args);
+    if (!error) return { status: 'ok', data };
+    if (isMissingFunctionError(error)) return { status: 'missing' };
+    return { status: 'error', error };
+  } catch (error) {
+    return { status: 'error', error };
+  }
+}
+
+/**
+ * Insert a row, retrying without `optionalKeys` when those columns are not
+ * deployed yet. Lets the client ship ahead of a migration without breaking.
+ */
+async function insertTolerant(
+  client: any,
+  table: string,
+  payload: Record<string, unknown>,
+  optionalKeys: string[],
+): Promise<{ data: any; error: any }> {
+  const first = await client.from(table).insert(payload).select().maybeSingle();
+  if (!first.error || !isMissingSchemaError(first.error)) return first;
+  const core = { ...payload };
+  for (const k of optionalKeys) delete core[k];
+  return client.from(table).insert(core).select().maybeSingle();
+}
+
+async function updateTolerant(
+  client: any,
+  table: string,
+  patch: Record<string, unknown>,
+  optionalKeys: string[],
+  match: Record<string, string>,
+): Promise<{ data: any; error: any }> {
+  const run = (p: Record<string, unknown>) => {
+    let q = client.from(table).update(p);
+    for (const [k, v] of Object.entries(match)) q = q.eq(k, v);
+    return q;
+  };
+  const first = await run(patch);
+  if (!first.error || !isMissingSchemaError(first.error)) return first;
+  const core = { ...patch };
+  for (const k of optionalKeys) delete core[k];
+  if (Object.keys(core).length === 0) return { data: null, error: null };
+  return run(core);
+}
+
+/** Calendar date (YYYY-MM-DD) of an instant, in IST. */
+export function toIstDateString(d: Date | string = new Date()): string {
+  const { year, month, day } = istParts(d);
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 /** Robust user profile upsert with automatic fallback for unmigrated database columns */
@@ -88,7 +187,7 @@ async function upsertUserProfile(supabaseClient: any, profile: any, contextMessa
   try {
     const { error } = await supabaseClient.from('users').upsert(fullPayload);
     if (error) {
-      if (error.code === 'PGRST204' || error.message?.includes('schema cache') || error.message?.includes('column')) {
+      if (isMissingSchemaError(error) || error.message?.includes('column')) {
         console.warn(`[DB Schema Notice] Extended profile columns not yet present in Supabase table. Falling back to core columns.`);
         const { error: coreErr } = await supabaseClient.from('users').upsert(corePayload);
         if (coreErr) {
@@ -98,7 +197,7 @@ async function upsertUserProfile(supabaseClient: any, profile: any, contextMessa
         return true;
       }
       console.error(`[DB Error] ${contextMessage}:`, error);
-      toast.error(`Database Error: ${error.message || contextMessage}`);
+      toast.error(`Couldn't save your profile: ${error.message || contextMessage}`);
       return false;
     }
     return true;
@@ -109,14 +208,14 @@ async function upsertUserProfile(supabaseClient: any, profile: any, contextMessa
 }
 
 /** Generate a simple UUID-v4-like string without a dependency. */
-function generateId(): string {
-  return 'txn-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+function generateId(prefix = 'txn'): string {
+  return `${prefix}-` + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
 }
 
 /**
  * Calculate reward points for a transaction.
  * Uses the multipliers from the rewards account, defaults to 1× if missing.
- * Rule: 1 point per $1 spent (i.e. per 100 cents).
+ * Rule: 1 point per ₹100 spent (i.e. per 10,000 paise), times the category multiplier.
  */
 function calcRewardPoints(
   amount: number,
@@ -126,6 +225,40 @@ function calcRewardPoints(
   if (amount <= 0) return 0;           // no points on refunds or credits
   const multiplier = multipliers[category] ?? 1;
   return Math.floor((amount / 10000) * multiplier);
+}
+
+/** Debounce timers for budget-limit writes (slider drags fire many changes). */
+const budgetWriteTimers = new Map<string, ReturnType<typeof setTimeout>>();
+const BUDGET_WRITE_DEBOUNCE_MS = 600;
+
+// Optional columns added by 20261016* migrations. Writes retry without them.
+const SUBSCRIPTION_OPTIONAL_COLUMNS = [
+  'status', 'next_billing_on', 'is_free_trial', 'trial_ends_on', 'has_price_hike',
+  'previous_amount', 'reminder_days', 'source', 'cancel_url',
+];
+
+function subscriptionToRow(s: Subscription, userId: string, userCardRowId: string | null) {
+  const nextOn = s.nextBillingDate ? toIstDateString(s.nextBillingDate) : null;
+  return {
+    id: s.id,
+    user_id: userId,
+    card_id: userCardRowId,
+    name: s.name,
+    amount: s.amount,
+    billing_cycle: s.billingCycle,
+    next_billing_date: nextOn ?? '',
+    icon: s.icon ?? null,
+    category: s.category,
+    status: s.status,
+    next_billing_on: nextOn,
+    is_free_trial: s.isFreeTrial,
+    trial_ends_on: s.trialEndsOn ? toIstDateString(s.trialEndsOn) : null,
+    has_price_hike: s.hasPriceHike,
+    previous_amount: s.previousAmount ?? null,
+    reminder_days: s.reminderDays ?? null,
+    source: s.source ?? 'manual',
+    cancel_url: s.cancelUrl ?? null,
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -152,6 +285,8 @@ interface DashboardState {
   profile: AppProfile | null;
   /** Cards added to the user's wallet */
   userCards: CardData[];
+  /** catalog card id → user_cards row id (what FKs like subscriptions.card_id point at) */
+  userCardRowIds: Record<string, string>;
   /** Subscriptions tied to cards */
   subscriptions: Subscription[];
   /** Milestones for cards */
@@ -160,7 +295,9 @@ interface DashboardState {
   offers: MerchantOffer[];
   /** Category budgets */
   budgets: CategoryBudget[];
-  
+  /** Savings goals (amounts in paise) */
+  goals: SavingsGoal[];
+
   /** Supabase client injected from React tree */
   supabaseClient: SupabaseClient<Database> | null;
   /** Identifies the active user session to prevent async race conditions */
@@ -174,7 +311,8 @@ interface DashboardState {
 interface DashboardActions {
   /**
    * Add a new transaction and automatically update the linked credit account
-   * (balance, available credit) and rewards ledger.
+   * (balance, available credit) and rewards ledger. Refunds/credits are stored
+   * with a negative amount.
    */
   addTransaction: (input: AddTransactionInput) => Promise<void>;
 
@@ -187,6 +325,9 @@ interface DashboardActions {
 
   /** Freeze or unfreeze a card (sets CardData.status via activeCardId). */
   setActiveCard: (cardId: string) => void;
+
+  /** Set (or clear with null) the payment due date for a card. ISO date. */
+  setCardDueDate: (cardId: string, dueDate: string | null) => Promise<void>;
 
   /** Redeem reward points. */
   redeemPoints: (points: number) => Promise<void>;
@@ -206,20 +347,27 @@ interface DashboardActions {
   /** Remove a card from user's wallet */
   deleteUserCard: (cardId: string) => Promise<void>;
 
-  /** Add a new category budget */
-  addBudget: (budget: CategoryBudget) => Promise<void>;
+  /** Add a new category budget. Returns false if a budget for that category already exists. */
+  addBudget: (budget: CategoryBudget) => Promise<boolean>;
 
   /** Remove a category budget */
   deleteBudget: (budgetId: string) => Promise<void>;
 
-  /** Update a category budget limit */
+  /** Update a category budget limit (local immediately, DB write debounced) */
   updateBudgetLimit: (budgetId: string, limitAmount: number) => Promise<void>;
 
   /** Add a new subscription (renewal) */
   addSubscription: (subscription: Subscription) => Promise<void>;
 
-  /** Cancel a subscription */
+  /** Patch a subscription (amount, next date, status, reminder days…) */
+  updateSubscription: (subscriptionId: string, patch: Partial<Subscription>) => Promise<void>;
+
+  /** Cancel a subscription (kept for history with status = cancelled) */
   cancelSubscription: (subscriptionId: string) => Promise<void>;
+
+  /** Add / remove a savings goal */
+  addGoal: (goal: SavingsGoal) => Promise<void>;
+  deleteGoal: (goalId: string) => Promise<void>;
 
   /** Reset store to seed state — useful for development. */
   _reset: () => void;
@@ -252,6 +400,7 @@ const EMPTY_REWARDS: RewardsAccount = {
     entertainment: 1,
     utilities:     1,
     other:         1,
+    fuel:          1,
   },
 };
 
@@ -269,10 +418,12 @@ const INITIAL_STATE: DashboardState = {
   isHydratingFromSupabase: false,
   profile:        null,
   userCards:      [],
+  userCardRowIds: {},
   subscriptions:  [],
   milestones:     [],
   offers:         [],
   budgets:        [],
+  goals:          [],
   supabaseClient: null,
   currentSessionId: null,
 };
@@ -291,158 +442,220 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         // ── addTransaction ───────────────────────────────────────────────────
         async addTransaction(input) {
           const { rewards } = get();
-          const points = calcRewardPoints(
-            input.amount,
-            input.category,
-            rewards.categoryMultipliers,
-          );
+          const isInflow = input.type === 'refund' || input.type === 'credit';
+          const amount = isInflow ? -Math.abs(input.amount) : Math.abs(input.amount);
+          const points = isInflow ? 0 : calcRewardPoints(amount, input.category, rewards.categoryMultipliers);
           const newTx: Transaction = {
             ...input,
+            amount,
+            date: input.date || new Date().toISOString(),
             id: generateId(),
             rewardPoints: points,
           };
+          const prevBalance = get().creditAccounts.find((a) => a.cardId === input.cardId)?.currentBalance;
 
           set((state) => {
             // 1. Prepend transaction (newest first)
             state.transactions.unshift(newTx);
 
             // 2. Update the matching credit account
-            const account = state.creditAccounts.find(
-              (a) => a.cardId === input.cardId,
-            );
+            const account = state.creditAccounts.find((a) => a.cardId === input.cardId);
             if (account) {
-              account.currentBalance  = Math.max(0, account.currentBalance + input.amount);
-              // availableCredit = limit - balance, clamped to [0, limit]
+              account.currentBalance = Math.max(0, account.currentBalance + amount);
             }
 
             // 3. Update rewards ledger
             if (points > 0) {
               state.rewards.totalPoints   += points;
-              state.rewards.cycleEarnings += Math.floor(input.amount * 0.01); // 1% cash back base (accrues in paise)
+              state.rewards.cycleEarnings += Math.floor(amount * 0.01); // 1% cash back base (accrues in paise)
             }
           });
 
-          // SYNC TO SUPABASE via ATOMIC RPC
-          const { supabaseClient, profile, creditAccounts } = get();
-          if (supabaseClient && profile) {
-            const rpcResult = await safeDbWrite(
-              (supabaseClient as any).rpc('add_transaction_v1', {
-                p_id: newTx.id,
-                p_user_id: profile.id,
-                p_card_id: newTx.cardId,
-                p_merchant: newTx.merchant,
-                p_amount: newTx.amount,
-                p_category: newTx.category,
-                p_type: newTx.type,
-                p_is_pending: newTx.pending || false,
-              }),
-              'atomic add_transaction_v1 RPC'
-            );
-
-            // Fallback for dev environments if RPC is not yet deployed
-            if (rpcResult === null) {
-              await safeDbWrite(
-                (supabaseClient as any).from('transactions').insert({
-                  id: newTx.id,
-                  user_id: profile.id,
-                  card_id: newTx.cardId,
-                  merchant: newTx.merchant,
-                  amount: newTx.amount,
-                  category: newTx.category,
-                  type: newTx.type,
-                  is_pending: newTx.pending || false,
-                }),
-                'insert transaction fallback'
-              );
-
-              const updatedAccount = creditAccounts.find(a => a.cardId === input.cardId);
-              if (updatedAccount) {
-                await safeDbWrite(
-                  (supabaseClient as any).from('credit_accounts')
-                    .update({ current_balance: updatedAccount.currentBalance })
-                    .eq('user_card_id', input.cardId),
-                  'update credit account balance fallback'
-                );
-              }
+          const rollback = () => set((state) => {
+            state.transactions = state.transactions.filter((t) => t.id !== newTx.id);
+            const account = state.creditAccounts.find((a) => a.cardId === input.cardId);
+            if (account && prevBalance !== undefined) account.currentBalance = prevBalance;
+            if (points > 0) {
+              state.rewards.totalPoints   -= points;
+              state.rewards.cycleEarnings -= Math.floor(amount * 0.01);
             }
+          });
+
+          const { supabaseClient, profile } = get();
+          if (!supabaseClient || !profile) return;
+          const client = supabaseClient as any;
+          const txnDate = toIstDateString(newTx.date);
+
+          // 1) v2 RPC: supports dates and refunds, returns server-computed points.
+          const v2 = await callRpc<{ points?: number }>(client, 'add_transaction_v2', {
+            p_id: newTx.id,
+            p_card_id: newTx.cardId || null,
+            p_merchant: newTx.merchant,
+            p_amount: newTx.amount,
+            p_category: newTx.category,
+            p_type: newTx.type,
+            p_is_pending: newTx.pending || false,
+            p_date: txnDate,
+          });
+          if (v2.status === 'ok') {
+            const serverPoints = Number((v2.data as any)?.points);
+            if (Number.isFinite(serverPoints)) {
+              set((state) => {
+                const tx = state.transactions.find((t) => t.id === newTx.id);
+                if (tx) tx.rewardPoints = serverPoints;
+              });
+            }
+            return;
+          }
+          if (v2.status === 'error') {
+            console.error('[DB Error] add_transaction_v2', v2.error);
+            toast.error(`Couldn't save transaction: ${v2.error?.message || 'server error'}`);
+            rollback();
+            return;
+          }
+
+          // 2) v1 RPC (purchases only; it rejects amounts <= 0).
+          if (!isInflow) {
+            const v1 = await callRpc(client, 'add_transaction_v1', {
+              p_id: newTx.id,
+              p_user_id: profile.id,
+              p_card_id: newTx.cardId,
+              p_merchant: newTx.merchant,
+              p_amount: newTx.amount,
+              p_category: newTx.category,
+              p_type: newTx.type,
+              p_is_pending: newTx.pending || false,
+            });
+            if (v1.status === 'ok') return;
+            if (v1.status === 'error') {
+              console.error('[DB Error] add_transaction_v1', v1.error);
+              toast.error(`Couldn't save transaction: ${v1.error?.message || 'server error'}`);
+              rollback();
+              return;
+            }
+          }
+
+          // 3) No RPC deployed: direct writes (RLS still scopes them to this user).
+          const inserted = await insertTolerant(client, 'transactions', {
+            id: newTx.id,
+            user_id: profile.id,
+            card_id: newTx.cardId || null,
+            merchant: newTx.merchant,
+            amount: newTx.amount,
+            category: newTx.category,
+            type: newTx.type,
+            is_pending: newTx.pending || false,
+            txn_date: txnDate,
+          }, ['txn_date']);
+          if (inserted.error) {
+            console.error('[DB Error] insert transaction', inserted.error);
+            toast.error(`Couldn't save transaction: ${inserted.error.message || 'server error'}`);
+            rollback();
+            return;
+          }
+
+          const updatedAccount = get().creditAccounts.find((a) => a.cardId === input.cardId);
+          if (updatedAccount) {
+            await safeDbWrite(
+              client.from('credit_accounts')
+                .update({ current_balance: updatedAccount.currentBalance })
+                .eq('user_id', profile.id)
+                .eq('card_id', input.cardId),
+              'update credit account balance',
+            );
           }
         },
 
         // ── payBill ──────────────────────────────────────────────────────────
         async payBill({ cardId, amount }) {
           if (amount <= 0) return;
+          const account = get().creditAccounts.find((a) => a.cardId === cardId);
+          if (!account) return;
+          if (account.currentBalance <= 0) {
+            toast.info('Nothing to pay — this card has no outstanding balance.');
+            return;
+          }
+
+          // Clamp payment to outstanding balance — can't overpay
+          const effectivePayment = Math.min(amount, account.currentBalance);
+          const prev = { balance: account.currentBalance, lastAmt: account.lastPaymentAmount, lastDate: account.lastPaymentDate };
+          const paymentTx: Transaction = {
+            id:           generateId(),
+            merchant:     CARD_PAYMENT_MERCHANT,
+            amount:       -effectivePayment,  // negative = money coming in
+            date:         new Date().toISOString(),
+            category:     'other',
+            type:         'credit',
+            cardId,
+            pending:      false,
+            rewardPoints: 0,
+          };
 
           set((state) => {
             state.isPaymentProcessing = true;
-
-            const account = state.creditAccounts.find((a) => a.cardId === cardId);
-            if (!account) {
-              state.isPaymentProcessing = false;
-              return;
+            const acc = state.creditAccounts.find((a) => a.cardId === cardId);
+            if (acc) {
+              acc.currentBalance   -= effectivePayment;
+              acc.lastPaymentAmount = effectivePayment;
+              acc.lastPaymentDate   = paymentTx.date;
             }
-
-            // Clamp payment to outstanding balance — can't overpay
-            const effectivePayment = Math.min(amount, account.currentBalance);
-
-            // Update balance
-            account.currentBalance     -= effectivePayment;
-            account.lastPaymentAmount   = effectivePayment;
-            account.lastPaymentDate     = new Date().toISOString();
-
-            // Record a credit transaction in the ledger
-            const paymentTx: Transaction = {
-              id:           generateId(),
-              merchant:     'Bill Payment',
-              amount:       -effectivePayment,  // negative = money coming in
-              date:         new Date().toISOString(),
-              category:     'other',
-              type:         'credit',
-              cardId,
-              pending:      false,
-              rewardPoints: 0,
-            };
             state.transactions.unshift(paymentTx);
             state.isPaymentProcessing = false;
           });
 
-          const { supabaseClient, profile, creditAccounts } = get();
-          if (supabaseClient && profile) {
-            const rpcResult = await safeDbWrite(
-              (supabaseClient as any).rpc('pay_bill_v1', {
-                p_user_id: profile.id,
-                p_card_id: cardId,
-                p_amount: amount,
-              }),
-              'atomic pay_bill_v1 RPC'
-            );
-
-            if (rpcResult === null) {
-              const updatedAccount = creditAccounts.find(a => a.cardId === cardId);
-              const effectivePayment = Math.min(amount, (updatedAccount?.currentBalance ?? 0) + amount);
-              
-              await safeDbWrite(
-                (supabaseClient as any).from('transactions').insert({
-                  id: generateId(),
-                  user_id: profile.id,
-                  card_id: cardId,
-                  merchant: 'Bill Payment',
-                  amount: -effectivePayment,
-                  category: 'other',
-                  type: 'credit',
-                  is_pending: false,
-                }),
-                'insert bill payment transaction fallback'
-              );
-
-              if (updatedAccount) {
-                await safeDbWrite(
-                  (supabaseClient as any).from('credit_accounts')
-                    .update({ current_balance: updatedAccount.currentBalance })
-                    .eq('user_card_id', cardId),
-                  'update credit account balance fallback'
-                );
-              }
+          const rollback = () => set((state) => {
+            const acc = state.creditAccounts.find((a) => a.cardId === cardId);
+            if (acc) {
+              acc.currentBalance = prev.balance;
+              acc.lastPaymentAmount = prev.lastAmt;
+              acc.lastPaymentDate = prev.lastDate;
             }
+            state.transactions = state.transactions.filter((t) => t.id !== paymentTx.id);
+          });
+
+          const { supabaseClient, profile } = get();
+          if (!supabaseClient || !profile) return;
+          const client = supabaseClient as any;
+
+          const rpc = await callRpc(client, 'pay_bill_v1', {
+            p_user_id: profile.id,
+            p_card_id: cardId,
+            p_amount: effectivePayment,
+          });
+          if (rpc.status === 'ok') return;
+          if (rpc.status === 'error') {
+            console.error('[DB Error] pay_bill_v1', rpc.error);
+            toast.error(`Couldn't record payment: ${rpc.error?.message || 'server error'}`);
+            rollback();
+            return;
+          }
+
+          const inserted = await insertTolerant(client, 'transactions', {
+            id: paymentTx.id,
+            user_id: profile.id,
+            card_id: cardId,
+            merchant: CARD_PAYMENT_MERCHANT,
+            amount: -effectivePayment,
+            category: 'other',
+            type: 'credit',
+            is_pending: false,
+            txn_date: toIstDateString(paymentTx.date),
+          }, ['txn_date']);
+          if (inserted.error) {
+            console.error('[DB Error] insert bill payment', inserted.error);
+            toast.error(`Couldn't record payment: ${inserted.error.message || 'server error'}`);
+            rollback();
+            return;
+          }
+          const updated = get().creditAccounts.find((a) => a.cardId === cardId);
+          if (updated) {
+            await safeDbWrite(
+              client.from('credit_accounts')
+                .update({ current_balance: updated.currentBalance })
+                .eq('user_id', profile.id)
+                .eq('card_id', cardId),
+              'update credit account balance',
+            );
           }
         },
 
@@ -451,6 +664,25 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           set((state) => {
             state.activeCardId = cardId;
           });
+        },
+
+        // ── setCardDueDate ───────────────────────────────────────────────────
+        async setCardDueDate(cardId, dueDate) {
+          const value = dueDate ? toIstDateString(dueDate) : '';
+          set((state) => {
+            const acc = state.creditAccounts.find((a) => a.cardId === cardId);
+            if (acc) acc.paymentDueDate = value;
+          });
+          const { supabaseClient, profile } = get();
+          if (supabaseClient && profile) {
+            await safeDbWrite(
+              (supabaseClient as any).from('credit_accounts')
+                .update({ due_date: value || null })
+                .eq('user_id', profile.id)
+                .eq('card_id', cardId),
+              'set card due date',
+            );
+          }
         },
 
         // ── login ────────────────────────────────────────────────────────────
@@ -465,25 +697,18 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE
           const { supabaseClient } = get();
           if (supabaseClient && profile) {
-             const success = await upsertUserProfile(supabaseClient, profile, 'sync user profile');
-             if (success) {
-               console.log('Successfully saved to Supabase!');
-               toast.success('Profile saved to cloud!');
-             }
+             await upsertUserProfile(supabaseClient, profile, 'sync user profile');
           }
         },
 
         // ── logout ───────────────────────────────────────────────────────────
         logout() {
-          set((state) => {
-            state.profile = null;
-            state.userCards = [];
-            state.transactions = [];
-            state.creditAccounts = [];
-            state.rewards = EMPTY_REWARDS;
-            state.activeCardId = '';
-            state.currentSessionId = null;
-          });
+          // Wipe every user-scoped slice (budgets, subscriptions, goals… included);
+          // keep only the injected client, which is session-agnostic.
+          const client = get().supabaseClient;
+          budgetWriteTimers.forEach((t) => clearTimeout(t));
+          budgetWriteTimers.clear();
+          set({ ...INITIAL_STATE, supabaseClient: client });
         },
 
         // ── updateProfile ────────────────────────────────────────────────────
@@ -517,13 +742,13 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             };
             state.userCards.push(newCard);
 
-            // Add credit account
+            // Add credit account. No due date until the user tells us one.
             state.creditAccounts.push({
               cardId: newCard.id,
               totalLimit: newCard.creditLimit,
               currentBalance: 0,
               minimumPaymentDue: 0,
-              paymentDueDate: newCard.expiry || '08/30',
+              paymentDueDate: '',
               lastPaymentAmount: 0,
               lastPaymentDate: null,
               apr: 0.1999,
@@ -538,21 +763,26 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           // SYNC TO SUPABASE via ATOMIC RPC
           const { supabaseClient, profile } = get();
           if (supabaseClient && profile) {
-            const rpcResult = await safeDbWrite(
-              (supabaseClient as any).rpc('add_user_card_v1', {
-                p_user_id: profile.id,
-                p_card_id: card.id,
-                p_last_4_digits: card.pan.slice(-4),
-                p_cardholder_name: profile.name,
-                p_expiry: card.expiry,
-                p_credit_limit: card.creditLimit,
-              }),
-              'atomic add_user_card_v1 RPC'
-            );
+            const client = supabaseClient as any;
+            const rpc = await callRpc<any>(client, 'add_user_card_v1', {
+              p_user_id: profile.id,
+              p_card_id: card.id,
+              p_last_4_digits: card.pan.slice(-4),
+              p_cardholder_name: profile.name,
+              p_expiry: card.expiry,
+              p_credit_limit: card.creditLimit,
+            });
 
-            if (rpcResult === null) {
+            let rowId: string | null = null;
+            if (rpc.status === 'ok') {
+              rowId = typeof rpc.data === 'string' ? rpc.data : (rpc.data?.id ?? rpc.data?.user_card_id ?? null);
+            } else if (rpc.status === 'error' && !String(rpc.error?.message || '').includes('user_cards_card_id_fkey')) {
+              console.error('[DB Error] add_user_card_v1', rpc.error);
+            }
+
+            if (rpc.status !== 'ok') {
               const data = await safeDbWrite(
-                (supabaseClient as any).from('user_cards').insert({
+                client.from('user_cards').insert({
                   user_id: profile.id,
                   card_id: card.id,
                   last_4_digits: card.pan.slice(-4),
@@ -561,22 +791,27 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                   credit_limit: card.creditLimit,
                   status: 'active',
                 }).select('id').single(),
-                'add user card fallback'
+                'add user card'
               );
 
               if (data && (data as any).id) {
+                rowId = (data as any).id;
                 await safeDbWrite(
-                  (supabaseClient as any).from('credit_accounts').insert({
+                  client.from('credit_accounts').insert({
                     user_id: profile.id,
                     card_id: card.id,
-                    user_card_id: (data as any).id,
+                    user_card_id: rowId,
                     current_balance: 0,
                     available_credit: card.creditLimit,
-                    next_statement_date: '2023-10-01',
+                    next_statement_date: null,
                   }),
-                  'create credit account fallback'
+                  'create credit account'
                 );
               }
+            }
+
+            if (rowId) {
+              set((state) => { state.userCardRowIds[card.id] = rowId as string; });
             }
           }
         },
@@ -587,7 +822,8 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             state.userCards = state.userCards.filter((c) => c.id !== cardId);
             state.creditAccounts = state.creditAccounts.filter((a) => a.cardId !== cardId);
             state.transactions = state.transactions.filter((t) => t.cardId !== cardId);
-            
+            delete state.userCardRowIds[cardId];
+
             if (state.activeCardId === cardId) {
               state.activeCardId = state.userCards.length > 0 ? state.userCards[0].id : '';
             }
@@ -605,7 +841,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
         // ── redeemPoints ─────────────────────────────────────────────────────
         async redeemPoints(points) {
           const { supabaseClient, profile } = get();
-          
+
           if (supabaseClient && profile) {
             // Use atomic RPC for security (server-side point validation)
             const result = await safeDbWrite(
@@ -614,7 +850,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               }),
               'redeem points RPC'
             );
-            
+
             if (result !== null) {
               // Only update local state if server allowed it
               set((state) => {
@@ -626,12 +862,16 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 
         // ── addBudget ────────────────────────────────────────────────────────
         async addBudget(budget) {
+          if (get().budgets.some((b) => b.category === budget.category)) {
+            toast.info(`You already have a ${budget.category} budget — adjust its limit instead.`);
+            return false;
+          }
           set((state) => {
-            state.budgets.push(budget);
+            state.budgets.push({ ...budget, currentSpend: 0, period: budget.period ?? 'monthly' });
           });
           const { supabaseClient, profile } = get();
           if (supabaseClient && profile) {
-            await safeDbWrite(
+            const saved = await safeDbWrite(
               (supabaseClient as any).from('budgets').insert({
                 id: budget.id,
                 user_id: profile.id,
@@ -639,21 +879,28 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                 limit_amount: budget.limitAmount,
                 icon: budget.icon,
                 color: budget.color,
-              }),
+              }).select('id').maybeSingle(),
               'add budget'
             );
+            if (saved === null) {
+              set((state) => { state.budgets = state.budgets.filter((b) => b.id !== budget.id); });
+              return false;
+            }
           }
+          return true;
         },
 
         // ── deleteBudget ─────────────────────────────────────────────────────
         async deleteBudget(budgetId) {
+          const pending = budgetWriteTimers.get(budgetId);
+          if (pending) { clearTimeout(pending); budgetWriteTimers.delete(budgetId); }
           set((state) => {
             state.budgets = state.budgets.filter((b) => b.id !== budgetId);
           });
-          const { supabaseClient } = get();
-          if (supabaseClient) {
+          const { supabaseClient, profile } = get();
+          if (supabaseClient && profile) {
             await safeDbWrite(
-              (supabaseClient as any).from('budgets').delete().eq('id', budgetId),
+              (supabaseClient as any).from('budgets').delete().eq('id', budgetId).eq('user_id', profile.id),
               'delete budget'
             );
           }
@@ -667,36 +914,87 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               budget.limitAmount = limitAmount;
             }
           });
-          const { supabaseClient } = get();
-          if (supabaseClient) {
-            await safeDbWrite(
-              (supabaseClient as any).from('budgets').update({ limit_amount: limitAmount }).eq('id', budgetId),
+          const { supabaseClient, profile } = get();
+          if (!supabaseClient || !profile) return;
+          // Debounce: a slider drag fires dozens of changes; persist only the last one.
+          const existing = budgetWriteTimers.get(budgetId);
+          if (existing) clearTimeout(existing);
+          budgetWriteTimers.set(budgetId, setTimeout(() => {
+            budgetWriteTimers.delete(budgetId);
+            const latest = get().budgets.find((b) => b.id === budgetId)?.limitAmount ?? limitAmount;
+            void safeDbWrite(
+              (supabaseClient as any).from('budgets').update({ limit_amount: latest }).eq('id', budgetId).eq('user_id', profile.id),
               'update budget limit'
             );
-          }
+          }, BUDGET_WRITE_DEBOUNCE_MS));
         },
 
         // ── addSubscription ──────────────────────────────────────────────────
         async addSubscription(subscription) {
+          const sub: Subscription = {
+            ...subscription,
+            status: subscription.status ?? 'active',
+            hasPriceHike: subscription.hasPriceHike ?? false,
+            isFreeTrial: subscription.isFreeTrial ?? false,
+          };
           set((state) => {
-            state.subscriptions.push(subscription);
+            state.subscriptions.push(sub);
           });
-          const { supabaseClient, profile } = get();
-          if (supabaseClient && profile) {
-            await safeDbWrite(
-              (supabaseClient as any).from('subscriptions').insert({
-                id: subscription.id,
-                user_id: profile.id,
-                card_id: subscription.cardId,
-                name: subscription.name,
-                amount: subscription.amount,
-                billing_cycle: subscription.billingCycle,
-                next_billing_date: subscription.nextBillingDate,
-                icon: subscription.icon,
-                category: subscription.category,
-              }),
-              'add subscription'
-            );
+          const { supabaseClient, profile, userCardRowIds } = get();
+          if (!supabaseClient || !profile) return;
+          const client = supabaseClient as any;
+
+          // subscriptions.card_id references user_cards(id), NOT the catalog id.
+          let rowId: string | null = sub.cardId ? userCardRowIds[sub.cardId] ?? null : null;
+          if (!rowId && sub.cardId) {
+            const { data } = await client.from('user_cards').select('id')
+              .eq('user_id', profile.id).eq('card_id', sub.cardId).maybeSingle();
+            rowId = data?.id ?? null;
+            if (rowId) set((state) => { state.userCardRowIds[sub.cardId] = rowId as string; });
+          }
+
+          const { error } = await insertTolerant(
+            client, 'subscriptions', subscriptionToRow(sub, profile.id, rowId), SUBSCRIPTION_OPTIONAL_COLUMNS,
+          );
+          if (error) {
+            console.error('[DB Error] add subscription', error);
+            const msg = error.code === '23502'
+              ? 'Pick the card this subscription is billed to so we can save it.'
+              : `Couldn't save subscription: ${error.message || 'server error'}`;
+            toast.error(msg);
+            set((state) => { state.subscriptions = state.subscriptions.filter((s) => s.id !== sub.id); });
+            return;
+          }
+          set((state) => {
+            const s = state.subscriptions.find((x) => x.id === sub.id);
+            if (s && rowId) s.userCardRowId = rowId;
+          });
+        },
+
+        // ── updateSubscription ───────────────────────────────────────────────
+        async updateSubscription(subscriptionId, patch) {
+          const before = get().subscriptions.find((s) => s.id === subscriptionId);
+          if (!before) return;
+          set((state) => {
+            const s = state.subscriptions.find((x) => x.id === subscriptionId);
+            if (s) Object.assign(s, patch);
+          });
+          const { supabaseClient, profile, userCardRowIds } = get();
+          if (!supabaseClient || !profile) return;
+          const merged = { ...before, ...patch } as Subscription;
+          const row = subscriptionToRow(merged, profile.id, merged.cardId ? userCardRowIds[merged.cardId] ?? merged.userCardRowId ?? null : null);
+          const { id: _id, user_id: _uid, ...dbPatch } = row;
+          const { error } = await updateTolerant(
+            supabaseClient, 'subscriptions', dbPatch, SUBSCRIPTION_OPTIONAL_COLUMNS,
+            { id: subscriptionId, user_id: profile.id },
+          );
+          if (error) {
+            console.error('[DB Error] update subscription', error);
+            toast.error(`Couldn't update subscription: ${error.message || 'server error'}`);
+            set((state) => {
+              const i = state.subscriptions.findIndex((x) => x.id === subscriptionId);
+              if (i >= 0) state.subscriptions[i] = before;
+            });
           }
         },
 
@@ -708,14 +1006,51 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
               sub.status = 'cancelled';
             }
           });
-          const { supabaseClient } = get();
-          if (supabaseClient) {
-            // Alternatively, could delete it or update status, but our table doesn't have status yet, let's just delete it for now to match cancellation
+          const { supabaseClient, profile } = get();
+          if (!supabaseClient || !profile) return;
+          const client = supabaseClient as any;
+          // Keep the row for history when the status column exists; legacy schema has no status, so delete.
+          const { error } = await client.from('subscriptions').update({ status: 'cancelled' })
+            .eq('id', subscriptionId).eq('user_id', profile.id);
+          if (error && isMissingSchemaError(error)) {
             await safeDbWrite(
-              (supabaseClient as any).from('subscriptions').delete().eq('id', subscriptionId),
+              client.from('subscriptions').delete().eq('id', subscriptionId).eq('user_id', profile.id),
               'cancel subscription'
             );
+          } else if (error) {
+            console.error('[DB Error] cancel subscription', error);
+            toast.error(`Couldn't cancel subscription: ${error.message || 'server error'}`);
           }
+        },
+
+        // ── goals ────────────────────────────────────────────────────────────
+        async addGoal(goal) {
+          set((state) => { state.goals.push(goal); });
+          const { supabaseClient, profile } = get();
+          if (!supabaseClient || !profile) return;
+          const { error } = await (supabaseClient as any).from('savings_goals').insert({
+            id: goal.id,
+            user_id: profile.id,
+            name: goal.goal,
+            target_amount: goal.targetAmount,
+            current_amount: goal.currentAmount,
+            monthly_contribution: goal.monthlyContribution,
+            deadline: goal.deadline ? toIstDateString(goal.deadline) : null,
+          });
+          if (error && !isMissingSchemaError(error)) {
+            console.error('[DB Error] add goal', error);
+            toast.error(`Couldn't save goal: ${error.message || 'server error'}`);
+            set((state) => { state.goals = state.goals.filter((g) => g.id !== goal.id); });
+          }
+        },
+
+        async deleteGoal(goalId) {
+          set((state) => { state.goals = state.goals.filter((g) => g.id !== goalId); });
+          const { supabaseClient, profile } = get();
+          if (!supabaseClient || !profile) return;
+          const { error } = await (supabaseClient as any).from('savings_goals').delete()
+            .eq('id', goalId).eq('user_id', profile.id);
+          if (error && !isMissingSchemaError(error)) console.error('[DB Error] delete goal', error);
         },
 
         // ── _reset ────────────────────────────────────────────────────────────
@@ -737,158 +1072,109 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
             set({ isHydratingFromSupabase: false });
             return;
           }
+          const client = supabaseClient as any;
 
-          // Fetch Profile
-          const profileService = new ProfileService(supabaseClient as any);
-          const { data: userRow, error: fetchError } = await profileService.getProfile(clerkId);
+          try {
+            // All six reads are independent — run them in parallel instead of
+            // six sequential round trips before the dashboard can render.
+            const [profileRes, walletRes, txnRes, budgetRes, subRes, accRes, goalRes] = await Promise.all([
+              new ProfileService(client).getProfile(clerkId),
+              new WalletService(client).getWallet(clerkId),
+              client.from('transactions').select('*').eq('user_id', clerkId)
+                .order('created_at', { ascending: false }).limit(HYDRATION_TXN_LIMIT),
+              client.from('budgets').select('*').eq('user_id', clerkId),
+              client.from('subscriptions').select('*').eq('user_id', clerkId),
+              client.from('credit_accounts').select('*').eq('user_id', clerkId),
+              client.from('savings_goals').select('*').eq('user_id', clerkId),
+            ].map((p: any) => Promise.resolve(p).catch((error: any) => ({ data: null, error }))));
 
-          if (fetchError) {
-             console.error('Supabase Hydration Error:', fetchError);
-             import('sonner').then(m => m.toast.error(`Hydration Error: ${fetchError.message}`));
+            const { data: userRow, error: fetchError } = profileRes as any;
+            if (fetchError) {
+              console.error('Supabase Hydration Error:', fetchError);
+              toast.error(`Couldn't load your profile: ${fetchError.message}`);
+            }
+
+            const baseData = userRow || {};
+            const metaProfile = clerkMetadata?.profileData || {};
+            // A users row alone does NOT mean onboarding happened — the Clerk webhook
+            // creates it on sign-up. Use the explicit flag; for legacy rows without the
+            // column, a saved salary is the signal that onboarding was completed.
+            const rowSaysOnboarded = userRow
+              ? (userRow.onboarding_completed === true ||
+                 (userRow.onboarding_completed == null && Number(userRow.salary) > 0))
+              : false;
+            const hasOnboarded = rowSaysOnboarded || clerkMetadata?.onboardingCompleted === true;
+
+            const profile: AppProfile = {
+               id: baseData.id || metaProfile.id || clerkId,
+               name: baseData.name || metaProfile.name || clerkName,
+               email: baseData.email || metaProfile.email || clerkEmail,
+               phone: baseData.phone || metaProfile.phone || '',
+               avatar: baseData.avatar_url || metaProfile.avatar || clerkAvatar,
+               // 0 = unknown. Never invent an income or score for a real user.
+               salary: Number(baseData.salary) || Number(metaProfile.salary) || 0,
+               creditScore: Number(baseData.credit_score) || Number(metaProfile.creditScore) || 0,
+               onboardingCompleted: hasOnboarded,
+               userSegment: baseData.user_segment || metaProfile.userSegment || get().profile?.userSegment || 'adult',
+               primaryGoal: baseData.primary_goal || metaProfile.primaryGoal || get().profile?.primaryGoal || 'Maximise Cashback',
+               spendCategories: baseData.spend_categories || metaProfile.spendCategories || get().profile?.spendCategories || [],
+               city: baseData.city || metaProfile.city || get().profile?.city || 'Mumbai',
+               occupation: baseData.occupation || metaProfile.occupation || get().profile?.occupation || 'Salaried',
+            };
+
+            const userCardsRow: any[] | null = (walletRes as any)?.data ?? null;
+            const rowIds: Record<string, string> = {};
+            const cardIdByRowId: Record<string, string> = {};
+            (userCardsRow || []).forEach((row: any) => {
+              if (row?.id && row?.card_id) {
+                rowIds[row.card_id] = row.id;
+                cardIdByRowId[row.id] = row.card_id;
+              }
+            });
+
+            set((state) => {
+               if (state.currentSessionId !== clerkId) {
+                 console.warn(`[Hydration] Stale async request detected for user ${clerkId}. Aborting.`);
+                 return;
+               }
+
+               state.profile = profile;
+               state.rewards = {
+                 ...EMPTY_REWARDS,
+                 tier: 'gold',
+                 totalPoints: userRow?.total_reward_points || 0,
+                 redeemedPoints: userRow?.redeemed_reward_points || 0,
+               };
+               state.userCardRowIds = rowIds;
+
+               if (userCardsRow) {
+                 const dbCards = userCardsRow.map((row: any) => mapUserCardRow(row, profile.name));
+                 const localCards = state.userCards;
+                 const missingLocalCards = localCards.filter(
+                   local => !dbCards.some((db: any) => db.id === local.id)
+                 );
+                 state.userCards = [...dbCards, ...missingLocalCards] as any;
+               }
+
+               const txnRows = (txnRes as any)?.data;
+               if (Array.isArray(txnRows)) state.transactions = txnRows.map(mapTransactionRow);
+
+               const budgetRows = (budgetRes as any)?.data;
+               if (Array.isArray(budgetRows)) state.budgets = budgetRows.map(mapBudgetRow);
+
+               const subRows = (subRes as any)?.data;
+               if (Array.isArray(subRows)) state.subscriptions = subRows.map((r: any) => mapSubscriptionRow(r, cardIdByRowId));
+
+               const accRows = (accRes as any)?.data;
+               if (Array.isArray(accRows)) state.creditAccounts = accRows.map((r: any) => mapCreditAccountRow(r, state.userCards as CardData[]));
+
+               const goalRows = (goalRes as any)?.data;
+               if (Array.isArray(goalRows)) state.goals = goalRows.map(mapGoalRow);
+            });
+          } finally {
+            // Never leave the app stuck on a skeleton if any read throws.
+            if (get().currentSessionId === clerkId) set({ isHydratingFromSupabase: false });
           }
-
-          const baseData = userRow || {};
-          const metaProfile = clerkMetadata?.profileData || {};
-          const hasOnboarded = !!userRow || clerkMetadata?.onboardingCompleted === true || !!clerkMetadata?.profileData;
-          
-          const profile = {
-             id: baseData.id || metaProfile.id || clerkId,
-             name: baseData.name || metaProfile.name || clerkName,
-             email: baseData.email || metaProfile.email || clerkEmail,
-             phone: baseData.phone || metaProfile.phone || '',
-             avatar: baseData.avatar_url || metaProfile.avatar || clerkAvatar,
-             salary: baseData.salary || metaProfile.salary || 1500000,
-             creditScore: baseData.credit_score || metaProfile.creditScore || 750,
-             onboardingCompleted: hasOnboarded,
-             userSegment: baseData.user_segment || metaProfile.userSegment || get().profile?.userSegment || 'adult',
-             primaryGoal: baseData.primary_goal || metaProfile.primaryGoal || get().profile?.primaryGoal || 'Maximise Cashback',
-             spendCategories: baseData.spend_categories || metaProfile.spendCategories || get().profile?.spendCategories || [],
-             city: baseData.city || metaProfile.city || get().profile?.city || 'Mumbai',
-             occupation: baseData.occupation || metaProfile.occupation || get().profile?.occupation || 'Salaried',
-          };
-             
-          // Fetch Cards
-          const walletService = new WalletService(supabaseClient as any);
-          const { data: userCardsRow } = await walletService.getWallet(clerkId);
-
-          // Fetch Transactions
-          const { data: transactionsRow } = await (supabaseClient as any)
-            .from('transactions')
-            .select('*')
-            .eq('user_id', clerkId)
-            .order('created_at', { ascending: false });
-            
-          // Fetch Budgets
-          const { data: budgetsRow } = await (supabaseClient as any)
-            .from('budgets')
-            .select('*')
-            .eq('user_id', clerkId);
-            
-          // Fetch Subscriptions
-          const { data: subscriptionsRow } = await (supabaseClient as any)
-            .from('subscriptions')
-            .select('*')
-            .eq('user_id', clerkId);
-            
-          // Fetch Credit Accounts
-          const { data: creditAccountsRow } = await (supabaseClient as any)
-            .from('credit_accounts')
-            .select('*')
-            .eq('user_id', clerkId);
-
-          set((state) => {
-             if (state.currentSessionId !== clerkId) {
-               console.warn(`[Hydration] Stale async request detected for user ${clerkId}. Aborting.`);
-               return;
-             }
-             
-             state.profile = profile;
-                
-                state.rewards = {
-                  ...EMPTY_REWARDS,
-                  tier: 'gold',
-                  totalPoints: userRow?.total_reward_points || 0,
-                  redeemedPoints: userRow?.redeemed_reward_points || 0,
-                };
-                
-                
-                if (userCardsRow) {
-                  const dbCards = userCardsRow.map((row: any) => {
-                    const cardDef = Array.isArray(row.cards) ? row.cards[0] : row.cards;
-                    return {
-                      id: row.card_id,
-                      pan: `**** **** **** ${row.last_4_digits}`,
-                      cardholderName: row.cardholder_name || profile.name,
-                      expiry: row.expiry || '12/30',
-                      network: cardDef?.network || 'visa',
-                      bank: cardDef?.bank || 'Bank',
-                      status: row.status as any,
-                      availableCredit: row.credit_limit,
-                      creditLimit: row.credit_limit,
-                      label: cardDef?.name || 'Credit Card',
-                      gradientFrom: cardDef?.gradient_from || '#1F5247',
-                      gradientVia: '#30595c',
-                      gradientTo: cardDef?.gradient_to || '#1B3029',
-                    } as CardData;
-                  });
-                  const localCards = get().userCards;
-                  const missingLocalCards = localCards.filter(
-                    local => !dbCards.some((db: any) => db.id === local.id)
-                  );
-                  state.userCards = [...dbCards, ...missingLocalCards];
-                }
-                
-                if (transactionsRow) {
-                  state.transactions = transactionsRow.map((row: any) => ({
-                    id: row.id,
-                    merchant: row.merchant,
-                    amount: row.amount,
-                    date: row.created_at,
-                    category: row.category as any,
-                    type: row.type as any,
-                    cardId: row.card_id || '',
-                    pending: row.is_pending,
-                    rewardPoints: 0,
-                  }));
-                }
-                
-                if (budgetsRow) {
-                  state.budgets = budgetsRow.map((row: any) => ({
-                    id: row.id,
-                    category: row.category,
-                    limitAmount: row.limit_amount,
-                    icon: row.icon,
-                    color: row.color,
-                  }));
-                }
-                
-                if (subscriptionsRow) {
-                  state.subscriptions = subscriptionsRow.map((row: any) => ({
-                    id: row.id,
-                    name: row.name,
-                    amount: row.amount,
-                    billingCycle: row.billing_cycle,
-                    nextBillingDate: row.next_billing_date,
-                    icon: row.icon,
-                    category: row.category,
-                    cardId: row.card_id,
-                  }));
-                }
-                
-                if (creditAccountsRow) {
-                  state.creditAccounts = creditAccountsRow.map((row: any) => ({
-                    cardId: row.card_id,
-                    totalLimit: state.userCards.find(c => c.id === row.card_id)?.creditLimit || 100000,
-                    currentBalance: row.current_balance,
-                    minimumPaymentDue: row.min_due,
-                    paymentDueDate: row.due_date || row.next_statement_date,
-                    lastPaymentAmount: 0,
-                    lastPaymentDate: null,
-                    apr: 0.1999,
-                  }));
-                }
-             });
-          set({ isHydratingFromSupabase: false });
         },
       })),
 
@@ -901,7 +1187,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
          * Security Fix: Do not persist user-specific financial or profile data to localStorage.
          * This prevents cross-user state leakage upon hydration.
          */
-        partialize: (state) => ({}),
+        partialize: () => ({}),
 
         /**
          * Migration strategy — increment version when state shape changes
@@ -921,7 +1207,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
       enabled: (function() {
         try {
           return import.meta.env.DEV;
-        } catch (e) {
+        } catch {
           return typeof process !== 'undefined' && process.env ? process.env.NODE_ENV !== 'production' : false;
         }
       })(),
@@ -930,7 +1216,7 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
 );
 
 export const useHydration = () => {
-  const [hydrated, setHydrated] = useState(false);
+  const [hydrated, setHydrated] = useState(() => useDashboardStore.persist.hasHydrated());
   useEffect(() => {
     const unsubFinishHydration = useDashboardStore.persist.onFinishHydration(() => setHydrated(true));
     setHydrated(useDashboardStore.persist.hasHydrated());

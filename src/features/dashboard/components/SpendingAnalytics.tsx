@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { isSpend, monthKey } from '../../money/lib/moneyMath';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { useDashboardStore } from '../store/dashboardStore';
 
@@ -11,6 +12,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   entertainment: '#D4A5A5',
   utilities: '#9B59B6',
   subscriptions: '#FF9FF3',
+  health: '#2ecc71',
+  fuel: '#e67e22',
   other: '#95A5A6',
 };
 
@@ -23,28 +26,32 @@ const CATEGORY_LABELS: Record<string, string> = {
   entertainment: 'Entertainment',
   utilities: 'Utilities',
   subscriptions: 'Subscriptions',
+  health: 'Health',
+  fuel: 'Fuel',
   other: 'Other',
 };
 
 export function SpendingAnalytics() {
   const transactions = useDashboardStore((s) => s.transactions);
+  const [period, setPeriod] = useState<'month' | 'all'>('month');
 
   const data = useMemo(() => {
     const categoryTotals: Record<string, number> = {};
-    
+    const currentMonth = monthKey(new Date());
+
     transactions.forEach(t => {
-      if (t.type === 'debit') {
-        const cat = t.category || 'other';
-        categoryTotals[cat] = (categoryTotals[cat] || 0) + (t.amount / 100);
-      }
+      if (!isSpend(t)) return;
+      if (period === 'month' && monthKey(t.date) !== currentMonth) return;
+      const cat = t.category || 'other';
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + (Math.abs(t.amount) / 100);
     });
 
     return Object.entries(categoryTotals)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
-  }, [transactions]);
+  }, [transactions, period]);
 
-  if (data.length === 0) {
+  if (data.length === 0 && period === 'all') {
     return null;
   }
 
@@ -68,10 +75,28 @@ export function SpendingAnalytics() {
 
   return (
     <div className="panel-glass rounded-3xl p-5 mb-6 flex flex-col gap-4">
-      <div>
-        <h2 className="text-lg font-display font-bold text-text-primary">Spending Analytics</h2>
-        <p className="text-xs text-text-muted">Your category breakdown</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-display font-bold text-text-primary">Spending Analytics</h2>
+          <p className="text-xs text-text-muted">{period === 'month' ? 'This month by category' : 'All-time by category'}</p>
+        </div>
+        <div className="flex bg-surface-secondary p-1 rounded-lg gap-1" role="group" aria-label="Period">
+          {(['month', 'all'] as const).map((p) => (
+            <button
+              key={p}
+              type="button"
+              aria-pressed={period === p}
+              onClick={() => setPeriod(p)}
+              className={`text-[10px] font-semibold px-2 py-1 rounded-md ${period === p ? 'bg-surface text-brand-emerald shadow-sm' : 'text-text-muted'}`}
+            >
+              {p === 'month' ? 'Month' : 'All'}
+            </button>
+          ))}
+        </div>
       </div>
+      {data.length === 0 && (
+        <p className="text-sm text-text-muted py-8 text-center">No spending recorded this month yet.</p>
+      )}
       
       <div className="h-[220px] w-full relative">
         <ResponsiveContainer width="100%" height="100%">

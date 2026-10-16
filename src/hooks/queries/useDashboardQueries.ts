@@ -11,6 +11,13 @@ import type {
 import type { CardData } from '../../features/cards/types/card.types';
 import { ProfileService } from '../../services/profile/ProfileService';
 import { WalletService } from '../../services/wallet/WalletService';
+import {
+  mapTransactionRow,
+  mapBudgetRow,
+  mapSubscriptionRow,
+  mapCreditAccountRow,
+  mapUserCardRow,
+} from '../../features/dashboard/store/rowMappers';
 
 // 1. Profile Query
 export function useProfileQuery(userId?: string, initialInfo?: { email?: string; name?: string; avatar?: string }) {
@@ -50,24 +57,7 @@ export function useUserCardsQuery(userId?: string) {
       const { data: userCardsRow } = await walletService.getWallet(userId);
       if (!userCardsRow) return [];
 
-      return userCardsRow.map((row: any) => {
-        const cardDef = Array.isArray(row.cards) ? row.cards[0] : row.cards;
-        return {
-          id: row.card_id,
-          pan: `**** **** **** ${row.last_4_digits || '0000'}`,
-          cardholderName: row.cardholder_name || 'Cardholder',
-          expiry: row.expiry || '12/30',
-          network: cardDef?.network || 'visa',
-          bank: cardDef?.bank || 'Bank',
-          status: row.status || 'active',
-          availableCredit: row.credit_limit || 0,
-          creditLimit: row.credit_limit || 0,
-          label: cardDef?.name || 'Credit Card',
-          gradientFrom: cardDef?.gradient_from || '#1F5247',
-          gradientVia: '#30595c',
-          gradientTo: cardDef?.gradient_to || '#456171',
-        };
-      });
+      return userCardsRow.map((row: any) => mapUserCardRow(row, 'Cardholder'));
     },
     enabled: !!userId && !!supabase,
     staleTime: 2 * 60 * 1000,
@@ -90,17 +80,7 @@ export function useTransactionsQuery(userId?: string, limit: number = 50) {
         .limit(limit);
 
       if (!data) return [];
-      return data.map((row: any) => ({
-        id: row.id,
-        merchant: row.merchant,
-        amount: row.amount,
-        date: row.created_at,
-        category: row.category,
-        type: row.type,
-        cardId: row.card_id || '',
-        pending: row.is_pending,
-        rewardPoints: 0,
-      }));
+      return data.map(mapTransactionRow);
     },
     enabled: !!userId && !!supabase,
     staleTime: 30 * 1000,
@@ -121,13 +101,7 @@ export function useBudgetsQuery(userId?: string) {
         .eq('user_id', userId);
 
       if (!data) return [];
-      return data.map((row: any) => ({
-        id: row.id,
-        category: row.category,
-        limitAmount: row.limit_amount,
-        icon: row.icon,
-        color: row.color,
-      }));
+      return data.map(mapBudgetRow);
     },
     enabled: !!userId && !!supabase,
     staleTime: 5 * 60 * 1000,
@@ -148,16 +122,12 @@ export function useSubscriptionsQuery(userId?: string) {
         .eq('user_id', userId);
 
       if (!data) return [];
-      return data.map((row: any) => ({
-        id: row.id,
-        name: row.name,
-        amount: row.amount,
-        billingCycle: row.billing_cycle,
-        nextBillingDate: row.next_billing_date,
-        icon: row.icon,
-        category: row.category,
-        cardId: row.card_id,
-      }));
+      // Translate subscriptions.card_id (user_cards row id) back to catalog card ids.
+      const { data: walletRows } = await (supabase as any)
+        .from('user_cards').select('id, card_id').eq('user_id', userId);
+      const byRowId: Record<string, string> = {};
+      (walletRows || []).forEach((r: any) => { byRowId[r.id] = r.card_id; });
+      return data.map((row: any) => mapSubscriptionRow(row, byRowId));
     },
     enabled: !!userId && !!supabase,
     staleTime: 5 * 60 * 1000,
@@ -178,16 +148,7 @@ export function useCreditAccountsQuery(userId?: string, userCards?: CardData[]) 
         .eq('user_id', userId);
 
       if (!data) return [];
-      return data.map((row: any) => ({
-        cardId: row.card_id,
-        totalLimit: userCards?.find((c) => c.id === row.card_id)?.creditLimit || 100000,
-        currentBalance: row.current_balance,
-        minimumPaymentDue: row.min_due || 0,
-        paymentDueDate: row.due_date || row.next_statement_date || '2025-01-01',
-        lastPaymentAmount: 0,
-        lastPaymentDate: null,
-        apr: 0.1999,
-      }));
+      return data.map((row: any) => mapCreditAccountRow(row, userCards || []));
     },
     enabled: !!userId && !!supabase,
     staleTime: 1 * 60 * 1000,

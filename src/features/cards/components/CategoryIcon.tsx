@@ -18,6 +18,7 @@ import {
   Car,
   RefreshCcw,
   MoreHorizontal,
+  Fuel,
   type LucideIcon,
 } from 'lucide-react';
 import type { TransactionCategory } from '../../dashboard/types/dashboard.types';
@@ -97,6 +98,13 @@ export const CATEGORY_STYLES: Record<TransactionCategory, CategoryStyle> = {
     iconClass: 'text-violet-500',
     glowColor: 'rgba(139, 92, 246, 0.18)',
     label:     'Subscriptions',
+  },
+  fuel: {
+    Icon:      Fuel,
+    bgClass:   'bg-amber-50',
+    iconClass: 'text-amber-600',
+    glowColor: 'rgba(217, 119, 6, 0.18)',
+    label:     'Fuel',
   },
   other: {
     Icon:      MoreHorizontal,

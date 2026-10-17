@@ -19,7 +19,14 @@ export default {
         'fade-in-up': {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
-        }
+        },
+        'rc-marquee': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        'rc-marquee': 'rc-marquee 40s linear infinite',
       },
       colors: {
         // V2 SEMANTIC SYSTEM
@@ -44,6 +51,22 @@ export default {
           intelligence: 'var(--color-border-intelligence)',
         },
         
+        // RENOCRED SITE SYSTEM (public website). Same brand palette as `editorial`,
+        // plus the text/line tones needed to keep body copy at AA contrast on cream.
+        rc: {
+          night: '#0A1F15',     // deepest surface (cinematic sections)
+          ink: '#0F2A1D',       // primary text on light, primary dark surface
+          moss: '#16382A',      // raised surface on dark
+          forest: '#375534',
+          sage: '#6B9071',      // decorative / large text only (3.3:1 on cream)
+          mist: '#AEC3B0',      // secondary text on dark, hairlines
+          pistachio: '#E3EED4',
+          cream: '#F6F4EC',     // page background
+          paper: '#FBFAF6',     // raised surface on cream
+          muted: '#4D6354',     // secondary text on light (6:1 on cream)
+          emerald: '#2A9D5C',   // money / positive value only
+        },
+
         // EDITORIAL THEME
         editorial: {
           'deep-forest': '#0F2A1D',

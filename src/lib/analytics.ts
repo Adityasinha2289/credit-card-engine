@@ -35,7 +35,7 @@ type EventMap = {
 
   // Partners
   'Partner Section Viewed': { partner: string };
-  'Partner Offer Clicked': { partner: string };
+  'Partner Offer Clicked': { partner: string; placement?: string };
   'Partner Offer Revealed': { partner: string };
   'Partner Coupon Copied': { partner: string };
   'Partner Order Clicked': { partner: string; url: string };

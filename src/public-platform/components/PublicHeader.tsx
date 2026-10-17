@@ -1,241 +1,269 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { interactivePrimary, interactiveSecondary } from '../../motion';
-import { CardsMegaMenu } from './header/CardsMegaMenu';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
+import { cn } from '../../lib/utils';
+import { Container, EASE_OUT } from '../site/primitives';
+import { CardFace } from '../site/CardFace';
+import { CARD_NEEDS, COMPANY, SIGN_IN, SIGN_UP, TOOLS } from '../site/nav';
+import { CATALOG_STATS } from '../site/swipeMath';
+import { getPopularComparisons } from '../lib/cardKnowledgeGraph';
+import { analytics } from '../../lib/analytics';
 
-// Wrap Link to allow Framer Motion props
-const MotionLink = motion.create ? motion.create(Link as any) : motion(Link as any);
-const MotionAnchor = motion.a;
+type Panel = 'cards' | 'tools' | null;
+
+const BAR_KEY = 'rc.announcement.greenox.dismissed';
+
+function readDismissed(): boolean {
+  try { return localStorage.getItem(BAR_KEY) === '1'; } catch { return false; }
+}
+
+function AnnouncementBar() {
+  const [hidden, setHidden] = useState(readDismissed);
+  if (hidden) return null;
+  return (
+    <div className="relative bg-rc-ink text-rc-cream">
+      <Container className="flex h-10 items-center justify-center gap-3 text-[13px]">
+        <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-mist sm:inline">Member perk</span>
+        <span aria-hidden className="hidden h-3 w-px bg-rc-cream/25 sm:inline" />
+        <a
+          href="/#perks"
+          onClick={() => analytics.track('Partner Offer Clicked', { partner: 'greenox', placement: 'announcement' })}
+          className="group inline-flex items-center gap-1.5 truncate"
+        >
+          <span>20% off at GreeNox for RenoCred members</span>
+          <ArrowRight aria-hidden className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+        </a>
+      </Container>
+      <button
+        type="button"
+        aria-label="Dismiss announcement"
+        onClick={() => { try { localStorage.setItem(BAR_KEY, '1'); } catch { /* storage blocked */ } setHidden(true); }}
+        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-rc-mist transition-colors hover:text-rc-cream"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
+function Logo() {
+  return (
+    <Link to="/" className="flex shrink-0 items-center gap-2.5 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rc-forest">
+      <img src="/logo.jpg" alt="" width={32} height={32} className="h-8 w-8 rounded-[9px] object-cover" />
+      <span className="text-[17px] font-semibold tracking-[-0.01em] text-rc-ink">RenoCred</span>
+    </Link>
+  );
+}
+
+function CardsPanel() {
+  const comparisons = getPopularComparisons().slice(0, 5);
+  return (
+    <Container className="grid gap-10 py-10 lg:grid-cols-12">
+      <div className="lg:col-span-4">
+        <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Best cards for</p>
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-3">
+          {CARD_NEEDS.map((n) => (
+            <li key={n.to}>
+              <Link to={n.to} className="text-[15px] text-rc-ink transition-colors hover:text-rc-forest">{n.label}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="lg:col-span-4">
+        <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Popular comparisons</p>
+        <ul className="space-y-3">
+          {comparisons.map((c) => (
+            <li key={c.slug}>
+              <Link to={`/compare/${c.slug}`} className="text-[15px] text-rc-ink transition-colors hover:text-rc-forest">{c.label}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <Link
+        to="/cards"
+        className="group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-2xl bg-rc-ink p-6 text-rc-cream lg:col-span-4"
+      >
+        <div>
+          <p className="font-serif text-[28px] leading-tight">All {CATALOG_STATS.cards} cards</p>
+          <p className="mt-2 max-w-[22ch] text-[14px] leading-relaxed text-rc-mist">Every fee and reward rule from {CATALOG_STATS.banks} issuers, in one place.</p>
+        </div>
+        <span className="inline-flex items-center gap-2 text-[14px] font-medium">
+          Browse the directory <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </span>
+        <div className="pointer-events-none absolute -bottom-6 -right-10 rotate-[-8deg] transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-5deg]">
+          <CardFace name="Axis Bank ATLAS Credit Card" bank="AXIS" width={210} />
+        </div>
+      </Link>
+    </Container>
+  );
+}
+
+function ToolsPanel() {
+  return (
+    <Container className="grid gap-6 py-10 md:grid-cols-3">
+      {TOOLS.map((t) => (
+        <Link key={t.to} to={t.to} className="group rounded-2xl border border-rc-ink/10 bg-rc-paper p-6 transition-colors hover:border-rc-ink/30">
+          <p className="font-serif text-[24px] leading-tight text-rc-ink">{t.label}</p>
+          <p className="mt-2 text-[14px] leading-relaxed text-rc-muted">{t.description}</p>
+          <span className="mt-6 inline-flex items-center gap-2 text-[13px] font-medium text-rc-ink">
+            Open <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </Link>
+      ))}
+    </Container>
+  );
+}
+
+function MobileMenu({ onClose }: { onClose: () => void }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      id="mobile-menu"
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-40 overflow-y-auto bg-rc-cream lg:hidden"
+    >
+      {/* clears the sticky header (and the announcement bar when it is still on screen) */}
+      <Container className="flex min-h-full flex-col pb-10 pt-28">
+        <nav aria-label="Mobile" className="flex flex-col">
+          {[{ label: 'All cards', to: '/cards' }, ...TOOLS.slice(0, 1).map((t) => ({ label: 'Reward calculator', to: t.to })), ...COMPANY].map((item, i) => (
+            <motion.div
+              key={item.to}
+              initial={reduce ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.04 * i }}
+            >
+              <Link to={item.to} onClick={onClose} className="block border-b border-rc-ink/10 py-4 font-serif text-[32px] leading-tight text-rc-ink">
+                {item.label}
+              </Link>
+            </motion.div>
+          ))}
+        </nav>
+        <p className="mb-3 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Best cards for</p>
+        <div className="flex flex-wrap gap-2">
+          {CARD_NEEDS.map((n) => (
+            <Link key={n.to} to={n.to} onClick={onClose} className="rounded-full border border-rc-ink/15 px-4 py-2 text-[14px] text-rc-ink">
+              {n.label}
+            </Link>
+          ))}
+        </div>
+        <div className="mt-auto grid grid-cols-2 gap-3 pt-10">
+          <Link to={SIGN_IN} onClick={onClose} className="flex h-12 items-center justify-center rounded-full border border-rc-ink/20 text-[15px] font-medium text-rc-ink">Log in</Link>
+          <Link to={SIGN_UP} onClick={onClose} className="flex h-12 items-center justify-center rounded-full bg-rc-ink text-[15px] font-medium text-rc-cream">Get started</Link>
+        </div>
+      </Container>
+    </motion.div>
+  );
+}
 
 export function PublicHeader() {
-  const { scrollY } = useScroll();
-  const shouldReduceMotion = useReducedMotion();
-  const [isCardsMenuOpen, setIsCardsMenuOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [panel, setPanel] = useState<Panel>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const location = useLocation();
+  const reduce = useReducedMotion();
 
   useEffect(() => {
-    return scrollY.on("change", (latest) => {
-      setIsScrolled(latest > 50);
-    });
-  }, [scrollY]);
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setIsCardsMenuOpen(true);
-  };
+  useEffect(() => { setPanel(null); setMobileOpen(false); }, [location.pathname, location.search]);
 
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsCardsMenuOpen(false);
-    }, 150); // slight delay to prevent flickering when moving to dropdown
-  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { setPanel(null); setMobileOpen(false); } };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
-  // Continuous GPU-accelerated interpolation (0px to 50px of scroll)
-  const backgroundColor = useTransform(
-    scrollY,
-    [0, 50],
-    ['rgba(246, 244, 236, 0)', 'rgba(246, 244, 236, 0.85)']
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
+  const openPanel = (p: Panel) => { if (closeTimer.current) clearTimeout(closeTimer.current); setPanel(p); };
+  const scheduleClose = () => { closeTimer.current = setTimeout(() => setPanel(null), 160); };
+
+  const trigger = (p: Exclude<Panel, null>, label: string) => (
+    <button
+      type="button"
+      aria-expanded={panel === p}
+      aria-controls={`panel-${p}`}
+      onClick={() => setPanel(panel === p ? null : p)}
+      onMouseEnter={() => openPanel(p)}
+      onMouseLeave={scheduleClose}
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full px-3 py-2 text-[14px] font-medium transition-colors',
+        panel === p ? 'text-rc-ink' : 'text-rc-ink/75 hover:text-rc-ink',
+      )}
+    >
+      {label}
+      <ChevronDown aria-hidden className={cn('h-3.5 w-3.5 transition-transform duration-300', panel === p && 'rotate-180')} />
+    </button>
   );
-  
-  const borderBottomColor = useTransform(
-    scrollY,
-    [0, 50],
-    ['rgba(15, 42, 29, 0)', 'rgba(15, 42, 29, 0.1)']
-  );
 
-  const paddingY = useTransform(
-    scrollY,
-    [0, 50],
-    ['1.5rem', '1rem'] // py-6 to py-4 equivalent
-  );
-
-  const backdropBlur = useTransform(
-    scrollY,
-    [0, 50],
-    ['blur(0px)', 'blur(12px)']
-  );
-
-  // Fallback physics if reduced motion is enabled
-  const hoverPhysicsSecondary = shouldReduceMotion ? undefined : interactiveSecondary.hover;
-  const tapPhysicsSecondary = shouldReduceMotion ? undefined : interactiveSecondary.tap;
-  
-  const hoverPhysicsPrimary = shouldReduceMotion ? undefined : interactivePrimary.hover;
-  const tapPhysicsPrimary = shouldReduceMotion ? undefined : interactivePrimary.tap;
+  const solid = scrolled || panel !== null || mobileOpen;
 
   return (
     <>
-    <motion.header
-      className="fixed top-0 left-0 right-0 z-50 w-full"
-      style={{
-        backgroundColor,
-        borderBottomColor,
-        borderBottomWidth: '1px',
-        borderBottomStyle: 'solid',
-        paddingTop: paddingY,
-        paddingBottom: paddingY,
-        backdropFilter: backdropBlur,
-        WebkitBackdropFilter: backdropBlur,
-      }}
-    >
-      <div className="mx-auto max-w-7xl px-6 flex items-center justify-between relative">
-        
-        {/* Logo */}
-        <MotionLink 
-          to="/" 
-          whileHover={hoverPhysicsSecondary}
-          whileTap={tapPhysicsSecondary}
-          className="font-display font-bold text-xl tracking-tight flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md shrink-0"
-        >
-          <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover shrink-0" />
-          <span className={`transition-colors duration-200 whitespace-nowrap hidden sm:block text-editorial-deep-forest`}>RenoCred</span>
-        </MotionLink>
-        
-        {/* Links */}
-        <nav className="hidden md:flex items-center gap-8">
-          <MotionAnchor 
-            href="/#how-it-works" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Product
-          </MotionAnchor>
-          
-          <div 
-            className="relative h-full flex items-center"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <MotionLink 
-              to="/cards"
-              whileHover={hoverPhysicsSecondary}
-              whileTap={tapPhysicsSecondary}
-              className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 flex items-center gap-1 ${isCardsMenuOpen ? 'text-editorial-forest' : 'text-editorial-deep-forest hover:text-editorial-forest'}`}
-            >
-              Cards <ChevronDown size={14} className={`transition-transform duration-200 ${isCardsMenuOpen ? 'rotate-180 text-semantic-brand-strong' : ''}`} />
-            </MotionLink>
-            <AnimatePresence>
-              {isCardsMenuOpen && (
-                <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                  <CardsMegaMenu onClose={() => setIsCardsMenuOpen(false)} />
-                </div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <MotionLink 
-            to="/calculators/credit-card-reward-calculator" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Rewards
-          </MotionLink>
-          <MotionLink 
-            to="/cards" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Offers
-          </MotionLink>
-          <MotionLink 
-            to="/calculators/credit-utilization" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Credit Health
-          </MotionLink>
-        </nav>
-        
-        {/* CTAs */}
-        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
-          <MotionLink 
-            to="/cards"
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`hidden sm:block md:hidden text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-1 sm:px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Explore Cards
-          </MotionLink>
-          <MotionLink 
-            to="/app/sign-in" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`hidden md:block text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Log In
-          </MotionLink>
-          <MotionLink 
-            to="/app/sign-up" 
-            whileHover={hoverPhysicsPrimary}
-            whileTap={tapPhysicsPrimary}
-            className="bg-editorial-deep-forest text-white text-xs sm:text-sm font-semibold whitespace-nowrap py-1.5 px-3 sm:py-2 sm:px-4 md:py-2.5 md:px-6 rounded-full transition-all hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2A9D5C]/50 shrink-0"
-          >
-            Get Started
-          </MotionLink>
-          
-          <button 
-            className={`md:hidden p-2 -mr-2 transition-colors duration-200 text-editorial-deep-forest`}
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-      </div>
-    </motion.header>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-editorial-light-cream flex flex-col p-6"
-          >
-            <div className="flex items-center justify-between mb-12">
-              <div className="font-display font-bold text-xl tracking-tight flex items-center gap-2">
-                <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover" />
-                <span className="text-editorial-deep-forest">RenoCred</span>
-              </div>
-              <button 
-                className="p-2 -mr-2 text-editorial-deep-forest hover:text-editorial-forest bg-black/5 rounded-full"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            
-            <nav className="flex flex-col gap-6 text-xl font-medium">
-              <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Product</a>
-              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10 flex justify-between items-center">
-                Cards <ChevronDown size={20} className="-rotate-90" />
-              </Link>
-              <Link to="/calculators/credit-card-reward-calculator" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Rewards</Link>
-              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Offers</Link>
-              <Link to="/calculators/credit-utilization" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Credit Health</Link>
-              <Link to="/app/sign-in" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Log In</Link>
-            </nav>
-            
-            <div className="mt-auto mb-8">
-              <Link 
-                to="/app/sign-up"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full bg-editorial-deep-forest text-white text-lg font-semibold py-4 rounded-full flex items-center justify-center transition-all hover:bg-editorial-forest"
-              >
-                Get Started
-              </Link>
-            </div>
-          </motion.div>
+      <AnnouncementBar />
+      <header
+        className={cn(
+          'sticky top-0 z-50 w-full transition-[background-color,border-color,backdrop-filter] duration-300',
+          solid ? 'border-b border-rc-ink/10 bg-rc-cream/90 backdrop-blur-xl' : 'border-b border-transparent bg-rc-cream',
         )}
-      </AnimatePresence>
+      >
+        <Container className="flex h-16 items-center justify-between gap-6 lg:h-[72px]">
+          <Logo />
+
+          <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
+            {trigger('cards', 'Cards')}
+            {trigger('tools', 'Tools')}
+            <Link to="/methodology" className="rounded-full px-3 py-2 text-[14px] font-medium text-rc-ink/75 transition-colors hover:text-rc-ink">How we rank</Link>
+            <Link to="/business" className="rounded-full px-3 py-2 text-[14px] font-medium text-rc-ink/75 transition-colors hover:text-rc-ink">For business</Link>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <Link to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] font-medium text-rc-ink/80 transition-colors hover:text-rc-ink sm:inline-flex">Log in</Link>
+            <Link to={SIGN_UP} className="hidden h-10 items-center rounded-full bg-rc-ink px-5 text-[14px] font-medium text-rc-cream transition-colors hover:bg-rc-moss sm:inline-flex">Get started</Link>
+            <button
+              type="button"
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
+              onClick={() => setMobileOpen((v) => !v)}
+              className="-mr-2 rounded-full p-2 text-rc-ink lg:hidden"
+            >
+              {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </Container>
+
+        <AnimatePresence>
+          {panel && (
+            <motion.div
+              id={`panel-${panel}`}
+              key={panel}
+              onMouseEnter={() => openPanel(panel)}
+              onMouseLeave={scheduleClose}
+              initial={reduce ? false : { opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: EASE_OUT }}
+              className="absolute inset-x-0 top-full hidden border-b border-rc-ink/10 bg-rc-cream shadow-[0_24px_48px_-24px_rgba(10,31,21,0.25)] lg:block"
+            >
+              {panel === 'cards' ? <CardsPanel /> : <ToolsPanel />}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+      <AnimatePresence>{mobileOpen && <MobileMenu onClose={() => setMobileOpen(false)} />}</AnimatePresence>
     </>
   );
 }

@@ -1,340 +1,228 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowRight, Search, X } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import { getAllPublicCards } from '../lib/cardKnowledgeGraph';
+import { getDirectoryCards, type PublicCardEntity } from '../lib/cardKnowledgeGraph';
 import { getBreadcrumbSchema, getOrganizationSchema, getWebSiteSchema } from '../lib/schemaBuilders';
-import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
-import { Shield, Sparkles, Filter, ChevronRight, Search, CreditCard as CreditCardIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '../../lib/utils';
+import { Container, Eyebrow } from '../site/primitives';
+import { CardFace, displayCardName } from '../site/CardFace';
+import { bankLabel } from '../site/banks';
 
-const CATEGORIES = ['all', 'travel', 'shopping', 'dining', 'fuel', 'utilities'];
+const NEEDS: { id: string; label: string; match: (c: PublicCardEntity) => boolean }[] = [
+  { id: 'all', label: 'All cards', match: () => true },
+  { id: 'travel', label: 'Travel', match: (c) => c.categories.includes('travel') },
+  { id: 'shopping', label: 'Shopping', match: (c) => c.categories.includes('shopping') },
+  { id: 'dining', label: 'Dining', match: (c) => c.categories.includes('dining') },
+  { id: 'fuel', label: 'Fuel', match: (c) => c.categories.includes('fuel') },
+  { id: 'utilities', label: 'Bills', match: (c) => c.categories.includes('utilities') },
+  { id: 'lifetime-free', label: 'Lifetime free', match: (c) => c.annualFee === 0 },
+  { id: 'premium', label: 'Premium', match: (c) => c.premiumTier === 'premium' || c.premiumTier === 'super_premium' },
+];
+
+const SORTS = {
+  featured: { label: 'Featured', fn: (a: PublicCardEntity, b: PublicCardEntity) => Number(b.id.startsWith('card-')) - Number(a.id.startsWith('card-')) },
+  'fee-asc': { label: 'Annual fee, low to high', fn: (a: PublicCardEntity, b: PublicCardEntity) => (a.annualFee ?? Infinity) - (b.annualFee ?? Infinity) },
+  'fee-desc': { label: 'Annual fee, high to low', fn: (a: PublicCardEntity, b: PublicCardEntity) => (b.annualFee ?? -1) - (a.annualFee ?? -1) },
+  name: { label: 'Name, A to Z', fn: (a: PublicCardEntity, b: PublicCardEntity) => a.cardName.localeCompare(b.cardName) },
+};
+type SortKey = keyof typeof SORTS;
+
+const PAGE = 24;
+
+function feeLabel(c: PublicCardEntity): string {
+  if (c.annualFee === null) return 'Not disclosed';
+  return c.annualFee === 0 ? 'Lifetime free' : `₹${c.annualFee.toLocaleString('en-IN')}`;
+}
+
+function DirectoryCard({ card }: { card: PublicCardEntity }) {
+  return (
+    <Link to={`/cards/${card.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-rc-ink/10 bg-rc-paper transition-colors hover:border-rc-ink/30">
+      <div className="flex items-center justify-center bg-rc-cream/60 px-6 py-9">
+        <div className="transition-transform duration-500 group-hover:-translate-y-1.5 group-hover:rotate-[-1.5deg]">
+          <CardFace name={card.cardName} bank={card.issuer} network={card.network} width={236} />
+        </div>
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-muted">{bankLabel(card.issuer)}</p>
+        <h2 className="mt-2 font-serif text-[22px] leading-snug text-rc-ink">{displayCardName(card.cardName)}</h2>
+        <p className="mb-6 mt-2 line-clamp-2 text-[14px] leading-relaxed text-rc-muted">{card.topBenefit}</p>
+        <div className="mt-auto flex items-end justify-between gap-4 border-t border-rc-ink/10 pt-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-rc-muted">Annual fee</p>
+            <p className="mt-1 text-[15px] font-medium text-rc-ink">{feeLabel(card)}</p>
+          </div>
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-rc-ink/15 text-rc-ink transition-colors group-hover:border-rc-ink group-hover:bg-rc-ink group-hover:text-rc-cream">
+            <ArrowRight className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export function CardsDirectoryPage() {
-  const allCards = getAllPublicCards();
-  
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const initialCategory = queryParams.get('category') || 'all';
-  
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    CATEGORIES.includes(initialCategory) ? initialCategory : 'all'
-  );
-  
-  // Update if URL changes externally
+  const all = useMemo(() => getDirectoryCards(), []);
+  const [params, setParams] = useSearchParams();
+  const need = NEEDS.some((n) => n.id === params.get('category')) ? params.get('category')! : 'all';
+  const issuer = params.get('issuer') ?? 'all';
+  const sort: SortKey = (params.get('sort') as SortKey) in SORTS ? (params.get('sort') as SortKey) : 'featured';
+  const [query, setQuery] = useState(params.get('q') ?? '');
+  const [shown, setShown] = useState(PAGE);
+
+  const issuers = useMemo(() => [...new Set(all.map((c) => bankLabel(c.issuer)))].sort(), [all]);
+
+  const update = (key: string, value: string, fallback: string) => {
+    const next = new URLSearchParams(params);
+    if (value === fallback || !value) next.delete(key); else next.set(key, value);
+    setParams(next, { replace: true });
+  };
+
+  // keep ?q= in the URL (the site search schema points here) without a history entry per keystroke
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const cat = params.get('category');
-    if (cat && CATEGORIES.includes(cat)) {
-      setSelectedCategory(cat);
-    }
-  }, [location.search]);
+    const t = setTimeout(() => update('q', query.trim(), ''), 250);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
-  const [selectedIssuer, setSelectedIssuer] = useState<string>('all');
-  const issuers = Array.from(new Set(allCards.map((c) => c.issuer)));
+  useEffect(() => { setShown(PAGE); }, [need, issuer, sort, query]);
 
-  const filteredCards = allCards.filter((c) => {
-    const matchesCategory = selectedCategory === 'all' || c.categories.includes(selectedCategory);
-    const matchesIssuer = selectedIssuer === 'all' || c.issuer === selectedIssuer;
-    return matchesCategory && matchesIssuer;
-  });
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const match = NEEDS.find((n) => n.id === need)!.match;
+    return all
+      .filter((c) => match(c)
+        && (issuer === 'all' || bankLabel(c.issuer) === issuer)
+        && (!q || `${c.cardName} ${bankLabel(c.issuer)} ${c.topBenefit}`.toLowerCase().includes(q)))
+      .sort(SORTS[sort].fn);
+  }, [all, need, issuer, sort, query]);
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', item: '/' },
     { name: 'Credit Cards Directory', item: '/cards' },
   ]);
 
-  // Framer Motion variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.05 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 16 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
-  };
+  const reset = () => { setQuery(''); setParams(new URLSearchParams(), { replace: true }); };
+  const filtersActive = need !== 'all' || issuer !== 'all' || !!query.trim();
 
   return (
-    <div className="w-full relative min-h-[100dvh] bg-editorial-light-cream text-editorial-deep-forest selection:bg-[#008933]/20 font-sans">
+    <div className="w-full">
       <SEO
-        title="Indian Credit Cards Directory (2026) | Compare 130+ Cards | RenoCred"
-        description="Explore verified Indian credit cards from HDFC, SBI, Axis, and ICICI Bank. Compare reward rates, lounge access, annual fees, and forex markups."
+        title={`Indian Credit Cards Directory | Compare ${all.length} Cards | RenoCred`}
+        description="Every Indian credit card from HDFC, SBI, Axis, ICICI and more. Compare reward rates, lounge access, annual fees and eligibility side by side."
         canonicalUrl="https://renocred.com/cards"
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
 
-      {/* Hero Header */}
-      <section className="relative w-full max-w-7xl mx-auto px-6 pt-28 sm:pt-32 pb-12 lg:pb-16 text-center sm:text-left flex flex-col items-center sm:items-start">
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest border border-editorial-soft-sage/30 px-3 py-1.5 rounded-full flex items-center gap-1.5 bg-white/50 mb-6"
-        >
-          THE RENO CRED CARD DIRECTORY
-        </motion.div>
-        
-        <motion.h1 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-4xl sm:text-5xl md:text-6xl font-serif font-medium tracking-tight text-editorial-deep-forest mb-6 leading-[1.05]"
-        >
-          Indian Credit Cards<br className="hidden sm:block" /> Directory.
-        </motion.h1>
-        
-        <motion.p 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-base sm:text-lg text-editorial-muted-sage max-w-2xl font-light leading-relaxed"
-        >
-          Compare reward structures, lounge privileges, milestone bonuses, annual fees and more.
-        </motion.p>
-      </section>
-
-      {/* Filters & Grid */}
-      <main className="relative w-full max-w-7xl mx-auto px-6 pb-24 flex flex-col md:flex-row gap-8 lg:gap-12 xl:gap-16 items-start">
-        
-        {/* Mobile Filters (Dropdowns) */}
-        <div className="w-full flex flex-col gap-4 md:hidden">
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest flex items-center gap-2">
-              <span className="w-3 h-[1px] bg-editorial-muted-sage/30"></span>
-              Filter by Bank
-            </label>
-            <div className="relative">
-              <select
-                value={selectedIssuer}
-                onChange={(e) => setSelectedIssuer(e.target.value)}
-                className="w-full appearance-none bg-white border border-editorial-soft-sage/30 text-editorial-deep-forest font-medium rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#008933]/20"
-              >
-                <option value="all">All Banks</option>
-                {issuers.sort().map(iss => <option key={iss} value={iss}>{iss}</option>)}
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-editorial-muted-sage">
-                <ChevronRight size={16} className="rotate-90" />
+      <header className="border-b border-rc-ink/10">
+        <Container className="grid gap-10 pb-14 pt-16 lg:grid-cols-12 lg:items-end lg:pb-16 lg:pt-24">
+          <div className="lg:col-span-8">
+            <Eyebrow>Card directory</Eyebrow>
+            <h1 className="mt-6 font-serif text-[clamp(2.75rem,6vw,5.25rem)] font-medium leading-[0.98] tracking-[-0.025em] text-rc-ink">
+              Every Indian credit card, <span className="italic text-rc-forest">side by side.</span>
+            </h1>
+          </div>
+          <dl className="grid grid-cols-3 gap-6 lg:col-span-4">
+            {[
+              [all.length, 'cards'],
+              [issuers.length, 'issuers'],
+              [all.filter((c) => c.annualFee === 0).length, 'lifetime free'],
+            ].map(([n, label]) => (
+              <div key={label as string}>
+                <dt className="sr-only">{label}</dt>
+                <dd className="font-serif text-[40px] leading-none text-rc-ink tabular-nums">{n}</dd>
+                <p className="mt-2 text-[13px] text-rc-muted">{label}</p>
               </div>
-            </div>
-          </div>
-          
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest flex items-center gap-2">
-              <span className="w-3 h-[1px] bg-editorial-muted-sage/30"></span>
-              Category
-            </label>
-            <div className="flex overflow-x-auto pb-2 -mx-6 px-6 gap-2 no-scrollbar scroll-smooth">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all whitespace-nowrap shrink-0 border ${
-                    selectedCategory === cat
-                      ? 'bg-editorial-forest text-editorial-light-cream border-editorial-forest shadow-sm'
-                      : 'bg-white text-editorial-deep-forest border-editorial-soft-sage/30 hover:bg-editorial-soft-sage/10'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+            ))}
+          </dl>
+        </Container>
+      </header>
 
-        {/* Desktop Left Sidebar: Banks */}
-        <aside className="hidden md:block w-48 lg:w-56 shrink-0">
-          <div className="sticky top-28 flex flex-col gap-6">
-            <h3 className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest flex items-center gap-2">
-              <span className="w-4 h-[1px] bg-editorial-muted-sage/30"></span>
-              BANKS
-            </h3>
-            
-            <div className="flex flex-col gap-1 max-h-[calc(100dvh-12rem)] overflow-y-auto pr-2 custom-scrollbar">
+      {/* toolbar */}
+      <div className="z-30 border-b border-rc-ink/10 bg-rc-cream/90 backdrop-blur-xl sm:sticky sm:top-16 lg:top-[72px]">
+        <Container className="flex flex-col gap-3 py-4">
+          <div role="tablist" aria-label="Filter by need" className="-mx-5 flex gap-1 overflow-x-auto px-5 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {NEEDS.map((n) => (
               <button
-                onClick={() => setSelectedIssuer('all')}
-                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all ${
-                  selectedIssuer === 'all'
-                    ? 'bg-editorial-forest text-editorial-light-cream font-medium shadow-sm'
-                    : 'text-editorial-muted-sage hover:bg-editorial-soft-sage/10 hover:text-editorial-deep-forest font-light'
-                }`}
+                key={n.id}
+                type="button"
+                role="tab"
+                aria-selected={need === n.id}
+                onClick={() => update('category', n.id, 'all')}
+                className={cn('shrink-0 rounded-full px-4 py-2 text-[14px] transition-colors', need === n.id ? 'bg-rc-ink text-rc-cream' : 'text-rc-ink/75 hover:bg-rc-ink/[0.05] hover:text-rc-ink')}
               >
-                All Banks
-              </button>
-              
-              <div className="w-full h-px bg-editorial-soft-sage/20 my-2" />
-              
-              {issuers.sort().map((iss) => (
-                <button
-                  key={iss}
-                  onClick={() => setSelectedIssuer(iss)}
-                  className={`w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all ${
-                    selectedIssuer === iss
-                      ? 'bg-editorial-forest text-editorial-light-cream font-medium shadow-sm'
-                      : 'text-editorial-muted-sage hover:bg-editorial-soft-sage/10 hover:text-editorial-deep-forest font-light'
-                  }`}
-                >
-                  {iss}
-                </button>
-              ))}
-            </div>
-          </div>
-        </aside>
-
-        {/* Right Content: Categories & Grid */}
-        <div className="flex-1 min-w-0">
-          
-          {/* Desktop Category Filters */}
-          <div className="hidden md:flex flex-wrap items-center gap-2 pb-8 mb-8 border-b border-editorial-soft-sage/20">
-            <span className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest mr-4">
-              Categories
-            </span>
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all border ${
-                  selectedCategory === cat
-                    ? 'bg-editorial-forest text-editorial-light-cream border-editorial-forest shadow-sm'
-                    : 'bg-transparent text-editorial-deep-forest border-editorial-soft-sage/30 hover:bg-white hover:shadow-sm'
-                }`}
-              >
-                {cat}
+                {n.label}
               </button>
             ))}
           </div>
-
-          {/* Empty State */}
-          {filteredCards.length === 0 && (
-            <div className="w-full py-20 flex flex-col items-center justify-center text-center bg-white border border-editorial-soft-sage/20 rounded-3xl">
-              <Search className="w-8 h-8 text-editorial-muted-sage mb-4" />
-              <h3 className="text-xl font-serif text-editorial-deep-forest font-medium mb-2">No matches found</h3>
-              <p className="text-editorial-muted-sage font-light max-w-sm">Try adjusting your filters or selecting a different bank to explore more cards.</p>
-              <button 
-                onClick={() => { setSelectedCategory('all'); setSelectedIssuer('all'); }}
-                className="mt-6 px-6 py-2 bg-editorial-forest text-white rounded-full text-sm font-medium hover:bg-editorial-deep-forest transition-colors"
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <label className="relative block sm:w-80">
+              <span className="sr-only">Search cards</span>
+              <Search aria-hidden className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-rc-muted" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search by card or bank"
+                className="h-11 w-full rounded-full border border-rc-ink/15 bg-white pl-11 pr-4 text-[14px] text-rc-ink outline-none placeholder:text-rc-muted/80 focus:border-rc-ink/50"
+              />
+            </label>
+            <div className="flex gap-2 sm:ml-auto">
+              <select
+                aria-label="Issuer"
+                value={issuer}
+                onChange={(e) => update('issuer', e.target.value, 'all')}
+                className="h-11 w-full min-w-0 flex-1 rounded-full border border-rc-ink/15 bg-white px-4 text-[14px] text-rc-ink outline-none focus:border-rc-ink/50 sm:w-auto sm:flex-none"
               >
-                Reset Filters
-              </button>
+                <option value="all">All issuers</option>
+                {issuers.map((i) => <option key={i} value={i}>{i}</option>)}
+              </select>
+              <select
+                aria-label="Sort"
+                value={sort}
+                onChange={(e) => update('sort', e.target.value, 'featured')}
+                className="h-11 w-full min-w-0 flex-1 rounded-full border border-rc-ink/15 bg-white px-4 text-[14px] text-rc-ink outline-none focus:border-rc-ink/50 sm:w-auto sm:flex-none"
+              >
+                {Object.entries(SORTS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+              </select>
             </div>
+          </div>
+        </Container>
+      </div>
+
+      <Container className="pb-28 pt-10 lg:pb-36">
+        <div className="mb-8 flex items-center justify-between gap-4 text-[14px] text-rc-muted">
+          <p aria-live="polite">{filtered.length} {filtered.length === 1 ? 'card' : 'cards'}</p>
+          {filtersActive && (
+            <button type="button" onClick={reset} className="inline-flex items-center gap-1.5 text-rc-ink underline decoration-rc-ink/25 underline-offset-4 hover:decoration-rc-ink">
+              <X className="h-3.5 w-3.5" /> Clear filters
+            </button>
           )}
-
-          {/* Card Grid */}
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={`${selectedCategory}-${selectedIssuer}`}
-              variants={containerVariants}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8"
-            >
-              {filteredCards.map((card) => {
-                // Generate a deterministic fake PAN based on the card ID string length & characters
-                const fakeLast4 = ((card.id.length * 13) % 9000 + 1000).toString();
-                
-                return (
-                  <motion.div variants={itemVariants} key={card.id}>
-                    <Link
-                      to={`/cards/${card.slug}`}
-                      className="group relative rounded-3xl bg-white border border-editorial-soft-sage/30 hover:border-editorial-soft-sage/50 shadow-sm hover:shadow-md transition-all duration-500 flex flex-col overflow-hidden h-full"
-                    >
-                      {/* Physical Card Showcase Area */}
-                      <div className="p-8 pb-6 flex items-center justify-center relative bg-editorial-soft-sage/5">
-                        
-                        {/* Subtle interactive glow */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-editorial-soft-sage/20 blur-[50px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-                        {/* The actual card */}
-                        <motion.div 
-                          className="relative z-10 w-[240px] origin-center transition-all duration-500"
-                          whileHover={{ scale: 1.02, y: -4 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        >
-                          <PhysicalCard 
-                            card={{
-                              id: card.id,
-                              pan: `•••• •••• •••• ${fakeLast4}`,
-                              cardholderName: 'RENOCRED MEMBER',
-                              expiry: '12/28',
-                              network: card.network.toLowerCase() as any,
-                              bank: card.issuer,
-                              status: 'active',
-                              availableCredit: 0,
-                              creditLimit: 0,
-                              label: card.cardName,
-                            }}
-                            variant="compact"
-                          />
-                        </motion.div>
-                        
-                        {/* Contextual Badge (Top Right) */}
-                        {card.categories[0] && (
-                          <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-md border border-editorial-soft-sage/30 px-2 py-1 rounded-md text-[9px] uppercase tracking-wider font-bold text-editorial-deep-forest shadow-sm z-20">
-                            {card.categories[0]}
-                          </div>
-                        )}
-                        
-                        {/* Bank Indicator (Top Left) */}
-                        <div className="absolute top-4 left-4 text-[10px] uppercase tracking-wider font-bold text-editorial-muted-sage z-20">
-                          {card.issuer}
-                        </div>
-                      </div>
-
-                      {/* Details Section */}
-                      <div className="px-6 pb-6 pt-4 flex-1 flex flex-col bg-white">
-                        <div className="mb-6">
-                          <h2 className="text-xl font-serif font-medium text-editorial-deep-forest group-hover:text-[#008933] transition-colors line-clamp-1 mb-1.5">
-                            {card.cardName}
-                          </h2>
-                          <p className="text-sm text-editorial-muted-sage line-clamp-2 leading-relaxed font-light">
-                            {card.topBenefit}
-                          </p>
-                        </div>
-
-                        <div className="mt-auto pt-4 border-t border-editorial-soft-sage/20 flex items-center justify-between">
-                          <div className="flex flex-col gap-1">
-                            <span className="text-[9px] text-editorial-muted-sage font-bold uppercase tracking-widest">Annual Fee</span>
-                            <span className="text-sm font-medium text-editorial-deep-forest">{card.formattedAnnualFee}</span>
-                          </div>
-                          
-                          <div className="w-px h-8 bg-editorial-soft-sage/30" />
-                          
-                          <div className="flex flex-col gap-1 items-end">
-                            <span className="text-[9px] text-editorial-muted-sage font-bold uppercase tracking-widest">Rewards</span>
-                            <span className="text-sm font-medium text-editorial-deep-forest capitalize">{card.rewardType}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </AnimatePresence>
         </div>
-      </main>
 
-      {/* Adding custom scrollbar style to support the sidebar list */}
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(174, 195, 176, 0.3);
-          border-radius: 10px;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+        {filtered.length === 0 ? (
+          <div className="rounded-[28px] border border-dashed border-rc-ink/20 px-6 py-24 text-center">
+            <p className="font-serif text-[30px] text-rc-ink">No cards match that.</p>
+            <p className="mx-auto mt-3 max-w-[40ch] text-[15px] text-rc-muted">Try a different need or issuer, or clear the search.</p>
+            <button type="button" onClick={reset} className="mt-8 h-11 rounded-full bg-rc-ink px-6 text-[14px] font-medium text-rc-cream">Clear filters</button>
+          </div>
+        ) : (
+          <>
+            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.slice(0, shown).map((c) => (
+                <li key={c.id}><DirectoryCard card={c} /></li>
+              ))}
+            </ul>
+            {shown < filtered.length && (
+              <div className="mt-14 flex justify-center">
+                <button type="button" onClick={() => setShown((n) => n + PAGE)} className="h-12 rounded-full border border-rc-ink/20 px-7 text-[14px] font-medium text-rc-ink transition-colors hover:border-rc-ink/60">
+                  Show more ({filtered.length - shown} left)
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </Container>
     </div>
   );
 }

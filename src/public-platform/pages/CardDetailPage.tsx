@@ -1,58 +1,87 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
+import { ArrowRight, Plus } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import { 
-  getCardBySlug, 
-  getAllPublicCards, 
-  getCardsByIssuer 
-} from '../lib/cardKnowledgeGraph';
-import { 
-  getCreditCardProductSchema, 
-  getBreadcrumbSchema, 
-  getFAQPageSchema 
-} from '../lib/schemaBuilders';
-import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
-import { 
-  Shield, Sparkles, Award, Plane, Zap, CheckCircle2, 
-  Building2, CreditCard, ChevronRight, HelpCircle, ArrowRight 
-} from 'lucide-react';
-import { useState } from 'react';
+import { getCardBySlug, getDirectoryCards, getRatesFor, monthlyIncome, type PublicCardEntity } from '../lib/cardKnowledgeGraph';
+import { getCreditCardProductSchema, getBreadcrumbSchema, getFAQPageSchema } from '../lib/schemaBuilders';
+import { ButtonLink, Container, Eyebrow, Reveal, formatINR } from '../site/primitives';
+import { CardFace, displayCardName } from '../site/CardFace';
+import { bankLabel } from '../site/banks';
+import { SPEND_CATEGORIES } from '../site/swipeMath';
+import { SIGN_UP } from '../site/nav';
+
+const NOT_DISCLOSED = 'Not disclosed';
+
+const categoryLabel = (id: string) =>
+  SPEND_CATEGORIES.find((c) => c.id === id)?.label ?? id.charAt(0).toUpperCase() + id.slice(1);
+
+function hasLounge(text: string) {
+  return !!text && !/^(none|no complimentary)/i.test(text.trim());
+}
+
+function buildFaqs(card: PublicCardEntity) {
+  const name = displayCardName(card.cardName);
+  const income = monthlyIncome(card.eligibility?.minSalary);
+  return [
+    {
+      question: `What is the annual fee for ${name}?`,
+      answer: card.annualFee === null
+        ? `${bankLabel(card.issuer)} has not published an annual fee for ${name}. Check the issuer's site before applying.`
+        : card.annualFee === 0
+          ? `${name} is lifetime free: there is no annual fee.`
+          : `The annual fee for ${name} is ${formatINR(card.annualFee)}.${card.joiningFee != null ? ` The joining fee is ${card.joiningFee === 0 ? 'nil' : formatINR(card.joiningFee)}.` : ''}`,
+    },
+    {
+      question: `What is the reward rate on ${name}?`,
+      answer: `The reward structure for ${name} is: ${card.rewardRate}.`,
+    },
+    {
+      question: `Does ${name} offer lounge access?`,
+      answer: hasLounge(card.loungeAccess) ? `Yes: ${card.loungeAccess}.` : `${name} does not include complimentary lounge access.`,
+    },
+    {
+      question: `What income do I need for ${name}?`,
+      answer: income
+        ? `${bankLabel(card.issuer)} typically looks for an income of about ${formatINR(income)} a month (around ${formatINR(income * 12)} a year). The issuer makes the final decision.`
+        : `${bankLabel(card.issuer)} has not published a minimum income for ${name}; its standard eligibility criteria apply.`,
+    },
+  ];
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  const muted = value === NOT_DISCLOSED || value === 'Not Disclosed';
+  return (
+    <div className="border-t border-rc-ink/10 pt-4">
+      <dt className="text-[11px] uppercase tracking-[0.16em] text-rc-muted">{label}</dt>
+      <dd className={muted ? 'mt-1.5 text-[15px] text-rc-muted' : 'mt-1.5 font-serif text-[24px] leading-tight text-rc-ink'}>{muted ? NOT_DISCLOSED : value}</dd>
+    </div>
+  );
+}
 
 export function CardDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const card = slug ? getCardBySlug(slug) : undefined;
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
-  if (!card) {
-    return <Navigate to="/cards" replace />;
-  }
+  if (!card) return <Navigate to="/cards" replace />;
 
-  const relatedCards = getCardsByIssuer(card.issuer).filter((c) => c.id !== card.id).slice(0, 3);
-  const allCards = getAllPublicCards();
-  const sameCategoryCards = allCards.filter((c) => c.id !== card.id && c.categories.some((cat) => card.categories.includes(cat))).slice(0, 3);
-
-  // Generate FAQs for FAQPage Schema & Accordion
-  const faqs = [
-    {
-      question: `What is the annual fee for ${card.cardName}?`,
-      answer: `The annual fee for ${card.cardName} is ${card.formattedAnnualFee}. The joining fee is ${card.formattedJoiningFee}.`,
-    },
-    {
-      question: `What is the reward rate on ${card.cardName}?`,
-      answer: `The reward structure for ${card.cardName} is: ${card.rewardRate}.`,
-    },
-    {
-      question: `Does ${card.cardName} offer lounge access?`,
-      answer: `Yes, ${card.cardName} offers: ${card.loungeAccess}.`,
-    },
-    {
-      question: `What is the minimum income requirement for ${card.cardName}?`,
-      answer: card.eligibility?.minSalary
-        ? `The minimum recommended monthly income for ${card.cardName} is ₹${card.eligibility.minSalary.toLocaleString('en-IN')}/month.`
-        : `Applicants must meet ${card.issuer}'s standard credit card eligibility criteria.`,
-    },
+  const name = displayCardName(card.cardName);
+  const issuer = bankLabel(card.issuer);
+  const faqs = buildFaqs(card);
+  const income = monthlyIncome(card.eligibility?.minSalary);
+  const similar = getDirectoryCards()
+    .filter((c) => c.id !== card.id && c.categories.some((cat) => card.categories.includes(cat)))
+    .sort((a, b) => Math.abs((a.annualFee ?? 0) - (card.annualFee ?? 0)) - Math.abs((b.annualFee ?? 0) - (card.annualFee ?? 0)))
+    .slice(0, 3);
+  const rateData = getRatesFor(card);
+  const baseRate = rateData?.baseRate ?? null;
+  const rates = (rateData?.rates ?? []).filter((r) => r.rate > 0).sort((a, b) => b.rate - a.rate);
+  const topRate = Math.max(...rates.map((r) => r.rate), baseRate ?? 0, 1);
+  const perks = [
+    { label: 'Lounge access', value: hasLounge(card.loungeAccess) ? card.loungeAccess : 'None' },
+    { label: 'Fuel', value: card.fuelBenefits },
+    ...card.welcomeBenefits.map((w) => ({ label: 'Welcome benefit', value: w })),
+    ...card.milestoneBenefits.map((m) => ({ label: 'Milestone', value: m })),
   ];
 
-  // FinancialProduct Schema
   const productSchema = getCreditCardProductSchema({
     name: card.cardName,
     issuer: card.issuer,
@@ -62,268 +91,176 @@ export function CardDetailPage() {
     network: card.network,
     perksSummary: card.topBenefit,
   });
-
-  // Breadcrumb Schema
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', item: '/' },
     { name: 'Credit Cards Directory', item: '/cards' },
     { name: card.cardName, item: `/cards/${card.slug}` },
   ]);
 
-  // FAQ Schema
-  const faqSchema = getFAQPageSchema(faqs);
-
   return (
-    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
+    <div className="w-full">
       <SEO
-        title={`${card.cardName} Rewards, Fees & Benefits (2026) | RenoCred`}
-        description={`Detailed breakdown of ${card.cardName} by ${card.issuer}. Reward rate: ${card.rewardRate}. Annual fee: ${card.formattedAnnualFee}. Lounge access: ${card.loungeAccess}.`}
+        title={`${name} Rewards, Fees & Benefits | RenoCred`}
+        description={`${name} by ${issuer}: ${card.rewardRate}. Annual fee: ${card.formattedAnnualFee}. Lounge access: ${card.loungeAccess}.`}
         canonicalUrl={`https://renocred.com/cards/${card.slug}`}
-        schemaData={[productSchema, breadcrumbSchema, faqSchema]}
+        schemaData={[productSchema, breadcrumbSchema, getFAQPageSchema(faqs)]}
       />
 
-      {/* Hero Header */}
-      <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-8">
-        {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-gray-400 mb-8 overflow-x-auto whitespace-nowrap hide-scrollbar">
-          <Link to="/" className="hover:text-emerald-400 transition-colors shrink-0">Home</Link>
-          <span className="shrink-0">/</span>
-          <Link to="/cards" className="hover:text-emerald-400 transition-colors shrink-0">Credit Cards</Link>
-          <span className="shrink-0">/</span>
-          <span className="text-white font-medium truncate">{card.cardName}</span>
-        </nav>
-
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Visual Card Render */}
-          <div className="md:col-span-5 flex justify-center">
-            <PhysicalCard
-              card={{
-                id: card.id,
-                pan: '•••• •••• •••• 8888',
-                cardholderName: 'VERIFIED ENTITY',
-                expiry: '12/29',
-                network: card.network.toLowerCase() as any,
-                bank: card.issuer,
-                status: 'active',
-                availableCredit: card.annualFee * 10,
-                creditLimit: card.annualFee * 10,
-                label: card.cardName,
-                gradientFrom: '#0D2B1D',
-                gradientTo: '#1A4D36',
-              }}
-              variant="wallet"
-            />
-          </div>
-
-          {/* Right Column: Title & Key Badges */}
-          <div className="md:col-span-7 flex flex-col gap-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-                {card.issuer}
-              </span>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/5 text-gray-300 border border-white/10 uppercase tracking-wider">
-                {card.network}
-              </span>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/5 text-gray-300 border border-white/10 uppercase tracking-wider">
-                {card.rewardType}
-              </span>
+      {/* hero */}
+      <section className="border-b border-rc-ink/10">
+        <Container className="pb-16 pt-10 lg:pb-24 lg:pt-14">
+          <nav aria-label="Breadcrumb" className="mb-12 flex items-center gap-2 overflow-x-auto whitespace-nowrap text-[13px] text-rc-muted">
+            <Link to="/" className="hover:text-rc-ink">Home</Link>
+            <span aria-hidden>/</span>
+            <Link to="/cards" className="hover:text-rc-ink">Cards</Link>
+            <span aria-hidden>/</span>
+            <span className="truncate text-rc-ink">{name}</span>
+          </nav>
+          <div className="grid items-center gap-14 lg:grid-cols-12">
+            <div className="lg:col-span-7">
+              <Eyebrow>{issuer} · {card.network}</Eyebrow>
+              <h1 className="mt-6 font-serif text-[clamp(2.6rem,5.4vw,4.75rem)] font-medium leading-[1] tracking-[-0.025em] text-rc-ink">{name}</h1>
+              <p className="mt-6 max-w-[48ch] text-[18px] leading-relaxed text-rc-muted">{card.topBenefit}</p>
+              <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
+                <Fact label="Annual fee" value={card.formattedAnnualFee === 'Free Lifetime' ? 'Free' : card.formattedAnnualFee} />
+                <Fact label="Joining fee" value={card.formattedJoiningFee} />
+                <Fact label="Forex markup" value={card.forexMarkup !== null ? `${card.forexMarkup}%` : NOT_DISCLOSED} />
+                <Fact label="Rewards" value={card.rewardType.charAt(0).toUpperCase() + card.rewardType.slice(1)} />
+              </dl>
+              <div className="mt-10 flex flex-wrap gap-3">
+                <ButtonLink to={SIGN_UP} size="lg">See how it fits your wallet</ButtonLink>
+                <ButtonLink to="/calculators/credit-card-reward-calculator" variant="outline" size="lg" arrow={false}>Estimate rewards</ButtonLink>
+              </div>
             </div>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white tracking-tight leading-tight">
-              {card.cardName}
-            </h1>
-
-            <p className="text-lg text-emerald-400 font-medium leading-relaxed">
-              {card.topBenefit}
-            </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-white/10">
-              <div>
-                <span className="text-xs text-gray-400 block uppercase tracking-wider">Annual Fee</span>
-                <span className="text-xl font-bold text-white font-mono">{card.formattedAnnualFee}</span>
-              </div>
-              <div>
-                <span className="text-xs text-gray-400 block uppercase tracking-wider">Joining Fee</span>
-                <span className="text-xl font-bold text-white font-mono">{card.formattedJoiningFee}</span>
-              </div>
-              <div>
-                <span className="text-xs text-gray-400 block uppercase tracking-wider">Forex Markup</span>
-                <span className="text-xl font-bold text-white font-mono">{card.forexMarkup !== null ? `${card.forexMarkup}%` : 'Not Disclosed'}</span>
+            <div className="lg:col-span-5">
+              <div className="flex aspect-[5/4] items-center justify-center rounded-[32px] bg-rc-pistachio">
+                <div className="rotate-[-6deg] transition-transform duration-700 hover:rotate-0">
+                  <CardFace name={card.cardName} bank={card.issuer} network={card.network} width={340} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
-      {/* Main Content Sections */}
-      <main className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-        {/* Section 1: Rewards & Benefits */}
-        <section className="bg-[#0D120F] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
-          <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-            <Sparkles className="text-emerald-400" size={24} />
-            Reward Rates & Performance
-          </h2>
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
-            <h3 className="text-sm font-semibold text-emerald-400 uppercase tracking-wider">Base & Accelerated Structure</h3>
-            <p className="text-base text-gray-200 leading-relaxed">{card.rewardRate}</p>
-          </div>
-        </section>
+      {/* how it earns */}
+      <section className="py-20 lg:py-28">
+        <Container className="grid gap-12 lg:grid-cols-12">
+          <Reveal className="lg:col-span-4">
+            <Eyebrow index="01">How it earns</Eyebrow>
+            <h2 className="mt-5 font-serif text-[clamp(2rem,3.4vw,3rem)] font-medium leading-[1.04] tracking-[-0.02em] text-rc-ink">Where this card <span className="italic text-rc-forest">pays most.</span></h2>
+          </Reveal>
+          <Reveal delay={0.08} className="lg:col-span-7 lg:col-start-6">
+            <p className="text-[17px] leading-relaxed text-rc-ink">{card.rewardRate}</p>
+            {rates.length > 0 && (
+              <ul className="mt-10 divide-y divide-rc-ink/10 border-y border-rc-ink/10">
+                {rates.map((r) => (
+                  <li key={r.category} className="grid grid-cols-[8rem_1fr_auto] items-center gap-5 py-4 sm:grid-cols-[10rem_1fr_auto]">
+                    <span className="text-[15px] text-rc-ink">{categoryLabel(r.category)}</span>
+                    <span className="h-1.5 overflow-hidden rounded-full bg-rc-ink/10">
+                      <span className="block h-full rounded-full bg-rc-forest" style={{ width: `${(r.rate / topRate) * 100}%` }} />
+                    </span>
+                    <span className="text-right text-[15px] font-medium tabular-nums text-rc-ink">
+                      {r.rate}%{r.cap ? <span className="ml-1 text-[12px] font-normal text-rc-muted">cap {formatINR(r.cap)}</span> : null}
+                    </span>
+                  </li>
+                ))}
+                {baseRate != null && (
+                  <li className="grid grid-cols-[8rem_1fr_auto] items-center gap-5 py-4 sm:grid-cols-[10rem_1fr_auto]">
+                    <span className="text-[15px] text-rc-muted">Everything else</span>
+                    <span className="h-1.5 overflow-hidden rounded-full bg-rc-ink/10">
+                      <span className="block h-full rounded-full bg-rc-sage" style={{ width: `${(baseRate / topRate) * 100}%` }} />
+                    </span>
+                    <span className="text-right text-[15px] tabular-nums text-rc-muted">{baseRate}%</span>
+                  </li>
+                )}
+              </ul>
+            )}
+            <p className="mt-6 text-[13px] leading-relaxed text-rc-muted">Rates are value back as a share of spend, from the issuer's published terms. Exclusions and redemption values vary.</p>
+          </Reveal>
+        </Container>
+      </section>
 
-        {/* Section 2: Lounge & Travel Benefits */}
-        <section className="bg-[#0D120F] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
-          <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-            <Plane className="text-emerald-400" size={24} />
-            Lounge & Travel Perks
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Lounge Access</h3>
-              <p className="text-sm font-medium text-white">{card.loungeAccess}</p>
-            </div>
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Fuel Benefits</h3>
-              <p className="text-sm font-medium text-white">{card.fuelBenefits}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 3: Milestone & Welcome Benefits */}
-        <section className="bg-[#0D120F] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
-          <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-            <Award className="text-emerald-400" size={24} />
-            Welcome & Milestone Rewards
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Welcome Privileges</h3>
-              {card.welcomeBenefits.map((b, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                  <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                  <span>{b}</span>
+      {/* perks + eligibility */}
+      <section className="bg-rc-paper py-20 lg:py-28">
+        <Container className="grid gap-16 lg:grid-cols-12">
+          <Reveal className="lg:col-span-7">
+            <Eyebrow index="02">Perks</Eyebrow>
+            <dl className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+              {perks.map((p, i) => (
+                <div key={`${p.label}-${i}`} className="border-t border-rc-ink/10 pt-4">
+                  <dt className="text-[11px] uppercase tracking-[0.16em] text-rc-muted">{p.label}</dt>
+                  <dd className="mt-2 text-[16px] leading-relaxed text-rc-ink">{p.value}</dd>
                 </div>
               ))}
+            </dl>
+          </Reveal>
+          <Reveal delay={0.08} className="lg:col-span-4 lg:col-start-9">
+            <Eyebrow index="03">Eligibility</Eyebrow>
+            <div className="mt-8 rounded-[24px] bg-rc-ink p-7 text-rc-cream">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-rc-mist">Typical minimum income</p>
+              <p className="mt-2 font-serif text-[34px] leading-none">{income ? `${formatINR(income)}` : NOT_DISCLOSED}</p>
+              {income && <p className="mt-1 text-[13px] text-rc-mist">a month, about {formatINR(income * 12)} a year</p>}
+              {card.eligibility?.minCreditScore && (
+                <>
+                  <p className="mt-7 text-[11px] uppercase tracking-[0.16em] text-rc-mist">Credit score</p>
+                  <p className="mt-2 font-serif text-[34px] leading-none">{card.eligibility.minCreditScore}+</p>
+                </>
+              )}
+              <p className="mt-7 border-t border-white/10 pt-5 text-[13px] leading-relaxed text-rc-mist">The issuer makes the final decision. Checking here never touches your credit score.</p>
             </div>
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Milestone Bonuses</h3>
-              {card.milestoneBenefits.map((b, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                  <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                  <span>{b}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          </Reveal>
+        </Container>
+      </section>
 
-        {/* Section 4: Frequently Asked Questions (FAQ) */}
-        <section className="bg-[#0D120F] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6">
-          <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-            <HelpCircle className="text-emerald-400" size={24} />
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-4">
-            {faqs.map((faq, index) => {
-              const isOpen = openFaqIndex === index;
-              return (
-                <div 
-                  key={index}
-                  className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]"
-                >
-                  <button
-                    onClick={() => setOpenFaqIndex(isOpen ? null : index)}
-                    className="w-full p-4 flex items-center justify-between text-left font-medium text-white hover:text-emerald-400 transition-colors"
-                  >
-                    <span>{faq.question}</span>
-                    <ChevronRight size={18} className={`transform transition-transform ${isOpen ? 'rotate-90 text-emerald-400' : ''}`} />
-                  </button>
-                  {isOpen && (
-                    <div className="p-4 pt-0 text-sm text-gray-300 border-t border-white/5 leading-relaxed">
-                      {faq.answer}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+      {/* faq */}
+      <section className="py-20 lg:py-28">
+        <Container className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Eyebrow index="04">Questions</Eyebrow>
+            <h2 className="mt-5 font-serif text-[clamp(2rem,3.4vw,3rem)] font-medium leading-[1.04] tracking-[-0.02em] text-rc-ink">About the {name}</h2>
           </div>
-        </section>
+          <div className="lg:col-span-7 lg:col-start-6">
+            {faqs.map((f, i) => (
+              <details key={f.question} open={i === 0} className="group border-b border-rc-ink/10 first:border-t">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
+                  <span className="text-[17px] font-medium text-rc-ink">{f.question}</span>
+                  <Plus className="h-4 w-4 shrink-0 text-rc-ink transition-transform duration-300 group-open:rotate-45" />
+                </summary>
+                <p className="pb-6 pr-10 text-[16px] leading-relaxed text-rc-muted">{f.answer}</p>
+              </details>
+            ))}
+          </div>
+        </Container>
+      </section>
 
-        {/* Section 5: Related Cards Internal Linking */}
-        {sameCategoryCards.length > 0 && (
-          <section className="space-y-6 pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-display font-bold text-white tracking-tight">Similar Credit Cards to Compare</h2>
-                <p className="text-sm text-gray-400 mt-1">Explore comparable credit cards in the {card.categories[0] || 'rewards'} category</p>
-              </div>
-              <Link 
-                to="/cards" 
-                className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
-              >
-                Browse directory <ArrowRight size={14} />
+      {/* similar */}
+      {similar.length > 0 && (
+        <section className="border-t border-rc-ink/10 py-20 lg:py-28">
+          <Container>
+            <div className="flex items-end justify-between gap-6">
+              <h2 className="font-serif text-[clamp(2rem,3.4vw,3rem)] font-medium leading-[1.04] tracking-[-0.02em] text-rc-ink">Cards like this</h2>
+              <Link to="/cards" className="hidden items-center gap-2 text-[14px] font-medium text-rc-ink underline decoration-rc-ink/25 underline-offset-[6px] hover:decoration-rc-ink sm:inline-flex">
+                All cards <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {sameCategoryCards.map((c) => {
-                const fakeLast4 = ((c.id.length * 13) % 9000 + 1000).toString();
-                return (
-                  <Link
-                    key={c.id}
-                    to={`/cards/${c.slug}`}
-                    className="group relative rounded-2xl bg-[#0D120F] border border-white/10 hover:border-emerald-500/40 transition-all duration-300 flex flex-col overflow-hidden hover:bg-white/[0.02]"
-                  >
-                    {/* 2D Card Graphic Container */}
-                    <div className="p-6 pb-4 flex items-center justify-center relative bg-gradient-to-b from-white/[0.02] to-transparent">
-                      {/* Subtle hover glow behind card */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 bg-emerald-500/10 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-                      <div className="scale-90 group-hover:scale-95 group-hover:-translate-y-1 transition-transform duration-300 ease-out origin-center relative z-10 w-full flex justify-center">
-                        <PhysicalCard
-                          card={{
-                            id: c.id,
-                            pan: `•••• •••• •••• ${fakeLast4}`,
-                            cardholderName: 'RENOCRED MEMBER',
-                            expiry: '12/28',
-                            network: c.network.toLowerCase() as any,
-                            bank: c.issuer,
-                            status: 'active',
-                            availableCredit: 0,
-                            creditLimit: 0,
-                            label: c.cardName,
-                          }}
-                          variant="compact"
-                        />
-                      </div>
+            <ul className="mt-12 grid gap-8 md:grid-cols-3">
+              {similar.map((c) => (
+                <li key={c.id}>
+                  <Link to={`/cards/${c.slug}`} className="group block">
+                    <div className="transition-transform duration-500 group-hover:-translate-y-1">
+                      <CardFace name={c.cardName} bank={c.issuer} network={c.network} width={300} />
                     </div>
-
-                    {/* Metadata & Actions */}
-                    <div className="px-5 pb-5 pt-2 flex-1 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">{c.issuer}</span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/5 uppercase tracking-wider">{c.network}</span>
-                        </div>
-                        <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors line-clamp-1">{c.cardName}</h3>
-                        <p className="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">{c.topBenefit}</p>
-                      </div>
-
-                      <div className="flex items-center justify-between text-xs text-gray-400 pt-3 mt-4 border-t border-white/5">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] text-gray-500 uppercase tracking-wider">Annual Fee</span>
-                          <span className="font-semibold text-white">{c.formattedAnnualFee}</span>
-                        </div>
-                        <span className="flex items-center gap-1 text-emerald-400 group-hover:translate-x-1 transition-transform font-medium">
-                          View details <ArrowRight size={12} />
-                        </span>
-                      </div>
-                    </div>
+                    <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-muted">{bankLabel(c.issuer)}</p>
+                    <p className="mt-1.5 font-serif text-[22px] leading-snug text-rc-ink">{displayCardName(c.cardName)}</p>
+                    <p className="mt-1 text-[14px] text-rc-muted">{c.annualFee === null ? 'Fee not disclosed' : c.annualFee === 0 ? 'Lifetime free' : `${formatINR(c.annualFee)} a year`}</p>
                   </Link>
-                );
-              })}
-            </div>
-          </section>
-        )}
-      </main>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      )}
     </div>
   );
 }

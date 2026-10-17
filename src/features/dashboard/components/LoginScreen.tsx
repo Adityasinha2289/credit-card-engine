@@ -1,41 +1,18 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, X, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { SignIn, SignUp, GoogleOneTap, useUser } from '@clerk/clerk-react';
 import { useDashboardStore } from '../store/dashboardStore';
 import type { AppProfile, UserSegment, PrimaryGoal } from '../types/dashboard.types';
-import { cn } from '../../../lib/utils';
 import type { OnboardingState } from '../../onboarding/OnboardingFlow';
-import { CreditCard } from '../../cards/components/CreditCard';
-import type { CardData, CardNetwork } from '../../cards/types/card.types';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { CardFace } from '../../../public-platform/site/CardFace';
 
 const OnboardingFlow = lazy(() => import('../../onboarding/OnboardingFlow').then(m => ({ default: m.OnboardingFlow })));
-
-// Decorative cards on the sign-in screen. Static on purpose: importing the
-// card catalog here put ~90 KB of data on the critical path of the auth page.
-const showcaseCard = (id: string, bank: string, label: string, network: CardNetwork): CardData => ({
-  id,
-  pan: '•••• •••• •••• 1234',
-  cardholderName: 'RENO CRED',
-  expiry: '12/28',
-  network,
-  bank,
-  status: 'active',
-  availableCredit: 500000,
-  creditLimit: 500000,
-  label,
-});
-const SHOWCASE_CARDS = {
-  sbi: showcaseCard('sbi_cashback', 'SBI Card', 'Cashback SBI Card', 'visa'),
-  hdfc: showcaseCard('hdfc_infinia', 'HDFC Bank', 'Infinia Metal', 'visa'),
-};
 
 export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin' | 'signup' }) {
   const { isSignedIn, user } = useUser();
   const login = useDashboardStore((s) => s.login);
-  const [showBlog, setShowBlog] = useState(false);
-  const [showLegal, setShowLegal] = useState<'privacy' | 'terms' | null>(null);
   const [mode, setMode] = useState<'signin' | 'signup'>(defaultMode);
   const authPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -120,205 +97,116 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
 
   if (isSignedIn) {
     return (
-      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-editorial-light-cream" />}>
+      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-rc-cream" />}>
         <OnboardingFlow onComplete={handleOnboardingComplete} />
       </Suspense>
     );
   }
 
+  const switchMode = () => {
+    const next = mode === 'signin' ? 'signup' : 'signin';
+    setMode(next);
+    navigate(next === 'signin' ? '/app/sign-in' : '/app/sign-up');
+  };
+
   return (
-    <div className="min-h-[100dvh] w-full flex items-center justify-center bg-editorial-light-cream p-4 lg:p-8 relative overflow-hidden text-editorial-deep-forest font-sans">
-      
-      {/* Editorial Decorative Elements */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-editorial-soft-sage/10 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-editorial-soft-sage/10 blur-[120px] rounded-full pointer-events-none" />
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 max-w-[1100px] w-full gap-12 lg:gap-24 items-center relative z-10 mx-auto">
-        
-        {/* LEFT PANEL: Brand / Storytelling */}
-        <div className="hidden lg:flex flex-col gap-12 pt-8">
-           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-             <h1 className="text-4xl xl:text-5xl font-serif font-medium tracking-tight leading-[1.1] text-editorial-deep-forest mb-6">
-               Your wallet,<br/>finally working intelligently.
-             </h1>
-             <p className="text-editorial-muted-sage text-lg max-w-md font-light leading-relaxed">
-               Cards. Rewards. Offers.<br/>One place to make better money decisions.
-             </p>
-           </motion.div>
+    <div className="grid min-h-[100dvh] w-full bg-rc-cream font-sans text-rc-ink lg:grid-cols-2">
+      {/* LEFT: brand panel (desktop) */}
+      <aside className="relative hidden overflow-hidden bg-rc-ink text-rc-cream lg:flex lg:flex-col lg:justify-between lg:p-14 xl:p-16">
+        <Link to="/" className="flex items-center gap-2.5">
+          <img src="/logo.jpg" alt="" width={32} height={32} className="h-8 w-8 rounded-[9px] object-cover ring-1 ring-white/10" />
+          <span className="text-[17px] font-semibold tracking-[-0.01em]">RenoCred</span>
+        </Link>
 
-           <motion.div 
-             initial={{ opacity: 0 }} 
-             animate={{ opacity: 1 }} 
-             transition={{ duration: 0.8, delay: 0.2 }}
-             className="relative"
-           >
-              {/* Product Visual: Card Stack */}
-              <div className="relative w-full max-w-[320px] h-[240px]">
-                 {/* Card 2 (Background) */}
-                 <motion.div 
-                   initial={{ x: -20, y: 20, rotate: -4 }}
-                   animate={{ x: -10, y: 10, rotate: -2 }}
-                   transition={{ duration: 1, delay: 0.5 }}
-                   className="absolute top-4 left-4 w-[280px] origin-center opacity-70 grayscale-[0.2]"
-                 >
-                    <CreditCard card={SHOWCASE_CARDS.sbi} variant="compact" />
-                 </motion.div>
-
-                 {/* Card 1 (Foreground) */}
-                 <motion.div 
-                   initial={{ x: 20, y: -20, rotate: 4 }}
-                   animate={{ x: 0, y: 0, rotate: 0 }}
-                   transition={{ duration: 1, delay: 0.4 }}
-                   className="absolute top-0 left-0 w-[280px] origin-center drop-shadow-2xl z-10"
-                 >
-                    <CreditCard card={SHOWCASE_CARDS.hdfc} variant="compact" />
-                 </motion.div>
-                 
-                 {/* Intelligence Label */}
-                 <motion.div
-                   initial={{ opacity: 0, y: 10 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   transition={{ duration: 0.6, delay: 1 }}
-                   className="absolute -right-8 bottom-4 bg-white/90 border border-editorial-soft-sage/20 rounded-xl p-4 shadow-xl z-20 backdrop-blur-md"
-                 >
-                    <div className="text-[10px] text-editorial-soft-sage font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
-                       <Sparkles className="w-3 h-3 text-editorial-forest" /> Potential Annual Value
-                    </div>
-                    <div className="text-xl font-mono text-editorial-deep-forest font-medium">₹1,250</div>
-                 </motion.div>
-              </div>
-           </motion.div>
-        </div>
-
-        {/* RIGHT PANEL: Auth Surface */}
-        <div className="w-full flex justify-center lg:justify-end py-4 lg:py-8">
-          <motion.div
-            ref={authPanelRef}
-            initial={{ opacity: 0, y: 10 }}
+        <div>
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-[440px] bg-white border border-editorial-soft-sage/20 rounded-[2rem] p-8 lg:p-10 shadow-[0_20px_50px_rgba(107,144,113,0.05)] relative flex flex-col"
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-[13ch] font-serif text-[clamp(2.75rem,4.4vw,4.25rem)] font-medium leading-[0.98] tracking-[-0.025em]"
           >
-             {/* Header Row */}
-             <div className="flex justify-between items-start mb-10">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-editorial-deep-forest text-white overflow-hidden shadow-sm">
-                    <img src="/icons/icon-192.png" alt="RenoCred" width={40} height={40} className="w-full h-full object-cover" />
-                  </div>
-                  <span className="text-lg font-serif font-medium text-editorial-deep-forest">renocred</span>
-                </div>
+            Every card you own, <span className="italic text-rc-pistachio">working together.</span>
+          </motion.h1>
 
-                <div className="text-right pt-1 flex flex-col items-end gap-2">
-                   {mode === 'signin' ? (
-                      <button onClick={() => { setMode('signup'); navigate('/app/sign-up'); }} className="text-xs text-editorial-soft-sage hover:text-editorial-forest font-medium transition-colors">
-                        New here? <span className="underline underline-offset-2">Get Started</span>
-                      </button>
-                   ) : (
-                      <button onClick={() => { setMode('signin'); navigate('/app/sign-in'); }} className="text-xs text-editorial-soft-sage hover:text-editorial-forest font-medium transition-colors">
-                        Already have an account? <span className="underline underline-offset-2">Log In</span>
-                      </button>
-                   )}
-                   <button onClick={() => { window.location.href = '?demo=onboarding'; }} className="text-[10px] uppercase tracking-wider font-bold bg-[#2A9D5C]/10 text-[#2A9D5C] hover:bg-[#2A9D5C]/20 px-2 py-1 rounded-full transition-colors flex items-center gap-1">
-                     <Sparkles size={10} /> Preview onboarding
-                   </button>
-                </div>
-             </div>
-
-             <div className="mb-8">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={mode}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <h2 className="text-2xl font-serif font-medium text-editorial-deep-forest mb-2">
-                       {mode === 'signin' ? "Welcome back." : "Start understanding your wallet."}
-                    </h2>
-                    <p className="text-sm text-editorial-muted-sage">
-                       {mode === 'signin' ? "Your wallet intelligence is ready." : "See which cards, rewards, and offers actually fit your spending."}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-             </div>
-
-             {/* One-tap Google sign-in/up: a single click for returning Google users.
-                 Requires Google enabled in the Clerk dashboard (opt-in via env). */}
-             {import.meta.env.VITE_GOOGLE_ONE_TAP === 'true' && (
-               <GoogleOneTap signInForceRedirectUrl="/app" signUpForceRedirectUrl="/app" cancelOnTapOutside={false} />
-             )}
-
-             {/* Clerk Container - Styled to match RenoCred Editorial theme */}
-             <div className="w-full [&_.cl-rootBox]:w-full [&_.cl-card]:w-full [&_.cl-card]:shadow-none [&_.cl-card]:border-0 [&_.cl-card]:p-0 [&_.cl-card]:bg-transparent [&_.cl-header]:hidden [&_.cl-socialButtonsBlockButton]:border-editorial-soft-sage/30 [&_.cl-socialButtonsBlockButton]:text-editorial-deep-forest [&_.cl-socialButtonsBlockButton]:hover:bg-editorial-soft-sage/5 [&_.cl-socialButtonsBlockButton]:rounded-xl [&_.cl-socialButtonsBlockButton]:h-11 [&_.cl-dividerLine]:bg-editorial-soft-sage/20 [&_.cl-dividerText]:text-editorial-muted-sage [&_.cl-formFieldLabel]:text-editorial-deep-forest [&_.cl-formFieldLabel]:font-medium [&_.cl-formFieldInput]:border-editorial-soft-sage/30 [&_.cl-formFieldInput]:bg-editorial-light-cream/50 [&_.cl-formFieldInput]:rounded-xl [&_.cl-formFieldInput]:h-11 [&_.cl-formFieldInput]:text-editorial-deep-forest focus:[&_.cl-formFieldInput]:ring-1 focus:[&_.cl-formFieldInput]:ring-editorial-forest focus:[&_.cl-formFieldInput]:border-editorial-forest [&_.cl-formButtonPrimary]:bg-editorial-deep-forest [&_.cl-formButtonPrimary]:hover:bg-editorial-forest [&_.cl-formButtonPrimary]:rounded-xl [&_.cl-formButtonPrimary]:h-11 [&_.cl-formButtonPrimary]:font-medium [&_.cl-formButtonPrimary]:transition-colors [&_.cl-footer]:hidden [&_.cl-identityPreview]:bg-editorial-light-cream/50 [&_.cl-identityPreview]:border-editorial-soft-sage/30 [&_.cl-identityPreview]:rounded-xl [&_.cl-identityPreviewText]:text-editorial-deep-forest [&_.cl-identityPreviewEditButton]:text-editorial-forest [&_.cl-formFieldSuccessIcon]:text-editorial-forest [&_.cl-internal-2q60ed]:text-editorial-forest">
-                {mode === 'signin' ? (
-                  <SignIn routing="path" path="/app/sign-in" signUpUrl="/app/sign-up" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
-                ) : (
-                  <SignUp routing="path" path="/app/sign-up" signInUrl="/app/sign-in" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
-                )}
-             </div>
-
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Legal Modal logic maintained just in case */}
-      <AnimatePresence>
-        {showLegal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="relative mt-16 h-[230px] w-[420px] max-w-full">
+            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 0.55, rotate: 8 }} transition={{ duration: 1, delay: 0.2 }} className="absolute left-16 top-0">
+              <CardFace name="Cashback SBI Card" bank="SBI" width={260} />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.35 }} className="absolute left-0 top-8">
+              <CardFace name="Swiggy HDFC" bank="HDFC" width={280} />
+            </motion.div>
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowLegal(null)}
-              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-lg bg-white rounded-[2rem] p-6 shadow-2xl border border-editorial-soft-sage/20 overflow-hidden flex flex-col max-h-[85vh] text-left"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="absolute bottom-0 right-0 w-[230px] rounded-2xl bg-rc-paper p-4 text-rc-ink shadow-[0_24px_48px_-20px_rgba(0,0,0,0.6)]"
             >
-              <div className="flex items-center justify-between mb-4 border-b border-editorial-soft-sage/20 pb-3">
-                <h3 className="text-lg font-serif font-medium text-editorial-deep-forest flex items-center gap-2">
-                  <BookOpen className="text-editorial-forest" size={18} /> {showLegal === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
-                </h3>
-                <button
-                  onClick={() => setShowLegal(null)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-editorial-muted-sage hover:text-editorial-deep-forest hover:bg-editorial-light-cream"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto pr-2 text-sm leading-relaxed text-editorial-muted-sage flex flex-col gap-4">
-                {showLegal === 'privacy' ? (
-                  <div>
-                    <h4 className="font-bold text-editorial-deep-forest text-base">Data Protection Commitment</h4>
-                    <p className="mt-1">
-                      At Renocred, we take your privacy seriously. Your financial information is used exclusively to power the Wallet Optimizer.
-                    </p>
-                  </div>
-                ) : (
-                  <div>
-                    <h4 className="font-bold text-editorial-deep-forest text-base">Terms of Service</h4>
-                    <p className="mt-1">
-                      By using Renocred, you agree to our Terms of Service. Recommendations are for informational purposes only.
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div className="mt-4 pt-3 border-t border-editorial-soft-sage/20 text-center">
-                <button
-                  onClick={() => setShowLegal(null)}
-                  className="px-6 py-2 rounded-xl bg-editorial-deep-forest text-white hover:bg-editorial-forest transition-colors font-medium text-sm inline-block"
-                >
-                  Close
-                </button>
-              </div>
+              <p className="flex justify-between text-[12px] text-rc-muted"><span>Dinner for two</span><span className="tabular-nums">₹2,400</span></p>
+              <p className="mt-2 flex items-end justify-between">
+                <span className="font-serif text-[18px] leading-tight">Swiggy HDFC</span>
+                <span className="font-serif text-[20px] leading-none text-rc-emerald tabular-nums">+₹240</span>
+              </p>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+
+        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-rc-mist">
+          {['Free to use', 'Never touches your credit score', 'No full card numbers'].map((t) => (
+            <li key={t} className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-rc-pistachio" />{t}</li>
+          ))}
+        </ul>
+      </aside>
+
+      {/* RIGHT: auth */}
+      <main className="flex min-h-[100dvh] flex-col px-5 py-6 sm:px-10 lg:px-14 lg:py-10">
+        <div className="flex items-center justify-between gap-4">
+          <Link to="/" className="inline-flex items-center gap-2 text-[14px] text-rc-muted transition-colors hover:text-rc-ink">
+            <ArrowLeft className="h-4 w-4" /> <span className="lg:hidden">RenoCred</span><span className="hidden lg:inline">Back to site</span>
+          </Link>
+          <button type="button" onClick={switchMode} className="text-right text-[14px] text-rc-muted transition-colors hover:text-rc-ink">
+            {mode === 'signin'
+              ? <>New here? <span className="font-medium text-rc-ink underline decoration-rc-ink/25 underline-offset-4">Create an account</span></>
+              : <>Have an account? <span className="font-medium text-rc-ink underline decoration-rc-ink/25 underline-offset-4">Log in</span></>}
+          </button>
+        </div>
+
+        <div className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-12">
+          <AnimatePresence mode="wait">
+            <motion.div key={mode} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
+              <h2 className="font-serif text-[clamp(2.25rem,4vw,3rem)] font-medium leading-[1.02] tracking-[-0.02em]">
+                {mode === 'signin' ? 'Welcome back.' : 'Make every swipe count.'}
+              </h2>
+              <p className="mt-3 text-[16px] leading-relaxed text-rc-muted">
+                {mode === 'signin' ? 'Pick up where you left off.' : 'Free, and about a minute to set up. Add your cards and see what each one is for.'}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* One-tap Google sign-in/up: a single click for returning Google users.
+              Requires Google enabled in the Clerk dashboard (opt-in via env). */}
+          {import.meta.env.VITE_GOOGLE_ONE_TAP === 'true' && (
+            <GoogleOneTap signInForceRedirectUrl="/app" signUpForceRedirectUrl="/app" cancelOnTapOutside={false} />
+          )}
+
+          <div ref={authPanelRef} className="mt-9 w-full">
+            {mode === 'signin' ? (
+              <SignIn routing="path" path="/app/sign-in" signUpUrl="/app/sign-up" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
+            ) : (
+              <SignUp routing="path" path="/app/sign-up" signInUrl="/app/sign-in" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
+            )}
+          </div>
+
+          <p className="mt-8 text-[12px] leading-relaxed text-rc-muted">
+            By continuing you agree to our <Link to="/terms" className="underline underline-offset-2 hover:text-rc-ink">Terms</Link> and <Link to="/privacy" className="underline underline-offset-2 hover:text-rc-ink">Privacy policy</Link>.
+          </p>
+        </div>
+
+        <div className="text-center">
+          <button type="button" onClick={() => { window.location.href = '?demo=onboarding'; }} className="text-[13px] text-rc-muted underline decoration-rc-ink/20 underline-offset-4 transition-colors hover:text-rc-ink">
+            Just looking? Preview the onboarding
+          </button>
+        </div>
+      </main>
     </div>
   );
 }

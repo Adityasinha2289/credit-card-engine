@@ -41,7 +41,7 @@ export function getWebSiteSchema() {
     '@id': `${DOMAIN}/#website`,
     url: DOMAIN,
     name: 'RenoCred',
-    description: "India's #1 AI Credit Card & Financial Intelligence Platform",
+    description: 'Credit card intelligence for India: the right card for every spend.',
     publisher: {
       '@id': `${DOMAIN}/#organization`,
     },
@@ -74,8 +74,8 @@ export function getBreadcrumbSchema(items: { name: string; item: string }[]) {
 export interface CardSchemaInput {
   name: string;
   issuer: string;
-  annualFee: number;
-  joiningFee: number;
+  annualFee: number | null;
+  joiningFee: number | null;
   rewardRate: string;
   network: string;
   perksSummary: string;
@@ -91,8 +91,11 @@ export function getCreditCardProductSchema(card: CardSchemaInput) {
       name: card.issuer,
     },
     category: 'CreditCard',
-    feesAndCommissionsSpecification: `Annual Fee: ₹${card.annualFee}, Joining Fee: ₹${card.joiningFee}`,
-    interestRate: '19.99% - 42.00% APR',
+    // only state fees we actually know; no interest rate (issuers set it per customer)
+    feesAndCommissionsSpecification: [
+      card.annualFee != null ? `Annual Fee: ₹${card.annualFee}` : null,
+      card.joiningFee != null ? `Joining Fee: ₹${card.joiningFee}` : null,
+    ].filter(Boolean).join(', ') || undefined,
     description: `${card.name} by ${card.issuer}. ${card.perksSummary}. Network: ${card.network}. Rewards Rate: ${card.rewardRate}.`,
     amount: {
       '@type': 'MonetaryAmount',

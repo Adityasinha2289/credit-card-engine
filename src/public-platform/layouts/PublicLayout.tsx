@@ -14,7 +14,7 @@ const organizationSchema = {
   'name': 'RenoCred',
   'url': 'https://renocred.com/',
   'logo': 'https://renocred.com/icons/icon-512.png',
-  'description': 'India\'s #1 AI-powered credit card intelligence platform. Compare 130+ cards, maximize cashback & rewards, and get personalized recommendations.',
+  'description': 'Credit card intelligence for India: compare 144 cards, know which card to use for every spend, and get personalised recommendations.',
   'foundingDate': '2025',
   'sameAs': [
     'https://www.instagram.com/social_renocred/',
@@ -101,7 +101,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   const breadcrumbSchema = generateBreadcrumbSchema(pathname);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-editorial-light-cream text-editorial-deep-forest font-sans selection:bg-editorial-soft-sage/30">
+    <div className="min-h-[100dvh] flex flex-col bg-rc-cream text-rc-ink font-sans selection:bg-rc-pistachio">
       <PublicHeader />
       <main className="flex-1 flex flex-col">
         <StructuredData data={organizationSchema} />

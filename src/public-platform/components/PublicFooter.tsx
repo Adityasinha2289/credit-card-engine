@@ -1,104 +1,68 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { LegalModal, LegalDocType } from './LegalModal';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
+import { Container, ButtonLink } from '../site/primitives';
+import { CARD_NEEDS, COMPANY, LEGAL, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
+
+function Column({ title, links }: { title: string; links: { label: string; to: string }[] }) {
+  return (
+    <div>
+      <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70">{title}</p>
+      <ul className="space-y-3">
+        {links.map((l) => (
+          <li key={l.to}>
+            <Link to={l.to} className="text-[14px] text-rc-mist transition-colors hover:text-rc-cream">{l.label}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function PublicFooter() {
-  const navigate = useNavigate();
   const year = new Date().getFullYear();
-  const [activeLegalDoc, setActiveLegalDoc] = useState<LegalDocType>(null);
-  
-  const handleProtectedLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    navigate('/app');
-  };
-
-  const openLegalModal = (e: React.MouseEvent<HTMLAnchorElement>, docType: LegalDocType) => {
-    e.preventDefault();
-    setActiveLegalDoc(docType);
-  };
-
   return (
-    <>
-      <footer className="border-t border-editorial-soft-sage/20 bg-editorial-deep-forest py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 md:gap-12">
-
-            {/* Brand Column */}
-            <div className="col-span-2 md:col-span-1">
-              <h2 className="text-2xl font-display font-bold text-editorial-warm-cream tracking-tight mb-4">renocred</h2>
-              <p className="text-sm text-editorial-soft-sage leading-relaxed max-w-xs">India's #1 AI-powered credit card intelligence platform. Compare, optimize, and maximize your rewards.</p>
-              <div className="flex flex-col gap-2 mt-6">
-                <span className="text-xs font-bold text-editorial-warm-cream uppercase tracking-wider">Socials</span>
-                <div className="flex gap-4">
-                  <a href="https://www.instagram.com/social_renocred/" target="_blank" rel="noopener noreferrer" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">
-                    Instagram
-                  </a>
-                  <a href="https://www.linkedin.com/company/renocred" target="_blank" rel="noopener noreferrer" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">
-                    LinkedIn
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <nav aria-label="Company navigation">
-              <h3 className="text-sm font-bold text-editorial-warm-cream mb-6 uppercase tracking-wider">Company</h3>
-              <ul className="space-y-4">
-                <li><Link to="/" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Home</Link></li>
-                <li><Link to="/about" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">About</Link></li>
-                <li><Link to="/methodology" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Methodology</Link></li>
-                <li><Link to="/contact" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Contact</Link></li>
-              </ul>
-            </nav>
-
-            {/* Cards & Banks — SEO link structure for future programmatic pages */}
-            <nav aria-label="Credit card resources">
-              <h3 className="text-sm font-bold text-editorial-warm-cream mb-6 uppercase tracking-wider">Cards</h3>
-              <ul className="space-y-4">
-                <li><Link to="/cards" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">All Credit Cards</Link></li>
-                <li><Link to="/cards?category=travel" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Best Travel Cards</Link></li>
-                <li><Link to="/cards?category=shopping" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Best Cashback Cards</Link></li>
-                <li><Link to="/cards?category=fuel" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Best Fuel Cards</Link></li>
-                <li><Link to="/cards" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Best Student Cards</Link></li>
-                <li><Link to="/cards" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Lifetime Free Cards</Link></li>
-              </ul>
-            </nav>
-
-            {/* Tools */}
-            <nav aria-label="Tools and calculators">
-              <h3 className="text-sm font-bold text-editorial-warm-cream mb-6 uppercase tracking-wider">Tools</h3>
-              <ul className="space-y-4">
-                <li><Link to="/cards" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Compare Cards</Link></li>
-                <li><Link to="/calculators/credit-card-reward-calculator" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Rewards Calculator</Link></li>
-                <li><Link to="/calculators/annual-fee-break-even" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Savings Estimator</Link></li>
-                <li><Link to="/calculators/credit-utilization" className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Eligibility Checker</Link></li>
-                <li><Link to="/app" className="text-sm text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">Open RenoCred App →</Link></li>
-              </ul>
-            </nav>
-
-            {/* Trust & Legal */}
-            <nav aria-label="Legal and trust pages">
-              <h3 className="text-sm font-bold text-editorial-warm-cream mb-6 uppercase tracking-wider">Trust & Legal</h3>
-              <ul className="space-y-4">
-                <li><a href="#" onClick={(e) => openLegalModal(e, 'editorial')} className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Editorial Policy</a></li>
-                <li><a href="#" onClick={(e) => openLegalModal(e, 'affiliate')} className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Affiliate Disclosure</a></li>
-                <li><a href="#" onClick={(e) => openLegalModal(e, 'privacy')} className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Privacy Policy</a></li>
-                <li><a href="#" onClick={(e) => openLegalModal(e, 'terms')} className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Terms of Service</a></li>
-                <li><a href="#" onClick={(e) => openLegalModal(e, 'disclaimer')} className="text-sm text-editorial-soft-sage hover:text-editorial-warm-cream transition-colors">Financial Disclaimer</a></li>
-              </ul>
-            </nav>
-
+    <footer className="overflow-hidden bg-rc-night text-rc-cream">
+      <Container className="pt-20 lg:pt-28">
+        <div className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Link to="/" className="inline-flex items-center gap-2.5">
+              <img src="/logo.jpg" alt="" width={32} height={32} className="h-8 w-8 rounded-[9px] object-cover ring-1 ring-white/10" />
+              <span className="text-[17px] font-semibold tracking-[-0.01em]">RenoCred</span>
+            </Link>
+            <p className="mt-6 max-w-[30ch] text-[15px] leading-relaxed text-rc-mist">
+              Credit card intelligence for India. Know which card to use, what you earn and what's about to renew.
+            </p>
+            <ButtonLink to={SIGN_UP} variant="cream" className="mt-8">Get started, it's free</ButtonLink>
           </div>
-
-          {/* Bottom Bar */}
-          <div className="mt-16 pt-8 border-t border-editorial-soft-sage/20 text-xs text-editorial-muted-sage flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <p>&copy; {year} RenoCred. All rights reserved.</p>
-            <p className="max-w-2xl text-left md:text-right">RenoCred provides informational and analytical tools. We are not acting as a financial advisor. Recommendations and comparisons do not guarantee outcomes. Credit card terms and eligibility can change. Users should verify product details with the official issuer.</p>
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 lg:col-span-8">
+            <Column title="Cards" links={[{ label: 'All cards', to: '/cards' }, ...CARD_NEEDS.slice(0, 6)]} />
+            <Column title="Tools" links={TOOLS.map(({ label, to }) => ({ label, to }))} />
+            <Column title="Company" links={COMPANY} />
+            <Column title="Trust" links={LEGAL} />
           </div>
         </div>
-      </footer>
-      <LegalModal doc={activeLegalDoc} onClose={() => setActiveLegalDoc(null)} />
-    </>
+      </Container>
+
+      {/* oversized wordmark, the site's sign-off */}
+      <div aria-hidden className="mt-20 select-none whitespace-nowrap pb-[0.06em] text-center font-serif leading-[0.9] tracking-[-0.04em] text-rc-moss" style={{ fontSize: 'clamp(5rem, 21vw, 19rem)' }}>
+        RenoCred
+      </div>
+
+      <Container className="border-t border-white/10 py-8">
+        <div className="flex flex-col gap-6 text-[12px] leading-relaxed text-rc-mist/70 lg:flex-row lg:items-start lg:justify-between">
+          <p>© {year} RenoCred. All rights reserved.</p>
+          <p className="max-w-2xl lg:text-center">
+            RenoCred provides information and analysis, not financial advice. Reward rates, fees and eligibility change; confirm details with the issuer before applying.
+          </p>
+          <div className="flex gap-5">
+            {SOCIAL.map((s) => (
+              <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-rc-mist transition-colors hover:text-rc-cream">
+                {s.label} <ArrowUpRight className="h-3 w-3" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </footer>
   );
 }

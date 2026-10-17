@@ -2,6 +2,7 @@ import { SEO } from '../components/SEO';
 import { getOrganizationSchema, getWebSiteSchema } from '../lib/schemaBuilders';
 import { Hero } from '../components/landing/Hero';
 import { IssuerStrip } from '../components/landing/IssuerStrip';
+import { CardJobs } from '../components/landing/CardJobs';
 import { Statement } from '../components/landing/Statement';
 import { SwipeSimulator } from '../components/landing/SwipeSimulator';
 import { ProductChapters } from '../components/landing/ProductChapters';
@@ -23,8 +24,9 @@ export function HomePage() {
       />
       <Hero />
       <IssuerStrip />
-      <Statement />
+      <CardJobs />
       <SwipeSimulator />
+      <Statement />
       <ProductChapters />
       <CardRail />
       <ToolsGrid />

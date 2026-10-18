@@ -1,19 +1,19 @@
 /**
  * "500+ cards. Read so you don't have to." Real cards ride a tilted wall in
- * slow columns on deep forest, while a scan line passes over them, and a panel
- * in front reads one card at a time, pulling its terms out of the dataset. The
- * counts come from the full catalogue (CATALOGUE_STATS).
+ * slow columns on deep forest, and a card machine in front reads one card at a
+ * time, pulling its terms out of the dataset. The counts come from the full
+ * catalogue (CATALOGUE_STATS).
  */
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { ArrowDown, Check, Delete, X } from 'lucide-react';
+import { BrandMark } from '../../site/Brand';
 import { cn } from '../../../lib/utils';
 import { ArrowLink, ButtonLink, Container, CountUp, EASE_OUT, formatINR, useMediaQuery } from '../../site/primitives';
 import { CardFace, bankLabel, displayCardName } from '../../site/CardFace';
 import { CATALOG, CATALOGUE_STATS, SPEND_CATEGORIES, cardsByIds, slugifyCardName, type FinixCard } from '../../site/swipeMath';
 
-const READ_MS = 3400;
 const READING = ['axis_atlas', 'hdfc_swiggy', 'idfc_first_wealth', 'sbi_cashback', 'hdfc_infinia', 'axis_ace', 'icici_amazon_pay', 'hsbc_live_plus'];
 
 const STATS = [
@@ -64,77 +64,130 @@ const Wall = memo(function Wall({ columns, cardW }: { columns: number; cardW: nu
   );
 });
 
-function Reader({ live }: { live: boolean }) {
+type Phase = 'insert' | 'reading' | 'done' | 'eject';
+
+/** How long each phase lasts before the next one starts. */
+const PHASE_MS: Record<Phase, number> = { insert: 900, reading: 1300, done: 3600, eject: 600 };
+const NEXT: Record<Phase, Phase> = { insert: 'reading', reading: 'done', done: 'eject', eject: 'insert' };
+
+const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'];
+
+/**
+ * A shop-counter card machine. Each card slides into the slot, the screen reads
+ * it, lists what it found in the card's terms, then the card pops back out and
+ * the next one goes in.
+ */
+function Terminal({ live }: { live: boolean }) {
   const reduce = useReducedMotion();
+  const mobile = !useMediaQuery('(min-width: 640px)');
   const cards = useMemo(() => cardsByIds(READING), []);
   const [i, setI] = useState(0);
+  const [phase, setPhase] = useState<Phase>(reduce ? 'done' : 'insert');
   const card = cards[i];
   const rows = facts(card);
 
+  const TW = mobile ? 280 : 304;
+  const CW = TW * 0.78;
+  const CH = CW / 1.586;
+  const ready = 6; // card resting just above the slot
+  const inserted = CH * 0.62; // how far in it goes
+
   useEffect(() => {
     if (!live || reduce) return;
-    const t = setTimeout(() => setI((n) => (n + 1) % cards.length), READ_MS);
+    const t = setTimeout(() => {
+      if (phase === 'eject') setI((n) => (n + 1) % cards.length);
+      setPhase(NEXT[phase]);
+    }, PHASE_MS[phase]);
     return () => clearTimeout(t);
-  }, [i, live, reduce, cards.length]);
+  }, [phase, live, reduce, cards.length]);
+
+  const cardY = phase === 'eject' ? -36 : phase === 'insert' && !reduce ? [-48, ready, ready + inserted] : ready + inserted;
 
   return (
-    <div className="relative rounded-[32px] bg-rc-paper p-5 text-rc-ink shadow-[0_40px_90px_-30px_rgba(0,0,0,0.75)] sm:p-6">
-      <div className="flex items-center justify-between text-[12px]">
-        <span className="flex items-center gap-2 font-semibold uppercase tracking-[0.18em] text-rc-muted">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inset-0 animate-ping rounded-full bg-rc-emerald/60" />
-            <span className="relative h-2 w-2 rounded-full bg-rc-emerald" />
-          </span>
-          Reading now
-        </span>
-        <span className="tabular-nums text-rc-muted">{String(i + 1).padStart(2, '0')} / {String(cards.length).padStart(2, '0')}</span>
-      </div>
+    <div className="relative mx-auto" style={{ width: TW, paddingTop: CH + ready }}>
+      {/* the card, behind the machine so it disappears into the slot */}
+      <motion.div
+        key={card.id}
+        className="absolute left-1/2 top-0 z-0"
+        style={{ marginLeft: -CW / 2 }}
+        initial={reduce ? false : { y: -48, opacity: 0 }}
+        animate={{ y: cardY, opacity: phase === 'eject' ? 0 : 1 }}
+        transition={phase === 'insert'
+          ? { duration: PHASE_MS.insert / 1000, times: [0, 0.35, 1], ease: [0.22, 1, 0.36, 1] }
+          : { duration: 0.5, ease: EASE_OUT }}
+      >
+        <CardFace name={card.name} bank={card.bank} network={card.network} width={CW} />
+      </motion.div>
 
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={card.id} initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-          <Link to={`/cards/${slugifyCardName(card.name)}`} className="group relative mt-5 block overflow-hidden rounded-[18px]">
-            <motion.div initial={reduce ? false : { rotate: -6, y: 18, scale: 0.94 }} animate={{ rotate: 0, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 160, damping: 18 }}>
-              <CardFace name={card.name} bank={card.bank} network={card.network} width={320} lifted={false} className="!h-auto !w-full aspect-[1.586]" />
-            </motion.div>
-            {!reduce && (
-              <motion.span
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 h-16 bg-gradient-to-b from-transparent to-rc-pistachio/70"
-                style={{ borderBottom: '2px solid #E3EED4' }}
-                initial={{ top: '-30%' }}
-                animate={{ top: '110%' }}
-                transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.15 }}
-              />
+      <div className="relative z-10 rounded-[34px] bg-gradient-to-b from-[#1d2e24] to-[#0b1610] p-4 pb-5 text-rc-ink shadow-[0_50px_100px_-30px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-white/10">
+        {/* the slot, on the top edge */}
+        <span aria-hidden className="absolute left-1/2 top-0 h-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black shadow-[inset_0_2px_3px_rgba(255,255,255,0.08),0_1px_0_rgba(255,255,255,0.1)]" style={{ width: CW + 22 }} />
+
+        {/* the screen */}
+        <div className="relative h-[244px] overflow-hidden rounded-[18px] bg-rc-pistachio px-4 py-3 shadow-[inset_0_2px_10px_rgba(15,42,29,0.35)]" aria-live="polite">
+          <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.16em] text-rc-ink/60">
+            <span className="flex items-center gap-1.5"><BrandMark size={12} /> RenoCred</span>
+            <span className="tabular-nums">{String(i + 1).padStart(2, '0')} / {String(cards.length).padStart(2, '0')}</span>
+          </div>
+          <div className="mt-2 h-px bg-rc-ink/10" />
+
+          <AnimatePresence mode="wait" initial={false}>
+            {phase === 'insert' || phase === 'eject' ? (
+              <motion.div key="insert" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="flex h-[200px] flex-col items-center justify-center text-center">
+                <motion.span animate={reduce ? undefined : { y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="text-rc-forest"><ArrowDown className="h-5 w-5" /></motion.span>
+                <p className="mt-2 font-serif text-[22px] leading-tight">{phase === 'eject' ? 'Remove card' : 'Insert card'}</p>
+              </motion.div>
+            ) : phase === 'reading' ? (
+              <motion.div key="reading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="flex h-[200px] flex-col items-center justify-center text-center">
+                <p className="font-serif text-[22px] leading-tight">Reading card</p>
+                <p className="mt-1 text-[12px] text-rc-ink/60">{bankLabel(card.bank)}</p>
+                <div className="mt-5 h-1.5 w-40 overflow-hidden rounded-full bg-rc-ink/10">
+                  <motion.div className="h-full rounded-full bg-rc-forest" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: PHASE_MS.reading / 1000 - 0.15, ease: 'easeInOut' }} />
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div key={`done-${card.id}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+                <Link to={`/cards/${slugifyCardName(card.name)}`} className="mt-2.5 block truncate font-serif text-[19px] leading-tight hover:underline">
+                  {displayCardName(card.name)}
+                </Link>
+                <ul className="mt-1.5">
+                  {rows.map((r, n) => (
+                    <motion.li
+                      key={r.k}
+                      initial={reduce ? false : { opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, ease: EASE_OUT, delay: 0.1 + n * 0.16 }}
+                      className="flex items-center gap-2 border-b border-dashed border-rc-ink/15 py-[7px] text-[12.5px] last:border-0"
+                    >
+                      <Check className="h-3 w-3 shrink-0 text-rc-forest" strokeWidth={3} />
+                      <span className="text-rc-ink/65">{r.k}</span>
+                      <span className="ml-auto text-right font-semibold tabular-nums">{r.v}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
             )}
-          </Link>
-          <p className="mt-4 flex items-baseline justify-between gap-3">
-            <span className="font-serif text-[22px] leading-tight text-rc-ink">{displayCardName(card.name)}</span>
-            <span className="shrink-0 text-[12px] text-rc-muted">{bankLabel(card.bank)}</span>
-          </p>
-          <ul className="mt-3 min-h-[214px] divide-y divide-rc-ink/[0.07]">
-            {rows.map((r, n) => (
-              <motion.li
-                key={r.k}
-                initial={reduce ? false : { opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, ease: EASE_OUT, delay: 0.7 + n * 0.22 }}
-                className="flex items-center gap-3 py-2.5 text-[14px]"
-              >
-                <motion.span
-                  initial={reduce ? false : { scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 18, delay: 0.8 + n * 0.22 }}
-                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rc-ink text-rc-pistachio"
-                >
-                  <Check className="h-3 w-3" strokeWidth={3} />
-                </motion.span>
-                <span className="text-rc-muted">{r.k}</span>
-                <span className="ml-auto text-right font-medium tabular-nums text-rc-ink">{r.v}</span>
-              </motion.li>
-            ))}
-          </ul>
-        </motion.div>
-      </AnimatePresence>
+          </AnimatePresence>
+        </div>
+
+        {/* keypad */}
+        <div aria-hidden className="mt-4 grid grid-cols-3 gap-1.5 px-2">
+          {KEYS.map((k) => (
+            <span key={k} className="flex h-8 items-center justify-center rounded-[10px] bg-white/[0.06] text-[13px] font-medium text-rc-mist shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">{k}</span>
+          ))}
+          <span className="flex h-9 items-center justify-center rounded-[10px] bg-rc-mist/80 text-rc-ink"><X className="h-4 w-4" strokeWidth={2.5} /></span>
+          <span className="flex h-9 items-center justify-center rounded-[10px] bg-rc-sage text-rc-ink"><Delete className="h-4 w-4" strokeWidth={2.5} /></span>
+          <motion.span
+            key={`ok-${i}-${phase === 'done'}`}
+            animate={phase === 'done' && !reduce ? { scale: [1, 0.9, 1] } : undefined}
+            transition={{ duration: 0.3 }}
+            className="flex h-9 items-center justify-center rounded-[10px] bg-rc-pistachio text-rc-ink"
+          >
+            <Check className="h-4 w-4" strokeWidth={3} />
+          </motion.span>
+        </div>
+        <p aria-hidden className="mt-4 flex items-center justify-center gap-1.5 text-[11px] font-semibold tracking-[0.02em] text-rc-mist/70"><BrandMark size={13} tone="pistachio" /> RenoCred</p>
+      </div>
     </div>
   );
 }
@@ -151,12 +204,6 @@ export function CardWall() {
       {/* the wall, faded out where the words sit */}
       <div className="absolute inset-0" style={{ perspective: 2000 }}>
         <div className="absolute inset-0 opacity-90"><Wall columns={desktop ? 9 : 5} cardW={desktop ? 210 : 150} /></div>
-        {!reduce && (
-          <div aria-hidden className="pointer-events-none absolute inset-0 animate-rc-scan">
-            <div className="absolute inset-x-0 bottom-1/2 h-48 bg-gradient-to-b from-transparent to-rc-pistachio/[0.16]" />
-            <div className="absolute inset-x-0 bottom-1/2 h-[2px] bg-rc-pistachio/80 shadow-[0_0_30px_8px_rgba(227,238,212,0.45)]" />
-          </div>
-        )}
         <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-rc-ink via-rc-ink/70 to-rc-ink lg:bg-gradient-to-r lg:from-rc-ink lg:via-rc-ink/85 lg:to-rc-ink/0" />
         <div aria-hidden className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-rc-ink to-transparent" />
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-rc-ink to-transparent" />
@@ -197,7 +244,7 @@ export function CardWall() {
           </div>
         </div>
         <div className="mx-auto w-full max-w-[400px] lg:col-span-4 lg:col-start-9">
-          <Reader live={live} />
+          <Terminal live={live} />
         </div>
       </Container>
     </section>

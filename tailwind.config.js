@@ -20,6 +20,20 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        'rc-rise': {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-50%)' },
+        },
+        'rc-fall': {
+          '0%': { transform: 'translateY(-50%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        'rc-scan': {
+          '0%': { transform: 'translateY(-100%)', opacity: '0' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '1' },
+          '100%': { transform: 'translateY(100%)', opacity: '0' },
+        },
         'rc-marquee': {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
@@ -27,6 +41,9 @@ export default {
       },
       animation: {
         'rc-marquee': 'rc-marquee 40s linear infinite',
+        'rc-rise': 'rc-rise 70s linear infinite',
+        'rc-fall': 'rc-fall 70s linear infinite',
+        'rc-scan': 'rc-scan 5.5s cubic-bezier(.45,0,.55,1) infinite',
       },
       colors: {
         // V2 SEMANTIC SYSTEM

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { Container, ButtonLink } from '../site/primitives';
+import { LogoLink } from '../site/Brand';
 import { CARD_NEEDS, COMPANY, LEGAL, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 
 function Column({ title, links }: { title: string; links: { label: string; to: string }[] }) {
@@ -21,14 +22,13 @@ function Column({ title, links }: { title: string; links: { label: string; to: s
 export function PublicFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="overflow-hidden bg-rc-night text-rc-cream">
+    // cream behind the rounded top, since nearly every page ends on cream
+    <div className="bg-rc-cream">
+    <footer className="overflow-hidden rounded-t-[40px] bg-rc-night text-rc-cream lg:rounded-t-[56px]">
       <Container className="pt-20 lg:pt-28">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Link to="/" className="inline-flex items-center gap-2.5">
-              <img src="/logo.jpg" alt="" width={32} height={32} className="h-8 w-8 rounded-[9px] object-cover ring-1 ring-white/10" />
-              <span className="text-[17px] font-semibold tracking-[-0.01em]">RenoCred</span>
-            </Link>
+            <LogoLink dark />
             <p className="mt-6 max-w-[30ch] text-[15px] leading-relaxed text-rc-mist">
               Credit card intelligence for India. Know which card to use, what you earn and what's about to renew.
             </p>
@@ -64,5 +64,6 @@ export function PublicFooter() {
         </div>
       </Container>
     </footer>
+    </div>
   );
 }

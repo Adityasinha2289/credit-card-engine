@@ -114,8 +114,8 @@ export function CardsDirectoryPage() {
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
 
-      <header className="border-b border-rc-ink/10">
-        <Container className="grid gap-10 pb-14 pt-16 lg:grid-cols-12 lg:items-end lg:pb-16 lg:pt-24">
+      <header>
+        <Container className="grid gap-10 pb-14 pt-16 sm:pb-[104px] lg:grid-cols-12 lg:items-end lg:pb-[120px] lg:pt-24">
           <div className="lg:col-span-8">
             <Eyebrow>Card directory</Eyebrow>
             <h1 className="mt-6 font-serif text-[clamp(2.75rem,6vw,5.25rem)] font-medium leading-[0.98] tracking-[-0.025em] text-rc-ink">
@@ -138,8 +138,8 @@ export function CardsDirectoryPage() {
         </Container>
       </header>
 
-      {/* toolbar */}
-      <div className="z-30 border-b border-rc-ink/10 bg-rc-cream/90 backdrop-blur-xl sm:sticky sm:top-16 lg:top-[72px]">
+      {/* toolbar: sticks to the very top, its padding sitting under the floating header so nothing shows around it */}
+      <div className="z-30 border-y border-rc-ink/10 bg-rc-cream/90 backdrop-blur-xl sm:sticky sm:top-0 sm:-mt-16 sm:border-t-0 sm:pt-16 lg:-mt-[76px] lg:pt-[76px]">
         <Container className="flex flex-col gap-3 py-4">
           <div role="tablist" aria-label="Filter by need" className="-mx-5 flex gap-1 overflow-x-auto px-5 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {NEEDS.map((n) => (

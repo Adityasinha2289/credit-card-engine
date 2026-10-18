@@ -29,6 +29,7 @@ const CardDetailPage = lazy(() => import('./public-platform/pages/CardDetailPage
 const RewardCalculatorPage = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
 const BreakEvenCalculatorPage = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
 const CreditUtilizationPage = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
+const WhichCardPage = lazy(() => import('./public-platform/pages/calculators/WhichCardPage').then((m) => ({ default: m.WhichCardPage })));
 const AuthenticatedAppWrapper = lazy(() => import('./components/AuthenticatedAppWrapper'));
 const CompareRouter = lazy(() => import('./public-platform/pages/CompareRouter'));
 
@@ -89,6 +90,7 @@ const appContent = (
         <Route path="/calculators/credit-card-reward-calculator" element={<PublicLayout><RewardCalculatorPage /></PublicLayout>} />
         <Route path="/calculators/annual-fee-break-even" element={<PublicLayout><BreakEvenCalculatorPage /></PublicLayout>} />
         <Route path="/calculators/credit-utilization" element={<PublicLayout><CreditUtilizationPage /></PublicLayout>} />
+        <Route path="/calculators/which-card-to-use" element={<PublicLayout><WhichCardPage /></PublicLayout>} />
 
         <Route path="/business" element={<PublicLayout><BusinessPartnerPage /></PublicLayout>} />
         <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />

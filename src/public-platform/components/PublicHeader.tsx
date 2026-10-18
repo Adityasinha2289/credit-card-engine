@@ -1,269 +1,231 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { Container, EASE_OUT } from '../site/primitives';
-import { CardFace } from '../site/CardFace';
-import { CARD_NEEDS, COMPANY, SIGN_IN, SIGN_UP, TOOLS } from '../site/nav';
-import { CATALOG_STATS } from '../site/swipeMath';
-import { getPopularComparisons } from '../lib/cardKnowledgeGraph';
+import { ArrowChip, Container, EASE_OUT } from '../site/primitives';
+import { LogoLink } from '../site/Brand';
+import { CARD_NEEDS, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 import { analytics } from '../../lib/analytics';
 
-type Panel = 'cards' | 'tools' | null;
+const PRIMARY = [
+  { label: 'Cards', to: '/cards' },
+  { label: 'Tools', to: TOOLS[0].to },
+  { label: 'How we rank', to: '/methodology' },
+  { label: 'For business', to: '/business' },
+  { label: 'About', to: '/about' },
+  { label: 'Contact', to: '/contact' },
+];
 
-const BAR_KEY = 'rc.announcement.greenox.dismissed';
+/** Pages whose first screen is dark get a light-on-dark header. */
+const DARK_ROUTES = new Set(['/']);
 
-function readDismissed(): boolean {
-  try { return localStorage.getItem(BAR_KEY) === '1'; } catch { return false; }
-}
+/** Shown inline in the header on wide screens; everything else lives in the menu. */
+const INLINE = [
+  { label: 'Cards', to: '/cards' },
+  { label: 'Tools', to: TOOLS[0].to },
+  { label: 'How we rank', to: '/methodology' },
+  { label: 'Business', to: '/business' },
+];
 
-function AnnouncementBar() {
-  const [hidden, setHidden] = useState(readDismissed);
-  if (hidden) return null;
+/** Two lines of unequal length that meet in an X; the short one grows on hover. */
+function MenuIcon({ open }: { open: boolean }) {
   return (
-    <div className="relative bg-rc-ink text-rc-cream">
-      <Container className="flex h-10 items-center justify-center gap-3 text-[13px]">
-        <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-mist sm:inline">Member perk</span>
-        <span aria-hidden className="hidden h-3 w-px bg-rc-cream/25 sm:inline" />
-        <a
-          href="/#perks"
-          onClick={() => analytics.track('Partner Offer Clicked', { partner: 'greenox', placement: 'announcement' })}
-          className="group inline-flex items-center gap-1.5 truncate"
-        >
-          <span>20% off at GreeNox for RenoCred members</span>
-          <ArrowRight aria-hidden className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
-        </a>
-      </Container>
-      <button
-        type="button"
-        aria-label="Dismiss announcement"
-        onClick={() => { try { localStorage.setItem(BAR_KEY, '1'); } catch { /* storage blocked */ } setHidden(true); }}
-        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-rc-mist transition-colors hover:text-rc-cream"
-      >
-        <X className="h-3.5 w-3.5" />
-      </button>
-    </div>
+    <span aria-hidden className="relative block h-3 w-[18px]">
+      <span className={cn('absolute right-0 h-[1.5px] rounded-full bg-current transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]', open ? 'top-[5px] w-[18px] rotate-45' : 'top-0.5 w-[18px]')} />
+      <span className={cn('absolute right-0 h-[1.5px] rounded-full bg-current transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:w-[18px]', open ? 'top-[5px] w-[18px] -rotate-45' : 'top-[9px] w-[11px]')} />
+    </span>
   );
 }
 
-function Logo() {
-  return (
-    <Link to="/" className="flex shrink-0 items-center gap-2.5 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rc-forest">
-      <img src="/logo.jpg" alt="" width={32} height={32} className="h-8 w-8 rounded-[9px] object-cover" />
-      <span className="text-[17px] font-semibold tracking-[-0.01em] text-rc-ink">RenoCred</span>
-    </Link>
-  );
-}
-
-function CardsPanel() {
-  const comparisons = getPopularComparisons().slice(0, 5);
-  return (
-    <Container className="grid gap-10 py-10 lg:grid-cols-12">
-      <div className="lg:col-span-4">
-        <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Best cards for</p>
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-3">
-          {CARD_NEEDS.map((n) => (
-            <li key={n.to}>
-              <Link to={n.to} className="text-[15px] text-rc-ink transition-colors hover:text-rc-forest">{n.label}</Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="lg:col-span-4">
-        <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Popular comparisons</p>
-        <ul className="space-y-3">
-          {comparisons.map((c) => (
-            <li key={c.slug}>
-              <Link to={`/compare/${c.slug}`} className="text-[15px] text-rc-ink transition-colors hover:text-rc-forest">{c.label}</Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <Link
-        to="/cards"
-        className="group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-2xl bg-rc-ink p-6 text-rc-cream lg:col-span-4"
-      >
-        <div>
-          <p className="font-serif text-[28px] leading-tight">All {CATALOG_STATS.cards} cards</p>
-          <p className="mt-2 max-w-[22ch] text-[14px] leading-relaxed text-rc-mist">Every fee and reward rule from {CATALOG_STATS.banks} issuers, in one place.</p>
-        </div>
-        <span className="inline-flex items-center gap-2 text-[14px] font-medium">
-          Browse the directory <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-        </span>
-        <div className="pointer-events-none absolute -bottom-6 -right-10 rotate-[-8deg] transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-[-5deg]">
-          <CardFace name="Axis Bank ATLAS Credit Card" bank="AXIS" width={210} />
-        </div>
-      </Link>
-    </Container>
-  );
-}
-
-function ToolsPanel() {
-  return (
-    <Container className="grid gap-6 py-10 md:grid-cols-3">
-      {TOOLS.map((t) => (
-        <Link key={t.to} to={t.to} className="group rounded-2xl border border-rc-ink/10 bg-rc-paper p-6 transition-colors hover:border-rc-ink/30">
-          <p className="font-serif text-[24px] leading-tight text-rc-ink">{t.label}</p>
-          <p className="mt-2 text-[14px] leading-relaxed text-rc-muted">{t.description}</p>
-          <span className="mt-6 inline-flex items-center gap-2 text-[13px] font-medium text-rc-ink">
-            Open <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </span>
-        </Link>
-      ))}
-    </Container>
-  );
-}
-
-function MobileMenu({ onClose }: { onClose: () => void }) {
+function MenuOverlay({ onClose }: { onClose: () => void }) {
   const reduce = useReducedMotion();
+  const item = (i: number) => ({
+    initial: reduce ? false : { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: EASE_OUT, delay: 0.08 + i * 0.05 },
+  });
   return (
     <motion.div
-      id="mobile-menu"
+      id="site-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
       initial={reduce ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-40 overflow-y-auto bg-rc-cream lg:hidden"
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-[60] overflow-y-auto bg-rc-night text-rc-cream"
     >
-      {/* clears the sticky header (and the announcement bar when it is still on screen) */}
-      <Container className="flex min-h-full flex-col pb-10 pt-28">
-        <nav aria-label="Mobile" className="flex flex-col">
-          {[{ label: 'All cards', to: '/cards' }, ...TOOLS.slice(0, 1).map((t) => ({ label: 'Reward calculator', to: t.to })), ...COMPANY].map((item, i) => (
-            <motion.div
-              key={item.to}
-              initial={reduce ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.04 * i }}
-            >
-              <Link to={item.to} onClick={onClose} className="block border-b border-rc-ink/10 py-4 font-serif text-[32px] leading-tight text-rc-ink">
-                {item.label}
-              </Link>
-            </motion.div>
-          ))}
+      <Container className="flex h-16 items-center justify-between lg:h-[76px]">
+        <LogoLink dark onClick={onClose} />
+        <button type="button" onClick={onClose} aria-label="Close menu" className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/20 transition-colors hover:border-white/60 hover:bg-white/[0.06]">
+          <MenuIcon open />
+        </button>
+      </Container>
+      <Container className="grid gap-16 pb-16 pt-10 lg:grid-cols-12 lg:pt-16">
+        <nav aria-label="Main" className="lg:col-span-7">
+          <ul>
+            {PRIMARY.map((l, i) => (
+              <motion.li key={l.to} {...item(i)}>
+                <Link to={l.to} onClick={onClose} className="group flex items-baseline gap-5 py-2">
+                  <span className="w-7 text-[12px] tabular-nums text-rc-mist/60">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-serif text-[clamp(2.5rem,6vw,4.75rem)] font-semibold leading-[1.02] tracking-[-0.03em] transition-colors group-hover:text-rc-pistachio">{l.label}</span>
+                </Link>
+              </motion.li>
+            ))}
+          </ul>
         </nav>
-        <p className="mb-3 mt-8 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Best cards for</p>
-        <div className="flex flex-wrap gap-2">
-          {CARD_NEEDS.map((n) => (
-            <Link key={n.to} to={n.to} onClick={onClose} className="rounded-full border border-rc-ink/15 px-4 py-2 text-[14px] text-rc-ink">
-              {n.label}
-            </Link>
-          ))}
-        </div>
-        <div className="mt-auto grid grid-cols-2 gap-3 pt-10">
-          <Link to={SIGN_IN} onClick={onClose} className="flex h-12 items-center justify-center rounded-full border border-rc-ink/20 text-[15px] font-medium text-rc-ink">Log in</Link>
-          <Link to={SIGN_UP} onClick={onClose} className="flex h-12 items-center justify-center rounded-full bg-rc-ink text-[15px] font-medium text-rc-cream">Get started</Link>
-        </div>
+        <motion.div {...item(PRIMARY.length)} className="space-y-12 lg:col-span-4 lg:col-start-9">
+          <div>
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Best cards for</p>
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+              {CARD_NEEDS.map((n) => (
+                <li key={n.to}><Link to={n.to} onClick={onClose} className="text-[15px] text-rc-mist transition-colors hover:text-rc-cream">{n.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Free tools</p>
+            <ul className="space-y-2.5">
+              {TOOLS.map((t) => (
+                <li key={t.to}><Link to={t.to} onClick={onClose} className="text-[15px] text-rc-mist transition-colors hover:text-rc-cream">{t.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <Link
+            to={SIGN_UP}
+            onClick={() => { analytics.track('Partner Offer Clicked', { partner: 'greenox', placement: 'menu' }); onClose(); }}
+            className="flex items-center gap-5 rounded-[24px] border border-white/15 p-4 transition-colors hover:border-white/40 hover:bg-white/[0.03]"
+          >
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white"><img src="/greenox_logo.png" alt="GreeNox" className="h-10 w-10 object-contain" /></span>
+            <span>
+              <span className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Member perk</span>
+              <span className="mt-1 block font-serif text-[20px] leading-snug">20% off at GreeNox</span>
+            </span>
+          </Link>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px]">
+            <Link to={SIGN_IN} onClick={onClose} className="text-rc-mist hover:text-rc-cream">Log in</Link>
+            {SOCIAL.map((s) => (
+              <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-rc-mist hover:text-rc-cream">
+                {s.label} <ArrowUpRight className="h-3 w-3" />
+              </a>
+            ))}
+          </div>
+        </motion.div>
       </Container>
     </motion.div>
   );
 }
 
 export function PublicHeader() {
+  const { pathname, search } = useLocation();
+  const dark = DARK_ROUTES.has(pathname);
   const [scrolled, setScrolled] = useState(false);
-  const [panel, setPanel] = useState<Panel>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const location = useLocation();
-  const reduce = useReducedMotion();
+  const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setPanel(null); setMobileOpen(false); }, [location.pathname, location.search]);
+  useEffect(() => { setOpen(false); }, [pathname, search]);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { setPanel(null); setMobileOpen(false); } };
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
-
-  const openPanel = (p: Panel) => { if (closeTimer.current) clearTimeout(closeTimer.current); setPanel(p); };
-  const scheduleClose = () => { closeTimer.current = setTimeout(() => setPanel(null), 160); };
-
-  const trigger = (p: Exclude<Panel, null>, label: string) => (
-    <button
-      type="button"
-      aria-expanded={panel === p}
-      aria-controls={`panel-${p}`}
-      onClick={() => setPanel(panel === p ? null : p)}
-      onMouseEnter={() => openPanel(p)}
-      onMouseLeave={scheduleClose}
-      className={cn(
-        'inline-flex items-center gap-1 rounded-full px-3 py-2 text-[14px] font-medium transition-colors',
-        panel === p ? 'text-rc-ink' : 'text-rc-ink/75 hover:text-rc-ink',
-      )}
-    >
-      {label}
-      <ChevronDown aria-hidden className={cn('h-3.5 w-3.5 transition-transform duration-300', panel === p && 'rotate-180')} />
-    </button>
-  );
-
-  const solid = scrolled || panel !== null || mobileOpen;
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
+  }, [open]);
 
   return (
     <>
-      <AnnouncementBar />
-      <header
-        className={cn(
-          'sticky top-0 z-50 w-full transition-[background-color,border-color,backdrop-filter] duration-300',
-          solid ? 'border-b border-rc-ink/10 bg-rc-cream/90 backdrop-blur-xl' : 'border-b border-transparent bg-rc-cream',
-        )}
-      >
-        <Container className="flex h-16 items-center justify-between gap-6 lg:h-[72px]">
-          <Logo />
+      {/* The bar is full width at the top of the page and tucks into a floating capsule once you scroll. */}
+      <header className="sticky top-0 z-50 h-16 w-full px-3 sm:px-5 lg:h-[76px]">
+        <div
+          className={cn(
+            'mx-auto flex h-full items-center justify-between gap-4 rounded-full border transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] duration-700 ease-[cubic-bezier(.22,1,.36,1)]',
+            scrolled
+              ? cn(
+                'mt-2.5 h-[52px] max-w-[1040px] pl-3 pr-1.5 backdrop-blur-xl lg:mt-3 lg:h-[56px]',
+                dark
+                  ? 'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
+                  : 'border-rc-ink/10 bg-rc-paper/80 shadow-[0_18px_40px_-24px_rgba(15,42,29,0.35)]',
+              )
+              : 'max-w-[1280px] border-transparent px-2 sm:px-3 lg:px-7',
+          )}
+        >
+          <LogoLink dark={dark} />
 
-          <nav aria-label="Main" className="hidden items-center gap-1 lg:flex">
-            {trigger('cards', 'Cards')}
-            {trigger('tools', 'Tools')}
-            <Link to="/methodology" className="rounded-full px-3 py-2 text-[14px] font-medium text-rc-ink/75 transition-colors hover:text-rc-ink">How we rank</Link>
-            <Link to="/business" className="rounded-full px-3 py-2 text-[14px] font-medium text-rc-ink/75 transition-colors hover:text-rc-ink">For business</Link>
+          <nav aria-label="Primary" className="hidden lg:block" onMouseLeave={() => setHovered(null)}>
+            <ul className="flex items-center">
+              {INLINE.map((l) => {
+                const current = pathname === l.to || (l.to !== '/' && pathname.startsWith(`${l.to}/`));
+                return (
+                  <li key={l.to} className="relative">
+                    {hovered === l.to && (
+                      <motion.span
+                        layoutId="nav-hover"
+                        aria-hidden
+                        className={cn('absolute inset-0 rounded-full', dark ? 'bg-white/[0.08]' : 'bg-rc-ink/[0.06]')}
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    <Link
+                      to={l.to}
+                      onMouseEnter={() => setHovered(l.to)}
+                      onFocus={() => setHovered(l.to)}
+                      aria-current={current ? 'page' : undefined}
+                      className={cn(
+                        'relative block rounded-full px-4 py-2 text-[14px] transition-colors',
+                        dark ? 'text-rc-mist hover:text-rc-cream' : 'text-rc-ink/70 hover:text-rc-ink',
+                        current && (dark ? 'text-rc-cream' : 'text-rc-ink'),
+                      )}
+                    >
+                      {l.label}
+                      {current && <span aria-hidden className={cn('absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full', dark ? 'bg-rc-pistachio' : 'bg-rc-forest')} />}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
-          <div className="flex items-center gap-2">
-            <Link to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] font-medium text-rc-ink/80 transition-colors hover:text-rc-ink sm:inline-flex">Log in</Link>
-            <Link to={SIGN_UP} className="hidden h-10 items-center rounded-full bg-rc-ink px-5 text-[14px] font-medium text-rc-cream transition-colors hover:bg-rc-moss sm:inline-flex">Get started</Link>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Link to={SIGN_IN} className={cn('hidden rounded-full px-4 py-2 text-[14px] transition-colors sm:inline-flex', dark ? 'text-rc-mist hover:bg-white/[0.06] hover:text-rc-cream' : 'text-rc-ink/70 hover:bg-rc-ink/[0.05] hover:text-rc-ink')}>
+              Log in
+            </Link>
+            <Link
+              to={SIGN_UP}
+              className={cn(
+                'group inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-1 text-[14px] font-medium transition-colors duration-300 sm:h-11 sm:pl-5',
+                dark ? 'bg-rc-cream text-rc-ink hover:bg-white' : 'bg-rc-ink text-rc-cream hover:bg-rc-moss',
+              )}
+            >
+              Get started
+              <ArrowChip variant={dark ? 'cream' : 'ink'} size="sm" />
+            </Link>
             <button
               type="button"
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={mobileOpen}
-              aria-controls="mobile-menu"
-              onClick={() => setMobileOpen((v) => !v)}
-              className="-mr-2 rounded-full p-2 text-rc-ink lg:hidden"
+              aria-label="Open menu"
+              aria-expanded={open}
+              aria-controls="site-menu"
+              onClick={() => setOpen(true)}
+              className={cn(
+                'group flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11',
+                dark ? 'border-white/15 text-rc-cream hover:border-white/50 hover:bg-white/[0.06]' : 'border-rc-ink/15 text-rc-ink hover:border-rc-ink/50 hover:bg-rc-ink/[0.04]',
+              )}
             >
-              {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <MenuIcon open={false} />
             </button>
           </div>
-        </Container>
-
-        <AnimatePresence>
-          {panel && (
-            <motion.div
-              id={`panel-${panel}`}
-              key={panel}
-              onMouseEnter={() => openPanel(panel)}
-              onMouseLeave={scheduleClose}
-              initial={reduce ? false : { opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: EASE_OUT }}
-              className="absolute inset-x-0 top-full hidden border-b border-rc-ink/10 bg-rc-cream shadow-[0_24px_48px_-24px_rgba(10,31,21,0.25)] lg:block"
-            >
-              {panel === 'cards' ? <CardsPanel /> : <ToolsPanel />}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </div>
       </header>
-      <AnimatePresence>{mobileOpen && <MobileMenu onClose={() => setMobileOpen(false)} />}</AnimatePresence>
+      <AnimatePresence>{open && <MenuOverlay onClose={() => setOpen(false)} />}</AnimatePresence>
     </>
   );
 }

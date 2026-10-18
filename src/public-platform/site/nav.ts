@@ -13,6 +13,11 @@ export const CARD_NEEDS = [
 
 export const TOOLS = [
   {
+    label: 'Which card to use',
+    to: '/calculators/which-card-to-use',
+    description: 'Rank the cards you own for any spend.',
+  },
+  {
     label: 'Reward calculator',
     to: '/calculators/credit-card-reward-calculator',
     description: 'What a card returns on your spend, after its fee.',

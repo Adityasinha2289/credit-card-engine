@@ -109,6 +109,12 @@
 
   <!-- Public Utility Calculators -->
   <url>
+    <loc>https://renocred.com/calculators/which-card-to-use</loc>
+    <lastmod>2026-10-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://renocred.com/calculators/credit-card-reward-calculator</loc>
     <lastmod>2026-08-14</lastmod>
     <changefreq>weekly</changefreq>

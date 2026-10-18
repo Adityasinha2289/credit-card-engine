@@ -4,10 +4,9 @@
  * rate, from the dataset), then line up as a wallet where every card has a role.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, transform, useMotionValueEvent, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
-import { cn } from '../../../lib/utils';
-import { Container, Display, Eyebrow, useMediaQuery } from '../../site/primitives';
-import { CardFace, displayCardName } from '../../site/CardFace';
+import { motion, transform, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { Container, useMediaQuery } from '../../site/primitives';
+import { CardFace } from '../../site/CardFace';
 import { cardsByIds, rewardFor, type FinixCard, type SpendCategory } from '../../site/swipeMath';
 
 const JOBS: { id: string; job: string; category: SpendCategory }[] = [
@@ -99,10 +98,10 @@ function JobCard({ card, job, rate, index, progress, mobile, shift, width }: {
       style={{ x, y, rotate, scale, opacity, zIndex, width, marginLeft: -width / 2, marginTop: -width / 1.586 / 2 }}
     >
       <motion.div style={{ opacity: labelOpacity }} className="pointer-events-none absolute bottom-full left-1/2 mb-4 flex -translate-x-1/2 flex-col items-center whitespace-nowrap">
-        <span className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-rc-forest">Best for</span>
-        <span className="relative rounded-md bg-rc-ink px-4 py-1.5 text-[13px] font-medium uppercase tracking-[0.14em] text-rc-cream shadow-[0_10px_24px_-12px_rgba(10,31,21,0.6)]">
-          {job}<span className="ml-2 text-rc-pistachio">{rate}%</span>
-          <span aria-hidden className="absolute -bottom-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-45 bg-rc-ink" />
+        <span className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-rc-mist">Best for</span>
+        <span className="relative rounded-full bg-rc-pistachio px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-rc-ink shadow-[0_10px_24px_-12px_rgba(0,0,0,0.7)]">
+          {job}<span className="ml-2 text-rc-forest">{rate}%</span>
+          <span aria-hidden className="absolute -bottom-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-45 rounded-[2px] bg-rc-pistachio" />
         </span>
       </motion.div>
       <CardFace name={card.name} bank={card.bank} network={card.network} width={width} />
@@ -116,7 +115,6 @@ export function CardJobs() {
   const ref = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const [stageW, setStageW] = useState(0);
-  const [active, setActive] = useState(-1);
 
   const cards = useMemo(() => {
     const byId = new Map(cardsByIds(JOBS.map((j) => j.id)).map((c) => [c.id, c]));
@@ -130,11 +128,6 @@ export function CardJobs() {
   const textOpacity = useTransform(scrollYProgress, (v) => (v < 0.82 ? 1 : Math.max(0, 1 - (v - 0.82) / 0.07)));
   const payoffOpacity = useTransform(scrollYProgress, (v) => Math.min(1, Math.max(0, (v - 0.9) / 0.05)));
 
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    const i = FOCUS_WINDOWS.findIndex(([from, to]) => v >= from && v < to);
-    setActive((prev) => (prev === i ? prev : i));
-  });
-
   useEffect(() => {
     const el = stage.current;
     if (!el) return;
@@ -145,27 +138,26 @@ export function CardJobs() {
 
   const heading = (
     <>
-      <Eyebrow>Your wallet</Eyebrow>
-      <Display className="mt-6 text-rc-ink">Every card <span className="italic text-rc-forest">has a job.</span></Display>
-      <p className="mt-6 max-w-[34ch] text-[17px] leading-relaxed text-rc-muted">RenoCred helps you understand which card belongs in which moment.</p>
+      <h2 className="font-serif text-[clamp(2.75rem,5.6vw,5rem)] font-semibold leading-[0.95] tracking-[-0.035em] text-rc-cream">Every card<br />has a job.</h2>
+      <p className="mt-6 max-w-[30ch] text-[16px] leading-relaxed text-rc-mist">RenoCred knows which card belongs in which moment.</p>
     </>
   );
   const payoff = (
-    <p className="font-serif text-[clamp(1.6rem,3vw,2.6rem)] leading-[1.12] tracking-[-0.015em] text-rc-ink">
-      Your wallet isn't a collection of cards. <span className="italic text-rc-forest">It's a collection of better moves.</span>
+    <p className="font-serif text-[clamp(1.7rem,3.2vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.025em] text-rc-cream">
+      Your wallet isn't a collection of cards.<br />It's a collection of better moves.
     </p>
   );
 
   if (reduce) {
     return (
-      <section className="bg-rc-pistachio py-28">
+      <section className="relative z-10 -mt-10 rounded-t-[40px] bg-rc-night py-32 lg:-mt-14 lg:rounded-t-[56px]">
         <Container>
           {heading}
           <ul className="mt-20 grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
             {cards.map((c) => (
               <li key={c.id} className="flex flex-col items-center">
-                <span className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-rc-forest">Best for</span>
-                <span className="mb-5 rounded-md bg-rc-ink px-4 py-1.5 text-[13px] font-medium uppercase tracking-[0.14em] text-rc-cream">{c.job} <span className="text-rc-pistachio">{c.rate}%</span></span>
+                <span className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-rc-mist">Best for</span>
+                <span className="mb-5 rounded-full bg-rc-pistachio px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-rc-ink">{c.job} <span className="text-rc-forest">{c.rate}%</span></span>
                 <CardFace name={c.card.name} bank={c.card.bank} network={c.card.network} width={260} />
               </li>
             ))}
@@ -181,20 +173,11 @@ export function CardJobs() {
   const cardW = mobile ? 220 : 320;
 
   return (
-    <section ref={ref} className="relative h-[400vh] bg-rc-pistachio">
+    <section ref={ref} className="relative z-10 -mt-10 h-[400vh] rounded-t-[40px] bg-rc-night lg:-mt-14 lg:rounded-t-[56px]">
       <div className="sticky top-16 h-[calc(100svh-4rem)] overflow-hidden lg:top-[72px] lg:h-[calc(100svh-72px)]">
         <Container className="relative h-full">
           <motion.div style={{ opacity: textOpacity }} className="relative z-30 pt-10 lg:absolute lg:inset-y-0 lg:left-12 lg:flex lg:w-[38%] lg:flex-col lg:justify-center lg:pt-0">
             {heading}
-            <ol className="mt-10 hidden space-y-3 lg:block" aria-label="Card jobs">
-              {cards.map((c, i) => (
-                <li key={c.id} className={cn('flex items-baseline gap-4 transition-opacity duration-500', active === i ? 'opacity-100' : 'opacity-35')}>
-                  <span className="w-6 text-[12px] tabular-nums text-rc-forest">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="w-20 text-[15px] font-medium text-rc-ink">{c.job}</span>
-                  <span className="text-[14px] text-rc-muted">{displayCardName(c.card.name)} · {c.rate}%</span>
-                </li>
-              ))}
-            </ol>
           </motion.div>
         </Container>
 

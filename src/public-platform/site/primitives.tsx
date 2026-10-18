@@ -5,7 +5,7 @@
  */
 import { useEffect, useState, type ReactNode, type ElementType } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useReducedMotion } from 'framer-motion';
+import { animate, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -41,6 +41,33 @@ const BUTTON_STYLES: Record<ButtonVariant, string> = {
   'outline-cream': 'border border-rc-cream/25 text-rc-cream hover:border-rc-cream/70 hover:bg-white/[0.04]',
 };
 
+/** The round chip at the end of a button; its colour contrasts with the button's. */
+const CHIP_STYLES: Record<ButtonVariant, string> = {
+  ink: 'bg-rc-pistachio text-rc-ink',
+  cream: 'bg-rc-ink text-rc-pistachio',
+  outline: 'bg-rc-ink text-rc-cream',
+  'outline-cream': 'bg-rc-cream text-rc-ink',
+};
+
+/**
+ * Arrow in a round chip. On hover the arrow leaves through one side and a copy
+ * comes in from the other, so the button feels like it moves you forward.
+ */
+export function ArrowChip({ variant = 'ink', size = 'md', external, className }: {
+  variant?: ButtonVariant; size?: 'sm' | 'md' | 'lg'; external?: boolean; className?: string;
+}) {
+  const Icon = external ? ArrowUpRight : ArrowRight;
+  const box = size === 'lg' ? 'h-11 w-11' : size === 'md' ? 'h-9 w-9' : 'h-8 w-8';
+  const out = external ? 'group-hover:translate-x-[160%] group-hover:-translate-y-[160%]' : 'group-hover:translate-x-[180%]';
+  const inn = external ? '-translate-x-[160%] translate-y-[160%]' : '-translate-x-[180%]';
+  return (
+    <span aria-hidden className={cn('relative flex shrink-0 items-center justify-center overflow-hidden rounded-full transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.06]', box, CHIP_STYLES[variant], className)}>
+      <Icon className={cn('h-4 w-4 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)]', out)} />
+      <Icon className={cn('absolute h-4 w-4 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:translate-x-0 group-hover:translate-y-0', inn)} />
+    </span>
+  );
+}
+
 interface ButtonLinkProps {
   to?: string;
   href?: string;
@@ -53,20 +80,20 @@ interface ButtonLinkProps {
   onClick?: () => void;
 }
 
-/** Pill CTA. Internal routes use `to`, anchors and external links use `href`. */
+/** Pill CTA with an arrow chip. Internal routes use `to`, anchors and external links use `href`. */
 export function ButtonLink({ to, href, children, variant = 'ink', size = 'md', arrow = true, external, className, onClick }: ButtonLinkProps) {
   const classes = cn(
-    'group inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors duration-300',
+    'group inline-flex items-center justify-center gap-3 rounded-full border border-transparent font-medium transition-colors duration-300',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rc-forest',
-    size === 'lg' ? 'h-14 px-7 text-[15px]' : 'h-12 px-6 text-[14px]',
+    size === 'lg' ? 'h-14 text-[15px]' : 'h-12 text-[14px]',
+    arrow ? (size === 'lg' ? 'pl-7 pr-1.5' : 'pl-6 pr-1.5') : (size === 'lg' ? 'px-7' : 'px-6'),
     BUTTON_STYLES[variant],
     className,
   );
-  const Icon = external ? ArrowUpRight : ArrowRight;
   const content = (
     <>
       <span>{children}</span>
-      {arrow && <Icon aria-hidden className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />}
+      {arrow && <ArrowChip variant={variant} size={size === 'lg' ? 'lg' : 'md'} external={external} />}
     </>
   );
   if (to) return <Link to={to} className={classes} onClick={onClick}>{content}</Link>;
@@ -143,4 +170,18 @@ export function useMediaQuery(query: string): boolean {
     return () => mq.removeEventListener('change', on);
   }, [query]);
   return matches;
+}
+
+/** Counts from 0 to `to` when mounted (or when `start` turns true). */
+export function CountUp({ to, format = (n: number) => Math.round(n).toLocaleString('en-IN'), duration = 1.4, delay = 0.35, start = true }: {
+  to: number; format?: (n: number) => string; duration?: number; delay?: number; start?: boolean;
+}) {
+  const reduce = useReducedMotion();
+  const [v, setV] = useState(reduce ? to : 0);
+  useEffect(() => {
+    if (reduce || !start) return;
+    const c = animate(0, to, { duration, ease: EASE_OUT, delay, onUpdate: setV });
+    return () => c.stop();
+  }, [to, duration, delay, start, reduce]);
+  return <>{format(v)}</>;
 }

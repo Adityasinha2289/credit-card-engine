@@ -1,117 +1,91 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform, type MotionValue, type Variants } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { cn } from '../../../lib/utils';
-import { ButtonLink, Container, Eyebrow, EASE_OUT, formatINR } from '../../site/primitives';
-import { CardFace, displayCardName } from '../../site/CardFace';
-import { HERO_MOMENTS, SAMPLE_WALLET_IDS, CATALOG_STATS, cardsByIds, rankCards } from '../../site/swipeMath';
+import { ButtonLink, Container, EASE_OUT, formatINR, useMediaQuery } from '../../site/primitives';
+import { CardFace, displayCardName, themeFor } from '../../site/CardFace';
+import { BrandMark } from '../../site/Brand';
+import { CATALOG_STATS, HERO_MOMENTS, SAMPLE_WALLET_IDS, cardsByIds, rankCards, type FinixCard } from '../../site/swipeMath';
 import { SIGN_UP } from '../../site/nav';
 
-const ROTATE_MS = 3200;
+const ROTATE_MS = 3600;
 
-/** Where each card sits in the stack by rank: the winner is in front, the rest recede behind it. */
-const STACK = [
-  { x: 0, y: 0, scale: 1, rotate: 0, opacity: 1 },
-  { x: 22, y: -34, scale: 0.93, rotate: 3, opacity: 0.92 },
-  { x: 40, y: -62, scale: 0.86, rotate: 6, opacity: 0.78 },
-  { x: 54, y: -86, scale: 0.79, rotate: 9, opacity: 0.6 },
-  { x: 64, y: -106, scale: 0.72, rotate: 12, opacity: 0.4 },
-];
+/** Shortest signed turn (degrees) from one angle to another. */
+const turn = (from: number, to: number) => ((((to - from) % 360) + 540) % 360) - 180;
 
-function HeroWallet({ index, onPick }: { index: number; onPick: (i: number) => void }) {
-  const reduce = useReducedMotion();
-  const wallet = useMemo(() => cardsByIds(SAMPLE_WALLET_IDS), []);
-  const moment = HERO_MOMENTS[index];
-  const ranked = useMemo(() => rankCards(wallet, moment.category, moment.amount), [wallet, moment]);
-  const [best, next] = ranked;
-  const rankOf = new Map(ranked.map((r, i) => [r.card.id, i]));
-
+function CardBack({ card, width }: { card: FinixCard; width: number }) {
+  const theme = themeFor(card.name, card.bank);
+  const u = width / 320;
   return (
-    <div className="relative mx-auto w-full max-w-[460px]">
-      {/* card stack */}
-      <div className="relative mx-auto h-[300px] w-[320px] origin-top scale-[0.86] sm:scale-100">
-        {wallet.map((card) => {
-          const pos = STACK[rankOf.get(card.id) ?? STACK.length - 1];
-          return (
-            <motion.div
-              key={card.id}
-              className="absolute left-0 top-[110px]"
-              style={{ zIndex: 10 - (rankOf.get(card.id) ?? 9) }}
-              animate={{ x: pos.x, y: pos.y, scale: pos.scale, rotate: pos.rotate, opacity: pos.opacity }}
-              transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 170, damping: 24, mass: 0.9 }}
-            >
-              <CardFace name={card.name} bank={card.bank} network={card.network} width={320} />
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* receipt: the spend and the answer */}
-      <div className="relative z-20 -mt-2 rounded-[22px] border border-rc-ink/10 bg-rc-paper p-5 shadow-[0_30px_60px_-30px_rgba(10,31,21,0.35)] sm:p-6">
-        <div className="flex items-baseline justify-between gap-4 border-b border-dashed border-rc-ink/15 pb-4">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.p key={moment.label} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="text-[14px] text-rc-muted">
-              {moment.label}
-            </motion.p>
-          </AnimatePresence>
-          <p className="text-[15px] font-medium tabular-nums text-rc-ink">{formatINR(moment.amount)}</p>
-        </div>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={best.card.id + index}
-            initial={reduce ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.35, ease: EASE_OUT }}
-            className="pt-4"
-          >
-            <div className="flex items-end justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-muted">Use</p>
-                <p className="mt-1 truncate font-serif text-[24px] leading-tight text-rc-ink">{displayCardName(best.card.name)}</p>
-              </div>
-              <p className="shrink-0 text-right">
-                <span className="block font-serif text-[30px] leading-none text-rc-emerald tabular-nums">+{formatINR(best.reward)}</span>
-                <span className="text-[12px] text-rc-muted">back · {best.rate}%</span>
-              </p>
-            </div>
-            {next && best.reward > next.reward && (
-              <p className="mt-3 text-[13px] leading-relaxed text-rc-muted">
-                {formatINR(best.reward - next.reward)} more than your next best card, {displayCardName(next.card.name)}.
-              </p>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* manual control: pick a moment */}
-      <div role="tablist" aria-label="Example spends" className="mt-5 flex flex-wrap justify-center gap-1.5">
-        {HERO_MOMENTS.map((m, i) => (
-          <button
-            key={m.label}
-            role="tab"
-            type="button"
-            aria-selected={i === index}
-            onClick={() => onPick(i)}
-            className={cn(
-              'rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors',
-              i === index ? 'bg-rc-ink text-rc-cream' : 'text-rc-muted hover:bg-rc-ink/[0.05] hover:text-rc-ink',
-            )}
-          >
-            {m.short}
-          </button>
-        ))}
-      </div>
+    <div
+      className="relative overflow-hidden"
+      style={{ width, height: width / 1.586, borderRadius: 16 * u, background: `linear-gradient(320deg, ${theme.primary}, ${theme.secondary})` }}
+    >
+      <div className="absolute inset-0 bg-black/45" />
+      <div className="absolute inset-x-0 bg-black/80" style={{ top: 22 * u, height: 40 * u }} />
+      <div className="absolute rounded-[3px] bg-white/80" style={{ left: 20 * u, top: 80 * u, width: 150 * u, height: 26 * u }} />
+      <div className="absolute inset-0" style={{ borderRadius: 16 * u, boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.12)' }} />
     </div>
   );
 }
 
+/** One card on the ring: front and back faces, dimmed as it turns away from you. */
+function RingCard({ card, slot, count, spin, radius, width, winner }: {
+  card: FinixCard; slot: number; count: number; spin: MotionValue<number>; radius: number; width: number; winner: boolean;
+}) {
+  const step = 360 / count;
+  const transform = useTransform(spin, (a) => `rotateY(${a + slot * step}deg) translateZ(${radius}px)`);
+  const shade = useTransform(spin, (a) => (1 - Math.cos(((a + slot * step) * Math.PI) / 180)) * 0.34);
+  const u = width / 320;
+  return (
+    <motion.div className="absolute left-1/2 top-1/2" style={{ width, height: width / 1.586, marginLeft: -width / 2, marginTop: -width / 1.586 / 2, transform, transformStyle: 'preserve-3d' }}>
+      <motion.div
+        className="relative h-full w-full"
+        style={{ transformStyle: 'preserve-3d' }}
+        animate={{ y: winner ? -16 * u : 0, scale: winner ? 1.04 : 1 }}
+        transition={{ type: 'spring', stiffness: 140, damping: 18 }}
+      >
+        <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+          <CardFace name={card.name} bank={card.bank} network={card.network} width={width} />
+          <motion.div className="pointer-events-none absolute inset-0 bg-rc-night" style={{ opacity: shade, borderRadius: 16 * u }} />
+        </div>
+        <div className="absolute inset-0" style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+          <CardBack card={card} width={width} />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+const letter: Variants = {
+  hidden: { y: '115%', opacity: 0, rotateX: -75 },
+  shown: (i: number) => ({ y: '0%', opacity: 1, rotateX: 0, transition: { duration: 0.85, ease: EASE_OUT, delay: 0.1 + i * 0.03 } }),
+  gone: (i: number) => ({ y: '-115%', opacity: 0, rotateX: 60, transition: { duration: 0.5, ease: [0.6, 0, 0.8, 0.3], delay: i * 0.012 } }),
+};
+
 export function Hero() {
   const reduce = useReducedMotion();
+  const wide = useMediaQuery('(min-width: 640px)');
   const [index, setIndex] = useState(0);
-  const [hovering, setHovering] = useState(false);
-  const [picked, setPicked] = useState(false);
-  const paused = hovering || picked;
+  const [paused, setPaused] = useState(false);
+  const wallet = useMemo(() => cardsByIds(SAMPLE_WALLET_IDS), []);
+  const moment = HERO_MOMENTS[index];
+  const best = useMemo(() => rankCards(wallet, moment.category, moment.amount)[0], [wallet, moment]);
+  const winnerSlot = wallet.findIndex((c) => c.id === best.card.id);
+  const step = 360 / wallet.length;
+
+  const width = wide ? 300 : 200;
+  const radius = width * 1.04;
+  const base = useMotionValue(-winnerSlot * step);
+  const spin = useSpring(base, { stiffness: 60, damping: 17, mass: 1.1 });
+  const panFrom = useRef(0);
+
+  // turn the ring the short way round so the winning card faces you
+  useEffect(() => {
+    const now = base.get();
+    base.set(now + turn(now, -winnerSlot * step));
+  }, [winnerSlot, step, base]);
 
   useEffect(() => {
     if (paused || reduce) return;
@@ -119,64 +93,124 @@ export function Hero() {
     return () => clearInterval(t);
   }, [paused, reduce]);
 
-  const pick = (i: number) => { setIndex(i); setPicked(true); };
+  /** After a drag, settle on the nearest card and show the spend it wins. */
+  const settle = () => {
+    const slot = ((Math.round(-base.get() / step) % wallet.length) + wallet.length) % wallet.length;
+    const m = HERO_MOMENTS.findIndex((mo) => rankCards(wallet, mo.category, mo.amount)[0].card.id === wallet[slot].id);
+    if (m >= 0 && m !== index) setIndex(m);
+    else base.set(base.get() + turn(base.get(), -winnerSlot * step));
+  };
+
+  const chars = Array.from(moment.phrase);
 
   return (
-    <section className="relative overflow-hidden">
-      <Container className="grid items-center gap-14 pb-20 pt-12 lg:min-h-[calc(100svh-112px)] lg:grid-cols-12 lg:gap-8 lg:pb-24 lg:pt-6">
-        <div className="lg:col-span-7">
-          <Reveal0>
-            <Eyebrow>Credit card intelligence for India</Eyebrow>
-          </Reveal0>
-          <h1 className="mt-7 font-serif text-[clamp(3rem,7vw,6.5rem)] font-medium leading-[0.95] tracking-[-0.03em] text-rc-ink">
-            <span className="block">The right card</span>
-            <span className="block">
-              for every<span className="sr-only"> spend.</span>
-            </span>
-            <span aria-hidden className="relative block h-[1.08em] overflow-hidden">
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span
-                  key={index}
-                  className="absolute inset-x-0 top-0 block italic text-rc-forest"
-                  initial={reduce ? false : { y: '100%' }}
-                  animate={{ y: '0%' }}
-                  exit={{ y: '-100%' }}
-                  transition={{ duration: 0.7, ease: EASE_OUT }}
-                >
-                  {HERO_MOMENTS[index].phrase}
-                </motion.span>
-              </AnimatePresence>
-            </span>
-          </h1>
-          <p className="mt-8 max-w-[44ch] text-[17px] leading-relaxed text-rc-muted sm:text-[18px]">
-            RenoCred knows the reward rules of {CATALOG_STATS.cards} Indian credit cards. Add the ones you own and it tells you which to swipe, before you pay.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <ButtonLink to={SIGN_UP} size="lg">Get started, it's free</ButtonLink>
-            <ButtonLink href="#try" variant="outline" size="lg" arrow={false}>Try it with your cards</ButtonLink>
-          </div>
-          <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-rc-muted">
-            {['Free to use', 'Never touches your credit score', 'No full card numbers'].map((t) => (
-              <li key={t} className="inline-flex items-center gap-1.5">
-                <Check aria-hidden className="h-3.5 w-3.5 text-rc-forest" /> {t}
-              </li>
+    <section className="relative overflow-hidden bg-rc-night text-rc-cream">
+      {/* stage light from above, and the faint track the cards ride on */}
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[-35%] h-[900px] w-[1200px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.12),transparent)]" />
+      <BrandMark tone="pistachio" size={760} className="pointer-events-none absolute -right-[260px] top-[14%] hidden opacity-[0.025] lg:block" />
+
+      <Container className="relative flex min-h-[calc(100svh-4rem)] flex-col items-center justify-center pb-16 pt-8 text-center lg:min-h-[calc(100svh-76px)]">
+        <Link
+          to="/cards"
+          className="group inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] py-1.5 pl-1.5 pr-4 text-[13px] text-rc-mist transition-colors hover:border-white/25 hover:text-rc-cream"
+        >
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-rc-pistachio"><BrandMark size={16} /></span>
+          <span>RenoCred reads <span className="text-rc-cream">{CATALOG_STATS.cards} cards</span> from {CATALOG_STATS.banks} banks</span>
+          <ArrowRight aria-hidden className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+
+        {/* the wallet as a ring: drag it, or let it turn to the best card for each spend */}
+        <motion.div
+          className="relative mt-6 w-full cursor-grab touch-pan-y select-none active:cursor-grabbing"
+          style={{ height: width / 1.586 + 120 * (width / 300), perspective: wide ? 1500 : 1000 }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onPanStart={() => { panFrom.current = base.get(); setPaused(true); }}
+          onPan={(_, info) => base.set(panFrom.current + info.offset.x * 0.32)}
+          onPanEnd={settle}
+          aria-hidden
+        >
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-[62%] h-[90px] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(42,157,92,0.32),transparent)] blur-2xl" style={{ width: radius * 3 }} />
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-[56%] -translate-x-1/2 rounded-[50%] border border-white/[0.07]" style={{ width: radius * 2.5, height: radius * 0.42 }} />
+          <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(-11deg)' }}>
+            {wallet.map((card, i) => (
+              <RingCard key={card.id} card={card} slot={i} count={wallet.length} spin={reduce ? base : spin} radius={radius} width={width} winner={i === winnerSlot} />
             ))}
-          </ul>
+          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={index}
+              initial={reduce ? false : { opacity: 0, y: 14, scale: 0.92, rotate: -4 }}
+              animate={{ opacity: 1, y: 0, scale: 1, rotate: -2 }}
+              exit={{ opacity: 0, y: -8, scale: 0.96 }}
+              transition={{ duration: 0.5, ease: EASE_OUT, delay: 0.35 }}
+              className="absolute right-2 top-0 z-30 rounded-2xl sm:left-1/2 sm:right-auto sm:top-[6%] bg-rc-cream py-2.5 pl-3 pr-4 text-left text-rc-ink shadow-[0_24px_50px_-18px_rgba(0,0,0,0.7)]"
+              style={wide ? { marginLeft: width * 0.36 } : undefined}
+            >
+              <span className="block whitespace-nowrap text-[11px] text-rc-muted">{moment.label} · {formatINR(moment.amount)}</span>
+              <span className="mt-0.5 block font-serif text-[24px] font-semibold leading-none text-rc-emerald tabular-nums sm:text-[28px]">+{formatINR(best.reward)}</span>
+              <span className="mt-1 block max-w-[18ch] truncate text-[11px] font-medium text-rc-ink/80">with {displayCardName(best.card.name)}</span>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+
+        <h1 className="mt-6 sm:mt-10">
+          <span className="block text-[15px] text-rc-mist sm:text-[18px]">The right card for every</span>
+          <span className="sr-only">{moment.phrase}</span>
+          {/* padding inside the clip keeps ascenders and descenders whole while letters roll through */}
+          <span
+            aria-hidden
+            className="relative mt-1 block w-[min(94vw,1120px)] overflow-hidden py-[0.14em] font-serif text-[clamp(2.4rem,8.4vw,7rem)] font-semibold leading-[1.06] tracking-[-0.035em]"
+          >
+            <span className="invisible block">&nbsp;</span>
+            <AnimatePresence initial={false}>
+              <motion.span
+                key={index}
+                className="absolute inset-x-0 top-[0.14em] flex justify-center whitespace-nowrap"
+                style={{ perspective: 700 }}
+                initial="hidden"
+                animate="shown"
+                exit="gone"
+              >
+                {chars.map((ch, i) => (
+                  <motion.span key={i} custom={i} variants={reduce ? undefined : letter} className="inline-block origin-bottom" style={{ whiteSpace: 'pre' }}>
+                    {ch}
+                  </motion.span>
+                ))}
+              </motion.span>
+            </AnimatePresence>
+          </span>
+        </h1>
+
+        <div role="tablist" aria-label="Example spends" className="mt-6 flex items-center gap-2">
+          {HERO_MOMENTS.map((m, i) => (
+            <button
+              key={m.phrase}
+              type="button"
+              role="tab"
+              aria-selected={i === index}
+              aria-label={m.label}
+              onClick={() => { setIndex(i); setPaused(true); }}
+              className={cn('relative h-1.5 overflow-hidden rounded-full transition-all duration-500', i === index ? 'w-10 bg-white/20' : 'w-1.5 bg-white/25 hover:bg-white/50')}
+            >
+              {i === index && (
+                <motion.span
+                  key={`${index}-${paused}`}
+                  className="absolute inset-y-0 left-0 rounded-full bg-rc-pistachio"
+                  initial={{ width: paused || reduce ? '100%' : '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: paused || reduce ? 0 : ROTATE_MS / 1000, ease: 'linear' }}
+                />
+              )}
+            </button>
+          ))}
         </div>
-        <div className="lg:col-span-5" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
-          <HeroWallet index={index} onPick={pick} />
+
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <ButtonLink to={SIGN_UP} variant="cream" size="lg">Start free</ButtonLink>
+          <ButtonLink href="#try-it" variant="outline-cream" size="lg" arrow={false}>Try a spend</ButtonLink>
         </div>
       </Container>
     </section>
-  );
-}
-
-/** Entrance for above-the-fold content (Reveal waits for scroll; this plays on load). */
-function Reveal0({ children }: { children: ReactNode }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE_OUT }}>
-      {children}
-    </motion.div>
   );
 }

@@ -85,6 +85,7 @@ function CardPicker({ exclude, onAdd, disabled }: { exclude: string[]; onAdd: (c
 }
 
 export function SwipeSimulator() {
+  // rendered as the page body of /calculators/which-card-to-use
   const reduce = useReducedMotion();
   const [category, setCategory] = useState<SpendCategory>('dining');
   const [amount, setAmount] = useState(2500);
@@ -105,12 +106,12 @@ export function SwipeSimulator() {
   const categoryLabel = SPEND_CATEGORIES.find((c) => c.id === category)?.label.toLowerCase() ?? category;
 
   return (
-    <section id="try" className="scroll-mt-24 py-28 lg:py-40">
+    <section className="pb-28 pt-16 lg:pb-36 lg:pt-24">
       <Container>
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <Reveal className="lg:col-span-7">
-            <Eyebrow index="01">Try it</Eyebrow>
-            <Display className="mt-6 text-rc-ink">Pick a spend.<br /><span className="italic text-rc-forest">We'll pick the card.</span></Display>
+            <Eyebrow>Free tool</Eyebrow>
+            <Display as="h1" className="mt-6 text-rc-ink">Which card <span className="italic text-rc-forest">should I use?</span></Display>
           </Reveal>
           <Reveal delay={0.1} className="lg:col-span-5">
             <p className="max-w-[42ch] text-[17px] leading-relaxed text-rc-muted">

@@ -69,7 +69,7 @@ export const HERO_MOMENTS: SpendMoment[] = [
   { phrase: 'dinner out.', short: 'Dinner', label: 'Dinner for two', category: 'dining', amount: 2400 },
   { phrase: 'flight home.', short: 'Flight', label: 'Flight, Bengaluru to Delhi', category: 'travel', amount: 9800 },
   { phrase: 'fuel top-up.', short: 'Fuel', label: 'Fuel top-up', category: 'fuel', amount: 3000 },
-  { phrase: 'Amazon order.', short: 'Amazon', label: 'Amazon order', category: 'shopping', amount: 6000 },
+  { phrase: 'amazon order.', short: 'Amazon', label: 'Amazon order', category: 'shopping', amount: 6000 },
   { phrase: 'electricity bill.', short: 'Power bill', label: 'Electricity bill', category: 'utilities', amount: 2800 },
 ];
 

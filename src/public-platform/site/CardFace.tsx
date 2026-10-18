@@ -71,7 +71,7 @@ const words = (s: string) => new Set(s.toLowerCase().replace(/[^a-z0-9+\s]/g, ' 
  * data uses others ("Swiggy HDFC"); match on significant words, then fall back
  * to the issuer's colours.
  */
-function themeFor(name: string, bank: string): IssuerTheme {
+export function themeFor(name: string, bank: string): IssuerTheme {
   const nameWords = words(name);
   const key = Object.keys(PRODUCT_THEMES).find((k) => [...words(k)].every((w) => nameWords.has(w)));
   return key ? PRODUCT_THEMES[key] : getIssuerTheme(bankLabel(bank), name);

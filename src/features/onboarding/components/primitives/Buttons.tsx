@@ -1,35 +1,30 @@
 import React from 'react';
 import { cn } from '../../../../lib/utils';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { ArrowChip } from '../../../../public-platform/site/primitives';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
+/** The website's primary button: an ink pill with a pistachio arrow chip. */
 export const ContinueButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, children, disabled, ...props }, ref) => {
     return (
       <motion.button
         ref={ref}
-        whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.97 }}
         className={cn(
-          "w-full sm:w-auto px-10 rounded-full flex items-center justify-center gap-3 font-semibold text-base transition-all duration-300",
-          disabled && "opacity-30 pointer-events-none",
+          'group flex h-14 w-full items-center justify-center gap-3 rounded-full bg-rc-ink pl-8 pr-1.5 text-[15px] font-medium text-rc-cream transition-colors duration-300 hover:bg-rc-moss sm:w-auto',
+          disabled && 'pointer-events-none opacity-30',
           className
         )}
-        style={{
-          height: 56,
-          backgroundColor: '#2A9D5C',
-          color: '#FFFFFF',
-          border: 'none',
-          boxShadow: disabled ? 'none' : 'inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 20px rgba(42,157,92,0.25)',
-        }}
         disabled={disabled}
-        {...props}
+        {...(props as React.ComponentProps<typeof motion.button>)}
       >
-        {children} <ArrowRight size={18} strokeWidth={2} />
+        <span>{children}</span>
+        <ArrowChip variant="ink" size="lg" />
       </motion.button>
     );
   }
@@ -43,24 +38,10 @@ export const BackButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         whileTap={{ scale: 0.97 }}
         className={cn(
-          "px-6 rounded-full flex items-center justify-center gap-2 font-medium text-sm transition-all duration-300",
+          'flex h-14 items-center justify-center gap-2 rounded-full border border-rc-ink/15 px-6 text-sm font-medium text-rc-muted transition-colors duration-300 hover:border-rc-ink/40 hover:text-rc-ink',
           className
         )}
-        style={{
-          height: 56,
-          backgroundColor: 'transparent',
-          color: '#4B5563',
-          border: '1px solid #E5E7EB',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = '#D1D5DB';
-          e.currentTarget.style.color = '#111827';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = '#E5E7EB';
-          e.currentTarget.style.color = '#4B5563';
-        }}
-        {...props}
+        {...(props as React.ComponentProps<typeof motion.button>)}
       >
         <ArrowLeft size={16} strokeWidth={2} /> {children}
       </motion.button>
@@ -74,13 +55,7 @@ export const SkipButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={cn(
-          "text-sm font-medium transition-colors duration-200",
-          className
-        )}
-        style={{ color: '#6B7280' }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = '#111827'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = '#6B7280'; }}
+        className={cn('rounded-full text-sm font-medium text-rc-muted transition-colors duration-200 hover:text-rc-ink', className)}
         {...props}
       >
         {children}

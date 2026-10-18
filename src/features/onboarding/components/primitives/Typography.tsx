@@ -15,10 +15,9 @@ export const SectionHeading = React.forwardRef<HTMLHeadingElement, TypographyPro
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          "text-3xl md:text-4xl lg:text-[42px] font-display font-semibold tracking-tight leading-[1.15] mb-4",
+          "mb-4 font-display text-[clamp(2.1rem,4.4vw,3rem)] font-semibold leading-[1.04] tracking-[-0.03em] text-rc-ink",
           className
         )}
-        style={{ color: '#111827' }}
         {...props}
       >
         {children}
@@ -37,10 +36,9 @@ export const SectionDescription = React.forwardRef<HTMLParagraphElement, React.H
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          "text-base lg:text-lg leading-relaxed max-w-[560px]",
+          "max-w-[560px] text-base leading-relaxed text-rc-muted lg:text-lg",
           className
         )}
-        style={{ color: '#4B5563' }}
         {...props}
       >
         {children}

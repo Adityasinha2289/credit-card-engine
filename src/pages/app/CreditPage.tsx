@@ -770,7 +770,7 @@ function CompareTab() {
 
                   {/* 4. VALUE (OVERALL) */}
                   <tr className="bg-gray-50">
-                    <td colSpan={selectedCards.length + 1} className="px-5 py-2.5 text-[9px] font-bold text-gray-600 uppercase tracking-widest sticky left-0">Reno Cred Score</td>
+                    <td colSpan={selectedCards.length + 1} className="px-5 py-2.5 text-[9px] font-bold text-gray-600 uppercase tracking-widest sticky left-0">RenoCred score</td>
                   </tr>
                   <tr>
                     <td className="p-5 text-xs text-gray-900 font-semibold sticky left-0 bg-white z-10 border-r border-gray-200">Overall Score</td>

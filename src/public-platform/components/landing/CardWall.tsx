@@ -1,7 +1,8 @@
 /**
- * "144 cards. Read so you don't have to." Every card in the catalogue rides a
- * tilted wall in slow columns while a scan line passes over them, and a panel in
- * front reads one card at a time, pulling its real terms out of the dataset.
+ * "500+ cards. Read so you don't have to." Cards ride a tilted wall in slow
+ * columns, painted in the brand greens, while a scan line passes over them. A
+ * panel in front reads one card at a time in its real colours, pulling its terms
+ * out of the dataset. The counts come from the full catalogue (CATALOGUE_STATS).
  */
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -10,16 +11,22 @@ import { Check } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { ArrowLink, ButtonLink, Container, CountUp, EASE_OUT, formatINR, useMediaQuery } from '../../site/primitives';
 import { CardFace, bankLabel, displayCardName } from '../../site/CardFace';
-import { CATALOG, CATALOG_STATS, SPEND_CATEGORIES, cardsByIds, slugifyCardName, type FinixCard } from '../../site/swipeMath';
+import { CATALOG, CATALOGUE_STATS, SPEND_CATEGORIES, cardsByIds, slugifyCardName, type FinixCard } from '../../site/swipeMath';
 
 const READ_MS = 3400;
 const READING = ['axis_atlas', 'hdfc_swiggy', 'idfc_first_wealth', 'sbi_cashback', 'hdfc_infinia', 'axis_ace', 'icici_amazon_pay', 'hsbc_live_plus'];
 
 const STATS = [
-  { value: CATALOG_STATS.banks, label: 'banks' },
-  { value: CATALOG.reduce((n, c) => n + (c.rewards?.length ?? 0), 0), label: 'reward rules' },
-  { value: CATALOG.filter((c) => c.feeWaiverSpend).length, label: 'fee waivers' },
-  { value: CATALOG_STATS.lifetimeFree, label: 'lifetime free' },
+  { value: CATALOGUE_STATS.issuers, label: 'issuers' },
+  { value: CATALOGUE_STATS.pagesRead, label: 'issuer pages read' },
+  { value: CATALOGUE_STATS.sourcedFacts, label: 'facts, each sourced' },
+  { value: CATALOGUE_STATS.feeWaivers, label: 'fee waivers found' },
+];
+
+/** The wall's cards wear the brand's greens, so the one being read stands out in its own colours. */
+const TINTS: [string, string][] = [
+  ['#0F2A1D', '#16382A'], ['#375534', '#6B9071'], ['#16382A', '#375534'],
+  ['#6B9071', '#AEC3B0'], ['#0A1F15', '#375534'], ['#AEC3B0', '#C9DABE'],
 ];
 
 /** What a careful reader would pull out of a card's terms, straight from the dataset. */
@@ -54,7 +61,7 @@ const Wall = memo(function Wall({ columns, cardW }: { columns: number; cardW: nu
             style={{ animationDuration: `${70 + (i % 3) * 14}s` }}
           >
             {[...col, ...col].map((c, j) => (
-              <CardFace key={`${c.id}-${j}`} name={c.name} bank={c.bank} network={c.network} width={cardW} lifted={false} className="shadow-[0_16px_30px_-18px_rgba(15,42,29,0.5)]" />
+              <CardFace key={`${c.id}-${j}`} name={c.name} bank={c.bank} network={c.network} width={cardW} lifted={false} tint={TINTS[(i * 5 + j) % TINTS.length]} className="shadow-[0_16px_30px_-18px_rgba(15,42,29,0.5)]" />
             ))}
           </div>
         </div>
@@ -152,11 +159,11 @@ export function CardWall() {
         <Wall columns={desktop ? 9 : 5} cardW={desktop ? 210 : 150} />
         {!reduce && (
           <div aria-hidden className="pointer-events-none absolute inset-0 animate-rc-scan">
-            <div className="absolute inset-x-0 bottom-1/2 h-40 bg-gradient-to-b from-transparent to-rc-pistachio/60" />
-            <div className="absolute inset-x-0 bottom-1/2 h-[2px] bg-rc-forest/40 shadow-[0_0_24px_6px_rgba(227,238,212,0.9)]" />
+            <div className="absolute inset-x-0 bottom-1/2 h-48 bg-gradient-to-b from-transparent to-rc-pistachio/70" />
+            <div className="absolute inset-x-0 bottom-1/2 h-[2px] bg-rc-emerald/70 shadow-[0_0_28px_8px_rgba(227,238,212,0.95)]" />
           </div>
         )}
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-rc-cream via-rc-cream/40 to-rc-cream lg:bg-gradient-to-r lg:from-rc-cream lg:via-rc-cream/85 lg:to-rc-cream/0" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-rc-cream via-rc-cream/60 to-rc-cream lg:bg-gradient-to-r lg:from-rc-cream lg:via-rc-cream/90 lg:to-rc-cream/10" />
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-rc-cream to-transparent" />
       </div>
 
@@ -167,12 +174,12 @@ export function CardWall() {
           </p>
           <h2 className="mt-6 font-serif font-semibold tracking-[-0.04em]">
             <span className="block text-[clamp(6rem,17vw,13.5rem)] leading-[0.86] text-rc-forest lining-nums tabular-nums">
-              <CountUp to={CATALOG_STATS.cards} start={seen} duration={1.8} delay={0.1} />
+              <CountUp to={CATALOGUE_STATS.cards} start={seen} duration={1.8} delay={0.1} />
             </span>
             <span className="mt-3 block text-[clamp(2.25rem,4.4vw,3.9rem)] leading-[1] tracking-[-0.03em]">cards. Read so<br />you don't have to.</span>
           </h2>
           <p className="mt-7 max-w-[44ch] text-[17px] leading-relaxed text-rc-muted">
-            Every rate, fee and waiver, taken from each issuer's published terms and kept in one place, so the answer to “which card?” is a lookup, not an afternoon.
+            Every rate, fee and waiver, taken from {CATALOGUE_STATS.pagesRead} of the issuers' own pages and kept in one place, so the answer to “which card?” is a lookup, not an afternoon.
           </p>
           <dl className="mt-10 grid max-w-[520px] grid-cols-2 gap-3 sm:grid-cols-4">
             {STATS.map((s, n) => (
@@ -190,7 +197,7 @@ export function CardWall() {
             ))}
           </dl>
           <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
-            <ButtonLink to="/cards" size="lg">Browse all {CATALOG_STATS.cards} cards</ButtonLink>
+            <ButtonLink to="/cards" size="lg">Browse the cards</ButtonLink>
             <ArrowLink to="/methodology">How we rank</ArrowLink>
           </div>
         </div>

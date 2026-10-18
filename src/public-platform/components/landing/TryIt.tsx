@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Container, EASE_OUT, formatINR } from '../../site/primitives';
 import { displayCardName } from '../../site/CardFace';
-import { CATALOG_STATS, bestInCatalog, slugifyCardName, type SpendCategory } from '../../site/swipeMath';
+import { bestInCatalog, slugifyCardName, type SpendCategory } from '../../site/swipeMath';
 
 const OPTIONS: { id: SpendCategory; label: string }[] = [
   { id: 'dining', label: 'dining' },
@@ -74,7 +74,7 @@ export function TryIt() {
                   {displayCardName(best.card.name)}.
                 </Link>
                 <p className="mt-6 text-[16px] text-rc-muted">
-                  <span className="font-semibold text-rc-emerald">+{formatINR(best.reward)} back</span>, {best.rate}% on {label}. The most of the {CATALOG_STATS.cards} cards we track.
+                  <span className="font-semibold text-rc-emerald">+{formatINR(best.reward)} back</span>, {best.rate}% on {label}. The best rate we have on record for it.
                 </p>
               </motion.div>
             </AnimatePresence>

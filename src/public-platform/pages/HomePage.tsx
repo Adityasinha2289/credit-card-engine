@@ -19,7 +19,7 @@ export function HomePage() {
     <div className="flex w-full flex-col bg-rc-night text-rc-cream">
       <SEO
         title="RenoCred | The right credit card for every spend"
-        description="RenoCred knows the reward rules of 144 Indian credit cards. Add the cards you own and it tells you which to swipe, tracks what you spend and reminds you before subscriptions renew."
+        description="RenoCred has read the terms of 500+ Indian credit cards. Add the cards you own and it tells you which to swipe, tracks what you spend and reminds you before subscriptions renew."
         canonicalUrl="https://renocred.com/"
         schemaData={[getOrganizationSchema(), getWebSiteSchema()]}
       />

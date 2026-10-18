@@ -14,7 +14,7 @@ const organizationSchema = {
   'name': 'RenoCred',
   'url': 'https://renocred.com/',
   'logo': 'https://renocred.com/icons/icon-512.png',
-  'description': 'Credit card intelligence for India: compare 144 cards, know which card to use for every spend, and get personalised recommendations.',
+  'description': 'Credit card intelligence for India: compare 500+ credit cards, know which card to use for every spend, and get personalised recommendations.',
   'foundingDate': '2025',
   'sameAs': [
     'https://www.instagram.com/social_renocred/',

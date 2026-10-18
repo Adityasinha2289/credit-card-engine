@@ -87,9 +87,11 @@ export interface CardFaceProps {
   style?: CSSProperties;
   /** Draw a soft shadow under the card (off inside dense grids). */
   lifted?: boolean;
+  /** Paint the card in these two colours instead of the issuer's (decorative uses). */
+  tint?: [string, string];
 }
 
-export function CardFace({ name, bank, network = 'Visa', width = 320, className, style, lifted = true }: CardFaceProps) {
+export function CardFace({ name, bank, network = 'Visa', width = 320, className, style, lifted = true, tint }: CardFaceProps) {
   const theme = themeFor(name, bank);
   const unit = width / 320; // 1 at the design size
   const label = shortCardName(name, bank);
@@ -105,7 +107,7 @@ export function CardFace({ name, bank, network = 'Visa', width = 320, className,
         width,
         height: width / 1.586,
         borderRadius: 16 * unit,
-        background: `linear-gradient(140deg, ${theme.primary} 0%, ${theme.secondary} 100%)`,
+        background: `linear-gradient(140deg, ${tint?.[0] ?? theme.primary} 0%, ${tint?.[1] ?? theme.secondary} 100%)`,
         boxShadow: lifted
           ? `0 ${18 * unit}px ${40 * unit}px -${14 * unit}px rgba(10,31,21,0.45), 0 ${2 * unit}px ${6 * unit}px rgba(10,31,21,0.18)`
           : undefined,

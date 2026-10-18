@@ -1,6 +1,6 @@
 import { SEO } from '../components/SEO';
 import { ButtonLink, Container, Display, Eyebrow, Reveal } from '../site/primitives';
-import { CATALOG_STATS } from '../site/swipeMath';
+import { CATALOGUE_STATS } from '../site/swipeMath';
 import { SIGN_UP } from '../site/nav';
 
 const PRINCIPLES = [
@@ -47,7 +47,7 @@ export function AboutPage() {
           <Reveal delay={0.08} className="rc-prose lg:col-span-7 lg:col-start-6">
             <p>The credit card ecosystem in India is full of hidden benefits, complex reward structures, shifting eligibility rules and opaque terms. For most people, a confident decision about which card to use, or which to apply for next, means building a spreadsheet.</p>
             <blockquote>By matching how each card works to how you actually spend, RenoCred makes sure no swipe leaves money on the table.</blockquote>
-            <p>We are building RenoCred to be the place where you manage the cards you have, get more from everyday spending, and make data-driven decisions at a glance, starting with {CATALOG_STATS.cards} cards from {CATALOG_STATS.banks} issuers.</p>
+            <p>We are building RenoCred to be the place where you manage the cards you have, get more from everyday spending, and make data-driven decisions at a glance, starting with {CATALOGUE_STATS.cards} cards from {CATALOGUE_STATS.issuers} issuers.</p>
           </Reveal>
         </Container>
       </section>

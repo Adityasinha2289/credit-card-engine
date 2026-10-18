@@ -1,5 +1,6 @@
 import { SEO } from '../components/SEO';
 import { ButtonLink, Container, Display, Eyebrow, Reveal } from '../site/primitives';
+import { PageBody, PageHero } from '../site/PageHero';
 
 const SPLIT = [
   { label: 'RenoCred distribution', detail: 'Website, social, content', value: 40, cls: 'bg-rc-ink' },
@@ -27,36 +28,38 @@ const PARTNER = '/contact?intent=partner';
 
 export function BusinessPartnerPage() {
   return (
-    <>
+    <div className="flex w-full flex-1 flex-col">
       <SEO
         title="RenoCred for Business | Customer Acquisition Partnerships"
         description="Turn your customer acquisition budget into a measurable growth channel with RenoCred: distribution, customer incentives and tracking in one partnership."
         canonicalUrl="https://renocred.com/business"
       />
 
-      <section className="border-b border-rc-ink/10">
-        <Container className="grid items-end gap-14 pb-20 pt-16 lg:grid-cols-12 lg:pb-28 lg:pt-24">
-          <div className="lg:col-span-8">
-            <Eyebrow>RenoCred for business</Eyebrow>
-            <Display as="h1" size="xl" className="mt-7 max-w-[13ch] text-rc-ink">
-              Acquire customers. <span className="italic text-rc-forest">Spend less.</span> Grow more.
-            </Display>
-            <p className="mt-9 max-w-[46ch] text-[19px] leading-relaxed text-rc-muted">Turn your customer acquisition budget into a measurable growth channel.</p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <ButtonLink to={PARTNER} size="lg">Become a partner</ButtonLink>
-              <ButtonLink href="#how-it-works" variant="outline" size="lg" arrow={false}>See how it works</ButtonLink>
-            </div>
+      <PageHero
+        eyebrow="RenoCred for business"
+        title={<>Acquire customers. <span className="italic">Spend less.</span> Grow more.</>}
+        lede="Turn your customer acquisition budget into a measurable growth channel."
+        actions={(
+          <>
+            <ButtonLink to={PARTNER} variant="cream" size="lg">Become a partner</ButtonLink>
+            <ButtonLink href="#how-it-works" variant="outline-cream" size="lg" arrow={false}>See how it works</ButtonLink>
+          </>
+        )}
+        aside={(
+          <div className="relative overflow-hidden rounded-[40px] bg-rc-pistachio p-8 text-rc-ink">
+            <div aria-hidden className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/50 blur-2xl" />
+            <p className="relative flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-ink/60">
+              <span className="relative flex h-2 w-2"><span className="absolute inset-0 animate-ping rounded-full bg-rc-emerald/60" /><span className="relative h-2 w-2 rounded-full bg-rc-emerald" /></span>
+              Live partnership
+            </p>
+            <span className="relative mt-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white"><img src="/greenox_logo.png" alt="GreeNox" className="h-11 w-11 object-contain" /></span>
+            <p className="relative mt-6 font-serif text-[64px] font-semibold leading-none tracking-[-0.03em]">20%</p>
+            <p className="relative mt-2 text-[16px] text-rc-ink/75">off at GreeNox for RenoCred members</p>
           </div>
-          <div className="lg:col-span-4">
-            <div className="rounded-[24px] border border-rc-ink/10 bg-rc-paper p-7">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Live partnership</p>
-              <img src="/greenox_logo.png" alt="GreeNox" className="mt-5 h-10 w-auto object-contain" />
-              <p className="mt-5 font-serif text-[26px] leading-tight text-rc-ink">20% off for RenoCred members</p>
-            </div>
-          </div>
-        </Container>
-      </section>
+        )}
+      />
 
+      <PageBody>
       <section id="how-it-works" className="scroll-mt-24 py-24 lg:py-32">
         <Container>
           <Reveal className="max-w-3xl">
@@ -94,7 +97,7 @@ export function BusinessPartnerPage() {
         </Container>
       </section>
 
-      <section className="bg-rc-ink py-24 text-rc-cream lg:py-32">
+      <section className="mx-3 rounded-[40px] bg-rc-ink py-24 text-rc-cream sm:mx-5 lg:rounded-[56px] lg:py-32 2xl:mx-auto 2xl:max-w-[1360px]">
         <Container>
           <Reveal className="max-w-3xl">
             <Eyebrow index="02" tone="cream">What we handle</Eyebrow>
@@ -122,18 +125,18 @@ export function BusinessPartnerPage() {
             <Display className="mt-6 text-rc-ink">Start with a pilot. <span className="italic text-rc-forest">Scale with proof.</span></Display>
             <p className="mt-6 max-w-[54ch] text-[17px] leading-relaxed text-rc-muted">We don't ask brands to move their whole marketing budget. We start small, measure the economics, and scale what works.</p>
           </Reveal>
-          <ol className="mt-16 grid gap-px overflow-hidden rounded-[24px] border border-rc-ink/10 bg-rc-ink/10 sm:grid-cols-3 lg:grid-cols-6">
+          <ol className="mt-16 grid gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
             {PILOT.map((step, i) => (
-              <li key={step} className="bg-rc-cream p-6">
-                <p className="font-serif text-[34px] leading-none text-rc-ink/25 tabular-nums">{String(i + 1).padStart(2, '0')}</p>
-                <p className="mt-6 text-[16px] font-medium text-rc-ink">{step}</p>
-              </li>
+              <Reveal as="li" key={step} delay={i * 0.06} className="rounded-[24px] border border-rc-ink/10 bg-rc-paper p-6">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rc-ink font-serif text-[16px] font-semibold text-rc-pistachio tabular-nums">{i + 1}</span>
+                <p className="mt-8 font-serif text-[20px] font-semibold leading-snug text-rc-ink">{step}</p>
+              </Reveal>
             ))}
           </ol>
         </Container>
       </section>
 
-      <section className="border-t border-rc-ink/10 py-24 lg:py-32">
+      <section className="py-24 lg:py-32">
         <Container className="grid gap-14 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">
             <Eyebrow index="04">Why it works</Eyebrow>
@@ -152,7 +155,7 @@ export function BusinessPartnerPage() {
         </Container>
       </section>
 
-      <section className="bg-rc-ink py-28 text-center text-rc-cream lg:py-36">
+      <section className="mx-3 mb-24 rounded-[40px] bg-rc-ink py-28 text-center text-rc-cream sm:mx-5 lg:mb-32 lg:rounded-[56px] lg:py-36 2xl:mx-auto 2xl:max-w-[1360px]">
         <Container>
           <Display className="mx-auto max-w-[16ch]">Your next customer could come <span className="italic text-rc-pistachio">through RenoCred.</span></Display>
           <p className="mx-auto mt-7 max-w-[40ch] text-[18px] text-rc-mist">Let's build an acquisition channel that works for both sides.</p>
@@ -162,6 +165,7 @@ export function BusinessPartnerPage() {
           </div>
         </Container>
       </section>
-    </>
+      </PageBody>
+    </div>
   );
 }

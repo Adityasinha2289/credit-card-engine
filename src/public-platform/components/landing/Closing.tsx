@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform, type AnimationPlaybackControls } from 'framer-motion';
-import { ArrowRight, Plus, RotateCcw } from 'lucide-react';
+import { ArrowRight, RotateCcw } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { ButtonLink, Container, EASE_OUT, formatINR, useMediaQuery } from '../../site/primitives';
 import { CardFace, displayCardName } from '../../site/CardFace';
 import { BrandMark } from '../../site/Brand';
 import { FAQSchema } from '../FAQSchema';
+import { Accordion } from '../../site/Accordion';
 import { CATALOGUE_STATS, HERO_MOMENTS, SAMPLE_WALLET_IDS, cardsByIds, rankCards } from '../../site/swipeMath';
 import { SIGN_UP } from '../../site/nav';
 
@@ -278,8 +279,6 @@ const FAQ_ITEMS = [
 ];
 
 export function FaqToggle() {
-  const [open, setOpen] = useState<number | null>(0);
-  const reduce = useReducedMotion();
   return (
     <section className="relative z-10 -mt-10 rounded-t-[40px] bg-rc-cream pb-28 pt-24 text-rc-ink lg:-mt-14 lg:rounded-t-[56px] lg:pb-36 lg:pt-32">
       <FAQSchema items={FAQ_ITEMS} />
@@ -290,41 +289,7 @@ export function FaqToggle() {
             Something else? <Link to="/contact" className="font-medium text-rc-ink underline decoration-rc-ink/25 underline-offset-4 hover:decoration-rc-ink">Write to us</Link>.
           </p>
         </div>
-        <ul className="space-y-2.5 lg:col-span-8">
-          {FAQ_ITEMS.map((f, i) => {
-            const isOpen = open === i;
-            return (
-              <li key={f.question} className={cn('rounded-[24px] border transition-colors duration-300', isOpen ? 'border-transparent bg-rc-paper shadow-[0_20px_40px_-30px_rgba(15,42,29,0.4)]' : 'border-rc-ink/10 hover:border-rc-ink/25')}>
-                <button
-                  type="button"
-                  aria-expanded={isOpen}
-                  aria-controls={`faq-${i}`}
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
-                >
-                  <span className="font-serif text-[19px] leading-snug sm:text-[21px]">{f.question}</span>
-                  <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-[transform,background-color] duration-500 ease-[cubic-bezier(.22,1,.36,1)]', isOpen ? 'rotate-45 bg-rc-ink text-rc-pistachio' : 'bg-rc-ink/[0.06]')}>
-                    <Plus className="h-4 w-4" />
-                  </span>
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      id={`faq-${i}`}
-                      initial={reduce ? false : { height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.45, ease: EASE_OUT }}
-                      className="overflow-hidden"
-                    >
-                      <p className="max-w-[62ch] px-6 pb-6 text-[15px] leading-relaxed text-rc-muted">{f.answer}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </li>
-            );
-          })}
-        </ul>
+        <Accordion className="lg:col-span-8" items={FAQ_ITEMS} />
       </Container>
     </section>
   );

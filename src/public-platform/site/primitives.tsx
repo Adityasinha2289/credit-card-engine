@@ -21,12 +21,12 @@ export function Eyebrow({ children, index, tone = 'ink', className }: {
 }) {
   return (
     <p className={cn(
-      'flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em]',
+      'flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em]',
       tone === 'ink' ? 'text-rc-muted' : 'text-rc-mist',
       className,
     )}>
+      <span aria-hidden className={cn('h-2 w-2 shrink-0 rounded-full', tone === 'ink' ? 'bg-rc-emerald' : 'bg-rc-pistachio')} />
       {index && <span className={cn('tabular-nums', tone === 'ink' ? 'text-rc-ink' : 'text-rc-cream')}>{index}</span>}
-      {index && <span aria-hidden className={cn('h-px w-8', tone === 'ink' ? 'bg-rc-ink/25' : 'bg-rc-cream/30')} />}
       <span>{children}</span>
     </p>
   );
@@ -154,7 +154,7 @@ export function Display({ children, as: Tag = 'h2', size = 'lg', className }: {
     lg: 'text-[clamp(2.5rem,5.6vw,5rem)] leading-[0.98]',
     md: 'text-[clamp(2rem,3.6vw,3.25rem)] leading-[1.04]',
   };
-  return <Tag className={cn('font-serif font-medium tracking-[-0.025em]', sizes[size], className)}>{children}</Tag>;
+  return <Tag className={cn('font-serif font-semibold tracking-[-0.035em]', sizes[size], className)}>{children}</Tag>;
 }
 
 export const formatINR = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;

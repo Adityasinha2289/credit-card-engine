@@ -1,5 +1,6 @@
 import { SEO } from '../components/SEO';
 import { ButtonLink, Container, Display, Eyebrow, Reveal } from '../site/primitives';
+import { PageBody, PageHero } from '../site/PageHero';
 import { CATALOGUE_STATS } from '../site/swipeMath';
 import { SIGN_UP } from '../site/nav';
 
@@ -20,25 +21,21 @@ const PRINCIPLES = [
 
 export function AboutPage() {
   return (
-    <>
+    <div className="flex w-full flex-1 flex-col">
       <SEO
         title="About RenoCred | Credit card intelligence for India"
         description="RenoCred's mission is to bring clarity and transparency to the Indian credit card ecosystem."
         canonicalUrl="https://renocred.com/about"
       />
 
-      <section className="border-b border-rc-ink/10">
-        <Container className="pb-20 pt-16 lg:pb-28 lg:pt-24">
-          <Eyebrow>About RenoCred</Eyebrow>
-          <Display as="h1" size="xl" className="mt-7 max-w-[14ch] text-rc-ink">
-            Choosing a card shouldn't need <span className="italic text-rc-forest">a spreadsheet.</span>
-          </Display>
-          <p className="mt-9 max-w-[54ch] text-[19px] leading-relaxed text-rc-muted">
-            We built RenoCred to solve a simple problem: getting real value from credit cards in India is far too complicated.
-          </p>
-        </Container>
-      </section>
+      <PageHero
+        eyebrow="About RenoCred"
+        wide
+        title={<>Choosing a card shouldn't need <span className="italic">a spreadsheet.</span></>}
+        lede="We built RenoCred to solve a simple problem: getting real value from credit cards in India is far too complicated."
+      />
 
+      <PageBody>
       <section className="py-24 lg:py-32">
         <Container className="grid gap-14 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">
@@ -52,7 +49,7 @@ export function AboutPage() {
         </Container>
       </section>
 
-      <section className="bg-rc-ink py-24 text-rc-cream lg:py-32">
+      <section className="mx-3 rounded-[40px] bg-rc-ink py-24 text-rc-cream sm:mx-5 lg:rounded-[56px] lg:py-32 2xl:mx-auto 2xl:max-w-[1360px]">
         <Container>
           <Reveal>
             <Eyebrow index="02" tone="cream">What we believe</Eyebrow>
@@ -60,9 +57,9 @@ export function AboutPage() {
           </Reveal>
           <div className="mt-16 grid gap-12 md:grid-cols-3">
             {PRINCIPLES.map((p, i) => (
-              <Reveal key={p.title} delay={i * 0.08} className="border-t border-white/15 pt-6">
+              <Reveal key={p.title} delay={i * 0.08} className="rounded-[28px] border border-white/10 bg-white/[0.03] p-7">
                 <p className="text-[12px] tabular-nums text-rc-mist">{String(i + 1).padStart(2, '0')}</p>
-                <p className="mt-4 font-serif text-[28px] leading-tight">{p.title}</p>
+                <p className="mt-4 font-serif text-[28px] font-semibold leading-tight">{p.title}</p>
                 <p className="mt-3 text-[15px] leading-relaxed text-rc-mist">{p.body}</p>
               </Reveal>
             ))}
@@ -79,6 +76,7 @@ export function AboutPage() {
           </div>
         </Container>
       </section>
-    </>
+      </PageBody>
+    </div>
   );
 }

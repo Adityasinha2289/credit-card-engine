@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { FAQSchema } from '../components/FAQSchema';
 import { getBreadcrumbSchema } from '../lib/schemaBuilders';
-import { Container, Display, Eyebrow, Reveal, formatINR } from '../site/primitives';
+import { Container, Eyebrow, Reveal, formatINR } from '../site/primitives';
+import { PageBody, PageHero } from '../site/PageHero';
+import { Accordion } from '../site/Accordion';
 import { CardFace, displayCardName } from '../site/CardFace';
 import { CATALOGUE_STATS, cardsByIds, rankCards } from '../site/swipeMath';
 
@@ -41,7 +42,7 @@ export function MethodologyPage() {
   const example = useMemo(() => rankCards(cardsByIds(['hdfc_swiggy', 'sbi_cashback', 'axis_ace', 'icici_amazon_pay']), 'dining', 2400), []);
 
   return (
-    <>
+    <div className="flex w-full flex-1 flex-col">
       <SEO
         title="How RenoCred Ranks Credit Cards | Methodology"
         description="How RenoCred turns issuers' published reward rates, caps and fees into card rankings: the data, the maths and the limits."
@@ -50,29 +51,36 @@ export function MethodologyPage() {
       />
       <FAQSchema items={METHODOLOGY_FAQS} />
 
-      <section className="border-b border-rc-ink/10">
-        <Container className="pb-20 pt-16 lg:pb-28 lg:pt-24">
-          <Eyebrow>Methodology</Eyebrow>
-          <Display as="h1" size="xl" className="mt-7 max-w-[13ch] text-rc-ink">How we rank <span className="italic text-rc-forest">cards.</span></Display>
-          <p className="mt-9 max-w-[54ch] text-[19px] leading-relaxed text-rc-muted">
-            Rules you can check, not a black box. Here is the data we use, the maths behind each answer, and where it stops being precise.
-          </p>
-        </Container>
-      </section>
+      <PageHero
+        eyebrow="Methodology"
+        title={<>How we rank <span className="italic">cards.</span></>}
+        lede="Rules you can check, not a black box. Here is the data we use, the maths behind each answer, and where it stops being precise."
+        aside={(
+          <div className="rounded-[40px] bg-rc-pistachio p-8 text-rc-ink">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-ink/55">The whole rule, for one swipe</p>
+            <p className="mt-6 font-serif text-[clamp(2rem,3.2vw,2.9rem)] font-semibold leading-[1.15] tracking-[-0.02em] tabular-nums">
+              {formatINR(2400)} <span className="text-rc-ink/40">×</span> {example[0].rate}%
+              <br /><span className="text-rc-ink/40">=</span> <span className="rounded-[0.2em] bg-rc-ink px-[0.2em] text-rc-pistachio">{formatINR(example[0].reward)}</span>
+            </p>
+            <p className="mt-6 text-[14px] leading-relaxed text-rc-ink/70">Dinner for two on the {displayCardName(example[0].card.name)}: spend times the card's published rate for dining, capped where the issuer caps it.</p>
+          </div>
+        )}
+      />
 
+      <PageBody>
       <section className="py-20 lg:py-28">
-        <Container className="grid gap-10 md:grid-cols-3">
+        <Container className="grid gap-4 md:grid-cols-3">
           {PRINCIPLES.map((p, i) => (
-            <Reveal key={p.k} delay={i * 0.06} className="border-t border-rc-ink/15 pt-6">
+            <Reveal key={p.k} delay={i * 0.06} className="rounded-[28px] border border-rc-ink/10 bg-rc-paper p-7">
               <p className="text-[12px] tabular-nums text-rc-muted">{String(i + 1).padStart(2, '0')}</p>
-              <p className="mt-4 font-serif text-[26px] leading-tight text-rc-ink">{p.k}</p>
+              <p className="mt-4 font-serif text-[26px] font-semibold leading-tight text-rc-ink">{p.k}</p>
               <p className="mt-3 text-[15px] leading-relaxed text-rc-muted">{p.v}</p>
             </Reveal>
           ))}
         </Container>
       </section>
 
-      <section className="bg-rc-paper py-20 lg:py-28">
+      <section className="mx-3 rounded-[40px] bg-rc-paper py-20 sm:mx-5 lg:rounded-[56px] lg:py-28 2xl:mx-auto 2xl:max-w-[1360px]">
         <Container className="grid gap-14 lg:grid-cols-12">
           <Reveal className="rc-prose lg:col-span-6">
             <h2>Which card to use</h2>
@@ -81,7 +89,7 @@ export function MethodologyPage() {
             <p>Rates are the effective value back as a share of spend, so a "5X points" card and a "5% cashback" card are compared in rupees, not in points.</p>
           </Reveal>
           <Reveal delay={0.08} className="lg:col-span-5 lg:col-start-8">
-            <div className="rounded-[24px] bg-rc-ink p-7 text-rc-cream">
+            <div className="rounded-[32px] bg-rc-ink p-7 text-rc-cream">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist">Worked example · dinner, {formatINR(2400)}</p>
               <ol className="mt-6 space-y-3">
                 {example.map((r, i) => (
@@ -122,24 +130,16 @@ export function MethodologyPage() {
         </Container>
       </section>
 
-      <section className="border-t border-rc-ink/10 py-20 lg:py-28">
+      <section className="pb-28 lg:pb-36">
         <Container className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Eyebrow>Questions</Eyebrow>
+            <h2 className="mt-5 font-serif text-[clamp(2.2rem,3.8vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-rc-ink">Asked, <span className="italic text-rc-forest">answered.</span></h2>
           </div>
-          <div className="lg:col-span-7 lg:col-start-6">
-            {METHODOLOGY_FAQS.map((f, i) => (
-              <details key={f.question} open={i === 0} className="group border-b border-rc-ink/10 first:border-t">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
-                  <span className="text-[17px] font-medium text-rc-ink">{f.question}</span>
-                  <Plus className="h-4 w-4 shrink-0 text-rc-ink transition-transform duration-300 group-open:rotate-45" />
-                </summary>
-                <p className="pb-6 pr-10 text-[16px] leading-relaxed text-rc-muted">{f.answer}</p>
-              </details>
-            ))}
-          </div>
+          <Accordion className="lg:col-span-7 lg:col-start-6" items={METHODOLOGY_FAQS} />
         </Container>
       </section>
-    </>
+      </PageBody>
+    </div>
   );
 }

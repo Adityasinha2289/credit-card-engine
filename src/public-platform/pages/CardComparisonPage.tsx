@@ -5,6 +5,7 @@ import { getComparisonPairBySlug, getPopularComparisons, getRatesFor, monthlyInc
 import { getBreadcrumbSchema, getOrganizationSchema, getWebSiteSchema } from '../lib/schemaBuilders';
 import { cn } from '../../lib/utils';
 import { ButtonLink, Container, Eyebrow, Reveal, formatINR, useMediaQuery } from '../site/primitives';
+import { PageBody, PageHero } from '../site/PageHero';
 import { CardFace, displayCardName } from '../site/CardFace';
 import { bankLabel } from '../site/banks';
 import { SPEND_CATEGORIES } from '../site/swipeMath';
@@ -59,7 +60,7 @@ export function CardComparisonPage() {
   ]);
 
   return (
-    <div className="w-full">
+    <div className="flex w-full flex-1 flex-col">
       <SEO
         title={`${nameA} vs ${nameB}: Fees, Rewards & Perks Compared | RenoCred`}
         description={`Compare ${nameA} and ${nameB} side by side: annual fees (${cardA.formattedAnnualFee} vs ${cardB.formattedAnnualFee}), reward rates, lounge access and eligibility.`}
@@ -67,40 +68,36 @@ export function CardComparisonPage() {
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
 
-      <header className="border-b border-rc-ink/10">
-        <Container className="pb-16 pt-10 lg:pb-24 lg:pt-14">
-          <nav aria-label="Breadcrumb" className="mb-12 flex items-center gap-2 overflow-x-auto whitespace-nowrap text-[13px] text-rc-muted">
-            <Link to="/" className="hover:text-rc-ink">Home</Link><span aria-hidden>/</span>
-            <Link to="/cards" className="hover:text-rc-ink">Cards</Link><span aria-hidden>/</span>
-            <span className="truncate text-rc-ink">{nameA} vs {nameB}</span>
-          </nav>
-          <Eyebrow>Head to head</Eyebrow>
-          <h1 className="mt-6 font-serif text-[clamp(2.4rem,5vw,4.5rem)] font-medium leading-[1.02] tracking-[-0.025em] text-rc-ink">
-            {nameA} <span className="italic text-rc-sage">vs</span> {nameB}
-          </h1>
-          <div className="mt-14 grid grid-cols-2 gap-6 sm:gap-10">
-            {[cardA, cardB].map((c) => (
-              <Link key={c.id} to={`/cards/${c.slug}`} className="group flex flex-col items-center rounded-[28px] bg-rc-paper px-4 py-10 transition-colors hover:bg-white sm:py-14">
-                <div className="transition-transform duration-500 group-hover:-translate-y-1">
-                  <CardFace name={c.cardName} bank={c.issuer} network={c.network} width={wide ? 300 : 140} />
+      <PageHero
+        crumbs={[{ label: 'Home', to: '/' }, { label: 'Cards', to: '/cards' }, { label: `${nameA} vs ${nameB}` }]}
+        eyebrow="Head to head"
+        title={<>{nameA} <span className="italic">vs</span> {nameB}</>}
+        lede="Fees, reward rates, lounge access and eligibility, side by side from each issuer's published terms."
+        aside={(
+          <div className="relative flex items-center justify-center py-6">
+            {[cardA, cardB].map((c, i) => (
+              <Link key={c.id} to={`/cards/${c.slug}`} className={cn('group relative flex flex-col items-center', i === 0 ? '-mr-1 sm:-mr-10' : '-ml-1 sm:-ml-10')}>
+                <div className={cn('transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)]', i === 0 ? 'rotate-[-9deg] group-hover:rotate-[-4deg] group-hover:-translate-y-2' : 'rotate-[9deg] group-hover:rotate-[4deg] group-hover:-translate-y-2')}>
+                  <CardFace name={c.cardName} bank={c.issuer} network={c.network} width={wide ? 230 : 140} />
                 </div>
-                <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-muted sm:mt-8">{bankLabel(c.issuer)}</p>
-                <p className="mt-1.5 text-center font-serif text-[20px] leading-snug text-rc-ink sm:text-[24px]">{displayCardName(c.cardName)}</p>
-                <p className="mt-1 text-[14px] text-rc-muted">{fee(c)}{c.annualFee ? ' a year' : ''}</p>
+                <p className="mt-6 max-w-[11ch] text-center font-serif text-[15px] font-semibold leading-snug text-rc-cream sm:max-w-[16ch] sm:text-[17px]">{displayCardName(c.cardName)}</p>
+                <p className="mt-1 text-[13px] text-rc-mist">{fee(c)}{c.annualFee ? ' a year' : ''}</p>
               </Link>
             ))}
+            <span aria-hidden className="absolute left-1/2 top-[30%] z-10 flex h-12 w-12 text-[18px] sm:top-[34%] sm:h-16 sm:w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-rc-pistachio font-serif font-semibold italic text-rc-ink sm:text-[22px] shadow-[0_0_0_8px_rgba(10,31,21,1)]">vs</span>
           </div>
-        </Container>
-      </header>
+        )}
+      />
 
+      <PageBody>
       <section className="py-16 lg:py-24">
         <Container className="grid gap-12 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">
             <Eyebrow index="01">The short answer</Eyebrow>
-            <p className="mt-6 font-serif text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.3] text-rc-ink">{verdict}</p>
+            <p className="mt-6 font-serif text-[clamp(1.45rem,2.2vw,1.9rem)] leading-[1.3] text-rc-ink">{verdict}</p>
           </Reveal>
           <Reveal delay={0.08} className="lg:col-span-8">
-            <div className="overflow-x-auto rounded-[24px] border border-rc-ink/10 bg-rc-paper">
+            <div className="overflow-x-auto rounded-[28px] border border-rc-ink/10 bg-rc-paper">
               <table className="w-full min-w-[560px] border-collapse">
                 <thead>
                   <tr className="border-b border-rc-ink/10">
@@ -129,21 +126,24 @@ export function CardComparisonPage() {
         </Container>
       </section>
 
-      <section className="bg-rc-ink py-20 text-rc-cream lg:py-24">
-        <Container className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <p className="max-w-[22ch] font-serif text-[clamp(2rem,3.6vw,3.25rem)] leading-[1.05]">The right pick depends on <span className="italic text-rc-pistachio">how you spend.</span></p>
-          <ButtonLink to={SIGN_UP} variant="cream" size="lg">Compare with your spending</ButtonLink>
-        </Container>
+      <section className="px-3 sm:px-5">
+        <div className="relative mx-auto max-w-[1360px] overflow-hidden rounded-[40px] bg-rc-ink py-16 text-rc-cream lg:rounded-[56px] lg:py-20">
+          <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.16),transparent)]" />
+          <Container className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <p className="max-w-[22ch] font-serif text-[clamp(2rem,3.6vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.025em]">The right pick depends on <span className="italic text-rc-pistachio">how you spend.</span></p>
+            <ButtonLink to={SIGN_UP} variant="cream" size="lg">Compare with your spending</ButtonLink>
+          </Container>
+        </div>
       </section>
 
       {others.length > 0 && (
-        <section className="py-16 lg:py-20">
+        <section className="pb-28 pt-16 lg:pb-36 lg:pt-20">
           <Container>
-            <p className="mb-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">More comparisons</p>
-            <ul className="grid gap-px overflow-hidden rounded-[20px] border border-rc-ink/10 bg-rc-ink/10 sm:grid-cols-2">
+            <Eyebrow>More comparisons</Eyebrow>
+            <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
               {others.map((o) => (
                 <li key={o.slug}>
-                  <Link to={`/compare/${o.slug}`} className="group flex items-center justify-between gap-4 bg-rc-cream px-6 py-5 transition-colors hover:bg-rc-paper">
+                  <Link to={`/compare/${o.slug}`} className="group flex items-center justify-between gap-4 rounded-[22px] border border-rc-ink/10 bg-rc-paper px-6 py-5 transition-colors hover:border-rc-ink/30">
                     <span className="text-[15px] text-rc-ink">{o.label}</span>
                     <ArrowRight className="h-4 w-4 shrink-0 text-rc-ink transition-transform group-hover:translate-x-0.5" />
                   </Link>
@@ -153,6 +153,7 @@ export function CardComparisonPage() {
           </Container>
         </section>
       )}
+      </PageBody>
     </div>
   );
 }

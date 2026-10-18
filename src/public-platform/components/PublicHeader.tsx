@@ -17,8 +17,6 @@ const PRIMARY = [
   { label: 'Contact', to: '/contact' },
 ];
 
-/** Pages whose first screen is dark get a light-on-dark header. */
-const DARK_ROUTES = new Set(['/']);
 
 /** Shown inline in the header on wide screens; everything else lives in the menu. */
 const INLINE = [
@@ -118,9 +116,9 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** Every public page opens on a dark band, so the header is always light-on-dark. */
 export function PublicHeader() {
   const { pathname, search } = useLocation();
-  const dark = DARK_ROUTES.has(pathname);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -152,14 +150,12 @@ export function PublicHeader() {
             scrolled
               ? cn(
                 'mt-2.5 h-[52px] max-w-[1040px] pl-3 pr-1.5 backdrop-blur-xl lg:mt-3 lg:h-[56px]',
-                dark
-                  ? 'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
-                  : 'border-rc-ink/10 bg-rc-paper/80 shadow-[0_18px_40px_-24px_rgba(15,42,29,0.35)]',
+                'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
               )
               : 'max-w-[1280px] border-transparent px-2 sm:px-3 lg:px-7',
           )}
         >
-          <LogoLink dark={dark} />
+          <LogoLink dark />
 
           <nav aria-label="Primary" className="hidden lg:block" onMouseLeave={() => setHovered(null)}>
             <ul className="flex items-center">
@@ -171,7 +167,7 @@ export function PublicHeader() {
                       <motion.span
                         layoutId="nav-hover"
                         aria-hidden
-                        className={cn('absolute inset-0 rounded-full', dark ? 'bg-white/[0.08]' : 'bg-rc-ink/[0.06]')}
+                        className={cn('absolute inset-0 rounded-full', 'bg-white/[0.08]')}
                         transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                       />
                     )}
@@ -182,12 +178,12 @@ export function PublicHeader() {
                       aria-current={current ? 'page' : undefined}
                       className={cn(
                         'relative block rounded-full px-4 py-2 text-[14px] transition-colors',
-                        dark ? 'text-rc-mist hover:text-rc-cream' : 'text-rc-ink/70 hover:text-rc-ink',
-                        current && (dark ? 'text-rc-cream' : 'text-rc-ink'),
+                        'text-rc-mist hover:text-rc-cream',
+                        current && 'text-rc-cream',
                       )}
                     >
                       {l.label}
-                      {current && <span aria-hidden className={cn('absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full', dark ? 'bg-rc-pistachio' : 'bg-rc-forest')} />}
+                      {current && <span aria-hidden className={cn('absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full', 'bg-rc-pistachio')} />}
                     </Link>
                   </li>
                 );
@@ -196,18 +192,18 @@ export function PublicHeader() {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Link to={SIGN_IN} className={cn('hidden rounded-full px-4 py-2 text-[14px] transition-colors sm:inline-flex', dark ? 'text-rc-mist hover:bg-white/[0.06] hover:text-rc-cream' : 'text-rc-ink/70 hover:bg-rc-ink/[0.05] hover:text-rc-ink')}>
+            <Link to={SIGN_IN} className={cn('hidden rounded-full px-4 py-2 text-[14px] transition-colors sm:inline-flex', 'text-rc-mist hover:bg-white/[0.06] hover:text-rc-cream')}>
               Log in
             </Link>
             <Link
               to={SIGN_UP}
               className={cn(
                 'group inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-1 text-[14px] font-medium transition-colors duration-300 sm:h-11 sm:pl-5',
-                dark ? 'bg-rc-cream text-rc-ink hover:bg-white' : 'bg-rc-ink text-rc-cream hover:bg-rc-moss',
+                'bg-rc-cream text-rc-ink hover:bg-white',
               )}
             >
               Get started
-              <ArrowChip variant={dark ? 'cream' : 'ink'} size="sm" />
+              <ArrowChip variant={'cream'} size="sm" />
             </Link>
             <button
               type="button"
@@ -217,7 +213,7 @@ export function PublicHeader() {
               onClick={() => setOpen(true)}
               className={cn(
                 'group flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11',
-                dark ? 'border-white/15 text-rc-cream hover:border-white/50 hover:bg-white/[0.06]' : 'border-rc-ink/15 text-rc-ink hover:border-rc-ink/50 hover:bg-rc-ink/[0.04]',
+                'border-white/15 text-rc-cream hover:border-white/50 hover:bg-white/[0.06]',
               )}
             >
               <MenuIcon open={false} />

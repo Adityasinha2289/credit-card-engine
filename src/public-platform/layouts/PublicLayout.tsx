@@ -101,7 +101,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   const breadcrumbSchema = generateBreadcrumbSchema(pathname);
 
   return (
-    <div className={`min-h-[100dvh] flex flex-col font-sans selection:bg-rc-pistachio selection:text-rc-ink ${pathname === '/' ? 'bg-rc-night text-rc-cream' : 'bg-rc-cream text-rc-ink'}`}>
+    <div className="flex min-h-[100dvh] flex-col bg-rc-night font-sans text-rc-cream selection:bg-rc-pistachio selection:text-rc-ink">
       <PublicHeader />
       <main className="flex-1 flex flex-col">
         <StructuredData data={organizationSchema} />

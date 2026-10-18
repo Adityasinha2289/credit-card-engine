@@ -5,7 +5,9 @@ import { SEO } from '../components/SEO';
 import { getDirectoryCards, type PublicCardEntity } from '../lib/cardKnowledgeGraph';
 import { getBreadcrumbSchema, getOrganizationSchema, getWebSiteSchema } from '../lib/schemaBuilders';
 import { cn } from '../../lib/utils';
-import { Container, Eyebrow } from '../site/primitives';
+import { Container, CountUp } from '../site/primitives';
+import { PageBody, PageHero } from '../site/PageHero';
+import { CardFan } from '../site/CardFan';
 import { CardFace, displayCardName } from '../site/CardFace';
 import { bankLabel } from '../site/banks';
 
@@ -37,15 +39,16 @@ function feeLabel(c: PublicCardEntity): string {
 
 function DirectoryCard({ card }: { card: PublicCardEntity }) {
   return (
-    <Link to={`/cards/${card.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-rc-ink/10 bg-rc-paper transition-colors hover:border-rc-ink/30">
-      <div className="flex items-center justify-center bg-rc-cream/60 px-6 py-9">
-        <div className="transition-transform duration-500 group-hover:-translate-y-1.5 group-hover:rotate-[-1.5deg]">
+    <Link to={`/cards/${card.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[32px] border border-rc-ink/10 bg-rc-paper transition-[border-color,box-shadow,transform] duration-500 hover:-translate-y-1 hover:border-rc-ink/20 hover:shadow-[0_30px_60px_-36px_rgba(15,42,29,0.45)]">
+      <div className="relative m-2 flex items-center justify-center overflow-hidden rounded-[26px] bg-rc-pistachio/60 px-6 py-9">
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_45%,rgba(255,255,255,0.7),transparent)]" />
+        <div className="relative transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-2 group-hover:rotate-[-3deg] group-hover:scale-[1.03]">
           <CardFace name={card.cardName} bank={card.issuer} network={card.network} width={236} />
         </div>
       </div>
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex flex-1 flex-col px-6 pb-6 pt-4">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-muted">{bankLabel(card.issuer)}</p>
-        <h2 className="mt-2 font-serif text-[22px] leading-snug text-rc-ink">{displayCardName(card.cardName)}</h2>
+        <h2 className="mt-2 font-serif text-[23px] font-semibold leading-snug tracking-[-0.01em] text-rc-ink">{displayCardName(card.cardName)}</h2>
         <p className="mb-6 mt-2 line-clamp-2 text-[14px] leading-relaxed text-rc-muted">{card.topBenefit}</p>
         <div className="mt-auto flex items-end justify-between gap-4 border-t border-rc-ink/10 pt-4">
           <div>
@@ -106,7 +109,7 @@ export function CardsDirectoryPage() {
   const filtersActive = need !== 'all' || issuer !== 'all' || !!query.trim();
 
   return (
-    <div className="w-full">
+    <div className="flex w-full flex-1 flex-col">
       <SEO
         title={`Indian Credit Cards Directory | Compare ${all.length} Cards | RenoCred`}
         description="Every Indian credit card from HDFC, SBI, Axis, ICICI and more. Compare reward rates, lounge access, annual fees and eligibility side by side."
@@ -114,33 +117,32 @@ export function CardsDirectoryPage() {
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
 
-      <header>
-        <Container className="grid gap-10 pb-14 pt-16 sm:pb-[104px] lg:grid-cols-12 lg:items-end lg:pb-[120px] lg:pt-24">
-          <div className="lg:col-span-8">
-            <Eyebrow>Card directory</Eyebrow>
-            <h1 className="mt-6 font-serif text-[clamp(2.75rem,6vw,5.25rem)] font-medium leading-[0.98] tracking-[-0.025em] text-rc-ink">
-              Every Indian credit card, <span className="italic text-rc-forest">side by side.</span>
-            </h1>
-          </div>
-          <dl className="grid grid-cols-3 gap-6 lg:col-span-4">
+      <PageHero
+        eyebrow="Card directory"
+        title={<>Compare cards, <span className="italic">side by side.</span></>}
+        lede="Fees, reward rates, lounge access and eligibility for every card we hold full reward data on, filterable by what you spend on."
+        actions={(
+          <dl className="flex flex-wrap gap-x-10 gap-y-4">
             {[
-              [all.length, 'cards'],
+              [all.length, 'cards ranked'],
               [issuers.length, 'issuers'],
               [all.filter((c) => c.annualFee === 0).length, 'lifetime free'],
             ].map(([n, label]) => (
               <div key={label as string}>
                 <dt className="sr-only">{label}</dt>
-                <dd className="font-serif text-[40px] leading-none text-rc-ink tabular-nums">{n}</dd>
-                <p className="mt-2 text-[13px] text-rc-muted">{label}</p>
+                <dd className="font-serif text-[44px] font-semibold leading-none text-rc-pistachio lining-nums tabular-nums"><CountUp to={n as number} delay={0.4} /></dd>
+                <p className="mt-2 text-[13px] text-rc-mist">{label}</p>
               </div>
             ))}
           </dl>
-        </Container>
-      </header>
+        )}
+        aside={<CardFan className="hidden lg:block" width={240} cards={all.slice(0, 5).map((c) => ({ id: c.id, name: c.cardName, bank: c.issuer, network: c.network }))} />}
+      />
 
-      {/* toolbar: sticks to the very top, its padding sitting under the floating header so nothing shows around it */}
-      <div className="z-30 border-y border-rc-ink/10 bg-rc-cream/90 backdrop-blur-xl sm:sticky sm:top-0 sm:-mt-16 sm:border-t-0 sm:pt-16 lg:-mt-[76px] lg:pt-[76px]">
-        <Container className="flex flex-col gap-3 py-4">
+      <PageBody className="overflow-clip">
+      {/* toolbar: sticks to the very top; its top padding sits under the floating header when stuck, so nothing shows around it */}
+      <div className="z-30 border-b border-rc-ink/10 bg-rc-cream/90 pt-6 backdrop-blur-xl sm:sticky sm:top-0 sm:pt-16 lg:pt-[76px]">
+        <Container className="flex flex-col gap-3 pb-4 sm:-mt-6">
           <div role="tablist" aria-label="Filter by need" className="-mx-5 flex gap-1 overflow-x-auto px-5 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {NEEDS.map((n) => (
               <button
@@ -223,6 +225,7 @@ export function CardsDirectoryPage() {
           </>
         )}
       </Container>
+      </PageBody>
     </div>
   );
 }

@@ -11,7 +11,7 @@ import { CardFace, displayCardName } from '../../site/CardFace';
 import { HERO_MOMENTS, SAMPLE_WALLET_IDS, SPEND_CATEGORIES, cardsByIds, rankCards } from '../../site/swipeMath';
 import { SIGN_UP } from '../../site/nav';
 
-const ROTATE_MS = 3800;
+const ROTATE_MS = 2600;
 
 /** Resting fan inside the holder, at the 280px design width. */
 const FAN = [{ x: -112, r: -7 }, { x: -56, r: -3.5 }, { x: 0, r: 0 }, { x: 56, r: 3.5 }, { x: 112, r: 7 }];

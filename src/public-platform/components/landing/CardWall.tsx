@@ -67,7 +67,7 @@ const Wall = memo(function Wall({ columns, cardW }: { columns: number; cardW: nu
 type Phase = 'insert' | 'reading' | 'done' | 'eject';
 
 /** How long each phase lasts before the next one starts. */
-const PHASE_MS: Record<Phase, number> = { insert: 900, reading: 1300, done: 3600, eject: 600 };
+const PHASE_MS: Record<Phase, number> = { insert: 700, reading: 900, done: 2300, eject: 450 };
 const NEXT: Record<Phase, Phase> = { insert: 'reading', reading: 'done', done: 'eject', eject: 'insert' };
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'];

@@ -1,8 +1,8 @@
 /**
- * "500+ cards. Read so you don't have to." Cards ride a tilted wall in slow
- * columns, painted in the brand greens, while a scan line passes over them. A
- * panel in front reads one card at a time in its real colours, pulling its terms
- * out of the dataset. The counts come from the full catalogue (CATALOGUE_STATS).
+ * "500+ cards. Read so you don't have to." Real cards ride a tilted wall in
+ * slow columns on deep forest, while a scan line passes over them, and a panel
+ * in front reads one card at a time, pulling its terms out of the dataset. The
+ * counts come from the full catalogue (CATALOGUE_STATS).
  */
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -21,12 +21,6 @@ const STATS = [
   { value: CATALOGUE_STATS.pagesRead, label: 'issuer pages read' },
   { value: CATALOGUE_STATS.sourcedFacts, label: 'facts, each sourced' },
   { value: CATALOGUE_STATS.feeWaivers, label: 'fee waivers found' },
-];
-
-/** The wall's cards wear the brand's greens, so the one being read stands out in its own colours. */
-const TINTS: [string, string][] = [
-  ['#0F2A1D', '#16382A'], ['#375534', '#6B9071'], ['#16382A', '#375534'],
-  ['#6B9071', '#AEC3B0'], ['#0A1F15', '#375534'], ['#AEC3B0', '#C9DABE'],
 ];
 
 /** What a careful reader would pull out of a card's terms, straight from the dataset. */
@@ -61,7 +55,7 @@ const Wall = memo(function Wall({ columns, cardW }: { columns: number; cardW: nu
             style={{ animationDuration: `${70 + (i % 3) * 14}s` }}
           >
             {[...col, ...col].map((c, j) => (
-              <CardFace key={`${c.id}-${j}`} name={c.name} bank={c.bank} network={c.network} width={cardW} lifted={false} tint={TINTS[(i * 5 + j) % TINTS.length]} className="shadow-[0_16px_30px_-18px_rgba(15,42,29,0.5)]" />
+              <CardFace key={`${c.id}-${j}`} name={c.name} bank={c.bank} network={c.network} width={cardW} lifted={false} className="shadow-[0_18px_34px_-16px_rgba(0,0,0,0.7)]" />
             ))}
           </div>
         </div>
@@ -84,7 +78,7 @@ function Reader({ live }: { live: boolean }) {
   }, [i, live, reduce, cards.length]);
 
   return (
-    <div className="relative rounded-[32px] border border-rc-ink/10 bg-rc-paper/90 p-5 shadow-[0_40px_80px_-40px_rgba(15,42,29,0.45)] backdrop-blur-xl sm:p-6">
+    <div className="relative rounded-[32px] bg-rc-paper p-5 text-rc-ink shadow-[0_40px_90px_-30px_rgba(0,0,0,0.75)] sm:p-6">
       <div className="flex items-center justify-between text-[12px]">
         <span className="flex items-center gap-2 font-semibold uppercase tracking-[0.18em] text-rc-muted">
           <span className="relative flex h-2 w-2">
@@ -153,32 +147,33 @@ export function CardWall() {
   const live = useInView(ref, { amount: 0.2 });
 
   return (
-    <section ref={ref} className="relative z-10 -mt-10 overflow-hidden rounded-t-[40px] bg-rc-cream text-rc-ink lg:-mt-14 lg:rounded-t-[56px]">
+    <section ref={ref} className="relative z-10 -mt-10 overflow-hidden rounded-t-[40px] bg-rc-ink text-rc-cream lg:-mt-14 lg:rounded-t-[56px]">
       {/* the wall, faded out where the words sit */}
       <div className="absolute inset-0" style={{ perspective: 2000 }}>
-        <Wall columns={desktop ? 9 : 5} cardW={desktop ? 210 : 150} />
+        <div className="absolute inset-0 opacity-90"><Wall columns={desktop ? 9 : 5} cardW={desktop ? 210 : 150} /></div>
         {!reduce && (
           <div aria-hidden className="pointer-events-none absolute inset-0 animate-rc-scan">
-            <div className="absolute inset-x-0 bottom-1/2 h-48 bg-gradient-to-b from-transparent to-rc-pistachio/70" />
-            <div className="absolute inset-x-0 bottom-1/2 h-[2px] bg-rc-emerald/70 shadow-[0_0_28px_8px_rgba(227,238,212,0.95)]" />
+            <div className="absolute inset-x-0 bottom-1/2 h-48 bg-gradient-to-b from-transparent to-rc-pistachio/[0.16]" />
+            <div className="absolute inset-x-0 bottom-1/2 h-[2px] bg-rc-pistachio/80 shadow-[0_0_30px_8px_rgba(227,238,212,0.45)]" />
           </div>
         )}
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-rc-cream via-rc-cream/60 to-rc-cream lg:bg-gradient-to-r lg:from-rc-cream lg:via-rc-cream/90 lg:to-rc-cream/10" />
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-rc-cream to-transparent" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-rc-ink via-rc-ink/70 to-rc-ink lg:bg-gradient-to-r lg:from-rc-ink lg:via-rc-ink/85 lg:to-rc-ink/0" />
+        <div aria-hidden className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-rc-ink to-transparent" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-rc-ink to-transparent" />
       </div>
 
       <Container className="relative grid items-center gap-14 py-28 lg:min-h-[100svh] lg:grid-cols-12 lg:py-36">
         <div className="lg:col-span-6">
-          <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-muted">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-rc-emerald" /> The catalogue
+          <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist">
+            <span aria-hidden className="h-2 w-2 rounded-full bg-rc-pistachio" /> The catalogue
           </p>
           <h2 className="mt-6 font-serif font-semibold tracking-[-0.04em]">
-            <span className="block text-[clamp(6rem,17vw,13.5rem)] leading-[0.86] text-rc-forest lining-nums tabular-nums">
+            <span className="block text-[clamp(6rem,17vw,13.5rem)] leading-[0.86] text-rc-pistachio lining-nums tabular-nums">
               <CountUp to={CATALOGUE_STATS.cards} start={seen} duration={1.8} delay={0.1} />
             </span>
             <span className="mt-3 block text-[clamp(2.25rem,4.4vw,3.9rem)] leading-[1] tracking-[-0.03em]">cards. Read so<br />you don't have to.</span>
           </h2>
-          <p className="mt-7 max-w-[44ch] text-[17px] leading-relaxed text-rc-muted">
+          <p className="mt-7 max-w-[44ch] text-[17px] leading-relaxed text-rc-mist">
             Every rate, fee and waiver, taken from {CATALOGUE_STATS.pagesRead} of the issuers' own pages and kept in one place, so the answer to “which card?” is a lookup, not an afternoon.
           </p>
           <dl className="mt-10 grid max-w-[520px] grid-cols-2 gap-3 sm:grid-cols-4">
@@ -188,17 +183,17 @@ export function CardWall() {
                 initial={reduce ? false : { opacity: 0, y: 14 }}
                 animate={seen ? { opacity: 1, y: 0 } : undefined}
                 transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.5 + n * 0.08 }}
-                className="rounded-[20px] border border-rc-ink/10 bg-rc-paper/80 px-4 py-3.5 backdrop-blur"
+                className="rounded-[20px] border border-white/10 bg-rc-ink/60 px-4 py-3.5 backdrop-blur"
               >
                 <dt className="sr-only">{s.label}</dt>
-                <dd className="font-serif text-[28px] font-semibold leading-none lining-nums tabular-nums text-rc-ink"><CountUp to={s.value} start={seen} delay={0.6 + n * 0.08} /></dd>
-                <dd className="mt-1.5 text-[12px] text-rc-muted">{s.label}</dd>
+                <dd className="font-serif text-[28px] font-semibold leading-none lining-nums tabular-nums text-rc-cream"><CountUp to={s.value} start={seen} delay={0.6 + n * 0.08} /></dd>
+                <dd className="mt-1.5 text-[12px] text-rc-mist">{s.label}</dd>
               </motion.div>
             ))}
           </dl>
           <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
-            <ButtonLink to="/cards" size="lg">Browse the cards</ButtonLink>
-            <ArrowLink to="/methodology">How we rank</ArrowLink>
+            <ButtonLink to="/cards" variant="cream" size="lg">Browse the cards</ButtonLink>
+            <ArrowLink to="/methodology" tone="cream">How we rank</ArrowLink>
           </div>
         </div>
         <div className="mx-auto w-full max-w-[400px] lg:col-span-4 lg:col-start-9">

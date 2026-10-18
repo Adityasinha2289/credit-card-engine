@@ -29,28 +29,28 @@ export function TrustStatement() {
   const y = useTransform(scrollYProgress, (p) => `${(Math.min(1, Math.max(0, p)) - 1) * 100}%`);
 
   return (
-    <section className="relative z-10 -mt-10 rounded-t-[40px] bg-rc-night py-28 text-rc-cream lg:-mt-14 lg:rounded-t-[56px] lg:py-40">
+    <section className="relative z-10 -mt-10 rounded-t-[40px] bg-rc-cream py-28 text-rc-ink lg:-mt-14 lg:rounded-t-[56px] lg:py-40">
       <Container className="grid items-center gap-16 lg:grid-cols-12">
         <div className="lg:col-span-6">
-          <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-rc-pistachio" /> The fine print
+          <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-muted">
+            <span aria-hidden className="h-2 w-2 rounded-full bg-rc-emerald" /> The fine print
           </p>
           <h2 className="mt-6 font-serif text-[clamp(2.75rem,4.9vw,4.4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">Your money data<br />stays yours.</h2>
-          <p className="mt-7 max-w-[42ch] text-[17px] leading-relaxed text-rc-mist">
+          <p className="mt-7 max-w-[42ch] text-[17px] leading-relaxed text-rc-muted">
             We never pull your credit report and never ask for your full card number. Every record you add is locked to your account, and the way we rank cards is public.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <ButtonLink to="/privacy" variant="outline-cream" arrow={false}>Privacy policy</ButtonLink>
-            <ButtonLink to="/methodology" variant="outline-cream" arrow={false}>How we rank</ButtonLink>
+            <ButtonLink to="/privacy" variant="outline" arrow={false}>Privacy policy</ButtonLink>
+            <ButtonLink to="/methodology" variant="outline" arrow={false}>How we rank</ButtonLink>
           </div>
         </div>
 
         <div ref={ref} className="mx-auto w-full max-w-[400px] lg:col-span-5 lg:col-start-8">
           {/* the printer's slot */}
-          <div className="relative z-10 h-5 rounded-full bg-black/60 shadow-[inset_0_2px_6px_rgba(0,0,0,0.8)] ring-1 ring-white/10" />
+          <div className="relative z-10 h-5 rounded-full bg-rc-ink shadow-[inset_0_2px_6px_rgba(0,0,0,0.8)]" />
           <div className="-mt-2.5 overflow-hidden px-4 pt-2.5">
             <motion.div style={reduce ? undefined : { y }} className="font-mono text-rc-ink">
-              <div className="bg-rc-paper px-6 pb-10 pt-8" style={{ mask: TEAR, WebkitMask: TEAR }}>
+              <div className="bg-white px-6 pb-10 pt-8 shadow-[0_30px_60px_-30px_rgba(15,42,29,0.35)]" style={{ mask: TEAR, WebkitMask: TEAR }}>
                 <div className="flex items-center justify-center gap-2">
                   <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rc-ink"><BrandMark tone="pistachio" size={16} /></span>
                   <span className="font-sans text-[15px] font-semibold tracking-[-0.01em]">RenoCred</span>
@@ -250,7 +250,7 @@ function SwipeReader() {
 
 export function Closer() {
   return (
-    <section className="bg-rc-night px-3 pb-28 sm:px-5 lg:pb-36">
+    <section className="relative z-10 -mt-10 rounded-t-[40px] bg-rc-night px-3 pb-28 pt-10 sm:px-5 lg:-mt-14 lg:rounded-t-[56px] lg:pb-36 lg:pt-14">
       <div className="mx-auto max-w-[1360px] overflow-hidden rounded-[40px] bg-rc-pistachio text-rc-ink lg:rounded-[56px]">
         <Container className="grid items-center gap-14 py-20 lg:grid-cols-12 lg:py-28">
           <div className="lg:col-span-5">

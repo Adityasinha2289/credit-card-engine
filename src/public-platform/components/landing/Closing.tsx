@@ -10,6 +10,7 @@ import { FAQSchema } from '../FAQSchema';
 import { Accordion } from '../../site/Accordion';
 import { CATALOGUE_STATS, HERO_MOMENTS, SAMPLE_WALLET_IDS, cardsByIds, rankCards } from '../../site/swipeMath';
 import { SIGN_UP } from '../../site/nav';
+import { useSignedInHint } from '../../site/SiteLink';
 
 const RECEIPT = [
   { k: 'Credit report pulls', v: '0' },
@@ -297,6 +298,7 @@ export function FaqToggle() {
 
 /** A quiet way back to sign-up once the hero has scrolled away. */
 export function FloatingStart() {
+  const signedIn = useSignedInHint();
   const [show, setShow] = useState(false);
   useEffect(() => {
     const onScroll = () => {
@@ -317,11 +319,11 @@ export function FloatingStart() {
           transition={{ duration: 0.4, ease: EASE_OUT }}
           className="fixed bottom-6 right-6 z-40 hidden lg:block"
         >
-          <Link to={SIGN_UP} className="group flex items-center gap-3 rounded-full border border-white/15 bg-rc-ink/90 py-2 pl-2 pr-5 text-rc-cream shadow-[0_20px_40px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md transition-colors hover:border-white/40">
+          <Link to={signedIn ? '/app' : SIGN_UP} className="group flex items-center gap-3 rounded-full border border-white/15 bg-rc-ink/90 py-2 pl-2 pr-5 text-rc-cream shadow-[0_20px_40px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md transition-colors hover:border-white/40">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rc-pistachio"><BrandMark size={20} /></span>
             <span>
-              <span className="block text-[14px] font-medium leading-tight">Start free</span>
-              <span className="block text-[12px] leading-tight text-rc-mist">Takes about a minute</span>
+              <span className="block text-[14px] font-medium leading-tight">{signedIn ? 'Open the app' : 'Start free'}</span>
+              <span className="block text-[12px] leading-tight text-rc-mist">{signedIn ? 'Back to your wallet' : 'Takes about a minute'}</span>
             </span>
             <ArrowRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>

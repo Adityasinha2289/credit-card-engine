@@ -4,7 +4,7 @@
  * rhythm, instead of each section inventing its own.
  */
 import { useEffect, useState, type ReactNode, type ElementType } from 'react';
-import { Link } from 'react-router-dom';
+import { SiteLink as Link } from './SiteLink';
 import { animate, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';

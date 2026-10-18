@@ -5,7 +5,7 @@ import { istDate } from '../../features/subscriptions/billingCycle';
 import { CardDueEngine } from '../../features/money/engines/SafeToSpendEngine';
 import { formatRupees } from '../../features/money/lib/moneyMath';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Search, Command, CheckCircle2, Settings } from 'lucide-react';
+import { Bell, Search, Command, CheckCircle2, Settings, User } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
@@ -87,8 +87,17 @@ export function TopNav() {
 
       {/* ── Actions ─────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-4">
-        {/* Settings (Mobile Only) */}
-        <div className="lg:hidden">
+        {/* Profile and settings (phones; the sidebar has them on wide screens) */}
+        <div className="flex items-center gap-1 lg:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate({ pathname: '/app/profile', search: location.search })}
+            className="relative h-10 w-10 rounded-full p-0 hover:bg-transparent"
+            aria-label="Profile"
+          >
+            <User size={20} strokeWidth={1.5} className="text-semantic-text-muted" />
+          </Button>
           <Button
             variant="ghost"
             size="sm"

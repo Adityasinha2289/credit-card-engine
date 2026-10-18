@@ -1,4 +1,5 @@
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
+import { SiteLink as Link, useSitePath } from '../site/SiteLink';
 import { motion, useReducedMotion } from 'framer-motion';
 import { SEO } from '../components/SEO';
 import { getCardBySlug, getDirectoryCards, getRatesFor, monthlyIncome, type PublicCardEntity } from '../lib/cardKnowledgeGraph';
@@ -80,9 +81,10 @@ function RateBar({ share, tone }: { share: number; tone: 'forest' | 'sage' }) {
 export function CardDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const card = slug ? getCardBySlug(slug) : undefined;
+  const sitePath = useSitePath();
   const wide = useMediaQuery('(min-width: 640px)');
 
-  if (!card) return <Navigate to="/cards" replace />;
+  if (!card) return <Navigate to={sitePath('/cards')} replace />;
 
   const name = displayCardName(card.cardName);
   const issuer = bankLabel(card.issuer);

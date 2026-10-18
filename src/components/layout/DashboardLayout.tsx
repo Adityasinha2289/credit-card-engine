@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import { DashboardSkeleton } from './DashboardSkeleton';
 import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
+import { InAppProvider } from '../../public-platform/site/SiteLink';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { GlobalTaqdeerButton } from '../../features/taqdeer/components/GlobalTaqdeerButton';
 import { TaqdeerDrawer } from '../../features/taqdeer/components/TaqdeerDrawer';
-import { Squares2X2Icon, CreditCardIcon, WalletIcon, ShoppingBagIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { Squares2X2Icon, CreditCardIcon, WalletIcon, ShoppingBagIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DASHBOARD LAYOUT — Root wrapper with Sidebar + TopNav + Content
@@ -23,8 +24,8 @@ const MOBILE_NAV = [
   { id: 'home',        path: '/app',            label: 'Home',        Icon: Squares2X2Icon },
   { id: 'credit',      path: '/app/credit',     label: 'Credit',      Icon: CreditCardIcon },
   { id: 'wallet',      path: '/app/wallet',     label: 'Wallet',      Icon: WalletIcon },
+  { id: 'tools',       path: '/app/tools',      label: 'Tools',       Icon: WrenchScrewdriverIcon },
   { id: 'money',       path: '/app/money',      label: 'Money',       Icon: ShoppingBagIcon },
-  { id: 'profile',     path: '/app/profile',    label: 'Profile',     Icon: UserCircleIcon },
 ];
 
 export function DashboardLayout({
@@ -60,7 +61,7 @@ export function DashboardLayout({
         <main className="flex flex-1 flex-col pb-[96px] lg:pb-0">
           <React.Suspense fallback={<div className="p-6 md:p-12 w-full max-w-7xl mx-auto"><DashboardSkeleton /></div>}>
             <div className="flex-1 flex flex-col w-full animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
-              {children}
+              <InAppProvider>{children}</InAppProvider>
             </div>
           </React.Suspense>
         </main>

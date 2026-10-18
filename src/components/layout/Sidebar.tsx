@@ -7,6 +7,9 @@ import {
   UserCircleIcon,
   Cog6ToothIcon,
   MapIcon,
+  WrenchScrewdriverIcon,
+  RectangleStackIcon,
+  ArrowUpRightIcon,
 } from '@heroicons/react/24/outline';
 import { cn } from '../../lib/utils';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
@@ -19,6 +22,8 @@ const PRIMARY_NAV = [
   { id: 'credit',    path: '/app/credit',   label: 'Credit',    Icon: CreditCardIcon },
   { id: 'wallet',    path: '/app/wallet',   label: 'Wallet',    Icon: WalletIcon },
   { id: 'money',     path: '/app/money',    label: 'Money',     Icon: ShoppingBagIcon },
+  { id: 'tools',     path: '/app/tools',    label: 'Tools',     Icon: WrenchScrewdriverIcon },
+  { id: 'cards',     path: '/app/cards',    label: 'Cards',     Icon: RectangleStackIcon },
   { id: 'plan',      path: '/app/plan',     label: 'Plan',      Icon: MapIcon },
   { id: 'marketplace', path: '/app/marketplace', label: 'Marketplace', Icon: ShoppingBagIcon },
 ];
@@ -96,6 +101,11 @@ export function Sidebar() {
         </nav>
         <nav className="flex w-full flex-col gap-1 px-3 pb-4">
           {UTILITY_NAV.map((entry) => item(entry, false))}
+          {/* a plain link out to the website; its header has "Open app" to come back */}
+          <a href="/" className="group flex w-full items-center gap-3.5 rounded-full px-4 py-2.5 text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream">
+            <ArrowUpRightIcon className="h-[18px] w-[18px] stroke-[1.6]" />
+            <span className="text-[14px] font-medium">RenoCred website</span>
+          </a>
         </nav>
       </div>
 

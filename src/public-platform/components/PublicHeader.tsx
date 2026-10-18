@@ -5,6 +5,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ArrowChip, Container, EASE_OUT } from '../site/primitives';
 import { LogoLink } from '../site/Brand';
+import { useSignedInHint } from '../site/SiteLink';
 import { CARD_NEEDS, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 import { analytics } from '../../lib/analytics';
 
@@ -36,7 +37,7 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
-function MenuOverlay({ onClose }: { onClose: () => void }) {
+function MenuOverlay({ onClose, signedIn }: { onClose: () => void; signedIn: boolean }) {
   const reduce = useReducedMotion();
   const item = (i: number) => ({
     initial: reduce ? false : { opacity: 0, y: 24 },
@@ -103,7 +104,7 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
             </span>
           </Link>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px]">
-            <Link to={SIGN_IN} onClick={onClose} className="text-rc-mist hover:text-rc-cream">Log in</Link>
+            <Link to={signedIn ? '/app' : SIGN_IN} onClick={onClose} className="text-rc-mist hover:text-rc-cream">{signedIn ? 'Open the app' : 'Log in'}</Link>
             {SOCIAL.map((s) => (
               <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-rc-mist hover:text-rc-cream">
                 {s.label} <ArrowUpRight className="h-3 w-3" />
@@ -122,6 +123,8 @@ export function PublicHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
+  // signed-in visitors browse the site freely and always have a one-click way back into the app
+  const signedIn = useSignedInHint();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -192,18 +195,20 @@ export function PublicHeader() {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Link to={SIGN_IN} className={cn('hidden rounded-full px-4 py-2 text-[14px] transition-colors sm:inline-flex', 'text-rc-mist hover:bg-white/[0.06] hover:text-rc-cream')}>
-              Log in
-            </Link>
+            {!signedIn && (
+              <Link to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
+                Log in
+              </Link>
+            )}
             <Link
-              to={SIGN_UP}
+              to={signedIn ? '/app' : SIGN_UP}
               className={cn(
                 'group inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-1 text-[14px] font-medium transition-colors duration-300 sm:h-11 sm:pl-5',
                 'bg-rc-cream text-rc-ink hover:bg-white',
               )}
             >
-              Get started
-              <ArrowChip variant={'cream'} size="sm" />
+              {signedIn ? 'Open app' : 'Get started'}
+              <ArrowChip variant="cream" size="sm" />
             </Link>
             <button
               type="button"
@@ -221,7 +226,7 @@ export function PublicHeader() {
           </div>
         </div>
       </header>
-      <AnimatePresence>{open && <MenuOverlay onClose={() => setOpen(false)} />}</AnimatePresence>
+      <AnimatePresence>{open && <MenuOverlay signedIn={signedIn} onClose={() => setOpen(false)} />}</AnimatePresence>
     </>
   );
 }

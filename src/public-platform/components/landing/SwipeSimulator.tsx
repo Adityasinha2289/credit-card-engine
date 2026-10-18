@@ -1,5 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { SiteLink as Link } from '../../site/SiteLink';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Plus, Search, X } from 'lucide-react';
 import { cn } from '../../../lib/utils';

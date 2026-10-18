@@ -4,7 +4,7 @@
  * then the page body in cream, overlapping it with a rounded top.
  */
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { SiteLink as Link, useInApp } from './SiteLink';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -57,12 +57,13 @@ export function PageHero({ eyebrow, title, lede, crumbs, meta, actions, aside, w
   /** let the headline run the full width (no aside) */
   wide?: boolean;
 }) {
+  const inApp = useInApp();
   return (
-    <section className="relative overflow-hidden bg-rc-night text-rc-cream">
+    <section className={cn('relative overflow-hidden bg-rc-night text-rc-cream', inApp && 'mx-4 mt-2 rounded-[36px] md:mx-8 lg:mx-12')}>
       <div aria-hidden className="pointer-events-none absolute -left-[15%] -top-[45%] h-[900px] w-[1000px] rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.10),transparent)]" />
       <div aria-hidden className="pointer-events-none absolute -bottom-[40%] right-[-10%] h-[700px] w-[800px] rounded-full bg-[radial-gradient(closest-side,rgba(42,157,92,0.14),transparent)]" />
 
-      <Container className="relative grid gap-12 pb-28 pt-8 lg:grid-cols-12 lg:items-center lg:gap-10 lg:pb-36 lg:pt-12">
+      <Container className={cn('relative grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10', inApp ? 'py-10 lg:py-14' : 'pb-28 pt-8 lg:pb-36 lg:pt-12')}>
         <div className={cn(aside ? 'lg:col-span-7' : wide ? 'lg:col-span-12' : 'lg:col-span-10')}>
           {crumbs && <Enter><Breadcrumbs items={crumbs} /></Enter>}
           {eyebrow && (
@@ -94,6 +95,8 @@ export function PageHero({ eyebrow, title, lede, crumbs, meta, actions, aside, w
 
 /** The cream page body that tucks over the hero with a rounded top. */
 export function PageBody({ children, className }: { children: ReactNode; className?: string }) {
+  const inApp = useInApp();
+  if (inApp) return <div className={cn('relative flex-1 text-rc-ink', className)}>{children}</div>;
   return (
     <div className={cn('relative z-10 -mt-12 flex-1 rounded-t-[40px] bg-rc-cream text-rc-ink lg:-mt-16 lg:rounded-t-[56px]', className)}>
       {children}

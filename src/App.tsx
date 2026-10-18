@@ -21,6 +21,14 @@ const DemoOnboarding = lazy(() => import('./features/onboarding/demo/DemoOnboard
 import { DemoAppProvider } from './features/demo/DemoAppProvider';
 
 const HomePage = lazy(() => import('./pages/app/HomePage'));
+const ToolsPage = lazy(() => import('./pages/app/ToolsPage'));
+// the website's tools, opened inside the app shell
+const WhichCardTool = lazy(() => import('./public-platform/pages/calculators/WhichCardPage').then((m) => ({ default: m.WhichCardPage })));
+const RewardCalculatorTool = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
+const BreakEvenTool = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
+const UtilizationTool = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
+const CardsDirectoryTool = lazy(() => import('./public-platform/pages/CardsDirectoryPage').then((m) => ({ default: m.CardsDirectoryPage })));
+const CardDetailTool = lazy(() => import('./public-platform/pages/CardDetailPage').then((m) => ({ default: m.CardDetailPage })));
 const WalletPage = lazy(() => import('./pages/app/WalletPage'));
 const CreditPage = lazy(() => import('./pages/app/CreditPage'));
 const ExplorePage = lazy(() => import('./pages/app/ExplorePage'));
@@ -149,9 +157,11 @@ export default function App() {
     return () => window.removeEventListener('STORE_LOGOUT', handleLogout);
   }, []);
 
-  const isTestKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY?.includes('test');
+  // wait for Clerk on every key type: a test key used to skip this and briefly look signed out,
+  // which bounced deep links (/app/wallet) to sign-up and then to /app
+  const usesDemoData = import.meta.env.VITE_USE_DEMO_DATA === 'true';
   
-  if (!isHydrated || (!isLoaded && !isTestKey && !isProfileDemo) || isHydratingFromSupabase) {
+  if (!isHydrated || (!isLoaded && !usesDemoData && !isProfileDemo) || isHydratingFromSupabase) {
     // Exception for demo mode which requires no hydration or loading
     if (!window.location.search.includes('demo=onboarding') && !isProfileDemo) {
       return (
@@ -220,6 +230,15 @@ export default function App() {
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
+
+        {/* Tools and the card directory, inside the app */}
+        <Route path="/tools" element={<ToolsPage />} />
+        <Route path="/tools/which-card-to-use" element={<WhichCardTool />} />
+        <Route path="/tools/credit-card-reward-calculator" element={<RewardCalculatorTool />} />
+        <Route path="/tools/annual-fee-break-even" element={<BreakEvenTool />} />
+        <Route path="/tools/credit-utilization" element={<UtilizationTool />} />
+        <Route path="/cards" element={<CardsDirectoryTool />} />
+        <Route path="/cards/:slug" element={<CardDetailTool />} />
         
         {/* Plan Routes */}
         <Route path="/plan" element={<PlanHubPage />} />

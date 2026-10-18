@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { SiteLink as Link } from './SiteLink';
 import { ArrowChip, Container } from './primitives';
 import { PageBody, PageHero } from './PageHero';
 import { TOOLS } from './nav';

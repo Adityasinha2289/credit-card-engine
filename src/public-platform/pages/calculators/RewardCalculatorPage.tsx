@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { SiteLink as Link } from '../../site/SiteLink';
 import { ArrowRight } from 'lucide-react';
 import { SEO } from '../../components/SEO';
 import { getCardBySlug, getDirectoryCards } from '../../lib/cardKnowledgeGraph';

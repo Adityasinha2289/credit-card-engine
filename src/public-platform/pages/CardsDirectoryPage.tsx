@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { SiteLink as Link, useInApp } from '../site/SiteLink';
 import { ArrowRight, Search, X } from 'lucide-react';
 import { SEO } from '../components/SEO';
 import { getDirectoryCards, type PublicCardEntity } from '../lib/cardKnowledgeGraph';
@@ -66,6 +67,7 @@ function DirectoryCard({ card }: { card: PublicCardEntity }) {
 
 export function CardsDirectoryPage() {
   const all = useMemo(() => getDirectoryCards(), []);
+  const inApp = useInApp();
   const [params, setParams] = useSearchParams();
   const need = NEEDS.some((n) => n.id === params.get('category')) ? params.get('category')! : 'all';
   const issuer = params.get('issuer') ?? 'all';
@@ -141,7 +143,8 @@ export function CardsDirectoryPage() {
 
       <PageBody className="overflow-clip">
       {/* toolbar: sticks to the very top; its top padding sits under the floating header when stuck, so nothing shows around it */}
-      <div className="z-30 border-b border-rc-ink/10 bg-rc-cream/90 pt-6 backdrop-blur-xl sm:sticky sm:top-0 sm:pt-16 lg:pt-[76px]">
+      {/* in the app the toolbar sits under the app's own top bar instead */}
+      <div className={cn('z-30 border-b border-rc-ink/10 bg-rc-cream/90 backdrop-blur-xl sm:sticky', inApp ? 'mt-4 pt-4 sm:top-16' : 'pt-6 sm:top-0 sm:pt-16 lg:pt-[76px]')}>
         <Container className="flex flex-col gap-3 pb-4 sm:-mt-6">
           <div role="tablist" aria-label="Filter by need" className="-mx-5 flex gap-1 overflow-x-auto px-5 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {NEEDS.map((n) => (

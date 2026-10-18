@@ -15,7 +15,7 @@ export const SectionHeading = React.forwardRef<HTMLHeadingElement, TypographyPro
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          "text-3xl md:text-4xl lg:text-[42px] font-display font-bold tracking-tight leading-[1.15] mb-4",
+          "text-3xl md:text-4xl lg:text-[42px] font-display font-semibold tracking-tight leading-[1.15] mb-4",
           className
         )}
         style={{ color: '#111827' }}

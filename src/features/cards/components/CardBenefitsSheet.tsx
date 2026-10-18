@@ -88,7 +88,7 @@ export function CardBenefitsSheet({ cardId, onClose }: CardBenefitsSheetProps) {
               <div className="flex items-center gap-3">
                 <BankLogo bank={cardData.bank} />
                 <div>
-                  <h3 className="text-base font-display font-extrabold text-text-primary leading-tight">
+                  <h3 className="text-base font-sans font-extrabold text-text-primary leading-tight">
                     {cardData.name}
                   </h3>
                   <p className="text-[10px] text-text-muted font-semibold tracking-wider uppercase mt-0.5">
@@ -117,7 +117,7 @@ export function CardBenefitsSheet({ cardId, onClose }: CardBenefitsSheetProps) {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite] pointer-events-none" />
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="text-xs font-display font-bold uppercase tracking-widest text-white/95">
+                    <p className="text-xs font-sans font-bold uppercase tracking-widest text-white/95">
                       {cardData.name}
                     </p>
                     <p className="text-[9px] text-white/75 mt-0.5">Verified Intelligence</p>
@@ -137,21 +137,21 @@ export function CardBenefitsSheet({ cardId, onClose }: CardBenefitsSheetProps) {
                 <div className="bg-surface-primary dark:bg-white/[0.02] border border-border-subtle dark:border-white/[0.03] rounded-2xl p-3 flex flex-col items-center justify-center">
                   <Wallet size={16} className="text-brand-emerald mb-1" />
                   <p className="text-[10px] text-text-muted uppercase font-bold tracking-wider">Annual Fee</p>
-                  <p className="text-sm font-display font-extrabold text-text-primary mt-0.5">
+                  <p className="text-sm font-sans font-extrabold text-text-primary mt-0.5">
                     {cardData.annualFee === 0 ? 'LIFETIME FREE' : `₹${cardData.annualFee}`}
                   </p>
                 </div>
                 <div className="bg-surface-primary dark:bg-white/[0.02] border border-border-subtle dark:border-white/[0.03] rounded-2xl p-3 flex flex-col items-center justify-center">
                   <Calendar size={16} className="text-profit mb-1" />
                   <p className="text-[10px] text-text-muted uppercase font-bold tracking-wider">Fee Waiver</p>
-                  <p className="text-sm font-display font-extrabold text-text-primary mt-0.5">
+                  <p className="text-sm font-sans font-extrabold text-text-primary mt-0.5">
                     {cardData.feeWaiverSpend ? `₹${cardData.feeWaiverSpend.toLocaleString('en-IN')}` : 'N/A'}
                   </p>
                 </div>
                 <div className="bg-surface-primary dark:bg-white/[0.02] border border-border-subtle dark:border-white/[0.03] rounded-2xl p-3 flex flex-col items-center justify-center">
                   <Plane size={16} className="text-copper-500 mb-1" />
                   <p className="text-[10px] text-text-muted uppercase font-bold tracking-wider">Lounge Access</p>
-                  <p className="text-sm font-display font-extrabold text-text-primary mt-0.5">
+                  <p className="text-sm font-sans font-extrabold text-text-primary mt-0.5">
                     {cardData.loungeAccess ? `${cardData.loungeAccess}/year` : 'None'}
                   </p>
                 </div>
@@ -175,7 +175,7 @@ export function CardBenefitsSheet({ cardId, onClose }: CardBenefitsSheetProps) {
                         </p>
                         <p className="text-[10px] text-text-muted">Multiplier Rate</p>
                       </div>
-                      <p className="text-sm font-display font-bold text-profit">{r.rate}%</p>
+                      <p className="text-sm font-sans font-bold text-profit">{r.rate}%</p>
                     </div>
                   ))}
                   <div className={`bg-surface-primary dark:bg-white/[0.02] border border-border-subtle dark:border-white/[0.03] rounded-2xl p-3 flex items-center gap-3 ${cardData.rewards.length % 2 === 0 ? 'col-span-2' : ''}`}>
@@ -184,7 +184,7 @@ export function CardBenefitsSheet({ cardId, onClose }: CardBenefitsSheetProps) {
                       <p className="text-xs font-semibold text-text-primary truncate">Base Rate</p>
                       <p className="text-[10px] text-text-muted">All other spends</p>
                     </div>
-                    <p className="text-sm font-display font-bold text-profit">{cardData.baseRewardRate}%</p>
+                    <p className="text-sm font-sans font-bold text-profit">{cardData.baseRewardRate}%</p>
                   </div>
                 </div>
               </div>

@@ -130,7 +130,7 @@ export function BankLogo({ bank, className = '' }: BankLogoProps) {
       }}
     >
       <span
-        className={`font-display font-extrabold leading-none ${fontSize} ${tracking}`}
+        className={`font-display font-semibold leading-none ${fontSize} ${tracking}`}
         style={{ color: textColor }}
       >
         {initials}

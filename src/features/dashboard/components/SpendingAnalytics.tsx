@@ -77,7 +77,7 @@ export function SpendingAnalytics() {
     <div className="panel-glass rounded-3xl p-5 mb-6 flex flex-col gap-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-display font-bold text-text-primary">Spending Analytics</h2>
+          <h2 className="text-lg font-display font-semibold text-text-primary">Spending Analytics</h2>
           <p className="text-xs text-text-muted">{period === 'month' ? 'This month by category' : 'All-time by category'}</p>
         </div>
         <div className="flex bg-surface-secondary p-1 rounded-lg gap-1" role="group" aria-label="Period">

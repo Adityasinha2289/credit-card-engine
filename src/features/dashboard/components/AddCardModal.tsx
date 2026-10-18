@@ -53,7 +53,7 @@ export default function AddCardModal({
       >
         <>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-display font-bold text-text-primary">Add Card to Wallet</h3>
+            <h3 className="text-lg font-display font-semibold text-text-primary">Add Card to Wallet</h3>
             <button
               onClick={handleCloseModal}
               className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-gray-100"

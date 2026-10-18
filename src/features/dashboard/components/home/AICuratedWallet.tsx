@@ -37,7 +37,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
     <div className="mb-32 px-4 md:px-0 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-display font-medium text-text-primary tracking-tight">Your Wallet</h2>
+          <h2 className="text-2xl font-display font-semibold text-text-primary tracking-tight">Your Wallet</h2>
           <p className="text-sm text-text-secondary mt-1">AI has already chosen today's smartest card.</p>
         </div>
       </div>
@@ -86,7 +86,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
               {/* Main Information */}
               <div className="relative z-10 mt-auto">
                 <div className="mb-4">
-                  <h3 className="text-3xl md:text-5xl font-display font-medium text-gray-900 tracking-tight mb-2">
+                  <h3 className="text-3xl md:text-5xl font-display font-semibold text-gray-900 tracking-tight mb-2">
                     {activeCard.cardName || activeCard.bank}
                   </h3>
                   
@@ -197,7 +197,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
                   onClick={onOpenWallet}
                   className="snap-start shrink-0 w-[180px] md:w-[220px] aspect-[1.58] rounded-2xl border border-dashed border-border-subtle dark:border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-brand-emerald/50 hover:bg-brand-emerald/5 transition-all"
                 >
-                  <span className="text-xl font-display font-medium text-text-secondary">+{overflowCount}</span>
+                  <span className="text-xl font-display font-semibold text-text-secondary">+{overflowCount}</span>
                 </div>
               )}
             </div>

@@ -175,7 +175,6 @@ function ContactlessIcon({ size, color }: { size: number, color: string }) {
 export function CreditCard({
   card,
   variant = 'compact',
-  revealed = false,
   selected = false,
   recommended = false,
   onClick,
@@ -188,8 +187,6 @@ export function CreditCard({
   const networkName = theme.network || card.network?.toLowerCase() || 'visa';
   const NetworkLogo = NetworkLogoMap[networkName] || VisaLogo;
   
-  const last4 = card.pan ? card.pan.replace(/\s/g, '').slice(-4) : '••••';
-  const maskedPan = revealed ? card.pan : `•••• •••• •••• ${last4}`;
 
   const isInteractive = !!onClick;
   const contactlessSize = variant === 'featured' || variant === 'recommendation' ? 24 : variant === 'wallet' ? 20 : 16;
@@ -225,20 +222,20 @@ export function CreditCard({
       tabIndex={isInteractive ? 0 : undefined}
       onClick={onClick}
       onKeyDown={isInteractive ? (e) => e.key === 'Enter' && onClick?.() : undefined}
-      aria-label={`${displayLabel} ending in ${last4}`}
+      aria-label={`${displayLabel}${card.bank ? ` by ${card.bank}` : ''}`}
       className={cn(
         'group relative overflow-hidden select-none shrink-0 transition-all duration-300',
         tokens.wrapper,
         tokens.radius,
         isInteractive && 'cursor-pointer hover:-translate-y-1',
-        selected && 'ring-[3px] ring-[#2A9D5C] ring-offset-4 ring-offset-[#0A0A0A]',
+        selected && 'ring-[3px] ring-rc-forest ring-offset-4 ring-offset-rc-cream',
         className
       )}
       style={{
         background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.secondary} 100%)`,
         boxShadow: selected
-          ? '0 12px 32px rgba(42, 157, 92, 0.3), inset 0 1px 1px rgba(255,255,255,0.2)'
-          : '0 8px 24px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 1px rgba(0,0,0,0.3)',
+          ? '0 18px 36px -12px rgba(55, 85, 52, 0.55), inset 0 1px 1px rgba(255,255,255,0.2)'
+          : '0 18px 36px -16px rgba(10,31,21,0.55), 0 2px 6px rgba(10,31,21,0.18), inset 0 1px 1px rgba(255,255,255,0.18)',
       }}
     >
       {/* Pattern Layer */}
@@ -276,42 +273,25 @@ export function CreditCard({
       {/* ── Card Content ──────────────────────────────────────────────────── */}
       <div className={cn('relative z-10 h-full flex flex-col justify-between', tokens.padX, tokens.padY)} style={{ color: theme.text }}>
         
-        {/* TOP: Issuer & Product */}
-        <div className="flex items-start justify-between w-full">
-          <div className="flex flex-col items-start max-w-[80%]">
-            <span className={cn('font-bold opacity-95 uppercase tracking-widest drop-shadow-sm truncate w-full', tokens.issuer)}>
-              {card.bank || 'BANK'}
-            </span>
-            <span className={cn('font-medium opacity-80 truncate w-full mt-0.5', tokens.product)}>
-              {displayLabel}
-            </span>
-          </div>
+        {/* the bank and a contactless mark */}
+        <div className="flex w-full items-start justify-between">
+          <span className={cn('max-w-[80%] truncate font-semibold uppercase tracking-widest opacity-90 drop-shadow-sm', tokens.issuer)}>
+            {card.bank || 'Card'}
+          </span>
           <ContactlessIcon size={contactlessSize} color={theme.text} />
         </div>
 
-        {/* MIDDLE: Chip & PAN */}
-        <div className="flex flex-col justify-center flex-1 w-full" style={{ paddingBottom: variant === 'compact' ? '0' : '4%' }}>
-          <div className="mb-2">
-            <EmvChip chipClass={tokens.chip} chipInnerClass={tokens.chipInner} style={theme.chipStyle} />
-          </div>
-          <p className={cn('font-mono opacity-95 leading-none drop-shadow-md w-full mt-1', tokens.pan)}>
-            {maskedPan}
-          </p>
+        {/* the chip. No card number: RenoCred never stores one, so it never shows a made-up one */}
+        <div className="flex w-full flex-1 items-center">
+          <EmvChip chipClass={tokens.chip} chipInnerClass={tokens.chipInner} style={theme.chipStyle} />
         </div>
 
-        {/* BOTTOM: Holder, Validity, Network */}
-        <div className="flex items-end justify-between w-full pt-1">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-1 opacity-75">
-              <span className="text-[5px] sm:text-[6px] uppercase leading-[0.8] max-w-[20px] font-medium break-words">Valid Thru</span>
-              <span className={cn('font-mono leading-none', tokens.holder)}>12/28</span>
-            </div>
-            <p className={cn('font-bold opacity-95 truncate drop-shadow-sm uppercase tracking-wider', tokens.holder)}>
-              {card.cardholderName || 'CARDHOLDER NAME'}
-            </p>
-          </div>
-          
-          <div className={cn('shrink-0 origin-bottom-right drop-shadow-sm opacity-95', tokens.networkScale)}>
+        {/* the product name and network */}
+        <div className="flex w-full items-end justify-between gap-3 pt-1">
+          <p className={cn('line-clamp-2 font-medium leading-tight drop-shadow-sm', tokens.label)}>
+            {displayLabel}
+          </p>
+          <div className={cn('shrink-0 origin-bottom-right opacity-95 drop-shadow-sm', tokens.networkScale)}>
             <NetworkLogo />
           </div>
         </div>
@@ -324,7 +304,7 @@ export function CreditCard({
     return (
       <div className="relative inline-block shrink-0">
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap">
-          <span className="bg-[#2A9D5C] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-lg border border-[#2A9D5C]/50">
+          <span className="rounded-full bg-rc-pistachio px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-rc-ink shadow-[0_8px_18px_-8px_rgba(10,31,21,0.6)]">
             RenoCred Pick
           </span>
         </div>

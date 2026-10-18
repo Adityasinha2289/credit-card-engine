@@ -119,7 +119,7 @@ export default function LifestyleHub() {
                   <heroCategory.icon className="w-5 h-5 text-[#2A9D5C]" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h3 className="text-3xl md:text-4xl font-display font-medium text-gray-900 mb-2">{heroCategory.label}</h3>
+                  <h3 className="text-3xl md:text-4xl font-display font-semibold text-gray-900 mb-2">{heroCategory.label}</h3>
                   <p className="text-base md:text-lg text-gray-600 max-w-lg">{heroCategory.desc}</p>
                 </div>
                 <div className="flex items-center gap-2 text-sm font-medium text-[#2A9D5C] mt-2 group-hover:text-gray-900 transition-colors">

@@ -58,7 +58,7 @@ export function WalletSnapshotV3({
   return (
     <div className="panel-glass rounded-[2rem] p-6 border border-border-subtle  shadow-xl">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
+        <h3 className="text-lg font-display font-semibold text-text-primary flex items-center gap-2">
           <WalletIcon size={20} className="text-brand-emerald" />
           Wallet Snapshot
         </h3>

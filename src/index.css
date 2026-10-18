@@ -10,28 +10,29 @@
 
 @layer base {
   :root {
-    /* V3 Color System - Light Edition */
-    --color-canvas: #F9FAFB;
-    --color-shell: #F9FAFB; 
-    --color-surface-primary: #FFFFFF;
-    --color-surface-secondary: #FFFFFF;
-    --color-surface-card: #FFFFFF;
-    --color-surface-elevated: #F3F4F6;
-    --color-surface-intelligence: #F0FDF4;
+    /* App colours on the brand palette: cream canvas, paper surfaces, ink text,
+       forest for actions; emerald stays for money. */
+    --color-canvas: #F6F4EC;
+    --color-shell: #F6F4EC;
+    --color-surface-primary: #FBFAF6;
+    --color-surface-secondary: #FBFAF6;
+    --color-surface-card: #FBFAF6;
+    --color-surface-elevated: #EFEDE3;
+    --color-surface-intelligence: #E3EED4;
     
-    --color-brand: #2A9D5C;
-    --color-brand-strong: #2A9D5C;
-    --color-brand-dark: #0D6B43;
-    --color-brand-muted: #4B8F70;
+    --color-brand: #375534;
+    --color-brand-strong: #0F2A1D;
+    --color-brand-dark: #0F2A1D;
+    --color-brand-muted: #6B9071;
     
-    --color-text-primary: #111827;
-    --color-text-secondary: #4B5563;
-    --color-text-muted: #6B7280;
-    --color-text-very-muted: #9CA3AF;
+    --color-text-primary: #0F2A1D;
+    --color-text-secondary: #4D6354;
+    --color-text-muted: #5E7363;
+    --color-text-very-muted: #8FA092;
     
-    --color-border-subtle: rgba(0, 0, 0, 0.08);
-    --color-border-strong: rgba(0, 0, 0, 0.15);
-    --color-border-intelligence: rgba(42, 157, 92, 0.2);
+    --color-border-subtle: rgba(15, 42, 29, 0.10);
+    --color-border-strong: rgba(15, 42, 29, 0.18);
+    --color-border-intelligence: rgba(55, 85, 52, 0.25);
 
     /* Semantic Aliases for backward compatibility */
     --bg-page: var(--color-canvas);
@@ -71,12 +72,12 @@
   }
 
   ::selection {
-    background-color: rgba(42, 157, 92, 0.25);
+    background-color: #E3EED4;
     color: var(--text-primary);
   }
 
   *:focus-visible {
-    outline: 2px solid rgba(42, 157, 92, 0.5);
+    outline: 2px solid rgba(55, 85, 52, 0.55);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -89,16 +90,17 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(15, 42, 29, 0.18);
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(15, 42, 29, 0.32);
   }
 
+  /* Big titles opt into the serif with `font-display` / `font-serif`; everything else is Inter. */
   h1, h2, h3, h4, h5, h6 {
     margin: 0;
-    font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, sans-serif;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   }
 
   p { margin: 0; }

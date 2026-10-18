@@ -43,7 +43,7 @@ export function CurrentCardsStep({ onBack, onContinue, initialValues = [] }: Cur
   return (
     <div className="flex flex-col w-full min-h-[70vh]">
       <div className="mb-6 md:mb-8 text-center md:text-left">
-        <SectionHeading className="mb-2 font-display uppercase tracking-tight">
+        <SectionHeading className="mb-2 font-sans uppercase tracking-tight">
           Show us your wallet.
         </SectionHeading>
         <SectionDescription>

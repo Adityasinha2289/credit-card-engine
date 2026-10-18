@@ -13,7 +13,7 @@ export function FinancialSnapshotV3({ health, ledgerSummary }: FinancialSnapshot
   return (
     <div className="panel-glass rounded-[2rem] p-6 border border-border-subtle  shadow-xl">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
+        <h3 className="text-lg font-display font-semibold text-text-primary flex items-center gap-2">
           <Activity size={20} className="text-brand-emerald" />
           Financial Snapshot
         </h3>
@@ -32,7 +32,7 @@ export function FinancialSnapshotV3({ health, ledgerSummary }: FinancialSnapshot
             </div>
           </div>
           <div className="text-right">
-            <p className="text-lg font-display font-bold text-brand-emerald">{health.score}</p>
+            <p className="text-lg font-display font-semibold text-brand-emerald">{health.score}</p>
           </div>
         </div>
 
@@ -48,7 +48,7 @@ export function FinancialSnapshotV3({ health, ledgerSummary }: FinancialSnapshot
             </div>
           </div>
           <div className="text-right">
-            <p className="text-lg font-display font-bold text-profit">94%</p>
+            <p className="text-lg font-display font-semibold text-profit">94%</p>
           </div>
         </div>
 
@@ -64,7 +64,7 @@ export function FinancialSnapshotV3({ health, ledgerSummary }: FinancialSnapshot
             </div>
           </div>
           <div className="text-right">
-            <p className="text-lg font-display font-bold text-indigo-500">{ledgerSummary.totalRewards.toLocaleString('en-IN')}</p>
+            <p className="text-lg font-display font-semibold text-indigo-500">{ledgerSummary.totalRewards.toLocaleString('en-IN')}</p>
           </div>
         </div>
 

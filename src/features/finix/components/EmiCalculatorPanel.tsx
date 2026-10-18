@@ -118,7 +118,7 @@ function StatTile({ label, value, icon: Icon, colorVar }: {
         </div>
         <p className="text-[11px] font-semibold text-text-muted">{label}</p>
       </div>
-      <p className="text-lg font-display font-bold text-text-primary tabular-nums leading-none">{value}</p>
+      <p className="text-lg font-display font-semibold text-text-primary tabular-nums leading-none">{value}</p>
     </div>
   );
 }
@@ -182,7 +182,7 @@ export function EmiCalculatorPanel() {
           <Calculator size={18} className="text-brand-emerald" />
         </div>
         <div>
-          <h3 className="text-base font-display font-bold text-text-primary">EMI Calculator</h3>
+          <h3 className="text-base font-sans font-bold text-text-primary">EMI Calculator</h3>
           <p className="text-xs text-text-muted">Plan a big purchase and find the best card to convert it</p>
         </div>
       </div>
@@ -198,7 +198,7 @@ export function EmiCalculatorPanel() {
                 initial={{ opacity: 0.4, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-4xl font-display font-bold text-text-primary tabular-nums tracking-tight"
+                className="text-4xl font-display font-semibold text-text-primary tabular-nums tracking-tight"
               >
                 {formatFullINR(emi)}
               </motion.p>

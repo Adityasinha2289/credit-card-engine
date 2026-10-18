@@ -25,7 +25,7 @@ export function StepTransport({ initialMode, onNext, onBack }: StepTransportProp
   return (
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex-1">
-        <h2 className="text-3xl font-display font-medium text-gray-900 tracking-tight mb-8">
+        <h2 className="text-3xl font-display font-semibold text-gray-900 tracking-tight mb-8">
           HOW DO YOU WANT TO GET THERE?
         </h2>
 

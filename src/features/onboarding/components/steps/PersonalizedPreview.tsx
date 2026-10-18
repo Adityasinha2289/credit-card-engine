@@ -56,7 +56,7 @@ export function PersonalizedPreview({ state, onComplete }: PersonalizedPreviewPr
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center text-center px-6"
           >
-            <h2 className="font-display text-3xl md:text-5xl uppercase tracking-tight text-white mb-4">
+            <h2 className="font-sans text-3xl md:text-5xl uppercase tracking-tight text-white mb-4">
               Your wallet is ready.
             </h2>
             <div className="w-16 h-1 bg-[#2A9D5C] rounded-full mt-4" />
@@ -149,7 +149,7 @@ export function PersonalizedPreview({ state, onComplete }: PersonalizedPreviewPr
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center text-center px-6"
           >
-            <h2 className="font-display text-4xl md:text-6xl uppercase tracking-tight text-white mb-6">
+            <h2 className="font-sans text-4xl md:text-6xl uppercase tracking-tight text-white mb-6">
               Your money <br/><span className="text-[#2A9D5C]">is ready to move.</span>
             </h2>
           </motion.div>

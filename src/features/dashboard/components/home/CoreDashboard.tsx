@@ -34,7 +34,7 @@ export function CoreDashboard({ onNavigateToTab }: CoreDashboardProps) {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
             <p className="text-lg text-text-secondary mb-8">Hello, {userName}.</p>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-medium text-text-primary tracking-tight leading-[1.1] mb-8">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-semibold text-text-primary tracking-tight leading-[1.1] mb-8">
               Let's build your<br />
               <span className="font-extrabold">first wallet.</span>
             </h1>

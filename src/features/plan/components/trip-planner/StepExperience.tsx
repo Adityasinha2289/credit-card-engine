@@ -37,7 +37,7 @@ export function StepExperience({ initialActivities, onNext, onBack }: StepExperi
   return (
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex-1">
-        <h2 className="text-3xl font-display font-medium text-gray-900 tracking-tight mb-2">
+        <h2 className="text-3xl font-display font-semibold text-gray-900 tracking-tight mb-2">
           WHAT DO YOU WANT TO DO?
         </h2>
         <p className="text-gray-500 mb-8">Select as many as you like. We'll find the best spots.</p>

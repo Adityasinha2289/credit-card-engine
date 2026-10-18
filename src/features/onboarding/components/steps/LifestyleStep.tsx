@@ -45,7 +45,7 @@ export function LifestyleStep({ onBack, onContinue, initialValues = [] }: Lifest
 
   return (
     <div className="flex flex-col w-full">
-      <SectionHeading className="mb-3 font-display uppercase tracking-tight">
+      <SectionHeading className="mb-3 font-sans uppercase tracking-tight">
         What's your money obsession?
       </SectionHeading>
       <SectionDescription className="mb-2">

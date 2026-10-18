@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface PageHeaderProps {
   eyebrow?: string;
   title: string;
@@ -8,21 +6,20 @@ interface PageHeaderProps {
 
 export function PageHeader({ eyebrow, title, subtitle }: PageHeaderProps) {
   return (
-    <div className="flex flex-col mb-8 lg:mb-12 w-full max-w-[800px]">
+    <div className="mb-10 flex w-full max-w-[820px] flex-col lg:mb-14">
       {eyebrow && (
-        <span className="text-[10px] md:text-xs font-bold text-semantic-text-tertiary uppercase tracking-widest mb-3">
-          {eyebrow}
+        <span className="mb-4 flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.2em] text-semantic-text-muted">
+          <span aria-hidden className="h-2 w-2 rounded-full bg-rc-emerald" /> {eyebrow}
         </span>
       )}
-      <h1 className="text-4xl md:text-5xl font-display font-medium text-semantic-text-primary tracking-tight leading-tight">
+      <h1 className="font-display text-[clamp(2.4rem,4.4vw,3.75rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-semantic-text-primary">
         {title}
       </h1>
       {subtitle && (
-        <p className="text-base md:text-lg text-semantic-text-secondary mt-4 max-w-xl leading-relaxed">
+        <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-semantic-text-secondary md:text-[17px]">
           {subtitle}
         </p>
       )}
-      <div className="w-full h-px bg-white/[0.04] mt-8" />
     </div>
   );
 }

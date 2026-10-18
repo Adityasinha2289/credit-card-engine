@@ -18,6 +18,7 @@ vi.mock('react-router-dom', () => ({
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, className, ...props }: any) => <div className={className} {...props}>{children}</div>,
+    span: ({ children, className }: any) => <span className={className}>{children}</span>,
   },
 }));
 
@@ -65,7 +66,7 @@ describe('Sidebar - User Identity Loading Bug Fix', () => {
     render(<Sidebar />);
     
     expect(screen.getByText('User Alpha')).toBeInTheDocument();
-    expect(screen.getByText('View Profile →')).toBeInTheDocument();
+    expect(screen.getByText('View profile →')).toBeInTheDocument();
   });
 
   it('Test C: Resolved User B renders User B actual name from Clerk if profile empty', () => {

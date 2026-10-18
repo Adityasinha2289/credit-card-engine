@@ -168,7 +168,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
           <div className="space-y-3">
             <div className="flex items-end justify-between">
               <div>
-                <h3 className="text-lg md:text-xl font-display font-medium text-gray-900 leading-tight">What matters most?</h3>
+                <h3 className="text-lg md:text-xl font-display font-semibold text-gray-900 leading-tight">What matters most?</h3>
                 <p className="text-xs text-gray-500 mt-1">Choose up to 4 areas</p>
               </div>
               <div className="hidden md:flex text-xs font-mono px-3 py-1 bg-gray-50 rounded-lg text-gray-600 border border-gray-200">
@@ -257,7 +257,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
         <section className="space-y-6 pt-10 border-t border-gray-200">
           <div className="space-y-1">
             <h3 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Your Best Match</h3>
-            <p className="text-2xl font-display font-medium text-gray-900">Cards worth considering</p>
+            <p className="text-2xl font-display font-semibold text-gray-900">Cards worth considering</p>
           </div>
 
           {results.length === 0 ? (
@@ -310,7 +310,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                         </div>
 
                         <div className="w-full text-center mb-8">
-                          <h4 className="text-2xl md:text-3xl font-display font-medium text-gray-900 leading-tight mb-2">{card.name}</h4>
+                          <h4 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 leading-tight mb-2">{card.name}</h4>
                           <p className="text-sm text-gray-600">{card.network}</p>
                         </div>
 
@@ -478,7 +478,7 @@ function CardPickerModal({ onSelect, onClose, excludeIds }: {
       >
         <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-200">
           <div>
-            <h3 className="text-lg font-display font-medium text-gray-900">Build your shortlist</h3>
+            <h3 className="text-lg font-display font-semibold text-gray-900">Build your shortlist</h3>
             <p className="text-xs text-gray-600 mt-1">{CARD_DATASET.length} cards available in the database</p>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all">
@@ -579,7 +579,7 @@ function CompareTab() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h3 className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Compare Your Shortlist</h3>
-            <p className="text-2xl font-display font-medium text-gray-900">See what actually differs.</p>
+            <p className="text-2xl font-display font-semibold text-gray-900">See what actually differs.</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-xs font-mono px-3 py-1.5 bg-white rounded-lg text-gray-600 border border-gray-200">
@@ -662,7 +662,7 @@ function CompareTab() {
                   <Trophy size={14} className="text-gray-600" />
                   <span className="text-[10px] font-bold text-gray-900 tracking-widest uppercase">RenoCred Pick · Winner</span>
                 </div>
-                <h4 className="text-lg font-display font-medium text-gray-900 mb-1">
+                <h4 className="text-lg font-display font-semibold text-gray-900 mb-1">
                   {winnerCard.name}
                 </h4>
                 <p className="text-sm text-gray-600">
@@ -823,7 +823,7 @@ function MyWalletTab() {
       <div className="space-y-4 max-w-md">
         <div>
           <h3 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">My Wallet</h3>
-          <h4 className="text-2xl font-display font-medium text-gray-900 leading-tight">
+          <h4 className="text-2xl font-display font-semibold text-gray-900 leading-tight">
             You already own the cards.<br/>Now make every transaction smarter.
           </h4>
         </div>
@@ -877,7 +877,7 @@ export default function CreditPage() {
           <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
             Credit Intelligence
           </span>
-          <h1 className="text-2xl md:text-3xl font-display font-medium text-gray-900 tracking-tight leading-tight">
+          <h1 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 tracking-tight leading-tight">
             Find the right credit. Make every card count.
           </h1>
         </div>

@@ -50,7 +50,7 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps, d
           >
             <img src="/icons/icon-192.png" alt="RenoCred" width={36} height={36} className="w-full h-full object-cover" />
           </div>
-          <span className="font-display font-bold text-xl tracking-tight hidden sm:block"
+          <span className="font-display font-semibold text-xl tracking-tight hidden sm:block"
             style={{ color: '#111827' }}
           >
             renocred

@@ -122,7 +122,7 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                   className="flex flex-col h-full"
                 >
                   <div className="flex flex-col gap-1 mt-4 mb-8">
-                    <h1 className="text-3xl font-display font-medium text-gray-900 mb-2">Decision Engine</h1>
+                    <h1 className="text-3xl font-display font-semibold text-gray-900 mb-2">Decision Engine</h1>
                     <p className="text-[15px] text-gray-600 leading-relaxed">
                       Describe any purchase. Taqdeer will analyze your wallet and recommend the best strategy.
                     </p>

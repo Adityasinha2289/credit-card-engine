@@ -34,7 +34,7 @@ export function UpiSimulator() {
           <Smartphone size={20} />
         </div>
         <div>
-          <h3 className="text-xl md:text-2xl font-display font-bold text-text-primary tracking-tight">UPI Simulator</h3>
+          <h3 className="text-xl md:text-2xl font-display font-semibold text-text-primary tracking-tight">UPI Simulator</h3>
           <p className="text-sm text-text-secondary mt-0.5">Live card optimization</p>
         </div>
       </div>

@@ -97,7 +97,7 @@ export function BudgetingPanel() {
                 <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="276.46" strokeDashoffset={276.46 - (276.46 * healthScore) / 100} className={cn("transition-all duration-1000 ease-out", healthColor)} strokeLinecap="round" />
               </svg>
               <div className="flex flex-col items-center relative z-10">
-                <span className="text-2xl font-display font-bold text-text-primary">{Math.round(healthScore)}</span>
+                <span className="text-2xl font-display font-semibold text-text-primary">{Math.round(healthScore)}</span>
               </div>
             </div>
           </div>
@@ -297,7 +297,7 @@ export function BudgetingPanel() {
             className="w-full max-w-md bg-surface-primary  rounded-[2rem] p-6 shadow-ag-modal border border-border-subtle"
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-display font-bold text-text-primary">Add a Budget</h3>
+              <h3 className="text-xl font-display font-semibold text-text-primary">Add a Budget</h3>
               <button 
                 onClick={() => {
                   setShowAddBudget(false);

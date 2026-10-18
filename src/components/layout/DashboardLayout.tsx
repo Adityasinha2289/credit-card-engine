@@ -44,68 +44,49 @@ export function DashboardLayout({
   };
 
   return (
-    <div className="bg-semantic-canvas min-h-[100dvh] w-full relative flex flex-col">
-      {/* ── Atmospheric Background ─────────────────────────────────────── */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[radial-gradient(ellipse_at_center,_rgba(25,184,106,0.03)_0%,_transparent_70%)] rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-[20%] w-[60%] h-[60%] bg-[radial-gradient(ellipse_at_center,_rgba(13,107,67,0.05)_0%,_transparent_70%)] rounded-full blur-[140px]" />
-      </div>
+    // On wide screens the forest sidebar frames the app, and the workspace sits in it as a rounded cream sheet.
+    <div className="relative flex min-h-[100dvh] w-full flex-col bg-semantic-canvas lg:bg-rc-night">
 
       {/* ── Desktop Sidebar ────────────────────────────────────────────── */}
       <Sidebar />
 
       {/* ── Main Content Area ──────────────────────────────────────────── */}
-      <div className="flex flex-col min-h-[100dvh] lg:pl-[240px]">
+      <div className="flex min-h-[100dvh] flex-col lg:pl-[240px]">
+        <div className="relative flex min-h-[100dvh] flex-1 flex-col bg-semantic-canvas lg:my-3 lg:mr-3 lg:min-h-[calc(100dvh-24px)] lg:overflow-clip lg:rounded-[36px]">
         {/* Contextual Command Bar */}
         <TopNav />
 
         {/* Page content */}
-        <main className="flex-1 flex flex-col pb-[80px] lg:pb-0">
+        <main className="flex flex-1 flex-col pb-[96px] lg:pb-0">
           <React.Suspense fallback={<div className="p-6 md:p-12 w-full max-w-7xl mx-auto"><DashboardSkeleton /></div>}>
             <div className="flex-1 flex flex-col w-full animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
               {children}
             </div>
           </React.Suspense>
         </main>
+        </div>
       </div>
 
-      {/* ── Mobile Bottom Navigation Bar (10/10 Premium) ───────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-[68px] bg-white/80 backdrop-blur-xl border-t border-gray-200 z-40 flex items-center justify-around px-2 pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+      {/* ── Mobile: a floating dark capsule, like the website header ───────────────────── */}
+      <nav className="fixed inset-x-3 bottom-3 z-40 flex h-[64px] items-center justify-around rounded-full border border-white/10 bg-rc-ink/95 px-1.5 shadow-[0_18px_40px_-16px_rgba(0,0,0,0.6)] backdrop-blur-xl lg:hidden">
         {MOBILE_NAV.map((item) => {
           const isActive = isRouteActive(item.path, item.id === 'home');
           return (
             <button
               key={item.id}
               onClick={() => navigate({ pathname: item.path, search: location.search })}
-              className="relative flex flex-1 flex-col items-center justify-center h-full transition-all duration-300 group"
+              aria-current={isActive ? 'page' : undefined}
+              className="relative flex h-[52px] flex-1 flex-col items-center justify-center rounded-full"
             >
-              {/* Animated Top Indicator */}
               {isActive && (
-                <motion.div
+                <motion.span
                   layoutId="activeMobileNav"
-                  className="absolute top-0 w-10 h-1 bg-[#2A9D5C] rounded-b-full shadow-[0_2px_8px_rgba(42,157,92,0.4)]"
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  className="absolute inset-0 rounded-full bg-rc-pistachio"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                 />
               )}
-
-              {/* Icon Container with subtle active background */}
-              <div className={cn(
-                "relative p-1.5 rounded-xl transition-all duration-300",
-                isActive ? "bg-[#2A9D5C]/5 mt-1" : "group-hover:bg-gray-50"
-              )}>
-                <item.Icon
-                  className={cn(
-                    'w-6 h-6 transition-all duration-300',
-                    isActive ? 'text-[#2A9D5C] stroke-[2]' : 'text-gray-400 group-hover:text-gray-600 stroke-[1.5]'
-                  )}
-                />
-              </div>
-
-              {/* Label */}
-              <span className={cn(
-                'text-[10px] tracking-wide transition-all duration-300 mt-0.5',
-                isActive ? 'font-bold text-[#2A9D5C]' : 'font-medium text-gray-400'
-              )}>
+              <item.Icon className={cn('relative h-5 w-5', isActive ? 'stroke-[2] text-rc-ink' : 'stroke-[1.5] text-rc-mist')} />
+              <span className={cn('relative mt-0.5 text-[10px] tracking-wide', isActive ? 'font-semibold text-rc-ink' : 'font-medium text-rc-mist')}>
                 {item.label}
               </span>
             </button>

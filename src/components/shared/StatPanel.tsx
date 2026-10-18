@@ -45,7 +45,7 @@ export function StatPanel({
         </div>
       </div>
       <div>
-        <p className="text-3xl font-display font-bold text-text-primary tabular-nums tracking-tight">
+        <p className="text-3xl font-display font-semibold text-text-primary tabular-nums tracking-tight">
           {value}
         </p>
         <p className="text-xs font-medium text-text-muted mt-1">

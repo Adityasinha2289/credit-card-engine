@@ -108,7 +108,7 @@ export default function MoneyManagerPage() {
         {/* Money Pulse */}
         <section className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-display font-medium text-gray-900">This Month</h2>
+            <h2 className="text-xl font-display font-semibold text-gray-900">This Month</h2>
             {isDemo && <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold tracking-wider uppercase rounded">Demo</span>}
           </div>
 
@@ -130,7 +130,7 @@ export default function MoneyManagerPage() {
             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Safe to Spend</p>
             {safe.hasIncome ? (
               <>
-                <p className="text-4xl font-display font-medium text-emerald-600 mb-1">{formatRupees(safe.safeToSpend)}</p>
+                <p className="text-4xl font-display font-semibold text-emerald-600 mb-1">{formatRupees(safe.safeToSpend)}</p>
                 <p className="text-sm text-gray-600 mb-2">
                   ≈ {formatRupees(safe.perDay)}/day for the next {safe.daysLeft} {safe.daysLeft === 1 ? 'day' : 'days'}
                 </p>

@@ -60,7 +60,7 @@ export default function SubcategoryPage() {
             <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-white group-hover:-translate-x-0.5 transition-all" />
           </button>
           <div>
-            <h1 className="text-3xl md:text-5xl font-display font-medium text-white tracking-tight">{subcategory.name}</h1>
+            <h1 className="text-3xl md:text-5xl font-display font-semibold text-white tracking-tight">{subcategory.name}</h1>
             <p className="text-white/50 text-base mt-2 font-light">Explore top partners in {subcategory.name.toLowerCase()}</p>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function SubcategoryPage() {
             <div className="w-20 h-20 rounded-full bg-[#0a1a13] flex items-center justify-center mb-6 border border-[#2A9D5C]/20 shadow-[0_0_40px_rgba(42,157,92,0.1)]">
               <Search className="w-8 h-8 text-[#2A9D5C]" />
             </div>
-            <h4 className="text-2xl font-display font-medium text-white mb-3">No partners found.</h4>
+            <h4 className="text-2xl font-display font-semibold text-white mb-3">No partners found.</h4>
             <p className="text-base text-white/50 max-w-md">We don't have any partners in this exact category right now. Check back later or explore other categories.</p>
           </motion.div>
         )}

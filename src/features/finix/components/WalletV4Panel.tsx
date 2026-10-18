@@ -74,7 +74,7 @@ export function WalletV4Panel() {
 
       {/* Header */}
       <div className="flex flex-col gap-1 px-2">
-        <h1 className="text-[22px] font-display font-medium text-text-primary flex items-center gap-2">
+        <h1 className="text-[22px] font-display font-semibold text-text-primary flex items-center gap-2">
           Your card intelligence <Sparkles size={18} className="text-brand-emerald" />
         </h1>
         <p className="text-[13px] text-text-secondary">AI picks the best card for every category.</p>
@@ -133,7 +133,7 @@ export function WalletV4Panel() {
             </div>
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Dining</span>
           </div>
-          <h2 className="text-[28px] font-display font-medium text-text-primary leading-tight">{heroCard.name || 'HDFC Infinia'}</h2>
+          <h2 className="text-[28px] font-display font-semibold text-text-primary leading-tight">{heroCard.name || 'HDFC Infinia'}</h2>
           
           <div className="flex flex-col mt-2">
             <span className="text-[12px] text-text-muted mb-1">Estimated savings</span>

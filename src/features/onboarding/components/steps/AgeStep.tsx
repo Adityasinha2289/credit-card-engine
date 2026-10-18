@@ -38,7 +38,7 @@ export function AgeStep({ onBack, onContinue, initialValue }: AgeStepProps) {
 
   return (
     <div className="flex flex-col w-full">
-      <SectionHeading className="mb-3 font-display uppercase tracking-tight">
+      <SectionHeading className="mb-3 font-sans uppercase tracking-tight">
         How do you see your money life?
       </SectionHeading>
       <SectionDescription className="mb-6 md:mb-12">

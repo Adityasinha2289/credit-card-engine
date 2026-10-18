@@ -118,7 +118,7 @@ export function QuickAskTaqdeer() {
                 <Sparkles className="w-6 h-6 text-[#2A9D5C]" />
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-display font-medium text-gray-900 mb-4 tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-display font-semibold text-gray-900 mb-4 tracking-tight">
                 What are you planning to buy?
               </h1>
               <p className="text-gray-600 text-lg md:text-xl font-light mb-12">
@@ -270,7 +270,7 @@ export function QuickAskTaqdeer() {
               <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
 
                 <div className="flex items-center justify-between w-full border-b border-border-subtle pb-4">
-                  <h3 className="text-lg font-display font-medium text-gray-900 flex items-center gap-2">
+                  <h3 className="text-lg font-display font-semibold text-gray-900 flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-[#2A9D5C]" />
                     Financial Decision Report
                   </h3>
@@ -297,7 +297,7 @@ export function QuickAskTaqdeer() {
                           <span className="text-xs text-gray-600 font-medium">Optimal Recommendation</span>
                         </div>
 
-                        <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-2">
+                        <h3 className="text-3xl md:text-4xl font-display font-semibold text-gray-900 mb-2">
                           {decision.cards?.[0]?.name ||"Recommended Strategy"}
                         </h3>
 

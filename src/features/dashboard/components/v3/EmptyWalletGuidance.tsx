@@ -17,7 +17,7 @@ export function EmptyWalletGuidance({ onAddCard }: EmptyWalletGuidanceProps) {
         <div className="w-12 h-1.5 bg-white/20 rounded-full" />
       </div>
 
-      <h3 className="text-xl font-display font-bold text-text-primary mb-2">Let's build your wallet</h3>
+      <h3 className="text-xl font-display font-semibold text-text-primary mb-2">Let's build your wallet</h3>
       <p className="text-xs text-text-muted max-w-[200px] mb-6">
         Add your first card to unlock TAQDEER's intelligence and insights.
       </p>

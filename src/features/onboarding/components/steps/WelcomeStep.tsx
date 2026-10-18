@@ -96,7 +96,7 @@ export function WelcomeStep({ onContinue }: WelcomeStepProps) {
       </div>
 
       {/* Copy */}
-      <SectionHeading className="text-3xl md:text-5xl font-display uppercase tracking-tight mb-4 text-[#111827]">
+      <SectionHeading className="text-3xl md:text-5xl font-sans uppercase tracking-tight mb-4 text-[#111827]">
         Welcome to Reno Cred
       </SectionHeading>
 

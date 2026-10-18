@@ -14,6 +14,8 @@ import {
   Sparkles, AlertCircle, BookOpen, Receipt, Heart, Plus, Map as MapIcon
 } from 'lucide-react';
 import { PageContainer } from '../../components/shared/PageContainer';
+import { ButtonLink } from '../../public-platform/site/primitives';
+import { CardFan } from '../../public-platform/site/CardFan';
 import { type UserProfile } from '../../features/finix/lib/recommendEngine';
 import { recommendCardsFor, evaluatePayment } from '../../features/financial-engine/rewardsApi';
 import { normalizeGoal } from '../../config/goals';
@@ -230,10 +232,37 @@ export default function HomePage() {
     <PageContainer hideHeader className="gap-12 md:gap-16 relative selection:bg-[#2A9D5C]/30 selection:text-gray-900">
       
       {/* ── 1. GREETING ─────────────────────────────────────────────── */}
-      <section className="relative z-10 flex flex-col gap-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <h1 className="text-4xl md:text-5xl font-display font-medium text-gray-900 tracking-tight leading-tight">
-          {greeting}, {userName}
-        </h1>
+      {/* the app's front page opens like the website: a forest panel, a serif greeting, your cards fanned out */}
+      <section className="relative z-10 overflow-hidden rounded-[36px] bg-rc-night px-7 py-9 text-rc-cream animate-in fade-in slide-in-from-bottom-2 duration-500 md:px-10 md:py-12">
+        <div aria-hidden className="pointer-events-none absolute -left-24 -top-32 h-[420px] w-[520px] rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.12),transparent)]" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-40 right-0 h-[420px] w-[520px] rounded-full bg-[radial-gradient(closest-side,rgba(42,157,92,0.18),transparent)]" />
+        <div className="relative grid items-center gap-10 md:grid-cols-[1fr_auto]">
+          <div>
+            <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist">
+              <span aria-hidden className="h-2 w-2 rounded-full bg-rc-pistachio" />
+              {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </p>
+            <h1 className="mt-5 font-display text-[clamp(2.4rem,4.6vw,3.9rem)] font-semibold leading-[1] tracking-[-0.03em]">
+              {greeting},{userName ? <><br /><span className="italic text-rc-pistachio">{userName}.</span></> : null}
+            </h1>
+            <p className="mt-5 max-w-[44ch] text-[16px] leading-relaxed text-rc-mist">
+              {userCards.length > 0
+                ? `${userCards.length} ${userCards.length === 1 ? 'card' : 'cards'} in your wallet. Before you pay, RenoCred tells you which one earns the most.`
+                : 'Add the cards you own and RenoCred will tell you which one to use before you pay.'}
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <ButtonLink to="/app/wallet" variant="cream">{userCards.length > 0 ? 'Which card to use' : 'Add your cards'}</ButtonLink>
+              <ButtonLink to="/app/credit" variant="outline-cream" arrow={false}>Find a better card</ButtonLink>
+            </div>
+          </div>
+          {userCards.length > 0 && (
+            <CardFan
+              className="hidden md:block"
+              width={190}
+              cards={userCards.slice(0, 5).map((c) => ({ id: c.id, name: c.label || 'Credit card', bank: c.bank || '', network: c.network }))}
+            />
+          )}
+        </div>
       </section>
 
       {/* ── OPTIONAL PROFILE DETAILS (asked here instead of blocking onboarding) ── */}
@@ -326,7 +355,7 @@ export default function HomePage() {
           />
 
           <div className="space-y-2 max-w-md">
-            <h3 className="text-xl md:text-2xl font-display font-medium text-gray-900">{mainRec.name}</h3>
+            <h3 className="text-xl md:text-2xl font-display font-semibold text-gray-900">{mainRec.name}</h3>
             <p className="text-base text-[#2A9D5C] font-medium">{mainRec.matchPercent}% Match Score</p>
             <p className="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-2">
               {mainRec.highlights?.[0] || 'Based on your CIBIL and spending habits, this card could maximize your returns.'}
@@ -375,7 +404,7 @@ export default function HomePage() {
             <h2 className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-[#2A9D5C] flex items-center gap-2">
               <ShoppingBag className="w-4 h-4" /> Merchant Offers
             </h2>
-            <p className="text-xl md:text-2xl font-display font-medium text-gray-900 mt-2">Available with your cards</p>
+            <p className="text-xl md:text-2xl font-display font-semibold text-gray-900 mt-2">Available with your cards</p>
           </div>
         </div>
         
@@ -385,7 +414,7 @@ export default function HomePage() {
       {/* ── 3. LIFESTYLE / DISCOVERY ────────────────────────────────── */}
       <section className="relative z-10 flex flex-col gap-6">
         <div className="flex items-center gap-3 border-b border-gray-300 pb-4">
-          <h2 className="text-xl md:text-2xl font-display font-medium text-gray-900">Planning Something?</h2>
+          <h2 className="text-xl md:text-2xl font-display font-semibold text-gray-900">Planning Something?</h2>
           <p className="text-sm text-gray-600">Explore opportunities selected around how you spend.</p>
         </div>
         

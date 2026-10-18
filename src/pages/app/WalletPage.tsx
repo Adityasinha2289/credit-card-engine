@@ -193,7 +193,7 @@ export default function WalletPage() {
             {/* HERO PAYMENT METHODS */}
             <section className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl md:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
+                <h2 className="text-xl md:text-2xl font-display font-semibold text-gray-900 flex items-center gap-2">
                   <CreditCard size={20} className="text-gray-600" />
                   Payment Methods
                 </h2>
@@ -280,7 +280,7 @@ export default function WalletPage() {
                   <PieChart size={18} className="text-gray-900" />
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-display font-medium text-gray-900">Optimization Coverage</h3>
+                  <h3 className="text-xl md:text-2xl font-display font-semibold text-gray-900">Optimization Coverage</h3>
                   <p className="text-sm text-gray-600 mt-0.5">Category readiness</p>
                 </div>
               </div>
@@ -317,7 +317,7 @@ export default function WalletPage() {
                 onClick={() => setShowHowItWorksModal(true)}
               >
                 <div>
-                  <h3 className="text-xl md:text-2xl font-display font-medium text-gray-900 group-hover:text-[#2A9D5C] transition-colors">How RenoCred Uses Your Wallet</h3>
+                  <h3 className="text-xl md:text-2xl font-display font-semibold text-gray-900 group-hover:text-[#2A9D5C] transition-colors">How RenoCred Uses Your Wallet</h3>
                   <p className="text-sm text-gray-600 mt-1">Highest value paths currently available</p>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-[#2A9D5C]/10 group-hover:text-[#2A9D5C] group-hover:border-[#2A9D5C]/20 transition-all shrink-0">

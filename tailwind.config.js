@@ -61,6 +61,21 @@ export default {
           intelligence: 'var(--color-border-intelligence)',
         },
         
+        // Tailwind's grey scale, re-tinted to the brand: cream (50) to ink (900).
+        gray: {
+          50: '#F6F4EC',
+          100: '#EFEDE3',
+          200: '#E2E3D8',
+          300: '#CBD0C4',
+          400: '#9AA89D',
+          500: '#6B7F70',
+          600: '#4D6354',
+          700: '#37503F',
+          800: '#1E3A2B',
+          900: '#0F2A1D',
+          950: '#0A1F15',
+        },
+
         // RENOCRED SITE SYSTEM (public website). Same brand palette as `editorial`,
         // plus the text/line tones needed to keep body copy at AA contrast on cream.
         rc: {
@@ -116,7 +131,8 @@ export default {
           700: '#0BCC88',
           800: '#0DE699',
           900: '#2A9D5C', // Primary brand action/value
-          emerald: '#2A9D5C',
+          // actions and accents in the app read in forest; money keeps `profit` emerald
+          emerald: '#375534',
         },
         // Action / Status
         profit: '#2A9D5C',
@@ -141,7 +157,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['Plus Jakarta Sans', 'Inter', 'ui-sans-serif', 'sans-serif'],
+        // app page titles: the same serif as the website
+        display: ['Playfair Display', 'Georgia', 'serif'],
         serif: ['Playfair Display', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },

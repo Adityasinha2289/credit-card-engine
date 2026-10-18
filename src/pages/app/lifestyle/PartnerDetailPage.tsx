@@ -69,7 +69,7 @@ export default function PartnerDetailPage() {
               Official Partner
             </span>
           </div>
-          <h1 className="text-4xl font-display font-medium text-gray-900">{partner.name}</h1>
+          <h1 className="text-4xl font-display font-semibold text-gray-900">{partner.name}</h1>
           <p className="text-gray-800 mt-1 max-w-xl">{partner.description}</p>
         </div>
       </div>

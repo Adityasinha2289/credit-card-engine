@@ -61,7 +61,7 @@ export default function PaymentCoachPage() {
       <div className="py-6 space-y-6 animate-in fade-in slide-in-from-bottom-4">
         
         <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <h2 className="text-xl font-display font-medium text-gray-900 mb-6">About to pay?</h2>
+          <h2 className="text-xl font-display font-semibold text-gray-900 mb-6">About to pay?</h2>
           
           <div className="space-y-4">
             <div>

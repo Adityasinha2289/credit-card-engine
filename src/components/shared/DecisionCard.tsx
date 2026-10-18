@@ -51,7 +51,7 @@ export function DecisionCard({
             )}
           </div>
 
-          <h2 className="text-2xl md:text-4xl font-display font-extrabold text-text-primary tracking-tight mb-3">
+          <h2 className="text-2xl md:text-4xl font-display font-semibold text-text-primary tracking-tight mb-3">
             {bestFit}
           </h2>
           

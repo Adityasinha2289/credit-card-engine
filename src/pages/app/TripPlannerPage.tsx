@@ -227,7 +227,7 @@ export default function TripPlannerPage() {
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-2xl">⚠️</span>
             </div>
-            <h2 className="text-3xl font-display font-medium text-gray-900 mb-4">LIVE DATA UNAVAILABLE</h2>
+            <h2 className="text-3xl font-display font-semibold text-gray-900 mb-4">Live data unavailable</h2>
             <p className="text-gray-500 mb-8 max-w-md mx-auto">
               {session.selectedPlan.providerError}
             </p>
@@ -248,7 +248,7 @@ export default function TripPlannerPage() {
     return (
       <PageContainer hideHeader className="max-w-3xl mx-auto pb-safe">
         <div className="py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h1 className="text-3xl font-display font-medium text-gray-900 mb-2">YOUR TRIP PLAN</h1>
+          <h1 className="text-3xl font-display font-semibold text-gray-900 mb-2">Your trip plan</h1>
           <p className="text-gray-500 mb-8 uppercase tracking-wide text-sm font-medium">{draft.origin?.name} to {draft.destination?.name}</p>
           
           <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6">
@@ -263,7 +263,7 @@ export default function TripPlannerPage() {
                 <p className="text-sm font-medium text-gray-500 mb-1">
                   {session.selectedPlan.isDemoMode ? 'DEMO TOTAL' : 'CALCULATED TOTAL'}
                 </p>
-                <p className="text-4xl font-display font-medium text-gray-900">₹{v.budget.estimatedTotal.toLocaleString('en-IN')}</p>
+                <p className="text-4xl font-display font-semibold text-gray-900">₹{v.budget.estimatedTotal.toLocaleString('en-IN')}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-500 mb-1">Per Person</p>
@@ -310,7 +310,7 @@ export default function TripPlannerPage() {
     return (
       <AdaptivePlanningShell session={session}>
         <div className="flex flex-col items-center justify-center h-full">
-          <h2 className="text-3xl font-display font-medium text-gray-900 mb-4 animate-pulse">GENERATING PLAN</h2>
+          <h2 className="text-3xl font-display font-semibold text-gray-900 mb-4 animate-pulse">Generating plan</h2>
           <p className="text-gray-500 mb-8 text-center max-w-md">Consulting Taqdeer planning intelligence...</p>
         </div>
       </AdaptivePlanningShell>

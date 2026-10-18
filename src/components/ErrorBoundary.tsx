@@ -14,7 +14,7 @@ const FallbackComponent = ({ error, resetError }: { error: any; resetError: () =
           <AlertTriangle size={32} className="text-red-500" />
         </div>
         
-        <h1 className="text-2xl font-display font-bold text-text-primary mb-3">
+        <h1 className="text-2xl font-display font-semibold text-text-primary mb-3">
           Something went wrong
         </h1>
         

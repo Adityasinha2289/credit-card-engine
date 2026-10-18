@@ -187,7 +187,7 @@ export function CreditScoreSimulator() {
             <SlidersHorizontal size={18} className="text-brand-emerald" />
           </div>
           <div>
-            <h3 className="text-base font-display font-bold text-text-primary">Credit Score Simulator</h3>
+            <h3 className="text-base font-sans font-bold text-text-primary">Credit Score Simulator</h3>
             <p className="text-xs text-text-muted">Adjust the sliders to see how actions affect your score</p>
           </div>
         </div>

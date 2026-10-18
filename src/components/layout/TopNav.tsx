@@ -10,6 +10,7 @@ import { cn } from '../../lib/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { Button } from '../ui/Button';
+import { Wordmark } from '../../public-platform/site/Brand';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  TOP NAV — Contextual Command Bar
@@ -76,9 +77,12 @@ export function TopNav() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 md:px-8 h-[60px] bg-white/80 backdrop-blur-md border-b border-gray-200 shrink-0">
-      {/* ── Context Identity / Greeting ─────────────────────────────────── */}
-      <div className="flex-1 min-w-0">
+    <header className="sticky top-0 z-30 flex h-[64px] shrink-0 items-center justify-between gap-4 bg-semantic-canvas/85 px-4 backdrop-blur-md md:px-8">
+      {/* the sidebar carries the brand on wide screens; on phones it lives here */}
+      <div className="min-w-0 flex-1">
+        <button type="button" onClick={() => navigate({ pathname: '/app', search: location.search })} aria-label="RenoCred home" className="rounded-full lg:hidden">
+          <Wordmark dark={false} />
+        </button>
       </div>
 
       {/* ── Actions ─────────────────────────────────────────────────────── */}
@@ -102,7 +106,7 @@ export function TopNav() {
             variant="ghost"
             size="sm"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative w-10 h-10 p-0 rounded-full hover:bg-transparent"
+            className="relative h-10 w-10 rounded-full border border-semantic-border-subtle p-0 hover:bg-white"
             aria-label={unreadCount > 0 ? `Notifications (${unreadCount} new)` : 'Notifications'}
           >
             <Bell size={20} strokeWidth={1.5} className={showNotifications ? 'text-semantic-text-primary' : 'text-semantic-text-muted'} />
@@ -118,12 +122,12 @@ export function TopNav() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.98 }}
                 transition={{ duration: 0.15, ease:"easeOut" }}
-                className="absolute right-0 top-[calc(100%+8px)] w-[calc(100vw-4rem)] sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-300 overflow-hidden z-50"
+                className="absolute right-0 top-[calc(100%+8px)] z-50 w-[calc(100vw-4rem)] overflow-hidden rounded-[24px] border border-semantic-border-subtle bg-semantic-surface-card shadow-[0_30px_60px_-30px_rgba(15,42,29,0.45)] sm:w-80"
               >
                 <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-transparent">
                   <h3 className="font-semibold text-gray-900 text-[15px]">Notifications</h3>
                   {unreadCount > 0 && (
-                    <button onClick={markAllRead} className="text-[11px] font-bold text-[#2A9D5C] hover:text-[#2A9D5C]/80 uppercase tracking-widest">MARK READ</button>
+                    <button onClick={markAllRead} className="rounded-full px-2.5 py-1 text-[12px] font-medium text-rc-forest hover:bg-rc-pistachio">Mark all read</button>
                   )}
                 </div>
                 <div className="flex flex-col max-h-[350px] overflow-y-auto hide-scrollbar">
@@ -134,9 +138,9 @@ export function TopNav() {
                     <button
                       key={notif.id}
                       onClick={() => { setShowNotifications(false); navigate({ pathname: notif.to, search: location.search }); }}
-                      className="text-left p-5 bg-white hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 relative group"
+                      className="group relative border-b border-gray-100 p-5 text-left transition-colors last:border-0 hover:bg-gray-50"
                     >
-                      {notif.unread && <span className="absolute left-4 top-[26px] w-1.5 h-1.5 rounded-full bg-[#2A9D5C]" />}
+                      {notif.unread && <span className="absolute left-4 top-[26px] h-1.5 w-1.5 rounded-full bg-rc-emerald" />}
                       <div className={cn("pl-5", !notif.unread &&"opacity-50")}>
                         <h4 className="text-[14px] font-semibold text-gray-900 mb-1.5">{notif.title}</h4>
                         <p className="text-[13px] text-gray-600 leading-relaxed mb-3">{notif.desc}</p>

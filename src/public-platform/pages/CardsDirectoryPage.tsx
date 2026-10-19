@@ -46,6 +46,25 @@ function featuredRank(c: PublicCardEntity): number {
   return c.hasRates === false ? 2 : 1;
 }
 
+/** Phones: a compact row, so a long list stays scannable. */
+function DirectoryRow({ card }: { card: PublicCardEntity }) {
+  return (
+    <Link to={`/cards/${card.slug}`} className="flex items-center gap-3.5 px-1 py-3.5 active:bg-white/60">
+      <CardFace name={card.cardName} bank={card.issuer} network={card.network} width={76} lifted={false} />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[15px] font-semibold leading-snug text-rc-ink">{displayCardName(card.cardName)}</span>
+        <span className="mt-0.5 flex items-center gap-1.5 text-[13px] text-rc-muted">
+          <span className="truncate">{bankLabel(card.issuer)} · {feeLabel(card)}</span>
+        </span>
+        {card.discontinued
+          ? <span className="mt-1 inline-flex rounded-full bg-rc-ink/[0.06] px-2 py-0.5 text-[11px] font-medium text-rc-muted">Not issued now</span>
+          : card.hasRates !== false && <span className="mt-1 inline-flex rounded-full bg-rc-pistachio px-2 py-0.5 text-[11px] font-semibold text-rc-forest">Rates</span>}
+      </span>
+      <ArrowRight className="h-4 w-4 shrink-0 text-rc-ink/30" />
+    </Link>
+  );
+}
+
 function DirectoryCard({ card }: { card: PublicCardEntity }) {
   return (
     <Link to={`/cards/${card.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[32px] border border-rc-ink/10 bg-rc-paper transition-[border-color,box-shadow,transform] duration-500 hover:-translate-y-1 hover:border-rc-ink/20 hover:shadow-[0_30px_60px_-36px_rgba(15,42,29,0.45)]">
@@ -229,7 +248,12 @@ export function CardsDirectoryPage({ embedded = false }: { embedded?: boolean } 
           </div>
         ) : (
           <>
-            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="divide-y divide-rc-ink/[0.08] sm:hidden">
+              {filtered.slice(0, shown).map((c) => (
+                <li key={c.id}><DirectoryRow card={c} /></li>
+              ))}
+            </ul>
+            <ul className="hidden gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-3">
               {filtered.slice(0, shown).map((c) => (
                 <li key={c.id}><DirectoryCard card={c} /></li>
               ))}

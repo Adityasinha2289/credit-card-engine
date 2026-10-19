@@ -138,9 +138,56 @@ const PANELS: Panel[] = [
   { icon: Gift, label: 'Perks', title: 'Member offers, matched to you.', body: 'Partner offers for RenoCred members, starting with GreeNox.', to: SIGN_UP, bg: 'bg-rc-paper', dark: false, visual: () => <PerkVisual /> },
 ];
 
+/** Phones: one feature at a time, full size, swiped sideways. */
+function SwipeDeck({ index, onIndex }: { index: number; onIndex: (i: number) => void }) {
+  const ref = useRef<HTMLUListElement>(null);
+  // follow the swipe: the card nearest the left edge is the current one
+  const onScroll = () => {
+    const el = ref.current;
+    if (!el) return;
+    const card = el.querySelector('li');
+    const w = card ? card.getBoundingClientRect().width + 12 : el.clientWidth;
+    const i = Math.round(el.scrollLeft / w);
+    if (i !== index) onIndex(Math.max(0, Math.min(PANELS.length - 1, i)));
+  };
+  // arrows and dots move the row
+  useEffect(() => {
+    const el = ref.current;
+    const card = el?.querySelectorAll('li')[index] as HTMLElement | undefined;
+    if (el && card && Math.abs(el.scrollLeft - (card.offsetLeft - el.offsetLeft - 20)) > 8) el.scrollTo({ left: card.offsetLeft - 20, behavior: 'smooth' });
+  }, [index]);
+  return (
+    <>
+      <ul ref={ref} onScroll={onScroll} className="-mx-5 mt-10 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {PANELS.map((p, i) => {
+          const sub = p.dark ? 'text-rc-mist' : 'text-rc-ink/65';
+          return (
+            <li key={p.label} aria-current={i === index ? 'true' : undefined} className={cn('flex h-[540px] w-[86%] max-w-[360px] shrink-0 snap-start flex-col overflow-hidden rounded-[28px]', p.bg, p.dark ? 'text-rc-cream' : 'text-rc-ink')}>
+              <div className="p-6">
+                <p className={cn('flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em]', sub)}>
+                  <p.icon className="h-3.5 w-3.5" strokeWidth={2} /> {p.label}
+                </p>
+                <p className="mt-3 font-serif text-[27px] font-semibold leading-[1.06] tracking-[-0.02em]">{p.title}</p>
+                <p className={cn('mt-2.5 text-[15px] leading-relaxed', sub)}>{p.body}</p>
+              </div>
+              <div className="relative min-h-0 flex-1">{i === index || Math.abs(i - index) === 1 ? p.visual() : null}</div>
+            </li>
+          );
+        })}
+      </ul>
+      <div className="mt-5 flex justify-center gap-1.5" aria-hidden>
+        {PANELS.map((p, i) => (
+          <button key={p.label} type="button" tabIndex={-1} onClick={() => onIndex(i)} className={cn('h-1.5 rounded-full transition-all duration-300', i === index ? 'w-6 bg-rc-pistachio' : 'w-1.5 bg-white/25')} />
+        ))}
+      </div>
+    </>
+  );
+}
+
 export function FeatureDeck() {
   const reduce = useReducedMotion();
   const desktop = useMediaQuery('(min-width: 1024px)');
+  const phone = !useMediaQuery('(min-width: 640px)');
   const ref = useRef<HTMLUListElement>(null);
   const inView = useInView(ref, { amount: 0.4 });
   const [active, setActive] = useState(0);
@@ -157,7 +204,7 @@ export function FeatureDeck() {
   const go = (i: number) => { setActive((i + PANELS.length) % PANELS.length); setTaken(true); };
 
   return (
-    <section className="bg-rc-night py-28 text-rc-cream lg:py-40">
+    <section className="bg-rc-night py-20 text-rc-cream sm:py-28 lg:py-40">
       <Container>
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -175,6 +222,7 @@ export function FeatureDeck() {
           </div>
         </div>
 
+        {phone ? <SwipeDeck index={active} onIndex={(i) => { setActive(i); setTaken(true); }} /> : (
         <ul
           ref={ref}
           className="mt-14 flex h-[880px] flex-col gap-2.5 lg:h-[600px] lg:flex-row lg:gap-3"
@@ -257,6 +305,7 @@ export function FeatureDeck() {
             );
           })}
         </ul>
+        )}
       </Container>
     </section>
   );

@@ -163,19 +163,26 @@ export function PublicHeader() {
   return (
     <>
       {/* The bar is full width at the top of the page and tucks into a floating capsule once you scroll. */}
-      <header className="sticky top-0 z-50 h-16 w-full px-3 sm:px-5 lg:h-[76px]">
+      {/* Phones: a slim full-width bar that turns solid once you scroll. Wider screens: the bar
+          tucks into a floating capsule once you scroll. */}
+      <header
+        className={cn(
+          'sticky top-0 z-50 h-14 w-full transition-[background-color,box-shadow] duration-500 sm:h-16 sm:px-5 lg:h-[76px]',
+          scrolled ? 'bg-rc-night/90 shadow-[0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-xl sm:bg-transparent sm:shadow-none sm:backdrop-blur-none' : 'bg-transparent',
+        )}
+      >
         <div
           className={cn(
-            'mx-auto flex h-full items-center justify-between gap-4 rounded-full border transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] duration-700 ease-[cubic-bezier(.22,1,.36,1)]',
+            'mx-auto flex h-full items-center justify-between gap-3 px-4 sm:gap-4 sm:rounded-full sm:border sm:transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] sm:duration-700 sm:ease-[cubic-bezier(.22,1,.36,1)]',
             scrolled
               ? cn(
-                'mt-2.5 h-[52px] max-w-[1040px] pl-3 pr-1.5 backdrop-blur-xl lg:mt-3 lg:h-[56px]',
-                'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
+                'sm:mt-2.5 sm:h-[52px] sm:max-w-[1040px] sm:pl-3 sm:pr-1.5 sm:backdrop-blur-xl lg:mt-3 lg:h-[56px]',
+                'sm:border-white/10 sm:bg-rc-ink/85 sm:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
               )
-              : 'max-w-[1280px] border-transparent px-2 sm:px-3 lg:px-7',
+              : 'max-w-[1280px] sm:border-transparent sm:px-3 lg:px-7',
           )}
         >
-          <LogoLink dark />
+          <LogoLink dark compact />
 
           <nav aria-label="Primary" className="hidden lg:block" onMouseLeave={() => setHovered(null)}>
             <ul className="flex items-center">
@@ -221,12 +228,12 @@ export function PublicHeader() {
               {...prefetchAuthProps}
               to={signedIn ? '/app' : SIGN_UP}
               className={cn(
-                'group inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-1 text-[14px] font-medium transition-colors duration-300 sm:h-11 sm:pl-5',
+                'group inline-flex h-9 items-center gap-2.5 rounded-full px-4 text-[13px] font-semibold transition-colors duration-300 sm:h-11 sm:pl-5 sm:pr-1 sm:text-[14px] sm:font-medium',
                 'bg-rc-cream text-rc-ink hover:bg-white',
               )}
             >
-              {signedIn ? 'My RenoCred' : 'Get started'}
-              <ArrowChip variant="cream" size="sm" />
+              {signedIn ? 'My RenoCred' : <><span className="sm:hidden">Start free</span><span className="hidden sm:inline">Get started</span></>}
+              <ArrowChip variant="cream" size="sm" className="hidden sm:flex" />
             </Link>
             <button
               type="button"
@@ -235,8 +242,8 @@ export function PublicHeader() {
               aria-controls="site-menu"
               onClick={() => setOpen(true)}
               className={cn(
-                'group flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11',
-                'border-white/15 text-rc-cream hover:border-white/50 hover:bg-white/[0.06]',
+                'group -mr-1.5 flex h-10 w-10 items-center justify-center rounded-full transition-colors sm:mr-0 sm:h-11 sm:w-11 sm:border',
+                'text-rc-cream hover:bg-white/[0.06] sm:border-white/15 sm:hover:border-white/50',
               )}
             >
               <MenuIcon open={false} />

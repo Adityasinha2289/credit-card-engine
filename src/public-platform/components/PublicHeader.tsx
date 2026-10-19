@@ -6,15 +6,14 @@ import { cn } from '../../lib/utils';
 import { ArrowChip, Container, EASE_OUT } from '../site/primitives';
 import { LogoLink } from '../site/Brand';
 import { useSignedInHint } from '../site/SiteLink';
-import { CARD_NEEDS, EXPERIENCES, MY_RENOCRED, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
+import { CARD_NEEDS, MY_RENOCRED, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 import { analytics } from '../../lib/analytics';
 
 const PRIMARY = [
   { label: 'Cards', to: '/cards' },
   { label: 'Tools', to: TOOLS[0].to },
-  { label: 'Experiences', to: EXPERIENCES },
-  { label: 'For business', to: '/business' },
   { label: 'How we rank', to: '/methodology' },
+  { label: 'For business', to: '/business' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ];
@@ -24,7 +23,7 @@ const PRIMARY = [
 const INLINE = [
   { label: 'Cards', to: '/cards' },
   { label: 'Tools', to: TOOLS[0].to },
-  { label: 'Experiences', to: EXPERIENCES },
+  { label: 'How we rank', to: '/methodology' },
   { label: 'Business', to: '/business' },
 ];
 

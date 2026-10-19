@@ -63,7 +63,6 @@ export const MY_RENOCRED = [
   { label: 'Wallet', to: '/app/wallet' },
   { label: 'Money', to: '/app/money' },
   { label: 'Picks for you', to: '/app/discover' },
+  { label: 'Experiences', to: '/app/marketplace' },
   { label: 'Account', to: '/app/account' },
 ];
-
-export const EXPERIENCES = '/app/marketplace';

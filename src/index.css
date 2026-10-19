@@ -54,6 +54,8 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    /* phones: keep anything scrolled into view clear of the fixed tab bar at the bottom */
+    scroll-padding-bottom: 96px;
     /* every page opens on the dark header; dark here means no light flash before it paints */
     background-color: #0A1F15;
   }

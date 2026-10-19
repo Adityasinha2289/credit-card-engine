@@ -22,7 +22,7 @@ export function SectionHead({ title, note, action, className }: { title: ReactNo
 
 /** A quiet text action for a section heading ("See all", "Add"). */
 export function HeadAction({ to, onClick, children }: { to?: string; onClick?: () => void; children: ReactNode }) {
-  const cls = 'inline-flex h-9 items-center gap-1 rounded-full bg-rc-ink/[0.06] px-3.5 text-[13px] font-medium text-rc-ink transition-colors hover:bg-rc-ink/[0.1]';
+  const cls = 'inline-flex h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-rc-ink/[0.06] px-3.5 text-[13px] font-medium text-rc-ink transition-colors hover:bg-rc-ink/[0.1]';
   return to ? <Link to={to} className={cls}>{children}</Link> : <button type="button" onClick={onClick} className={cls}>{children}</button>;
 }
 

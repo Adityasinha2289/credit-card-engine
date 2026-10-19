@@ -25,6 +25,12 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const MAX_BODY_BYTES = 64 * 1024;
 
 const getRawBody = async (req: VercelRequest): Promise<Buffer> => {
+  // already read by something upstream (a dev server, a body parser): use what it parsed
+  const anyReq = req as any;
+  if (anyReq.readableEnded === true) {
+    const b = anyReq.body;
+    return Buffer.isBuffer(b) ? b : Buffer.from(typeof b === 'string' ? b : JSON.stringify(b ?? {}));
+  }
   return new Promise((resolve, reject) => {
     let body = Buffer.alloc(0);
     req.on('data', (chunk) => {

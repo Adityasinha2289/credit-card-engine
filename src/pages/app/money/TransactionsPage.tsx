@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { Plus, Receipt } from 'lucide-react';
+import { Plus, Receipt, Trash2 } from 'lucide-react';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
 import { PageContainer } from '../../../components/shared/PageContainer';
 import { formatRupees, isSpend, isRefund, isCardPayment, toPaise } from '../../../features/money/lib/moneyMath';
@@ -33,6 +33,13 @@ export default function TransactionsPage({ embedded = false }: { embedded?: bool
   const transactions = useDashboardStore((s) => s.transactions);
   const userCards = useDashboardStore((s) => s.userCards);
   const addTransaction = useDashboardStore((s) => s.addTransaction);
+  const deleteTransaction = useDashboardStore((s) => s.deleteTransaction);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+
+  const remove = async (id: string) => {
+    setConfirmDelete(null);
+    try { await deleteTransaction(id); toast.success('Removed'); } catch { toast.error('Couldn’t remove it. Try again.'); }
+  };
   const [filter, setFilter] = useState<Filter>('ALL');
   const [log, setLog] = useState<{ merchant: string; amount: string; category: TransactionCategory; cardId: string; date: string } | null>(null);
 
@@ -165,10 +172,20 @@ export default function TransactionsPage({ embedded = false }: { embedded?: bool
                     <p className="truncate text-[15px] font-medium text-rc-ink">{t.merchant || 'Unknown merchant'}</p>
                     <p className="truncate text-[13px] text-rc-muted">{style?.label ?? t.category} · {instrument(t.cardId)}{t.pending ? ' · pending' : ''}</p>
                   </div>
-                  <div className="shrink-0 text-right">
+                  <div className={cn('shrink-0 text-right', confirmDelete === t.id && 'hidden sm:block')}>
                     <Amount className={inflow ? 'text-rc-forest' : undefined}>{inflow ? '+' : ''}{formatRupees(Math.abs(t.amount))}</Amount>
                     <p className="text-[12px] text-rc-muted">{new Date(t.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' })}</p>
                   </div>
+                  {confirmDelete === t.id ? (
+                    <span className="flex shrink-0 gap-1">
+                      <button type="button" onClick={() => setConfirmDelete(null)} className="h-8 rounded-full px-2.5 text-[12px] text-rc-muted hover:text-rc-ink">Keep</button>
+                      <button type="button" onClick={() => void remove(t.id)} className="h-8 rounded-full bg-[#C2410C] px-3 text-[12px] font-medium text-white">Remove</button>
+                    </span>
+                  ) : (
+                    <button type="button" onClick={() => setConfirmDelete(t.id)} aria-label={`Remove ${t.merchant || 'this spend'}`} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-rc-ink/30 hover:bg-rc-ink/[0.06] hover:text-rc-ink">
+                      <Trash2 size={15} />
+                    </button>
+                  )}
                 </div>
               );
             })}

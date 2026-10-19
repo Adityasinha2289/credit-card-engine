@@ -206,11 +206,6 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
           </p>
         </div>
 
-        <div className="text-center">
-          <button type="button" onClick={() => { window.location.href = '?demo=onboarding'; }} className="text-[13px] text-rc-muted underline decoration-rc-ink/20 underline-offset-4 transition-colors hover:text-rc-ink">
-            Just looking? Preview the onboarding
-          </button>
-        </div>
       </main>
     </div>
   );

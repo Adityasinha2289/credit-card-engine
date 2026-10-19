@@ -4,11 +4,11 @@ import { DashboardSkeleton } from './DashboardSkeleton';
 import { Sidebar } from './Sidebar';
 import { TopNav } from './TopNav';
 import { InAppProvider } from '../../public-platform/site/SiteLink';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 import { GlobalTaqdeerButton } from '../../features/taqdeer/components/GlobalTaqdeerButton';
 import { TaqdeerDrawer } from '../../features/taqdeer/components/TaqdeerDrawer';
-import { Squares2X2Icon, CreditCardIcon, WalletIcon, ShoppingBagIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
+import { APP_NAV, sectionFor } from './appNav';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  DASHBOARD LAYOUT — Root wrapper with Sidebar + TopNav + Content
@@ -20,29 +20,14 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
-const MOBILE_NAV = [
-  { id: 'home',        path: '/app',            label: 'Home',        Icon: Squares2X2Icon },
-  { id: 'credit',      path: '/app/credit',     label: 'Credit',      Icon: CreditCardIcon },
-  { id: 'wallet',      path: '/app/wallet',     label: 'Wallet',      Icon: WalletIcon },
-  { id: 'tools',       path: '/app/tools',      label: 'Tools',       Icon: WrenchScrewdriverIcon },
-  { id: 'money',       path: '/app/money',      label: 'Money',       Icon: ShoppingBagIcon },
-];
-
 export function DashboardLayout({
   isDark,
   onToggleTheme,
   children,
 }: DashboardLayoutProps) {
   const [isTaqdeerOpen, setIsTaqdeerOpen] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const isRouteActive = (itemPath: string, exact: boolean = false) => {
-    if (exact) {
-      return location.pathname === itemPath || location.pathname === `${itemPath}/`;
-    }
-    return location.pathname.startsWith(itemPath);
-  };
+  const { pathname } = useLocation();
+  const section = sectionFor(pathname);
 
   return (
     // On wide screens the forest sidebar frames the app, and the workspace sits in it as a rounded cream sheet.
@@ -52,10 +37,10 @@ export function DashboardLayout({
       <Sidebar />
 
       {/* ── Main Content Area ──────────────────────────────────────────── */}
-      <div className="flex min-h-[100dvh] flex-col lg:pl-[240px]">
+      <div className="flex min-h-[100dvh] flex-col lg:pl-[232px]">
         <div className="relative flex min-h-[100dvh] flex-1 flex-col bg-semantic-canvas lg:my-3 lg:mr-3 lg:min-h-[calc(100dvh-24px)] lg:overflow-clip lg:rounded-[36px]">
         {/* Contextual Command Bar */}
-        <TopNav />
+        <TopNav onAsk={() => setIsTaqdeerOpen(true)} />
 
         {/* Page content */}
         <main className="flex flex-1 flex-col pb-[96px] lg:pb-0">
@@ -70,27 +55,21 @@ export function DashboardLayout({
 
       {/* ── Mobile: a floating dark capsule, like the website header ───────────────────── */}
       <nav className="fixed inset-x-3 bottom-3 z-40 flex h-[64px] items-center justify-around rounded-full border border-white/10 bg-rc-ink/95 px-1.5 shadow-[0_18px_40px_-16px_rgba(0,0,0,0.6)] backdrop-blur-xl lg:hidden">
-        {MOBILE_NAV.map((item) => {
-          const isActive = isRouteActive(item.path, item.id === 'home');
+        {APP_NAV.map((item) => {
+          const isActive = section === item.id;
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => navigate({ pathname: item.path, search: location.search })}
+              to={item.path}
               aria-current={isActive ? 'page' : undefined}
               className="relative flex h-[52px] flex-1 flex-col items-center justify-center rounded-full"
             >
               {isActive && (
-                <motion.span
-                  layoutId="activeMobileNav"
-                  className="absolute inset-0 rounded-full bg-rc-pistachio"
-                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                />
+                <motion.span layoutId="activeMobileNav" className="absolute inset-0 rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
               )}
               <item.Icon className={cn('relative h-5 w-5', isActive ? 'stroke-[2] text-rc-ink' : 'stroke-[1.5] text-rc-mist')} />
-              <span className={cn('relative mt-0.5 text-[10px] tracking-wide', isActive ? 'font-semibold text-rc-ink' : 'font-medium text-rc-mist')}>
-                {item.label}
-              </span>
-            </button>
+              <span className={cn('relative mt-0.5 text-[11px]', isActive ? 'font-semibold text-rc-ink' : 'font-medium text-rc-mist')}>{item.label}</span>
+            </Link>
           );
         })}
       </nav>

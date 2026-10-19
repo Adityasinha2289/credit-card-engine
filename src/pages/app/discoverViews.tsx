@@ -1,3 +1,4 @@
+/** The "For you" and "Compare" views shown in Discover. */
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -72,14 +73,6 @@ function getWinnerIdx(cards: FinixCard[], getValue: (c: FinixCard) => number, hi
   return vals.filter((v) => v === best).length === 1 ? bestIdx : -1;
 }
 
-type CreditTab = 'recommend' | 'compare' | 'wallet';
-
-const TABS: { id: CreditTab; label: string; Icon: any }[] = [
-  { id: 'recommend', label: 'Recommend', Icon: Sparkles },
-  { id: 'compare', label: 'Compare', Icon: Scale },
-  { id: 'wallet', label: 'My Wallet', Icon: Wallet },
-];
-
 const COMPARE_CATEGORIES: { key: SpendCategory; label: string }[] = [
   { key: 'dining', label: 'Dining' },
   { key: 'travel', label: 'Travel' },
@@ -95,7 +88,7 @@ const COMPARE_CATEGORIES: { key: SpendCategory; label: string }[] = [
 //  RECOMMEND TAB
 // ─────────────────────────────────────────────────────────────────────────────
 
-function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) {
+export function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) {
   const profile = useDashboardStore((s) => s.profile);
   const userCards = useDashboardStore((s) => s.userCards);
 
@@ -140,24 +133,24 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
         
         {/* A. YOUR PROFILE (Contextual Strip) */}
         <div className="space-y-2">
-          <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider pl-1">Your Financial Context</p>
+          <p className="text-[13px] font-medium text-rc-muted pl-1">Your Financial Context</p>
           <div className="flex flex-wrap gap-[1px] bg-white border border-white rounded-2xl overflow-hidden p-[1px]">
             <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px] rounded-tl-[15px] rounded-bl-[15px] md:rounded-bl-none">
-              <span className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">Income</span>
+              <span className="text-[13px] font-medium text-rc-muted mb-0.5">Income</span>
               <span className="text-sm text-gray-900 font-medium">{profile?.salary ? <>{formatINR(profile.salary)}<span className="text-gray-600 font-normal text-xs">/yr</span></> : <span className="text-gray-500">Not added</span>}</span>
             </div>
             <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px] rounded-tr-[15px] md:rounded-tr-none">
-              <span className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">CIBIL</span>
+              <span className="text-[13px] font-medium text-rc-muted mb-0.5">CIBIL</span>
               <span className="text-sm text-gray-900 font-medium">{profile?.creditScore || <span className="text-gray-500">Not added</span>}</span>
             </div>
             {profile?.primaryGoal && (
               <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px]">
-                <span className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">Primary Goal</span>
+                <span className="text-[13px] font-medium text-rc-muted mb-0.5">Primary Goal</span>
                 <span className="text-sm text-gray-900 font-medium">{goalTitle(profile.primaryGoal)}</span>
               </div>
             )}
             <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px] rounded-bl-[15px] md:rounded-bl-none rounded-br-[15px]">
-              <span className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">Connected</span>
+              <span className="text-[13px] font-medium text-rc-muted mb-0.5">Connected</span>
               <span className="text-sm text-gray-900 font-medium">{userCards.length} cards</span>
             </div>
           </div>
@@ -171,7 +164,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                 <h3 className="text-lg md:text-xl font-display font-semibold text-gray-900 leading-tight">What matters most?</h3>
                 <p className="text-xs text-gray-500 mt-1">Choose up to 4 areas</p>
               </div>
-              <div className="hidden md:flex text-xs font-mono px-3 py-1 bg-gray-50 rounded-lg text-gray-600 border border-gray-200">
+              <div className="hidden md:flex text-xs font-sans tabular-nums px-3 py-1 bg-gray-50 rounded-lg text-gray-600 border border-gray-200">
                 <span className={categories.length > 0 ? "text-gray-900 font-medium" : ""}>{categories.length}</span> / 4 selected
               </div>
             </div>
@@ -202,7 +195,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                 );
               })}
             </div>
-            <div className="md:hidden flex text-xs font-mono px-3 py-1 bg-gray-50 rounded-lg text-gray-600 border border-gray-200 w-fit">
+            <div className="md:hidden flex text-xs font-sans tabular-nums px-3 py-1 bg-gray-50 rounded-lg text-gray-600 border border-gray-200 w-fit">
               <span className={categories.length > 0 ? "text-gray-900 font-medium" : ""}>{categories.length}</span> / 4 selected
             </div>
           </div>
@@ -211,11 +204,11 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
           <div className="pt-3 border-t border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex gap-3 items-center">
-                <div className="p-2 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="p-2 bg-gray-50 rounded-2xl border border-gray-200">
                   <PlaneTakeoff size={16} className="text-gray-500" />
                 </div>
                 <div>
-                  <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Travel Benefits</h4>
+                  <h4 className="text-[13px] font-medium text-rc-muted">Travel Benefits</h4>
                   <p className="text-xs font-medium text-gray-900">Prioritize lounge access</p>
                 </div>
               </div>
@@ -240,13 +233,11 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
               onClick={handleRecommend}
               disabled={categories.length === 0}
               className={cn(
-                'w-full py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2',
-                categories.length > 0
-                  ? 'bg-[#2A9D5C]/10 text-[#2A9D5C] hover:bg-[#2A9D5C]/20 border border-[#2A9D5C]/30'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 cursor-not-allowed'
+                'flex h-12 w-full items-center justify-center gap-2 rounded-full text-[15px] font-medium transition-colors duration-300',
+                categories.length > 0 ? 'bg-rc-ink text-rc-cream hover:bg-rc-moss' : 'cursor-not-allowed bg-rc-ink/[0.06] text-rc-muted'
               )}
             >
-              Tell RenoCred what matters <ArrowRight size={16} />
+              Show my best cards <ArrowRight size={16} />
             </button>
           </div>
         </div>
@@ -256,7 +247,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
       {hasSearched && (
         <section className="space-y-6 pt-10 border-t border-gray-200">
           <div className="space-y-1">
-            <h3 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Your Best Match</h3>
+            <h3 className="text-[13px] font-medium text-rc-muted">Your Best Match</h3>
             <p className="text-2xl font-display font-semibold text-gray-900">Cards worth considering</p>
           </div>
 
@@ -291,11 +282,11 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                       <div className="px-8 py-6 border-b border-gray-200 flex items-center justify-between bg-gray-50">
                         <div className="flex items-center gap-2">
                           <Trophy size={14} className="text-gray-600" />
-                          <span className="text-[10px] font-bold text-gray-900 tracking-widest uppercase">RenoCred Pick</span>
+                          <span className="text-[13px] font-medium text-rc-muted">RenoCred Pick</span>
                         </div>
                         <div className="flex flex-col items-end">
-                          <span className="text-2xl font-mono text-[#2A9D5C] font-medium leading-none">{card.matchPercent}</span>
-                          <span className="text-[9px] font-bold text-[#2A9D5C]/70 tracking-widest uppercase mt-1">Match</span>
+                          <span className="text-2xl font-sans tabular-nums text-[#2A9D5C] font-medium leading-none">{card.matchPercent}</span>
+                          <span className="text-[13px] font-medium text-rc-muted mt-1">Match</span>
                         </div>
                       </div>
 
@@ -316,7 +307,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
 
                         {card.highlights && card.highlights.length > 0 && (
                           <div className="w-full bg-gray-50 rounded-2xl p-6 border border-gray-200 mb-8">
-                            <h5 className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-4">Why RenoCred thinks this fits you</h5>
+                            <h5 className="text-[13px] font-medium text-rc-muted mb-4">Why RenoCred thinks this fits you</h5>
                             <ul className="space-y-3">
                               {card.highlights.slice(0, 3).map((h, i) => (
                                 <li key={i} className="flex items-start gap-3 text-sm text-gray-600 leading-relaxed">
@@ -330,11 +321,11 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
 
                         <div className="w-full grid grid-cols-2 gap-4 mt-auto border-t border-gray-200 pt-6 mb-6">
                           <div>
-                            <div className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Annual Fee</div>
+                            <div className="text-[13px] font-medium text-rc-muted mb-1">Annual Fee</div>
                             <div className="text-base font-medium text-gray-900">{card.annualFee === null ? 'Not Disclosed' : card.annualFee === 0 ? 'Lifetime Free' : formatINR(card.annualFee)}</div>
                           </div>
                           <div>
-                            <div className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Reward Rate</div>
+                            <div className="text-[13px] font-medium text-rc-muted mb-1">Reward Rate</div>
                             <div className="text-base font-medium text-gray-900">{card.baseRewardRate !== null ? `${card.baseRewardRate}%` : 'Terms Unconfirmed'}{estimatedHighRate > (card.baseRewardRate ?? 0) ? ` - ${estimatedHighRate}%` : ''}</div>
                           </div>
                         </div>
@@ -365,7 +356,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
 
               {/* Secondary Alternatives (42% width) */}
               <div className="xl:w-[42%] flex flex-col gap-4">
-                <p className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-2 pl-2">Strong Alternatives</p>
+                <p className="text-[13px] font-medium text-rc-muted mb-2 pl-2">Strong Alternatives</p>
                 {results.slice(1, 4).map((card, idx) => {
                   const theme = getCardTheme(card.id);
                   const applyUrl = BANK_APPLY_URLS[card.bank];
@@ -378,7 +369,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                       className="group bg-white border border-gray-200 hover:border-gray-300 rounded-2xl overflow-hidden transition-all duration-300 flex"
                     >
                       <div className="w-12 flex-shrink-0 flex flex-col items-center pt-8">
-                        <span className="text-xs font-mono text-gray-400">0{idx + 2}</span>
+                        <span className="text-xs font-sans tabular-nums text-gray-400">0{idx + 2}</span>
                       </div>
                       <div className="p-5 pl-0 flex-1 flex flex-col">
                         <div className="flex flex-col sm:flex-row sm:justify-between items-start mb-4 gap-4">
@@ -388,12 +379,12 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
                              </div>
                              <div className="mt-1">
                                <h4 className="text-base font-medium text-gray-900 leading-tight mb-1">{card.name}</h4>
-                               <p className="text-[10px] text-gray-600 uppercase tracking-wider">{card.bank}</p>
+                               <p className="text-[13px] font-medium text-rc-muted">{card.bank}</p>
                              </div>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-lg font-mono text-gray-900 font-medium leading-none">{card.matchPercent}</span>
-                            <span className="text-[8px] font-bold text-gray-600 tracking-widest uppercase mt-1">Match</span>
+                            <span className="text-lg font-sans tabular-nums text-gray-900 font-medium leading-none">{card.matchPercent}</span>
+                            <span className="text-[13px] font-medium text-rc-muted text-[8px] mt-1">Match</span>
                           </div>
                         </div>
 
@@ -405,7 +396,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
 
                         <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-200">
                           <div>
-                            <div className="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-0.5">Fee</div>
+                            <div className="text-[13px] font-medium text-rc-muted mb-0.5">Fee</div>
                             <div className="text-xs font-medium text-gray-900">{card.annualFee === null ? 'Not Disclosed' : card.annualFee === 0 ? 'Free' : formatINR(card.annualFee)}</div>
                           </div>
                           <div className="flex gap-2">
@@ -549,7 +540,7 @@ function CardPickerModal({ onSelect, onClose, excludeIds }: {
   );
 }
 
-function CompareTab() {
+export function CompareTab() {
   const [selectedCards, setSelectedCards] = useState<FinixCard[]>([]);
   const [showPicker, setShowPicker] = useState(false);
 
@@ -578,11 +569,11 @@ function CompareTab() {
       <section className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h3 className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Compare Your Shortlist</h3>
+            <h3 className="text-[13px] font-medium text-rc-muted mb-1">Compare Your Shortlist</h3>
             <p className="text-2xl font-display font-semibold text-gray-900">See what actually differs.</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="text-xs font-mono px-3 py-1.5 bg-white rounded-lg text-gray-600 border border-gray-200">
+            <div className="text-xs font-sans tabular-nums px-3 py-1.5 bg-white rounded-lg text-gray-600 border border-gray-200">
               <span className={selectedCards.length > 0 ? "text-gray-900 font-medium" : ""}>{selectedCards.length}</span> of 4 selected
             </div>
             {selectedCards.length > 0 && (
@@ -617,7 +608,7 @@ function CompareTab() {
 
                   <div className="min-h-[44px]">
                     <p className="text-sm font-medium text-gray-900 leading-snug line-clamp-2">{card.name}</p>
-                    <p className="text-[10px] text-gray-600 mt-1 uppercase tracking-wider">{card.bank}</p>
+                    <p className="text-[13px] font-medium text-rc-muted mt-1">{card.bank}</p>
                   </div>
                   
                   <div className="mt-auto pt-4 border-t border-gray-200 space-y-2">
@@ -645,7 +636,7 @@ function CompareTab() {
                 <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200 group-hover:bg-gray-100 group-hover:border-gray-300 transition-all">
                   <Plus size={16} />
                 </div>
-                <span className="text-[10px] font-semibold uppercase tracking-wider">Build Shortlist</span>
+                <span className="text-[13px] font-medium text-rc-muted">Build Shortlist</span>
               </button>
             );
           })}
@@ -660,7 +651,7 @@ function CompareTab() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Trophy size={14} className="text-gray-600" />
-                  <span className="text-[10px] font-bold text-gray-900 tracking-widest uppercase">RenoCred Pick · Winner</span>
+                  <span className="text-[13px] font-medium text-rc-muted">RenoCred Pick · Winner</span>
                 </div>
                 <h4 className="text-lg font-display font-semibold text-gray-900 mb-1">
                   {winnerCard.name}
@@ -670,8 +661,8 @@ function CompareTab() {
                 </p>
               </div>
               <div className="shrink-0 text-right">
-                <span className="text-2xl font-mono font-medium text-[#2A9D5C] leading-none">{Math.round((Math.max(...scores) / maxScore) * 100)}</span>
-                <span className="text-[9px] font-bold text-[#2A9D5C]/70 tracking-widest uppercase ml-1 block mt-1">Score</span>
+                <span className="text-2xl font-sans tabular-nums font-medium text-[#2A9D5C] leading-none">{Math.round((Math.max(...scores) / maxScore) * 100)}</span>
+                <span className="text-[13px] font-medium text-rc-muted ml-1 block mt-1">Score</span>
               </div>
             </div>
           )}
@@ -681,7 +672,7 @@ function CompareTab() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-white">
-                    <th className="text-left p-5 text-[10px] text-gray-600 uppercase tracking-wider font-semibold w-48 sticky left-0 bg-white z-10 border-r border-gray-200">Feature</th>
+                    <th className="text-[13px] font-medium text-rc-muted text-left p-5 w-48 sticky left-0 bg-white z-10 border-r border-gray-200">Feature</th>
                     {selectedCards.map((card, i) => (
                       <th key={card.id} className="p-5 text-center min-w-[140px] border-r border-gray-200/50 last:border-r-0">
                         <p className="text-sm font-medium text-gray-900 truncate max-w-[140px] mx-auto">{card.name}</p>
@@ -693,7 +684,7 @@ function CompareTab() {
                   
                   {/* 1. COST */}
                   <tr className="bg-gray-50">
-                    <td colSpan={selectedCards.length + 1} className="px-5 py-2.5 text-[9px] font-bold text-gray-600 uppercase tracking-widest sticky left-0">Cost</td>
+                    <td colSpan={selectedCards.length + 1} className="text-[13px] font-medium text-rc-muted px-5 py-2.5 sticky left-0">Cost</td>
                   </tr>
                   <tr>
                     <td className="p-5 text-xs text-gray-600 sticky left-0 bg-white z-10 border-r border-gray-200">Annual Fee</td>
@@ -711,7 +702,7 @@ function CompareTab() {
 
                   {/* 2. REWARDS */}
                   <tr className="bg-gray-50">
-                    <td colSpan={selectedCards.length + 1} className="px-5 py-2.5 text-[9px] font-bold text-gray-600 uppercase tracking-widest sticky left-0">Rewards</td>
+                    <td colSpan={selectedCards.length + 1} className="text-[13px] font-medium text-rc-muted px-5 py-2.5 sticky left-0">Rewards</td>
                   </tr>
                   <tr>
                     <td className="p-5 text-xs text-gray-600 sticky left-0 bg-white z-10 border-r border-gray-200">Base Rate</td>
@@ -719,7 +710,7 @@ function CompareTab() {
                       const w = getWinnerIdx(selectedCards, c => c.baseRewardRate);
                       return (
                         <td key={card.id} className="p-5 text-center border-r border-gray-200/50 last:border-r-0">
-                          <span className={cn('text-sm font-mono', w === i ? 'text-[#2A9D5C] font-medium' : 'text-gray-900')}>
+                          <span className={cn('text-sm font-sans tabular-nums', w === i ? 'text-[#2A9D5C] font-medium' : 'text-gray-900')}>
                             {card.baseRewardRate !== null ? `${card.baseRewardRate}%` : 'Unconfirmed'}
                           </span>
                         </td>
@@ -740,7 +731,7 @@ function CompareTab() {
                         const isSpecial = card.rewards?.some(r => r.category === key && r.rate > card.baseRewardRate);
                         return (
                           <td key={card.id} className="p-5 text-center border-r border-gray-200/50 last:border-r-0">
-                            <span className={cn('text-sm font-mono', w === i ? 'text-[#2A9D5C] font-medium' : isSpecial ? 'text-gray-900' : 'text-gray-600')}>
+                            <span className={cn('text-sm font-sans tabular-nums', w === i ? 'text-[#2A9D5C] font-medium' : isSpecial ? 'text-gray-900' : 'text-gray-600')}>
                               {rate}%
                             </span>
                           </td>
@@ -752,7 +743,7 @@ function CompareTab() {
 
                   {/* 3. BENEFITS */}
                   <tr className="bg-gray-50">
-                    <td colSpan={selectedCards.length + 1} className="px-5 py-2.5 text-[9px] font-bold text-gray-600 uppercase tracking-widest sticky left-0">Benefits</td>
+                    <td colSpan={selectedCards.length + 1} className="text-[13px] font-medium text-rc-muted px-5 py-2.5 sticky left-0">Benefits</td>
                   </tr>
                   <tr>
                     <td className="p-5 text-xs text-gray-600 sticky left-0 bg-white z-10 border-r border-gray-200">Lounge Access</td>
@@ -770,7 +761,7 @@ function CompareTab() {
 
                   {/* 4. VALUE (OVERALL) */}
                   <tr className="bg-gray-50">
-                    <td colSpan={selectedCards.length + 1} className="px-5 py-2.5 text-[9px] font-bold text-gray-600 uppercase tracking-widest sticky left-0">RenoCred score</td>
+                    <td colSpan={selectedCards.length + 1} className="text-[13px] font-medium text-rc-muted px-5 py-2.5 sticky left-0">RenoCred score</td>
                   </tr>
                   <tr>
                     <td className="p-5 text-xs text-gray-900 font-semibold sticky left-0 bg-white z-10 border-r border-gray-200">Overall Score</td>
@@ -779,7 +770,7 @@ function CompareTab() {
                       const w = getWinnerIdx(selectedCards, overallScore);
                       return (
                         <td key={card.id} className="p-5 text-center border-r border-gray-200/50 last:border-r-0">
-                          <span className={cn('text-lg font-mono font-medium', w === i ? 'text-[#2A9D5C]' : 'text-gray-900')}>
+                          <span className={cn('text-lg font-sans tabular-nums font-medium', w === i ? 'text-[#2A9D5C]' : 'text-gray-900')}>
                             {pct}
                           </span>
                         </td>
@@ -809,119 +800,3 @@ function CompareTab() {
 // ─────────────────────────────────────────────────────────────────────────────
 //  MY WALLET TAB
 // ─────────────────────────────────────────────────────────────────────────────
-
-function MyWalletTab() {
-  const navigate = useNavigate();
-  const { userCards } = useDashboardStore();
-
-  return (
-    <section className="bg-white border border-gray-200 rounded-[2rem] p-10 md:p-16 flex flex-col items-center text-center space-y-8 max-w-3xl mx-auto shadow-sm">
-      <div className="w-16 h-16 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-center">
-        <Wallet size={24} className="text-gray-600" />
-      </div>
-
-      <div className="space-y-4 max-w-md">
-        <div>
-          <h3 className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">My Wallet</h3>
-          <h4 className="text-2xl font-display font-semibold text-gray-900 leading-tight">
-            You already own the cards.<br/>Now make every transaction smarter.
-          </h4>
-        </div>
-        
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C]" />
-          {userCards.length} payment method{userCards.length !== 1 ? 's' : ''} connected
-        </div>
-      </div>
-
-      <div className="pt-2">
-        <button
-          onClick={() => navigate('/app/wallet')}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-100 text-gray-900 font-medium text-sm hover:bg-gray-200 border border-gray-300 transition-colors"
-        >
-          Open Wallet Intelligence <ArrowRight size={14} />
-        </button>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  CREDIT PAGE
-// ─────────────────────────────────────────────────────────────────────────────
-
-export default function CreditPage() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  
-  // Derive active tab purely from pathname
-  let activeTab: CreditTab = 'recommend';
-  if (location.pathname.includes('/compare')) {
-    activeTab = 'compare';
-  } else if (location.pathname.includes('/wallet')) {
-    activeTab = 'wallet';
-  }
-
-  const handleTabChange = (id: CreditTab) => {
-    navigate(`/app/credit/${id}`);
-  };
-
-  return (
-    <PageContainer
-      eyebrow="Credit"
-      title={<>Find the card that <span className="italic">pays you back.</span></>}
-      subtitle="Ranked on what you spend, after the annual fee, and filtered to what you're likely to be approved for."
-    >
-      <div className="relative flex w-full flex-col gap-5">
-        {/* tabs */}
-        <div>
-          <div className="relative z-20 flex w-fit flex-wrap gap-1 rounded-full border border-rc-ink/10 bg-rc-paper p-1">
-            {TABS.map(({ id, label, Icon }) => {
-              const isActive = activeTab === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => handleTabChange(id)}
-                  className={cn(
-                    'relative flex items-center gap-2 rounded-full px-5 py-2 text-[14px] font-medium transition-colors duration-300',
-                    isActive ? 'text-rc-pistachio' : 'text-rc-muted hover:text-rc-ink'
-                  )}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="credit-tab-bg-v4"
-                      className="absolute inset-0 rounded-full bg-rc-ink"
-                      transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                    />
-                  )}
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Icon size={14} className={isActive ? '' : 'opacity-70'} />
-                    {label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* TAB CONTENT */}
-        <div className="relative z-10">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
-              {activeTab === 'recommend' && <RecommendTab onSwitchToCompare={() => setActiveTab('compare')} />}
-              {activeTab === 'compare' && <CompareTab />}
-              {activeTab === 'wallet' && <MyWalletTab />}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-      </div>
-    </PageContainer>
-  );
-}

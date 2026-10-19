@@ -28,7 +28,8 @@ function formatINR(val: number) {
   return `₹${val.toLocaleString('en-IN')}`;
 }
 
-export function ProfileTab() {
+/** `embedded`: the form without its own page frame, inside Account. */
+export function ProfileTab({ embedded = false }: { embedded?: boolean } = {}) {
   const profile = useDashboardStore((s) => s.profile);
   const updateProfile = useDashboardStore((s) => s.updateProfile);
 
@@ -128,22 +129,20 @@ export function ProfileTab() {
 
   return (
     <PageContainer
+      bare={embedded}
       eyebrow="Profile"
       title="Your financial identity."
       subtitle="Keep your profile and financial context up to date so RenoCred can make better decisions for you."
       className="text-gray-900 font-body selection:bg-[#2A9D5C]/30 selection:text-gray-900"
     >
-      {/* Global Background Atmosphere */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-white" />
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 relative">
-        <div className="lg:col-span-8">
+      <div className="relative">
+        <div className="max-w-[760px]">
           <form onSubmit={handleSave} className="space-y-12">
             
             {/* IDENTITY SECTION */}
             <section className="space-y-8">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Identity</span>
+                <span className="text-[13px] font-medium text-rc-muted">Identity</span>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-8 items-start">
@@ -172,7 +171,7 @@ export function ProfileTab() {
 
                 <div className="flex-1 space-y-8 w-full">
                   <div className="space-y-2">
-                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Full Name</label>
+                    <label className="text-[13px] font-medium text-rc-muted font-medium">Full Name</label>
                     <input
                       type="text"
                       value={name}
@@ -184,7 +183,7 @@ export function ProfileTab() {
                   
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
                     <div className="space-y-2 sm:col-span-2">
-                      <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Email Address</label>
+                      <label className="text-[13px] font-medium text-rc-muted font-medium">Email Address</label>
                       <input
                         type="email"
                         value={email}
@@ -194,7 +193,7 @@ export function ProfileTab() {
                       />
                     </div>
                     <div className="space-y-2 sm:col-span-1">
-                      <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Phone Number</label>
+                      <label className="text-[13px] font-medium text-rc-muted font-medium">Phone Number</label>
                       <input
                         type="tel"
                         maxLength={10}
@@ -214,7 +213,7 @@ export function ProfileTab() {
             {/* FINANCIAL PROFILE SECTION */}
             <section className="space-y-8">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Financial Profile</span>
+                <span className="text-[13px] font-medium text-rc-muted">Financial Profile</span>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -295,7 +294,7 @@ export function ProfileTab() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
                 <div className="space-y-3">
-                  <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Financial Stage</label>
+                  <label className="text-[13px] font-medium text-rc-muted font-medium">Financial Stage</label>
                   <div className="flex gap-3">
                     <button
                       type="button"
@@ -339,7 +338,7 @@ export function ProfileTab() {
                 
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">Occupation</label>
+                    <label className="text-[13px] font-medium text-rc-muted font-medium">Occupation</label>
                     <div className="relative">
                       <button
                         type="button"
@@ -393,7 +392,7 @@ export function ProfileTab() {
                   </div>
                   
                   <div className="space-y-3">
-                    <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">City</label>
+                    <label className="text-[13px] font-medium text-rc-muted font-medium">City</label>
                     <input
                       type="text"
                       placeholder="e.g. Mumbai, Bengaluru"
@@ -411,7 +410,7 @@ export function ProfileTab() {
             {/* FINANCIAL GOALS SECTION */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Financial Goals</span>
+                <span className="text-[13px] font-medium text-rc-muted">Financial Goals</span>
               </div>
               
               <div className="space-y-2">
@@ -444,7 +443,7 @@ export function ProfileTab() {
             {/* TOP SPEND PRIORITIES */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Top Spend Priorities</span>
+                <span className="text-[13px] font-medium text-rc-muted">Top Spend Priorities</span>
               </div>
               
               <div className="space-y-2">
@@ -468,7 +467,7 @@ export function ProfileTab() {
             {/* SHARE SECTION */}
             <section className="space-y-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-gray-600">Share</span>
+                <span className="text-[13px] font-medium text-rc-muted">Share</span>
               </div>
               <ShareableScorecard />
             </section>
@@ -513,31 +512,6 @@ export function ProfileTab() {
         </div>
         
         {/* RIGHT PANEL - INTELLIGENCE OVERVIEW */}
-        <div className="lg:col-span-4 relative hidden lg:block">
-          <div className="sticky top-24 bg-white border border-gray-300 rounded-[32px] p-8 space-y-6">
-            <div className="flex items-center gap-2 text-[#2A9D5C]">
-              <Sparkles size={16} />
-              <span className="text-[10px] md:text-xs font-bold tracking-widest uppercase">Your RenoCred Profile</span>
-            </div>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Your profile helps RenoCred understand:
-            </p>
-            <ul className="space-y-4 text-sm text-gray-800">
-              <li className="flex items-start gap-3">
-                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#2A9D5C]/60 shrink-0" />
-                <span>which cards fit your spending</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#2A9D5C]/60 shrink-0" />
-                <span>which rewards matter most</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#2A9D5C]/60 shrink-0" />
-                <span>which financial opportunities are relevant</span>
-              </li>
-            </ul>
-          </div>
-        </div>
       </div>
     </PageContainer>
   );

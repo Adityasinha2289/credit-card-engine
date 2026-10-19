@@ -164,7 +164,7 @@ export function PerksDashboard() {
             <p className="text-4xl font-display font-semibold text-text-primary tracking-tight">
               {formatCents(monthlySubs)}
             </p>
-            <p className="text-sm font-medium text-text-muted mt-1">{subscriptions.length} active · <Link to="/app/money/subscriptions" className="underline">manage</Link></p>
+            <p className="text-sm font-medium text-text-muted mt-1">{subscriptions.length} active · <Link to="/app/money?tab=subscriptions" className="underline">manage</Link></p>
           </div>
         </motion.div>
       </div>

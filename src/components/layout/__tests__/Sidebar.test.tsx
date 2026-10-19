@@ -12,6 +12,7 @@ import { useDashboardStore } from '../../../features/dashboard/store/dashboardSt
 vi.mock('react-router-dom', () => ({
   useLocation: () => ({ pathname: '/app' }),
   useNavigate: () => vi.fn(),
+  Link: ({ children, to, ...props }: any) => <a href={to} {...props}>{children}</a>,
 }));
 
 // Mock framer-motion
@@ -51,7 +52,7 @@ describe('Sidebar - User Identity Loading Bug Fix', () => {
     render(<Sidebar />);
     
     expect(screen.queryByText(/Aditya Sinha/i)).not.toBeInTheDocument();
-    expect(screen.queryByText('View Profile →')).not.toBeInTheDocument();
+    expect(screen.queryByText('Account and settings')).not.toBeInTheDocument();
   });
 
   it('Test B: Resolved User A renders User A actual name', () => {
@@ -66,7 +67,7 @@ describe('Sidebar - User Identity Loading Bug Fix', () => {
     render(<Sidebar />);
     
     expect(screen.getByText('User Alpha')).toBeInTheDocument();
-    expect(screen.getByText('View profile →')).toBeInTheDocument();
+    expect(screen.getByText('Account and settings')).toBeInTheDocument();
   });
 
   it('Test C: Resolved User B renders User B actual name from Clerk if profile empty', () => {

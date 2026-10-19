@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useShallow } from 'zustand/shallow';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
 import { SafeToSpendEngine, CardDueEngine } from '../../../features/money/engines/SafeToSpendEngine';
@@ -8,9 +7,11 @@ import { upcomingCharges } from '../../../features/subscriptions/reminderPlanner
 import { istDate } from '../../../features/subscriptions/billingCycle';
 import { useIsDemo } from '../../../features/demo/DemoAppProvider';
 import { PageContainer } from '../../../components/shared/PageContainer';
-import { Plus, Receipt, Repeat, Sparkles } from 'lucide-react';
+import { AppTabs, useTab } from '../../../components/shared/AppTabs';
+import SubscriptionsPage from './SubscriptionsPage';
+import TransactionsPage from './TransactionsPage';
+import { Plus } from 'lucide-react';
 import { cn } from '../../../lib/utils';
-import { ArrowChip } from '../../../public-platform/site/primitives';
 
 const UPCOMING_WINDOW_DAYS = 7;
 
@@ -102,6 +103,7 @@ export default function MoneyManagerPage() {
     setGoalForm(null);
   };
 
+  const [tab, setTab] = useTab(['overview', 'subscriptions', 'activity'] as const, 'overview');
   const hasAttention = dueAlerts.length > 0 || needsDueDate.length > 0 || upcomingRenewals.length > 0;
   const activeSubs = subscriptions.filter((s) => s.status === 'active').length;
   const spentShare = safe.hasIncome && safe.totalIncome > 0 ? Math.min(1, safe.netSpent / safe.totalIncome) : 0;
@@ -140,12 +142,25 @@ export default function MoneyManagerPage() {
       heroAside={safe.hasIncome ? <SpendRing share={spentShare} /> : undefined}
       className="pb-safe"
     >
-      <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
+      <AppTabs
+        layoutId="money-tabs"
+        value={tab}
+        onChange={setTab}
+        tabs={[
+          { id: 'overview', label: 'Overview' },
+          { id: 'subscriptions', label: 'Subscriptions', count: activeSubs },
+          { id: 'activity', label: 'Activity' },
+        ]}
+      />
+      {tab === 'subscriptions' && <SubscriptionsPage embedded />}
+      {tab === 'activity' && <TransactionsPage embedded />}
+      {tab === 'overview' && (
+      <div className="grid max-w-[820px] gap-10">
         <div className="space-y-10">
           {/* What needs attention */}
           {hasAttention && (
             <section>
-              <SectionTitle title="Needs attention" action={<Link to="/app/money/subscriptions" className="text-[13px] font-medium text-rc-forest hover:underline">All subscriptions</Link>} />
+              <SectionTitle title="Needs attention" action={<button type="button" onClick={() => setTab('subscriptions')} className="text-[13px] font-medium text-rc-forest hover:underline">All subscriptions</button>} />
               <ul className="space-y-2.5">
                 {dueAlerts.map((due) => (
                   <AttentionRow
@@ -239,13 +254,8 @@ export default function MoneyManagerPage() {
           </section>
         </div>
 
-        {/* Tools */}
-        <aside className="space-y-2.5">
-          <ToolTile to="/app/money/coach" icon={Sparkles} title="Payment coach" body="Ask which card to use before you pay." featured />
-          <ToolTile to="/app/money/subscriptions" icon={Repeat} title="Subscriptions" body={activeSubs > 0 ? `${activeSubs} tracked, reminders on` : 'Track renewals and free trials.'} />
-          <ToolTile to="/app/money/transactions" icon={Receipt} title="Transactions" body="Your recent spending, by card and category." />
-        </aside>
       </div>
+      )}
     </PageContainer>
   );
 }
@@ -271,27 +281,6 @@ function AttentionRow({ tone, title, note, amount }: { tone: 'danger' | 'warn'; 
       </div>
       <p className="shrink-0 font-display text-[20px] font-semibold tabular-nums text-rc-ink">{amount}</p>
     </li>
-  );
-}
-
-function ToolTile({ to, icon: Icon, title, body, featured }: { to: string; icon: typeof Sparkles; title: string; body: string; featured?: boolean }) {
-  return (
-    <Link
-      to={to}
-      className={cn(
-        'group flex items-start justify-between gap-4 rounded-[24px] p-5 transition-[transform,border-color] duration-300 hover:-translate-y-0.5',
-        featured ? 'bg-rc-pistachio text-rc-ink' : 'border border-rc-ink/10 bg-rc-paper text-rc-ink hover:border-rc-ink/25',
-      )}
-    >
-      <span>
-        <span className={cn('flex h-10 w-10 items-center justify-center rounded-2xl', featured ? 'bg-rc-ink text-rc-pistachio' : 'bg-rc-ink/[0.06] text-rc-forest')}>
-          <Icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
-        </span>
-        <span className="mt-4 block font-display text-[21px] font-semibold leading-tight">{title}</span>
-        <span className="mt-1 block text-[14px] leading-relaxed text-rc-ink/70">{body}</span>
-      </span>
-      <ArrowChip variant="ink" size="sm" />
-    </Link>
   );
 }
 

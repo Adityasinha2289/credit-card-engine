@@ -14,7 +14,6 @@ import { useUser } from '@clerk/clerk-react';
 import { useProfileQuery, useUserCardsQuery } from '../../hooks/queries';
 import { useDashboardMutations } from '../../hooks/queries/useDashboardMutations';
 import { CardDetailsModal } from '../../features/dashboard/components/CardDetailsModal';
-import { UpiSimulator } from '../../features/dashboard/components/v3/UpiSimulator';
 import { ArrowChip } from '../../public-platform/site/primitives';
 import { CardFan } from '../../public-platform/site/CardFan';
 import { SPEND_CATEGORIES, cardsByIds, slugifyCardName } from '../../public-platform/site/swipeMath';
@@ -102,11 +101,6 @@ export default function WalletPage() {
           <button type="button" onClick={() => setShowAddModal(true)} className="group inline-flex h-12 items-center gap-3 rounded-full bg-rc-cream pl-6 pr-1.5 text-[14px] font-medium text-rc-ink transition-colors hover:bg-white">
             Add a card <ArrowChip variant="cream" size="md" />
           </button>
-          {totalCards > 0 && (
-            <Link to="/app/tools/which-card-to-use" className="inline-flex h-12 items-center rounded-full border border-rc-cream/25 px-6 text-[14px] font-medium text-rc-cream transition-colors hover:border-rc-cream/70">
-              Which card to use
-            </Link>
-          )}
         </>
       )}
       heroAside={totalCards > 0 ? (
@@ -168,8 +162,6 @@ export default function WalletPage() {
         </section>
 
         <div className="space-y-6 lg:col-span-5">
-          <UpiSimulator />
-
           {/* where the wallet is strong, and where it isn't */}
           <section className="rounded-[28px] border border-rc-ink/10 bg-rc-paper p-6 md:p-7">
             <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-rc-ink">Where your wallet earns</h3>

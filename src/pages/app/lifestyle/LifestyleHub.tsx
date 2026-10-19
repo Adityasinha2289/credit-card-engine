@@ -67,7 +67,7 @@ export default function LifestyleHub() {
       label: 'Debt', 
       desc: 'Smart tools and offers to help you manage and repay better.', 
       icon: Receipt, 
-      path: '/app/credit/advisor',
+      path: '/app/discover',
       image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=600&auto=format&fit=crop',
       level: 'tertiary'
     },

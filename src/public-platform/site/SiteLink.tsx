@@ -20,7 +20,8 @@ export const useInApp = () => useContext(InAppContext);
 /** Public path → the same screen inside the app, when there is one. */
 export function appPathFor(path: string): string {
   if (path === '/') return '/app';
-  if (path === '/cards' || path.startsWith('/cards/') || path.startsWith('/cards?')) return `/app${path}`;
+  if (path === '/cards' || path.startsWith('/cards?')) return '/app/discover?tab=cards';
+  if (path.startsWith('/cards/')) return `/app${path}`;
   if (path.startsWith('/calculators/')) return path.replace('/calculators/', '/app/tools/');
   if (path.startsWith('/app/sign-up') || path.startsWith('/app/sign-in')) return '/app';
   return path;

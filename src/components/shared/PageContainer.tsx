@@ -15,6 +15,8 @@ export interface PageContainerProps {
   children: ReactNode;
   className?: string;
   hideHeader?: boolean;
+  /** render just the content, inside another page (a tab of Money, say) */
+  bare?: boolean;
 }
 
 export function PageContainer({
@@ -27,7 +29,9 @@ export function PageContainer({
   children,
   className,
   hideHeader = false,
+  bare = false,
 }: PageContainerProps) {
+  if (bare) return <div className={cn('flex w-full flex-col gap-8', className)}>{children}</div>;
   return (
     <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-4 pb-24 pt-2 md:px-8 lg:px-12">
       {!hideHeader && title && (

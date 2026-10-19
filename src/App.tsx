@@ -21,21 +21,16 @@ const DemoOnboarding = lazy(() => import('./features/onboarding/demo/DemoOnboard
 import { DemoAppProvider } from './features/demo/DemoAppProvider';
 
 const HomePage = lazy(() => import('./pages/app/HomePage'));
-const ToolsPage = lazy(() => import('./pages/app/ToolsPage'));
+const DiscoverPage = lazy(() => import('./pages/app/DiscoverPage'));
+const AccountPage = lazy(() => import('./pages/app/AccountPage'));
 // the website's tools, opened inside the app shell
 const WhichCardTool = lazy(() => import('./public-platform/pages/calculators/WhichCardPage').then((m) => ({ default: m.WhichCardPage })));
 const RewardCalculatorTool = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
 const BreakEvenTool = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
 const UtilizationTool = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
-const CardsDirectoryTool = lazy(() => import('./public-platform/pages/CardsDirectoryPage').then((m) => ({ default: m.CardsDirectoryPage })));
 const CardDetailTool = lazy(() => import('./public-platform/pages/CardDetailPage').then((m) => ({ default: m.CardDetailPage })));
 const WalletPage = lazy(() => import('./pages/app/WalletPage'));
-const CreditPage = lazy(() => import('./pages/app/CreditPage'));
-const ExplorePage = lazy(() => import('./pages/app/ExplorePage'));
-const InsightsPage = lazy(() => import('./pages/app/InsightsPage'));
 const TaqdeerPage = lazy(() => import('./pages/app/TaqdeerPage'));
-const ProfilePage = lazy(() => import('./pages/app/ProfilePage'));
-const SettingsPage = lazy(() => import('./pages/app/SettingsPage'));
 
 // Marketplace
 const MarketplaceHome = lazy(() => import('./pages/marketplace/MarketplaceHome'));
@@ -51,9 +46,6 @@ const OccasionPlannerPage = lazy(() => import('./pages/app/plan/OccasionPlannerP
 
 // Money Imports
 const MoneyManagerPage = lazy(() => import('./pages/app/money/MoneyManagerPage'));
-const TransactionsPage = lazy(() => import('./pages/app/money/TransactionsPage'));
-const PaymentCoachPage = lazy(() => import('./pages/app/money/PaymentCoachPage'));
-const SubscriptionsPage = lazy(() => import('./pages/app/money/SubscriptionsPage'));
 
 // Lifestyle (Phase 5A Prototype) - Redirecting to marketplace
 const LifestyleHub = lazy(() => import('./pages/app/lifestyle/LifestyleHub'));
@@ -222,24 +214,33 @@ export default function App() {
           </Suspense>
         </DashboardLayout>
       }>
+        {/* The four sections and the account. Everything else redirects into one of them. */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/credit/*" element={<CreditPage />} />
         <Route path="/wallet" element={<WalletPage />} />
-        <Route path="/taqdeer" element={<TaqdeerPage />} />
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/insights" element={<InsightsPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/money" element={<MoneyManagerPage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
+        <Route path="/account" element={<AccountPage />} />
 
-        {/* Tools and the card directory, inside the app */}
-        <Route path="/tools" element={<ToolsPage />} />
+        {/* detail screens under Discover */}
+        <Route path="/cards/:slug" element={<CardDetailTool />} />
         <Route path="/tools/which-card-to-use" element={<WhichCardTool />} />
         <Route path="/tools/credit-card-reward-calculator" element={<RewardCalculatorTool />} />
         <Route path="/tools/annual-fee-break-even" element={<BreakEvenTool />} />
         <Route path="/tools/credit-utilization" element={<UtilizationTool />} />
-        <Route path="/cards" element={<CardsDirectoryTool />} />
-        <Route path="/cards/:slug" element={<CardDetailTool />} />
-        
+        <Route path="/taqdeer" element={<TaqdeerPage />} />
+
+        {/* old addresses */}
+        <Route path="/credit/*" element={<Navigate to="/app/discover" replace />} />
+        <Route path="/cards" element={<Navigate to="/app/discover?tab=cards" replace />} />
+        <Route path="/tools" element={<Navigate to="/app/discover?tab=tools" replace />} />
+        <Route path="/money/subscriptions" element={<Navigate to="/app/money?tab=subscriptions" replace />} />
+        <Route path="/money/transactions" element={<Navigate to="/app/money?tab=activity" replace />} />
+        <Route path="/money/coach" element={<Navigate to="/app" replace />} />
+        <Route path="/profile" element={<Navigate to="/app/account" replace />} />
+        <Route path="/settings" element={<Navigate to="/app/account" replace />} />
+        <Route path="/insights" element={<Navigate to="/app" replace />} />
+        <Route path="/explore" element={<Navigate to="/app/discover" replace />} />
+
         {/* Plan Routes */}
         <Route path="/plan" element={<PlanHubPage />} />
         <Route path="/plan/trip" element={<TripPlannerPage />} />
@@ -250,10 +251,6 @@ export default function App() {
         <Route path="/plan/occasion" element={<OccasionPlannerPage />} />
         
         {/* Money Routes */}
-        <Route path="/money" element={<MoneyManagerPage />} />
-        <Route path="/money/transactions" element={<TransactionsPage />} />
-        <Route path="/money/coach" element={<PaymentCoachPage />} />
-        <Route path="/money/subscriptions" element={<SubscriptionsPage />} />
         
         
         {/* Marketplace Routes in Dashboard */}

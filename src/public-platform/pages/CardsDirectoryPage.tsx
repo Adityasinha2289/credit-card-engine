@@ -65,7 +65,8 @@ function DirectoryCard({ card }: { card: PublicCardEntity }) {
   );
 }
 
-export function CardsDirectoryPage() {
+/** `embedded`: the list without its page hero, for the app's Discover tab. */
+export function CardsDirectoryPage({ embedded = false }: { embedded?: boolean } = {}) {
   const all = useMemo(() => getDirectoryCards(), []);
   const inApp = useInApp();
   const [params, setParams] = useSearchParams();
@@ -119,27 +120,29 @@ export function CardsDirectoryPage() {
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
 
-      <PageHero
-        eyebrow="Card directory"
-        title={<>Compare cards, <span className="italic">side by side.</span></>}
-        lede="Fees, reward rates, lounge access and eligibility for every card we hold full reward data on, filterable by what you spend on."
-        actions={(
-          <dl className="flex flex-wrap gap-x-10 gap-y-4">
-            {[
-              [all.length, 'cards ranked'],
-              [issuers.length, 'issuers'],
-              [all.filter((c) => c.annualFee === 0).length, 'lifetime free'],
-            ].map(([n, label]) => (
-              <div key={label as string}>
-                <dt className="sr-only">{label}</dt>
-                <dd className="font-serif text-[44px] font-semibold leading-none text-rc-pistachio lining-nums tabular-nums"><CountUp to={n as number} delay={0.4} /></dd>
-                <p className="mt-2 text-[13px] text-rc-mist">{label}</p>
-              </div>
-            ))}
-          </dl>
-        )}
-        aside={<CardFan className="hidden lg:block" width={240} cards={all.slice(0, 5).map((c) => ({ id: c.id, name: c.cardName, bank: c.issuer, network: c.network }))} />}
-      />
+      {!embedded && (
+        <PageHero
+          eyebrow="Card directory"
+          title={<>Compare cards, <span className="italic">side by side.</span></>}
+          lede="Fees, reward rates, lounge access and eligibility for every card we hold full reward data on, filterable by what you spend on."
+          actions={(
+            <dl className="flex flex-wrap gap-x-10 gap-y-4">
+              {[
+                [all.length, 'cards ranked'],
+                [issuers.length, 'issuers'],
+                [all.filter((c) => c.annualFee === 0).length, 'lifetime free'],
+              ].map(([n, label]) => (
+                <div key={label as string}>
+                  <dt className="sr-only">{label}</dt>
+                  <dd className="font-serif text-[44px] font-semibold leading-none text-rc-pistachio lining-nums tabular-nums"><CountUp to={n as number} delay={0.4} /></dd>
+                  <p className="mt-2 text-[13px] text-rc-mist">{label}</p>
+                </div>
+              ))}
+            </dl>
+          )}
+          aside={<CardFan className="hidden lg:block" width={240} cards={all.slice(0, 5).map((c) => ({ id: c.id, name: c.cardName, bank: c.issuer, network: c.network }))} />}
+        />
+      )}
 
       <PageBody className="overflow-clip">
       {/* toolbar: sticks to the very top; its top padding sits under the floating header when stuck, so nothing shows around it */}

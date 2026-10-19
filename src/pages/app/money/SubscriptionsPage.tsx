@@ -51,7 +51,7 @@ function whenLabel(days: number): string {
   return `In ${days} days`;
 }
 
-export default function SubscriptionsPage() {
+export default function SubscriptionsPage({ embedded = false }: { embedded?: boolean }) {
   const { subscriptions, userCards, transactions, profile, supabaseClient } = useDashboardStore(useShallow((s) => ({
     subscriptions: s.subscriptions,
     userCards: s.userCards,
@@ -227,23 +227,21 @@ export default function SubscriptionsPage() {
 
   // ── render ────────────────────────────────────────────────────────────────
   return (
-    <PageContainer eyebrow="Money" title={<>Every renewal, <span className="italic">before it hits.</span></>} subtitle="Track what you pay for and we'll remind you before each charge, and before free trials turn paid." className="pb-safe max-w-3xl mx-auto">
-      <div className="py-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-        <Link to="/app/money" className="text-sm text-gray-500 hover:text-gray-900">← Money Manager</Link>
+    <PageContainer bare={embedded} eyebrow="Money" title={<>Every renewal, <span className="italic">before it hits.</span></>} subtitle="Track what you pay for and we'll remind you before each charge, and before free trials turn paid." className="pb-safe max-w-3xl mx-auto">
+      <div className="space-y-8">
 
         {/* Summary */}
-        <section className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] grid grid-cols-3 gap-4">
+        <section className="rounded-[26px] border border-rc-ink/10 bg-rc-paper p-6 grid grid-cols-3 gap-4">
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Per month</p>
+            <p className="text-[13px] font-medium text-rc-muted mb-1">Per month</p>
             <p className="text-2xl font-medium text-gray-900">{formatRupees(perMonth)}</p>
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Per year</p>
+            <p className="text-[13px] font-medium text-rc-muted mb-1">Per year</p>
             <p className="text-2xl font-medium text-gray-900">{formatRupees(perYear)}</p>
           </div>
           <div>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Active</p>
+            <p className="text-[13px] font-medium text-rc-muted mb-1">Active</p>
             <p className="text-2xl font-medium text-gray-900">{running.length}</p>
           </div>
         </section>
@@ -251,7 +249,7 @@ export default function SubscriptionsPage() {
         {/* Detected */}
         {suggestions.length > 0 && (
           <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] normal-case text-rc-ink mb-3 flex items-center gap-2">
               <Sparkles size={14} className="text-emerald-600" /> Looks like a subscription
             </h3>
             <div className="space-y-2">
@@ -277,7 +275,7 @@ export default function SubscriptionsPage() {
         {/* List */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Your subscriptions</h3>
+            <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] normal-case text-rc-ink">Your subscriptions</h3>
             {!form && <button onClick={() => openAdd()} className="text-xs font-bold text-emerald-700">+ Add</button>}
           </div>
 
@@ -295,18 +293,18 @@ export default function SubscriptionsPage() {
               )}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <label className="text-xs font-bold text-gray-500">Name
-                  <input className="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-normal text-gray-900" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Netflix" />
+                  <input className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Netflix" />
                 </label>
                 <label className="text-xs font-bold text-gray-500">Amount (₹) per charge
-                  <input className="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-normal text-gray-900" inputMode="decimal" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="649" />
+                  <input className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900" inputMode="decimal" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="649" />
                 </label>
                 <label className="text-xs font-bold text-gray-500">Billed every
-                  <select className="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-normal text-gray-900 bg-white" value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value as BillingCycle })}>
+                  <select className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900 bg-white" value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value as BillingCycle })}>
                     {(['weekly', 'monthly', 'quarterly', 'yearly'] as const).map((c) => <option key={c} value={c}>{CYCLE_LABEL[c]}</option>)}
                   </select>
                 </label>
                 <label className="text-xs font-bold text-gray-500">Paid with
-                  <select className="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-normal text-gray-900 bg-white" value={form.cardId} onChange={(e) => setForm({ ...form, cardId: e.target.value })}>
+                  <select className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900 bg-white" value={form.cardId} onChange={(e) => setForm({ ...form, cardId: e.target.value })}>
                     <option value="">UPI / bank account</option>
                     {userCards.map((c) => <option key={c.id} value={c.id}>{c.label || c.bank}</option>)}
                   </select>
@@ -317,11 +315,11 @@ export default function SubscriptionsPage() {
                 </label>
                 {form.isFreeTrial ? (
                   <label className="text-xs font-bold text-gray-500">Trial ends on
-                    <input type="date" min={today} className="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-normal" value={form.trialEndsOn} onChange={(e) => setForm({ ...form, trialEndsOn: e.target.value })} />
+                    <input type="date" min={today} className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal" value={form.trialEndsOn} onChange={(e) => setForm({ ...form, trialEndsOn: e.target.value })} />
                   </label>
                 ) : (
                   <label className="text-xs font-bold text-gray-500">Next charge on
-                    <input type="date" className="mt-1 w-full px-3 py-2 rounded-xl border border-gray-200 text-sm font-normal" value={form.nextBillingDate} onChange={(e) => setForm({ ...form, nextBillingDate: e.target.value })} />
+                    <input type="date" className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal" value={form.nextBillingDate} onChange={(e) => setForm({ ...form, nextBillingDate: e.target.value })} />
                   </label>
                 )}
                 <div className="text-xs font-bold text-gray-500">Remind me
@@ -363,9 +361,9 @@ export default function SubscriptionsPage() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-medium text-gray-900">{s.name}</p>
-                        {s.isFreeTrial && <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">Free trial</span>}
-                        {s.hasPriceHike && <span className="text-[10px] font-bold uppercase bg-red-100 text-red-700 px-1.5 py-0.5 rounded">Price up</span>}
-                        {paused && <span className="text-[10px] font-bold uppercase bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">Paused</span>}
+                        {s.isFreeTrial && <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">Free trial</span>}
+                        {s.hasPriceHike && <span className="text-[10px] font-bold uppercase bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full">Price up</span>}
+                        {paused && <span className="text-[10px] font-bold uppercase bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">Paused</span>}
                       </div>
                       <p className="text-xs text-gray-500 mt-0.5">
                         {formatRupees(s.amount)}/{CYCLE_LABEL[s.billingCycle]}
@@ -397,7 +395,7 @@ export default function SubscriptionsPage() {
         {/* Reminder channels */}
         {!isDemo && (
           <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">How we remind you</h3>
+            <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] normal-case text-rc-ink mb-3">How we remind you</h3>
             <div className="bg-white rounded-3xl border border-gray-100 divide-y divide-gray-50">
               <div className="p-4 flex items-center gap-3">
                 <Bell size={16} className="text-gray-500" />

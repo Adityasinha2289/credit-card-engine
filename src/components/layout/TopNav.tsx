@@ -5,7 +5,7 @@ import { istDate } from '../../features/subscriptions/billingCycle';
 import { CardDueEngine } from '../../features/money/engines/SafeToSpendEngine';
 import { formatRupees } from '../../features/money/lib/moneyMath';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Search, Command, CheckCircle2, Settings, User } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
@@ -16,8 +16,10 @@ import { Wordmark } from '../../public-platform/site/Brand';
 //  TOP NAV — Contextual Command Bar
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function TopNav() {
+export function TopNav({ onAsk }: { onAsk?: () => void }) {
   const [showNotifications, setShowNotifications] = useState(false);
+  const profileName = useDashboardStore((st) => st.profile?.name) ?? '';
+  const initials = profileName.split(' ').filter(Boolean).map((n) => n[0]).join('').toUpperCase().slice(0, 2) || '·';
   const notifRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -64,7 +66,7 @@ export function TopNav() {
         : `${u.subscription.name} renews ${u.daysLeft === 0 ? 'today' : u.daysLeft === 1 ? 'tomorrow' : `in ${u.daysLeft} days`}`,
       desc: `${formatRupees(u.subscription.amount)} on ${u.dueOn}${u.subscription.hasPriceHike ? ' · price went up' : ''}`,
       time: u.dueOn,
-      to: '/app/money/subscriptions',
+      to: '/app/money?tab=subscriptions',
     }));
     return [...dues, ...renewals].map((n) => ({ ...n, unread: !seen.includes(n.id) }));
   }, [subscriptions, creditAccounts, userCards, seen]);
@@ -86,29 +88,7 @@ export function TopNav() {
       </div>
 
       {/* ── Actions ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-4">
-        {/* Profile and settings (phones; the sidebar has them on wide screens) */}
-        <div className="flex items-center gap-1 lg:hidden">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate({ pathname: '/app/profile', search: location.search })}
-            className="relative h-10 w-10 rounded-full p-0 hover:bg-transparent"
-            aria-label="Profile"
-          >
-            <User size={20} strokeWidth={1.5} className="text-semantic-text-muted" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate({ pathname: '/app/settings', search: location.search })}
-            className="relative w-10 h-10 p-0 rounded-full hover:bg-transparent"
-            aria-label="Settings"
-          >
-            <Settings size={20} strokeWidth={1.5} className="text-semantic-text-muted" />
-          </Button>
-        </div>
-
+      <div className="flex items-center gap-2">
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
           <Button
@@ -146,7 +126,7 @@ export function TopNav() {
                   {NOTIFICATIONS.map(notif => (
                     <button
                       key={notif.id}
-                      onClick={() => { setShowNotifications(false); navigate({ pathname: notif.to, search: location.search }); }}
+                      onClick={() => { setShowNotifications(false); navigate(notif.to); }}
                       className="group relative border-b border-gray-100 p-5 text-left transition-colors last:border-0 hover:bg-gray-50"
                     >
                       {notif.unread && <span className="absolute left-4 top-[26px] h-1.5 w-1.5 rounded-full bg-rc-emerald" />}
@@ -162,6 +142,21 @@ export function TopNav() {
             )}
           </AnimatePresence>
         </div>
+        {/* phones: the assistant lives here instead of floating over content */}
+        {onAsk && (
+          <button type="button" onClick={onAsk} aria-label="Ask Taqdeer" className="h-10 w-10 overflow-hidden rounded-full ring-1 ring-rc-ink/10 lg:hidden">
+            <img src="/taqdeer-logo.png" alt="" className="h-full w-full object-cover" />
+          </button>
+        )}
+        {/* account (phones; on wide screens it sits at the foot of the sidebar) */}
+        <button
+          type="button"
+          onClick={() => navigate('/app/account')}
+          aria-label="Account and settings"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-rc-ink text-[12px] font-semibold tracking-wider text-rc-pistachio lg:hidden"
+        >
+          {initials}
+        </button>
       </div>
     </header>
   );

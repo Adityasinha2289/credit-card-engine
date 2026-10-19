@@ -76,7 +76,7 @@ export function AdaptivePlanningShell({
         )}
       </div>
 
-      {/* Taqdeer Context Snippet */}
+      {/* Reni Context Snippet */}
       {taqdeerContext && (
         <div className="px-4 md:px-0 mb-6 z-10 relative">
           <div className="flex items-start gap-3 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50 text-blue-900">

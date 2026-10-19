@@ -51,7 +51,7 @@ export default function TripPlannerPage() {
 
   const generatePlanRef = React.useRef(0);
 
-  // If Taqdeer says we have everything needed, generate the plan
+  // If Reni says we have everything needed, generate the plan
   const generatePlan = async () => {
     if (!session) return;
     setPhase(session.id, 4); // Generating phase visually
@@ -311,7 +311,7 @@ export default function TripPlannerPage() {
       <AdaptivePlanningShell session={session}>
         <div className="flex flex-col items-center justify-center h-full">
           <h2 className="text-3xl font-display font-semibold text-gray-900 mb-4 animate-pulse">Generating plan</h2>
-          <p className="text-gray-500 mb-8 text-center max-w-md">Consulting Taqdeer planning intelligence...</p>
+          <p className="text-gray-500 mb-8 text-center max-w-md">Consulting Reni planning intelligence...</p>
         </div>
       </AdaptivePlanningShell>
     );
@@ -360,7 +360,7 @@ export default function TripPlannerPage() {
 
   const getTaqdeerContext = () => {
     if (!nextQuestion) return undefined;
-    if (nextQuestion.id === 'trip_transport') return 'Taqdeer noticed you have the RenoCred HDFC Travel card. We will optimize for rail and flight combos.';
+    if (nextQuestion.id === 'trip_transport') return 'Reni noticed you have the RenoCred HDFC Travel card. We will optimize for rail and flight combos.';
     return undefined;
   };
 

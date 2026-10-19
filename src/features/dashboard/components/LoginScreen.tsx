@@ -7,6 +7,7 @@ import type { AppProfile, UserSegment, PrimaryGoal } from '../types/dashboard.ty
 import type { OnboardingState } from '../../onboarding/OnboardingFlow';
 import { Link, useNavigate } from 'react-router-dom';
 import { CardFace } from '../../../public-platform/site/CardFace';
+import { LoaderHold } from '../../../components/BrandLoader';
 
 const OnboardingFlow = lazy(() => import('../../onboarding/OnboardingFlow').then(m => ({ default: m.OnboardingFlow })));
 
@@ -101,7 +102,7 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
 
   if (isSignedIn) {
     return (
-      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-rc-cream" />}>
+      <Suspense fallback={<LoaderHold />}>
         <OnboardingFlow onComplete={handleOnboardingComplete} />
       </Suspense>
     );

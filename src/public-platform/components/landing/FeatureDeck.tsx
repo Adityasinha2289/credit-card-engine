@@ -131,7 +131,7 @@ interface Panel { icon: typeof Bell; label: string; title: string; body: string;
 
 const PANELS: Panel[] = [
   { icon: CreditCard, label: 'Wallet', title: 'Know which card to swipe.', body: 'Add the cards you own. Before you pay, see which one earns the most.', to: SIGN_UP, bg: 'bg-gradient-to-br from-rc-forest to-rc-night', dark: true, visual: () => <WalletVisual /> },
-  { icon: MessageCircle, label: 'Taqdeer', title: 'Ask anything. In Hinglish too.', body: 'Taqdeer answers from your own cards, in the language you asked in.', to: SIGN_UP, bg: 'bg-rc-pistachio', dark: false, visual: () => <ChatVisual /> },
+  { icon: MessageCircle, label: 'Reni', title: 'Ask anything. In Hinglish too.', body: 'Reni answers from your own cards, in the language you asked in.', to: SIGN_UP, bg: 'bg-rc-pistachio', dark: false, visual: () => <ChatVisual /> },
   { icon: PiggyBank, label: 'Money', title: "See what's safe to spend.", body: 'Your spending by category, and what is left after this month’s bills.', to: SIGN_UP, bg: 'bg-gradient-to-b from-rc-moss to-rc-forest', dark: true, visual: () => <MoneyVisual /> },
   { icon: Bell, label: 'Reminders', title: 'Never pay for a trial you forgot.', body: 'A nudge before a subscription renews, so you decide, not the auto-debit.', to: SIGN_UP, bg: 'bg-rc-cream', dark: false, visual: () => <ReminderVisual /> },
   { icon: Sparkles, label: 'Discover', title: 'Find the card that pays you back.', body: 'Ranked on what you actually spend, after the annual fee.', to: '/cards', bg: 'bg-rc-mist', dark: false, visual: () => <DiscoverVisual /> },

@@ -1,5 +1,5 @@
 import './lib/env' // 🚨 VALIDATE ENV VARS FIRST 🚨
-import { StrictMode, lazy, Suspense, useEffect } from 'react'
+import { StrictMode, useLayoutEffect, lazy, Suspense, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -8,7 +8,8 @@ import { HomePage } from './public-platform/pages/HomePage';
 import { NotFoundPage } from './public-platform/pages/NotFoundPage';
 
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { BrandLoader } from './components/BrandLoader'
+import { LoaderHold } from './components/BrandLoader'
+import { holdLoaderNow, releaseLoader } from './lib/bootLoader'
 import { useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { ScrollToTop } from './components/ScrollToTop'
@@ -29,7 +30,6 @@ const DisclaimerPage = lazy(() => import('./public-platform/pages/DisclaimerPage
 const CardsDirectoryPage = lazy(() => import('./public-platform/pages/CardsDirectoryPage').then((m) => ({ default: m.CardsDirectoryPage })));
 const CardDetailPage = lazy(() => import('./public-platform/pages/CardDetailPage').then((m) => ({ default: m.CardDetailPage })));
 const RewardCalculatorPage = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
-const BreakEvenCalculatorPage = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
 const CreditUtilizationPage = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
 const WhichCardPage = lazy(() => import('./public-platform/pages/calculators/WhichCardPage').then((m) => ({ default: m.WhichCardPage })));
 const AuthenticatedAppWrapper = lazy(() => import('./components/AuthenticatedAppWrapper'));
@@ -67,11 +67,29 @@ function DeferredAnalytics() {
   return null;
 }
 
-/** Signed-in pages get the branded loader; public pages a plain dark fill (they load in a blink). */
+/** Signed-in pages hold the loading screen; public pages a plain dark fill (they load in a blink). */
 function RouteFallback() {
   const { pathname } = useLocation();
-  if (pathname.startsWith('/app')) return <BrandLoader label={pathname.includes('sign-') ? 'Opening sign-in' : 'Getting your cards ready'} />;
+  if (pathname.startsWith('/app')) return <LoaderHold now />;
   return <div className="min-h-[100dvh] bg-rc-night" />;
+}
+
+// A direct visit to a signed-in page: show the loading screen from the first frame,
+// and hand it over to whatever is loading once React has rendered.
+const bootHeld = window.location.pathname.startsWith('/app');
+if (bootHeld) holdLoaderNow();
+
+// once only: StrictMode runs effects twice in development, and a second release
+// would cancel the hold of whatever is still loading (the screen would blink off)
+let bootReleased = false;
+function BootRelease() {
+  useLayoutEffect(() => {
+    if (bootHeld && !bootReleased) {
+      bootReleased = true;
+      releaseLoader();
+    }
+  }, []);
+  return null;
 }
 
 const appContent = (
@@ -97,7 +115,9 @@ const appContent = (
         
         {/* Utility Calculators */}
         <Route path="/calculators/credit-card-reward-calculator" element={<PublicLayout><RewardCalculatorPage /></PublicLayout>} />
-        <Route path="/calculators/annual-fee-break-even" element={<PublicLayout><BreakEvenCalculatorPage /></PublicLayout>} />
+        {/* fee break-even is part of the rewards and fees calculator now */}
+        <Route path="/calculators/annual-fee-break-even" element={<Navigate to="/calculators/credit-card-reward-calculator" replace />} />
+        <Route path="/tools" element={<Navigate to="/calculators/which-card-to-use" replace />} />
         <Route path="/calculators/credit-utilization" element={<PublicLayout><CreditUtilizationPage /></PublicLayout>} />
         <Route path="/calculators/which-card-to-use" element={<PublicLayout><WhichCardPage /></PublicLayout>} />
 
@@ -115,6 +135,7 @@ const appContent = (
         <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
       </Routes>
     </Suspense>
+    <BootRelease />
     <Toaster theme="dark" position="top-center" />
   </BrowserRouter>
 );

@@ -41,7 +41,7 @@ export function InitializationStep({ onComplete }: { onComplete: () => void }) {
         <h1 className="font-display text-2xl font-bold tracking-tight mb-1"
           style={{ color: '#F4F4F2' }}
         >
-          TAQDEER
+          Reni
         </h1>
         <p className="text-sm mb-14" style={{ color: '#6E7471' }}>
           Initializing Financial Intelligence

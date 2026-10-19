@@ -1,65 +1,75 @@
 /**
- * Account: who you are to RenoCred (the profile form) and the controls for your
- * account, on one page. Replaces the separate Profile and Settings screens.
+ * Account: your member card, your details, how we remind you, and sign-in.
  */
-import type { ElementType, ReactNode } from 'react';
 import { useClerk, useUser } from '@clerk/clerk-react';
-import { Bell, FileText, Globe, KeyRound, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowUpRight, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { ProfileTab } from '../../features/dashboard/components/ProfileTab';
+import { ReminderSettings } from '../../features/subscriptions/components/ReminderSettings';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
-import { goalTitle } from '../../config/goals';
-import { cn } from '../../lib/utils';
+import { Reveal } from '../../public-platform/site/primitives';
+import { MemberCard } from './account/MemberCard';
+import { AvatarPicker } from './account/AvatarPicker';
 
-function Row({ icon: Icon, title, description, onClick, href, destructive }: {
-  icon: ElementType; title: string; description: ReactNode; onClick?: () => void; href?: string; destructive?: boolean;
-}) {
-  const inner = (
-    <>
-      <span className="flex items-start gap-4">
-        <span className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl', destructive ? 'bg-[#C2410C]/10 text-[#C2410C]' : 'bg-rc-ink/[0.06] text-rc-forest')}>
-          <Icon size={18} strokeWidth={1.7} />
-        </span>
-        <span>
-          <span className={cn('block text-[15px] font-semibold', destructive ? 'text-[#C2410C]' : 'text-rc-ink')}>{title}</span>
-          <span className="mt-0.5 block text-[14px] text-rc-muted">{description}</span>
-        </span>
-      </span>
-      {!destructive && <span aria-hidden className="text-rc-muted">→</span>}
-    </>
+function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+  return (
+    <Reveal as="section">
+      <h2 className="font-serif text-[26px] font-semibold leading-tight tracking-[-0.02em] text-rc-ink sm:text-[30px]">{title}</h2>
+      {note && <p className="mt-1 text-[14px] text-rc-muted">{note}</p>}
+      <div className="mt-4">{children}</div>
+    </Reveal>
   );
-  const cls = 'flex w-full items-center justify-between gap-4 border-b border-rc-ink/[0.07] px-5 py-4 text-left transition-colors last:border-0 hover:bg-white/70';
-  return href ? <a href={href} className={cls}>{inner}</a> : <button type="button" onClick={onClick} className={cls}>{inner}</button>;
 }
 
 export default function AccountPage() {
-  const navigate = useNavigate();
   const { signOut, openUserProfile } = useClerk();
   const { user } = useUser();
   const profile = useDashboardStore((s) => s.profile);
+  const userCards = useDashboardStore((s) => s.userCards);
   const name = profile?.name || user?.fullName || '';
-  const email = user?.primaryEmailAddress?.emailAddress ?? profile?.email;
-  const goal = goalTitle(profile?.primaryGoal);
+  const email = user?.primaryEmailAddress?.emailAddress ?? profile?.email ?? '';
+  const since = user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : null;
+
+  const row = 'flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-white';
 
   return (
     <PageContainer
-      eyebrow="Account"
+      eyebrow={email}
       title={name ? <>{name.split(' ')[0]}, <span className="italic">your account.</span></> : <>Your <span className="italic">account.</span></>}
-      subtitle={[email, goal ? `Goal: ${goal}` : null].filter(Boolean).join(' · ')}
+      center
+      band={<MemberCard name={name} since={since} cards={userCards.length} avatar={profile?.avatar || null} />}
     >
-      <ProfileTab embedded />
+      <div className="mx-auto grid w-full max-w-[980px] grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-2 lg:gap-12">
+        <Section title="Your details">
+          <div className="space-y-4">
+            <AvatarPicker />
+            <ProfileTab embedded />
+          </div>
+        </Section>
 
-      <section className="max-w-[760px]">
-        <h2 className="mb-3 font-display text-[26px] font-semibold tracking-[-0.02em] text-rc-ink">Account</h2>
-        <div className="overflow-hidden rounded-[26px] border border-rc-ink/10 bg-rc-paper">
-          <Row icon={Bell} title="Reminders" description="Email or push before renewals and trials, and how many days ahead." onClick={() => navigate('/app/money?tab=subscriptions')} />
-          <Row icon={KeyRound} title="Sign-in and security" description="Email, password, Google sign-in and active sessions." onClick={() => openUserProfile()} />
-          <Row icon={FileText} title="How we use your data" description="We never pull your credit report or store full card numbers." onClick={() => navigate('/privacy')} />
-          <Row icon={Globe} title="RenoCred website" description="The public site; its header takes you straight back here." href="/" />
-          <Row icon={LogOut} title="Sign out" description="Sign out of RenoCred on this device." destructive onClick={() => signOut({ redirectUrl: '/' })} />
+        <div className="min-w-0 space-y-10">
+          <Section title="Reminders" note="Before subscriptions renew, trials turn paid and card bills fall due.">
+            <ReminderSettings />
+          </Section>
+
+          <Section title="Sign-in">
+            <div className="divide-y divide-rc-ink/[0.07] overflow-hidden rounded-[24px] border border-rc-ink/[0.08] bg-rc-paper">
+              <button type="button" onClick={() => openUserProfile()} className={row}>
+                <span><span className="block text-[15px] font-medium text-rc-ink">Password and security</span><span className="block text-[13px] text-rc-muted">Email, password, Google sign-in, devices</span></span>
+                <ChevronRight size={18} className="shrink-0 text-rc-ink/30" />
+              </button>
+              <Link to="/privacy" className={row}>
+                <span><span className="block text-[15px] font-medium text-rc-ink">How we use your data</span><span className="block text-[13px] text-rc-muted">We never pull your credit report or store card numbers</span></span>
+                <ArrowUpRight size={17} className="shrink-0 text-rc-ink/30" />
+              </Link>
+              <button type="button" onClick={() => signOut({ redirectUrl: '/' })} className={row}>
+                <span className="text-[15px] font-medium text-[#C2410C]">Sign out</span>
+              </button>
+            </div>
+          </Section>
         </div>
-      </section>
+      </div>
     </PageContainer>
   );
 }

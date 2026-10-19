@@ -77,7 +77,7 @@ export default function LifestyleHub() {
       desc: 'From gadgets to gear, rewards for what you love.', 
       icon: Heart, 
       path: '/app/lifestyle',
-      image: 'https://images.unsplash.com/photo-1511871893393-82ce9c2aa4bf?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=600&auto=format&fit=crop',
       level: 'tertiary'
     },
   ];

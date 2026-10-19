@@ -1,144 +1,157 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/SEO';
-import { FAQSchema } from '../components/FAQSchema';
 import { getBreadcrumbSchema } from '../lib/schemaBuilders';
-import { Container, Eyebrow, Reveal, formatINR } from '../site/primitives';
+import { Container, Reveal, formatINR } from '../site/primitives';
 import { PageBody, PageHero } from '../site/PageHero';
-import { Accordion } from '../site/Accordion';
 import { CardFace, displayCardName } from '../site/CardFace';
 import { CATALOGUE_STATS, cardsByIds, rankCards } from '../site/swipeMath';
+import { picksFor, type SpendProfile } from '../../pages/app/picks/picks';
 
-const METHODOLOGY_FAQS = [
-  {
-    question: 'How does RenoCred evaluate credit cards?',
-    answer: "From each card's published terms: fees, fee-waiver thresholds, reward rates by spending category, monthly caps and minimum income and credit score. For a purchase, we rank your cards by the rupee value each would return. For new cards, we weigh reward rates on the categories you spend most on, fees and waivers, lounge access and welcome benefits, and filter out cards whose published eligibility is above what you have shared.",
-  },
-  {
-    question: 'Is RenoCred a financial advisor?',
-    answer: 'No. RenoCred is an informational and analytical tool, not a licensed financial advisor. Verify product details with the issuing bank before making a financial decision.',
-  },
-  {
-    question: 'Where does the card data come from?',
-    answer: `From each issuer's own published terms. So far we have read ${CATALOGUE_STATS.listed} cards from ${CATALOGUE_STATS.issuers} issuers. Where an issuer has not published a figure, we show it as not disclosed rather than estimating it. If you spot something out of date, tell us.`,
-  },
-  {
-    question: 'Does checking cards affect my credit score?',
-    answer: 'No. RenoCred never pulls your credit report. Eligibility checks compare the income and score range you choose to share with each card\'s published minimums.',
-  },
-  {
-    question: 'Do partner commissions change the rankings?',
-    answer: 'No. Rankings come from the data and your inputs. Our affiliate disclosure explains where we may earn money.',
-  },
-];
-
-const PRINCIPLES = [
-  { k: 'Published terms only', v: 'Every rate, cap and fee comes from the issuer. Missing figures are shown as not disclosed, never filled in with a guess.' },
-  { k: 'Your numbers, not averages', v: 'Values are worked out on the spend you enter, so a travel card can rightly lose to a cashback card for someone who rarely flies.' },
-  { k: 'Fees count', v: 'A card is only worth what it returns after its annual fee, unless your spend clears the waiver threshold.' },
-];
+/** The worked examples below are computed, not typed: same code as the app. */
+const USE_WALLET = ['hdfc_swiggy', 'sbi_cashback', 'axis_ace', 'icici_amazon_pay'];
+const GET_WALLET = ['icici_amazon_pay'];
+const GET_SPEND: SpendProfile = { dining: 6000, groceries: 6000, shopping: 5000, travel: 3000, fuel: 3000, utilities: 3000 };
 
 export function MethodologyPage() {
-  const example = useMemo(() => rankCards(cardsByIds(['hdfc_swiggy', 'sbi_cashback', 'axis_ace', 'icici_amazon_pay']), 'dining', 2400), []);
+  const use = useMemo(() => rankCards(cardsByIds(USE_WALLET), 'dining', 2400), []);
+  const get = useMemo(() => picksFor({ walletIds: GET_WALLET, profile: GET_SPEND, limit: 1 })[0], []);
+  const [held] = cardsByIds(GET_WALLET);
+  const monthly = Object.values(GET_SPEND).reduce((a, b) => a + (b ?? 0), 0);
 
   return (
     <div className="flex w-full flex-1 flex-col">
       <SEO
         title="How RenoCred Ranks Credit Cards | Methodology"
-        description="How RenoCred turns issuers' published reward rates, caps and fees into card rankings: the data, the maths and the limits."
+        description="How RenoCred turns issuers' published reward rates, caps and fees into rankings: which card to use for a spend, which card to get next, and where the maths stops being precise."
         canonicalUrl="https://renocred.com/methodology"
         schemaData={getBreadcrumbSchema([{ name: 'Home', item: '/' }, { name: 'Methodology', item: '/methodology' }])}
       />
-      <FAQSchema items={METHODOLOGY_FAQS} />
 
       <PageHero
-        eyebrow="Methodology"
-        title={<>How we rank <span className="italic">cards.</span></>}
-        lede="Rules you can check, not a black box. Here is the data we use, the maths behind each answer, and where it stops being precise."
+        eyebrow="How we rank"
+        title={<>Two questions, <span className="italic">two rules.</span></>}
+        lede="Which of your cards to pay with, and which card to get next. Both are worked out in rupees, from each issuer's published terms, so you can check every answer yourself."
         aside={(
-          <div className="rounded-[40px] bg-rc-pistachio p-8 text-rc-ink">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-ink/55">The whole rule, for one swipe</p>
-            <p className="mt-6 font-serif text-[clamp(2rem,3.2vw,2.9rem)] font-semibold leading-[1.15] tracking-[-0.02em] tabular-nums">
-              {formatINR(2400)} <span className="text-rc-ink/40">×</span> {example[0].rate}%
-              <br /><span className="text-rc-ink/40">=</span> <span className="rounded-[0.2em] bg-rc-ink px-[0.2em] text-rc-pistachio">{formatINR(example[0].reward)}</span>
-            </p>
-            <p className="mt-6 text-[14px] leading-relaxed text-rc-ink/70">Dinner for two on the {displayCardName(example[0].card.name)}: spend times the card's published rate for dining, capped where the issuer caps it.</p>
+          <div className="rounded-[36px] border border-white/10 bg-white/[0.04] p-7 text-rc-cream">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist">What we work from</p>
+            <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-6">
+              {[
+                [CATALOGUE_STATS.listed, 'cards read'],
+                [CATALOGUE_STATS.issuers, 'issuers'],
+                [CATALOGUE_STATS.pagesRead, 'issuer pages'],
+                [CATALOGUE_STATS.sourcedFacts.toLocaleString('en-IN'), 'facts, each sourced'],
+              ].map(([v, k]) => (
+                <div key={k}>
+                  <dd className="font-serif text-[34px] font-semibold leading-none text-rc-pistachio tabular-nums">{v}</dd>
+                  <dt className="mt-2 text-[13px] text-rc-mist">{k}</dt>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-6 border-t border-white/10 pt-5 text-[13px] leading-relaxed text-rc-mist">Where an issuer doesn't publish a figure, we show it as not published. We never fill a gap with a guess.</p>
           </div>
         )}
       />
 
       <PageBody>
-      <section className="py-20 lg:py-28">
-        <Container className="grid gap-4 md:grid-cols-3">
-          {PRINCIPLES.map((p, i) => (
-            <Reveal key={p.k} delay={i * 0.06} className="rounded-[28px] border border-rc-ink/10 bg-rc-paper p-7">
-              <p className="text-[12px] tabular-nums text-rc-muted">{String(i + 1).padStart(2, '0')}</p>
-              <p className="mt-4 font-serif text-[26px] font-semibold leading-tight text-rc-ink">{p.k}</p>
-              <p className="mt-3 text-[15px] leading-relaxed text-rc-muted">{p.v}</p>
+        {/* rule 1 */}
+        <section className="py-16 lg:py-28">
+          <Container className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <Reveal className="lg:col-span-6">
+              <p className="font-serif text-[15px] text-rc-forest">01</p>
+              <h2 className="mt-2 font-serif text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-rc-ink">Which card <span className="italic text-rc-forest">to use</span></h2>
+              <div className="rc-prose mt-6">
+                <p>Each card you hold is worth <strong>the amount × its published rate for that kind of spend</strong>, or its base rate if it has none. If the issuer caps that rate each month, the value stops at the cap.</p>
+                <p>The card worth the most wins. On a tie, the one with the lower annual fee goes first.</p>
+                <p>Rates are value back as a share of spend, so a “5X points” card and a “5% cashback” card are compared in rupees, not points.</p>
+              </div>
             </Reveal>
-          ))}
-        </Container>
-      </section>
+            <Reveal delay={0.08} className="lg:col-span-5 lg:col-start-8">
+              <div className="rounded-[32px] bg-rc-ink p-6 text-rc-cream sm:p-7">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist">Dinner for two, {formatINR(2400)}</p>
+                <ol className="mt-6 space-y-3.5">
+                  {use.map((r, i) => (
+                    <li key={r.card.id} className="flex items-center gap-4">
+                      <CardFace name={r.card.name} bank={r.card.bank} width={56} lifted={false} />
+                      <span className="min-w-0 flex-1 text-[14px]">
+                        <span className="block truncate">{displayCardName(r.card.name)}</span>
+                        <span className="text-[12px] text-rc-mist">{formatINR(2400)} × {r.rate}%</span>
+                      </span>
+                      <span className={i === 0 ? 'font-serif text-[24px] text-rc-pistachio tabular-nums' : 'text-[15px] tabular-nums text-rc-mist'}>{formatINR(r.reward)}</span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-6 border-t border-white/10 pt-4 text-[13px] text-rc-mist">Swipe the {displayCardName(use[0].card.name)}.</p>
+              </div>
+            </Reveal>
+          </Container>
+        </section>
 
-      <section className="mx-3 rounded-[40px] bg-rc-paper py-20 sm:mx-5 lg:rounded-[56px] lg:py-28 2xl:mx-auto 2xl:max-w-[1360px]">
-        <Container className="grid gap-14 lg:grid-cols-12">
-          <Reveal className="rc-prose lg:col-span-6">
-            <h2>Which card to use</h2>
-            <p>For a purchase, each card you hold is worth <strong>the amount × its reward rate for that category</strong>, or its base rate if it has no category rate. If the issuer publishes a monthly cap for that category, the value is capped there.</p>
-            <p>The card with the highest value wins. When two cards tie, the one with the lower annual fee goes first.</p>
-            <p>Rates are the effective value back as a share of spend, so a "5X points" card and a "5% cashback" card are compared in rupees, not in points.</p>
-          </Reveal>
-          <Reveal delay={0.08} className="lg:col-span-5 lg:col-start-8">
-            <div className="rounded-[32px] bg-rc-ink p-7 text-rc-cream">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist">Worked example · dinner, {formatINR(2400)}</p>
-              <ol className="mt-6 space-y-3">
-                {example.map((r, i) => (
-                  <li key={r.card.id} className="flex items-center gap-4">
-                    <CardFace name={r.card.name} bank={r.card.bank} width={56} lifted={false} />
-                    <span className="min-w-0 flex-1 text-[14px]">
-                      <span className="block truncate">{displayCardName(r.card.name)}</span>
-                      <span className="text-[12px] text-rc-mist">{formatINR(2400)} × {r.rate}%</span>
-                    </span>
-                    <span className={i === 0 ? 'font-serif text-[22px] text-rc-pistachio tabular-nums' : 'text-[15px] tabular-nums text-rc-mist'}>{formatINR(r.reward)}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
+        {/* rule 2 */}
+        <section className="mx-3 rounded-[40px] bg-rc-paper py-16 sm:mx-5 lg:rounded-[56px] lg:py-28 2xl:mx-auto 2xl:max-w-[1360px]">
+          <Container className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <Reveal className="lg:col-span-6">
+              <p className="font-serif text-[15px] text-rc-forest">02</p>
+              <h2 className="mt-2 font-serif text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-rc-ink">Which card <span className="italic text-rc-forest">to get</span></h2>
+              <div className="rc-prose mt-6">
+                <p>For every card you don't hold, we work out <strong>how much more a year it would earn than your best current card</strong> on each kind of spend, add that up, and subtract its annual fee. If your yearly spend clears the issuer's waiver threshold, the fee is waived.</p>
+                <p>Spend comes from what you log. Until you've logged any, we use a typical {formatINR(25000)} month leaning toward the spends you tell us matter, and we say so.</p>
+                <p>If the issuer asks for more income or a higher CIBIL score than you've shared, the card stays in the list, marked with what it needs, after the ones you can get.</p>
+              </div>
+            </Reveal>
+            <Reveal delay={0.08} className="lg:col-span-5 lg:col-start-8">
+              {get && held && (
+                <div className="rounded-[32px] bg-rc-pistachio p-6 text-rc-ink sm:p-7">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-ink/60">Holds the {displayCardName(held.name)}, spends {formatINR(monthly)} a month</p>
+                  <div className="mt-5 flex items-center gap-4">
+                    <CardFace name={get.card.name} bank={get.card.bank} network={get.card.network} width={96} />
+                    <p className="font-serif text-[22px] font-semibold leading-tight">{displayCardName(get.card.name)}</p>
+                  </div>
+                  <ul className="mt-6 space-y-2.5 text-[14px]">
+                    {get.wins.slice(0, 3).map((w) => (
+                      <li key={w.category} className="flex items-baseline justify-between gap-3 border-b border-dashed border-rc-ink/20 pb-2.5">
+                        <span><span className="font-medium">{w.label}</span> <span className="text-rc-ink/60">{w.rate}% vs {w.yourRate}%</span></span>
+                        <span className="tabular-nums">+{formatINR(w.perYear)}</span>
+                      </li>
+                    ))}
+                    {get.wins.length > 3 && (
+                      <li className="flex justify-between gap-3 border-b border-dashed border-rc-ink/20 pb-2.5 text-rc-ink/70">
+                        <span>Everything else it beats</span>
+                        <span className="tabular-nums">+{formatINR(get.wins.slice(3).reduce((s, w) => s + w.perYear, 0))}</span>
+                      </li>
+                    )}
+                    <li className="flex justify-between gap-3 border-b border-dashed border-rc-ink/20 pb-2.5">
+                      <span>Annual fee</span>
+                      <span className="tabular-nums">{get.feeWaived ? 'waived on this spend' : get.fee ? `−${formatINR(get.fee)}` : 'none'}</span>
+                    </li>
+                  </ul>
+                  <p className="mt-5 flex items-baseline justify-between">
+                    <span className="text-[14px] font-medium">Adds a year</span>
+                    <span className="font-serif text-[34px] font-semibold leading-none tabular-nums text-rc-forest">+{formatINR(get.net)}</span>
+                  </p>
+                </div>
+              )}
+            </Reveal>
+          </Container>
+        </section>
 
-      <section className="py-20 lg:py-28">
-        <Container className="grid gap-14 lg:grid-cols-12">
-          <Reveal className="rc-prose lg:col-span-6">
-            <h2>Which card to get</h2>
-            <p>Card suggestions in the app weigh a card's reward rates on the categories you spend most on, its annual fee and fee-waiver terms, lounge access and welcome benefits.</p>
-            <p>Cards whose published minimum income or credit score is above what you have shared are left out. If you have not shared them, the card stays in with a note that eligibility was not checked.</p>
-            <h3>On this website's tools</h3>
-            <p>The <Link to="/calculators/credit-card-reward-calculator">reward calculator</Link> and the "best on the market" answers add up a year of capped rewards across your categories and subtract the annual fee, unless your yearly spend clears the waiver threshold.</p>
-          </Reveal>
-          <Reveal delay={0.08} className="rc-prose lg:col-span-5 lg:col-start-8">
-            <h2>Where it stops being precise</h2>
-            <ul>
-              <li>Some accelerated rates only apply through an issuer's portal or with specific merchants.</li>
-              <li>Exclusions (wallet loads, rent, fuel on some cards) and points redemption choices change real returns.</li>
-              <li>Issuers change terms; there can be a lag before our data reflects it.</li>
-              <li>Approval is always the issuer's decision.</li>
-            </ul>
-            <p>Check the issuer's terms before you apply. Read our <Link to="/disclaimer">financial disclaimer</Link>.</p>
-          </Reveal>
-        </Container>
-      </section>
-
-      <section className="pb-28 lg:pb-36">
-        <Container className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <Eyebrow>Questions</Eyebrow>
-            <h2 className="mt-5 font-serif text-[clamp(2.2rem,3.8vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-rc-ink">Asked, <span className="italic text-rc-forest">answered.</span></h2>
-          </div>
-          <Accordion className="lg:col-span-7 lg:col-start-6" items={METHODOLOGY_FAQS} />
-        </Container>
-      </section>
+        {/* limits */}
+        <section className="py-16 pb-28 lg:py-28 lg:pb-36">
+          <Container className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <Reveal className="lg:col-span-5">
+              <h2 className="font-serif text-[clamp(2rem,3.6vw,3rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-rc-ink">Where it stops being <span className="italic text-rc-forest">precise</span></h2>
+            </Reveal>
+            <Reveal delay={0.08} className="rc-prose lg:col-span-6 lg:col-start-7">
+              <ul>
+                <li>Some boosted rates only apply through an issuer's portal or at named merchants.</li>
+                <li>Exclusions (wallet loads, rent, fuel on some cards) and how you redeem points change real returns.</li>
+                <li>Issuers change terms, and our data can lag behind for a while.</li>
+                <li>Approval is always the issuer's decision.</li>
+              </ul>
+              <p>Commissions never change a ranking; see our <Link to="/affiliate-disclosure">affiliate disclosure</Link>. Check the issuer's terms before you apply, and read the <Link to="/disclaimer">disclaimer</Link>.</p>
+            </Reveal>
+          </Container>
+        </section>
       </PageBody>
     </div>
   );

@@ -1,292 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, X, Sparkles, CreditCard, Bot, Zap, CheckCircle2 } from 'lucide-react';
-import { cn } from '../../../lib/utils';
-import { useDashboardStore } from '../../dashboard/store/dashboardStore';
-import { generateTaqdeerResponse, type TaqdeerAnswer } from '../../finix/lib/taqdeerEngine';
-import { DecisionCard } from '../../../components/shared/DecisionCard';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+/**
+ * Reni in a panel: a sheet above the tab bar on phones, a floating panel at the
+ * bottom right on wider screens. The conversation is kept while the panel is
+ * closed, so reopening picks up where you left off.
+ */
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ReniChat, type ReniMessage } from './ReniChat';
 
-interface TaqdeerDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+export function TaqdeerDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [messages, setMessages] = useState<ReniMessage[]>([]);
 
-// The engine's own confidence, not a fixed "98%".
-const CONFIDENCE_SCORE: Record<string, number> = { EXACT: 95, ESTIMATED: 75, LIMITED: 70, UNSUPPORTED: 40 };
-
-const LOADING_STAGES = [
-  'Understanding purchase intent...',
-  'Analyzing merchant category...',
-  'Evaluating active offers...',
-  'Calculating optimal reward...'
-];
-
-export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
-  const [query, setQuery] = useState('');
-  const [appState, setAppState] = useState<'idle' | 'loading' | 'result'>('idle');
-  const [loadingStage, setLoadingStage] = useState(0);
-  const [decision, setDecision] = useState<TaqdeerAnswer | null>(null);
-  const [history, setHistory] = useState<{ role: 'user' | 'ai'; content: string }[]>([]);
-
-  const userCards = useDashboardStore(state => state.userCards);
-
-  const handleSubmit = async (e?: React.FormEvent, presetQuery?: string) => {
-    if (e) e.preventDefault();
-    const finalQuery = presetQuery || query;
-    if (!finalQuery.trim()) return;
-
-    setQuery(finalQuery);
-    setAppState('loading');
-    setLoadingStage(0);
-
-    const stageInterval = setInterval(() => {
-      setLoadingStage(prev => {
-        if (prev >= LOADING_STAGES.length - 1) {
-          clearInterval(stageInterval);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, 400);
-
-    try {
-      // Local answers are instant; AI answers stream token by token. No artificial delay.
-      const response = await generateTaqdeerResponse(finalQuery, userCards, {
-        history,
-        onToken: (partial) => {
-          setDecision({ content: partial, source: 'ai' });
-          setAppState('result');
-        },
-      });
-      setDecision(response);
-      setAppState('result');
-      setHistory((h) => [...h, { role: 'user' as const, content: finalQuery }, { role: 'ai' as const, content: response.content }].slice(-6));
-    } catch (error) {
-      setDecision({ content: 'I encountered an error while trying to generate a response. Please try again.' });
-      setAppState('result');
-    } finally {
-      clearInterval(stageInterval);
-    }
-  };
-
-  const reset = () => {
-    setAppState('idle');
-    setQuery('');
-    setDecision(null);
-    setHistory([]);
-  };
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98, y: 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.98, y: 12 }}
-          transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-          className={cn(
-            "fixed bottom-[144px] lg:bottom-[88px] right-4 lg:right-6 z-[100] flex flex-col origin-bottom-right",
-            "w-[calc(100vw-32px)] lg:w-[420px]",
-            "h-[600px] max-h-[calc(100dvh-160px)] lg:max-h-[calc(100dvh-120px)]",
-            "bg-white border border-gray-200 rounded-[2rem] shadow-2xl overflow-hidden"
-          )}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 shrink-0 border-b border-gray-100">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-brand-emerald text-gray-900 flex items-center justify-center">
-                <Sparkles size={14} />
-              </div>
-              <h2 className="text-xs font-bold text-gray-900 tracking-widest uppercase">TAQDEER</h2>
+        <>
+          {/* phones: dim the page behind the sheet */}
+          <motion.div
+            key="scrim"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 z-[99] bg-rc-night/50 backdrop-blur-[2px] md:hidden"
+          />
+          <motion.div
+            key="panel"
+            role="dialog"
+            aria-label="Reni"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+            className="fixed inset-x-0 bottom-0 z-[100] h-[86dvh] overflow-hidden rounded-t-[28px] shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.5)] md:inset-x-auto md:bottom-24 md:right-6 md:h-[min(640px,calc(100dvh-140px))] md:w-[400px] md:rounded-[28px] md:border md:border-rc-ink/10 md:shadow-[0_40px_80px_-30px_rgba(10,31,21,0.55)]"
+          >
+            <div aria-hidden className="absolute left-1/2 top-2 z-10 h-1 w-10 -translate-x-1/2 rounded-full bg-rc-ink/15 md:hidden" />
+            <div className="h-full pb-[env(safe-area-inset-bottom)] md:pb-0">
+              <ReniChat messages={messages} setMessages={setMessages} onClose={onClose} />
             </div>
-            <button
-              onClick={onClose}
-              className="w-7 h-7 rounded-full flex items-center justify-center bg-gray-50 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-            >
-              <X size={14} />
-            </button>
-          </div>
-
-          {/* Main Content Area */}
-          <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col hide-scrollbar relative">
-
-            <AnimatePresence mode="wait">
-              {appState === 'idle' && (
-                <motion.div
-                  key="idle"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col h-full"
-                >
-                  <div className="flex flex-col gap-1 mt-4 mb-8">
-                    <h1 className="text-3xl font-display font-semibold text-gray-900 mb-2">Ask Taqdeer</h1>
-                    <p className="text-[15px] text-gray-600 leading-relaxed">
-                      Which card to use, whether a card is worth its fee, or how to lift your score. In English, Hindi or Hinglish.
-                    </p>
-                  </div>
-
-                  <div className="mt-2">
-                    <p className="mb-3 text-[13px] font-medium text-rc-muted">Try asking</p>
-                    <div className="flex flex-col gap-3">
-                      {[
-                        { icon: <CreditCard size={18} />, text: 'Buying a MacBook Pro on Amazon' },
-                        { icon: <Zap size={18} />, text: 'Dinner at Taj Hotel' },
-                        { icon: <Bot size={18} />, text: 'Booking Emirates flight to Dubai' },
-                      ].map((item, i) => (
-                        <button
-                          key={i}
-                          onClick={() => handleSubmit(undefined, item.text)}
-                          className="flex items-center gap-4 px-5 py-4 rounded-2xl bg-gray-50 hover:bg-white border border-gray-200 hover:border-brand-emerald hover:shadow-sm transition-all text-gray-900 text-[13px] font-medium text-left"
-                        >
-                          <div className="text-gray-400 group-hover:text-brand-emerald">{item.icon}</div>
-                          {item.text}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {appState === 'loading' && (
-                <motion.div
-                  key="loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center h-full gap-8"
-                >
-                  <div className="w-16 h-16 relative flex items-center justify-center">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 4, repeat: Infinity, ease:"linear" }}
-                      className="absolute inset-0 rounded-full border border-dashed border-brand-emerald/30"
-                    />
-                    <Sparkles className="w-6 h-6 text-brand-emerald animate-pulse" />
-                  </div>
-                  <div className="flex flex-col gap-3 w-full max-w-[200px]">
-                    {LOADING_STAGES.map((stage, idx) => {
-                      const isActive = idx === loadingStage;
-                      const isDone = idx < loadingStage;
-                      return (
-                        <motion.div
-                          key={stage}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: isActive || isDone ? 1 : 0.3, x: 0 }}
-                          className="flex items-center gap-3 w-full"
-                        >
-                          <div className="w-4 h-4 rounded-full flex items-center justify-center bg-gray-50 border border-gray-200 shrink-0">
-                            {isDone ? (
-                              <CheckCircle2 className="w-3 h-3 text-brand-emerald" />
-                            ) : isActive ? (
-                              <motion.div animate={{ scale: [1, 1.5, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-1.5 h-1.5 rounded-full bg-brand-emerald" />
-                            ) : (
-                              <div className="w-1 h-1 rounded-full bg-gray-300" />
-                            )}
-                          </div>
-                          <span className={`text-[11px] font-semibold ${isActive ? 'text-gray-900' : 'text-gray-500'}`}>
-                            {stage}
-                          </span>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
-
-              {appState === 'result' && decision && (
-                <motion.div
-                  key="result"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col h-full gap-4 pb-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900">
-                      {decision.evaluation?.best || (decision.cards && decision.cards.length > 0)
-                        ? 'Recommendation'
-                        : 'Taqdeer Insights'}
-                    </h3>
-                    <button onClick={reset} className="text-xs font-semibold text-brand-emerald hover:underline">
-                      Reset
-                    </button>
-                  </div>
-
-                  {decision.evaluation && decision.evaluation.best ? (
-                    <DecisionCard
-                      title="Best Fit"
-                      bestFit={decision.evaluation.best.card.name}
-                      why={decision.evaluation.delta > 0 && decision.evaluation.secondBest ? `Using this card earns you +₹${decision.evaluation.delta.toFixed(2)} more than your next best option. ${decision.evaluation.best.limitations.length > 0 ? decision.evaluation.best.limitations[0] : ''}` : decision.evaluation.best.reason}
-                      expectedValue={`${decision.evaluation.best.confidence !== 'EXACT' ? '~' : ''}₹${decision.evaluation.best.cappedRewardValue.toFixed(2)}`}
-                      tradeoff={decision.evaluation.secondBest ? `Next best: ${decision.evaluation.secondBest.card.name} (${decision.evaluation.secondBest.confidence !== 'EXACT' ? '~' : ''}₹${decision.evaluation.secondBest.cappedRewardValue.toFixed(2)})` : undefined}
-                      confidence={CONFIDENCE_SCORE[decision.evaluation.best.confidence] ?? 60}
-                      actionText="Use This Card"
-                    />
-                  ) : decision.cards && decision.cards.length > 0 ? (
-                    <DecisionCard
-                      title="Best Fit"
-                      bestFit={decision.cards[0].name}
-                      why={decision.source === 'ai' ? 'Card referenced in this answer.' : `Top match in our catalog for "${query}".`}
-                      expectedValue={`${decision.cards[0].baseRewardRate ?? '?'}% base`}
-                      tradeoff={decision.cards[0].annualFee === null ? 'Annual fee not confirmed' : `Annual fee: ₹${decision.cards[0].annualFee}`}
-                      confidence={60}
-                      actionText="Use This Card"
-                    />
-                  ) : null}
-
-                  <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-                    <h4 className="text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-3">
-                      {decision.evaluation?.best || (decision.cards && decision.cards.length > 0)
-                        ? 'Rationale'
-                        : 'Analysis & Advice'}
-                    </h4>
-                    <div className="prose prose-sm prose-gray max-w-none text-gray-700 text-[13px] leading-relaxed">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {decision.content}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-
-                  {/* Follow-up suggestion chips */}
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {['Which card for Swiggy?', 'Airport lounge access', 'Wallet health', 'Zero Forex cards'].map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        onClick={() => handleSubmit(undefined, suggestion)}
-                        className="text-[11px] font-medium text-gray-600 bg-gray-50 hover:bg-white hover:text-brand-emerald border border-gray-200 hover:border-brand-emerald rounded-full px-3 py-1.5 transition-all shadow-xs"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-          </div>
-
-          {/* Input Area */}
-          <div className="p-4 shrink-0 bg-white border-t border-gray-100">
-            <form onSubmit={(e) => handleSubmit(e)} className="relative">
-              <input
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Ask Taqdeer anything..."
-                className="w-full bg-gray-50 border border-gray-200 rounded-full py-4 pl-5 pr-14 text-[13px] font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald focus:bg-white transition-all shadow-inner"
-              />
-              <button
-                type="submit"
-                disabled={appState === 'loading' || !query.trim()}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gray-900 text-white hover:bg-brand-emerald disabled:opacity-50 disabled:hover:bg-gray-900 flex items-center justify-center transition-all shadow-md active:scale-95"
-              >
-                <ArrowRight size={16} />
-              </button>
-            </form>
-          </div>
-        </motion.div>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

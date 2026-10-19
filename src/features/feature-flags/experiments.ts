@@ -3,7 +3,7 @@ import type { Experiment } from './types';
 export const MOCK_EXPERIMENTS: Experiment[] = [
   {
     id: 'exp-taqdeer-ui',
-    name: 'TAQDEER Decision Card Design Variant',
+    name: 'Reni Decision Card Design Variant',
     variants: ['control', 'glass_emerald'],
     allocation: { control: 50, glass_emerald: 50 },
     status: 'running',

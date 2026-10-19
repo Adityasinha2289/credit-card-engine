@@ -271,12 +271,12 @@ export function Closer() {
 }
 
 const FAQ_ITEMS = [
-  { question: 'Is RenoCred free?', answer: 'Yes. Comparing cards, tracking your spending, reminders and Taqdeer are all free to use.' },
+  { question: 'Is RenoCred free?', answer: 'Yes. Comparing cards, tracking your spending, reminders and Reni are all free to use.' },
   { question: 'Will using RenoCred affect my credit score?', answer: 'No. We never pull your credit report. Eligibility estimates are based on the income and credit-score range you tell us, so nothing shows up with the credit bureaus.' },
   { question: 'Do I need to share my card numbers?', answer: 'No. You add cards by picking them from our catalogue. If you want SMS alerts matched to a card automatically, you can add its last four digits, never the full number or CVV.' },
   { question: 'Where do the reward rates come from?', answer: `From each issuer's own published terms: ${CATALOGUE_STATS.listed} cards from ${CATALOGUE_STATS.issuers} issuers so far. Our methodology page explains how we turn rates, caps and fees into a ranking.` },
   { question: 'How does RenoCred make money?', answer: 'Some card and partner links may earn us a commission when you apply or buy. That never changes how cards are ranked; our affiliate disclosure explains how it works.' },
-  { question: 'Which languages does Taqdeer speak?', answer: 'English, Hindi and Hinglish. Ask the way you would ask a friend; it replies in the same language.' },
+  { question: 'Which languages does Reni speak?', answer: 'English, Hindi and Hinglish. Ask the way you would ask a friend; it replies in the same language.' },
 ];
 
 export function FaqToggle() {

@@ -59,7 +59,7 @@ export class DecisionEngine {
     );
 
     if (allDecisions.length === 0) {
-      throw new Error('No TAQDEER decisions available.');
+      throw new Error('No Reni decisions available.');
     }
 
     // Rank by score descending and return the ONE top decision
@@ -99,7 +99,7 @@ export class DecisionEngine {
 }
 
 /**
- * React hook wrapper for consuming TAQDEER Decision in components
+ * React hook wrapper for consuming Reni Decision in components
  */
 export function useTaqdeerDecision(profile?: AppProfile | null) {
   const decision = DecisionEngine.getTodaysDecision(profile);

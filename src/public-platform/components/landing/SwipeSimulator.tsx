@@ -84,8 +84,8 @@ function CardPicker({ exclude, onAdd, disabled }: { exclude: string[]; onAdd: (c
   );
 }
 
-export function SwipeSimulator() {
-  // rendered as the page body of /calculators/which-card-to-use
+/** The which-card tool. `embedded`: just the tool, under a page header that already titles it. */
+export function SwipeSimulator({ embedded = false }: { embedded?: boolean } = {}) {
   const reduce = useReducedMotion();
   const [category, setCategory] = useState<SpendCategory>('dining');
   const [amount, setAmount] = useState(2500);
@@ -106,8 +106,9 @@ export function SwipeSimulator() {
   const categoryLabel = SPEND_CATEGORIES.find((c) => c.id === category)?.label.toLowerCase() ?? category;
 
   return (
-    <section className="pb-28 pt-16 lg:pb-36 lg:pt-24">
+    <section className={embedded ? 'pb-28 pt-12 lg:pb-36 lg:pt-20' : 'pb-28 pt-16 lg:pb-36 lg:pt-24'}>
       <Container>
+        {!embedded && (
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <Reveal className="lg:col-span-7">
             <Eyebrow>Free tool</Eyebrow>
@@ -119,8 +120,9 @@ export function SwipeSimulator() {
             </p>
           </Reveal>
         </div>
+        )}
 
-        <Reveal delay={0.15} className="mt-14">
+        <Reveal delay={0.15} className={embedded ? undefined : 'mt-14'}>
           <div className="grid overflow-hidden rounded-[28px] border border-rc-ink/10 bg-rc-paper lg:grid-cols-12">
             {/* inputs */}
             <div className="space-y-9 border-b border-rc-ink/10 p-6 sm:p-9 lg:col-span-5 lg:border-b-0 lg:border-r">

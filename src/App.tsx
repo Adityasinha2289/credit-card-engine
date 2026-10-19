@@ -5,7 +5,7 @@ import { useUser, RedirectToSignIn, RedirectToSignUp } from '@clerk/clerk-react'
 import { Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
 
 import { SiteAppLayout } from './components/layout/SiteAppLayout';
-import { BrandLoader } from './components/BrandLoader';
+import { LoaderHold } from './components/BrandLoader';
 import { useDashboardStore, useHydration } from './features/dashboard/store/dashboardStore';
 import { useSupabase } from './hooks/useSupabase';
 
@@ -163,7 +163,7 @@ export default function App() {
     // Exception for demo mode which requires no hydration or loading
     if (!window.location.search.includes('demo=onboarding') && !isProfileDemo) {
       return (
-        <BrandLoader label={isSignedIn ? 'Getting your cards ready' : 'Opening sign-in'} />
+        <LoaderHold />
       );
     }
   }
@@ -171,7 +171,7 @@ export default function App() {
   // 0. Intercept Demo Onboarding
   if (window.location.search.includes('demo=onboarding')) {
     return (
-      <Suspense fallback={<BrandLoader label="Opening the tour" />}>
+      <Suspense fallback={<LoaderHold />}>
         <DemoOnboarding />
       </Suspense>
     );
@@ -217,7 +217,8 @@ export default function App() {
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/account" element={<AccountPage />} />
 
-        <Route path="/taqdeer" element={<TaqdeerPage />} />
+        <Route path="/reni" element={<TaqdeerPage />} />
+        <Route path="/taqdeer" element={<Navigate to="/app/reni" replace />} />
 
         {/* old addresses */}
         <Route path="/credit/*" element={<Navigate to="/app/discover" replace />} />

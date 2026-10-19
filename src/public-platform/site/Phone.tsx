@@ -3,6 +3,7 @@
  * Screens are laid out at a fixed 280px design width and scale with the phone.
  */
 import { useMemo, type ReactNode } from 'react';
+import { ReniMark } from '../../features/taqdeer/components/ReniMark';
 import { ArrowUp, Bell, CreditCard, Home, MessageCircle, Wallet } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { CardFace, displayCardName } from './CardFace';
@@ -71,12 +72,13 @@ export function WalletScreen() {
   );
 }
 
+/** Reni, as seen on the landing page. */
 export function TaqdeerScreen() {
   return (
     <div className="relative h-[515px] px-4">
       <div className="mt-2 flex items-center gap-2.5 px-1">
-        <img src="/taqdeer-logo.png" alt="" className="h-8 w-8 rounded-full bg-rc-ink object-cover" />
-        <p className="font-serif text-[20px] font-semibold text-rc-ink">taqdeer</p>
+        <ReniMark size={32} tone="ink" />
+        <p className="font-serif text-[20px] font-semibold text-rc-ink">reni</p>
       </div>
       <div className="mt-8 space-y-3">
         <p className="ml-auto w-[82%] bg-rc-ink px-4 py-3 text-[13px] leading-snug text-rc-cream">Goa trip next month, ₹40,000. Kaunsa card use karun?</p>

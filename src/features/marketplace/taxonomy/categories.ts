@@ -556,7 +556,7 @@ export const MARKETPLACE_CATEGORIES: MarketplaceCategory[] = [
     slug: 'hobbies',
     name: 'Hobbies',
     description: 'From gadgets to gear, rewards for what you love.',
-    image: 'https://images.unsplash.com/photo-1511871893393-82ce9c2aa4bf?q=80&w=1200&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1200&auto=format&fit=crop',
     iconName: 'Heart',
     subcategories: [
       {

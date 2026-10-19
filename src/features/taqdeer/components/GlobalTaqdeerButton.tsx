@@ -1,53 +1,24 @@
-import React, { useState } from 'react';
+/** The way into Reni on wider screens: a quiet pill at the bottom right. */
+import { X } from 'lucide-react';
+import { ReniMark } from './ReniMark';
 import { cn } from '../../../lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
 
-interface GlobalTaqdeerButtonProps {
-  onClick: () => void;
-  isOpen: boolean;
-}
-
-export function GlobalTaqdeerButton({ onClick, isOpen }: GlobalTaqdeerButtonProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
+export function GlobalTaqdeerButton({ onClick, isOpen }: { onClick: () => void; isOpen: boolean }) {
   return (
-    <div className="fixed bottom-5 right-4 z-[100] flex items-center justify-center sm:bottom-6 sm:right-6">
-      <div 
-        className="relative flex items-center justify-center"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <AnimatePresence>
-          {isHovered && !isOpen && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              className="absolute right-[calc(100%+16px)] px-3 py-1.5 rounded-lg bg-white border border-white/[0.05] shadow-xl pointer-events-none"
-            >
-              <span className="text-[11px] font-medium text-gray-900 whitespace-nowrap">Ask Taqdeer</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Breathing emerald backdrop when idle */}
-        {!isOpen && (
-          <div className="absolute inset-0 rounded-2xl bg-[#2A9D5C]/20 blur-md animate-[pulse_4s_ease-in-out_infinite]" />
-        )}
-
-        <button
-          onClick={onClick}
-          aria-label="Open Taqdeer"
-          className={cn(
-            "relative w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300",
-            "bg-white border border-white/[0.05] shadow-lg",
-            "hover:border-[#2A9D5C]/50 hover:bg-[#0A2418] hover:-translate-y-0.5",
-            isOpen ? "border-[#2A9D5C] text-[#2A9D5C]" : "text-gray-900"
-          )}
-        >
-          <img src="/taqdeer-logo.png" alt="Taqdeer AI" className="w-full h-full object-cover rounded-2xl" />
-        </button>
-      </div>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={isOpen ? 'Close Reni' : 'Ask Reni'}
+      aria-expanded={isOpen}
+      className={cn(
+        'fixed bottom-6 right-6 z-[100] inline-flex h-12 items-center gap-2.5 rounded-full bg-rc-ink pl-1.5 pr-5 text-[14px] font-medium text-rc-cream',
+        'shadow-[0_18px_40px_-16px_rgba(10,31,21,0.7)] ring-1 ring-white/10 transition-transform duration-300 hover:-translate-y-0.5',
+      )}
+    >
+      {isOpen
+        ? <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"><X size={17} /></span>
+        : <ReniMark size={36} tone="pistachio" />}
+      {isOpen ? 'Close' : 'Ask Reni'}
+    </button>
   );
 }

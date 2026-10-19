@@ -227,7 +227,7 @@ export default function SubscriptionsPage() {
 
   // ── render ────────────────────────────────────────────────────────────────
   return (
-    <PageContainer title="Subscriptions" className="pb-safe max-w-3xl mx-auto">
+    <PageContainer eyebrow="Money" title={<>Every renewal, <span className="italic">before it hits.</span></>} subtitle="Track what you pay for and we'll remind you before each charge, and before free trials turn paid." className="pb-safe max-w-3xl mx-auto">
       <div className="py-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
         <Link to="/app/money" className="text-sm text-gray-500 hover:text-gray-900">← Money Manager</Link>

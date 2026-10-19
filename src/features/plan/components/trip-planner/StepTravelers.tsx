@@ -16,7 +16,7 @@ export function StepTravelers({ initialTravelers, onNext, onBack }: StepTraveler
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex-1 flex flex-col justify-center items-center">
         <h2 className="text-3xl font-display font-semibold text-gray-900 tracking-tight mb-12 text-center">
-          WHO'S COMING?
+          Who's coming?
         </h2>
 
         <div className="flex items-center gap-8">

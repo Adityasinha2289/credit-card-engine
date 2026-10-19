@@ -15,7 +15,7 @@ export function StepOrigin({ initialOrigin, onNext }: StepOriginProps) {
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex-1">
         <h2 className="text-3xl font-display font-semibold text-gray-900 tracking-tight mb-8">
-          WHERE ARE YOU STARTING FROM?
+          Where are you starting from?
         </h2>
 
         <PlaceSearchInput 

@@ -34,7 +34,7 @@ export default function TransactionsPage() {
   }, [transactions, filter]);
 
   return (
-    <PageContainer title="Recent Transactions" className="pb-safe max-w-3xl mx-auto">
+    <PageContainer eyebrow="Money" title={<>Where it <span className="italic">went.</span></>} subtitle="Your recent spending, by card and category." className="pb-safe max-w-3xl mx-auto">
       <div className="py-6 space-y-4 animate-in fade-in slide-in-from-bottom-4">
 
         {/* Filters */}

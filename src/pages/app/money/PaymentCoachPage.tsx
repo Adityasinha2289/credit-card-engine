@@ -57,7 +57,7 @@ export default function PaymentCoachPage() {
   };
 
   return (
-    <PageContainer title="Payment Coach" className="pb-safe max-w-3xl mx-auto">
+    <PageContainer eyebrow="Payment coach" title={<>Which card, <span className="italic">right now?</span></>} subtitle="Enter what you're about to pay and RenoCred ranks your cards by what each one earns on it." className="pb-safe max-w-3xl mx-auto">
       <div className="py-6 space-y-6 animate-in fade-in slide-in-from-bottom-4">
         
         <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
@@ -118,7 +118,7 @@ export default function PaymentCoachPage() {
             <button 
               onClick={handleAnalyze}
               disabled={!(parseFloat(amount) > 0) || (merchantType === 'P2M' && !merchant.trim() && category === 'auto')}
-              className="w-full mt-6 bg-emerald-600 text-white font-medium py-3 rounded-full hover:bg-emerald-700 transition-colors disabled:opacity-50"
+              className="mt-6 w-full rounded-full bg-rc-ink py-3 font-medium text-rc-cream transition-colors hover:bg-rc-moss disabled:opacity-50"
             >
               Analyze Payment
             </button>

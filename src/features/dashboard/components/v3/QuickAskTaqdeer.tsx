@@ -113,7 +113,7 @@ export function QuickAskTaqdeer() {
           >
             <div className="w-full max-w-3xl flex flex-col items-center text-center mt-[-10vh]">
 
-              {/* TAQDEER Mark & Headline */}
+              {/* Reni Mark & Headline */}
               <div className="w-14 h-14 rounded-2xl bg-[#111] border border-gray-300 flex items-center justify-center mb-8 shadow-2xl">
                 <Sparkles className="w-6 h-6 text-[#2A9D5C]" />
               </div>
@@ -122,7 +122,7 @@ export function QuickAskTaqdeer() {
                 What are you planning to buy?
               </h1>
               <p className="text-gray-600 text-lg md:text-xl font-light mb-12">
-                Describe any purchase. TAQDEER recommends exactly which card to use.
+                Describe any purchase. Reni recommends exactly which card to use.
               </p>
 
               {/* HERO COMPOSER */}
@@ -404,7 +404,7 @@ export function QuickAskTaqdeer() {
                   </button>
                 </div>
                 <p className="text-center text-[10px] text-gray-600 font-medium mt-4">
-                  TAQDEER AI analyzes merchant codes (MCC) and real-time bank offers. AI decisions may occasionally be inaccurate.
+                  Reni AI analyzes merchant codes (MCC) and real-time bank offers. AI decisions may occasionally be inaccurate.
                 </p>
               </div>
             </div>

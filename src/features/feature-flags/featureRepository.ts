@@ -7,7 +7,7 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlag[] = [
     enabled: true,
     rolloutPercentage: 100,
     environments: ['development', 'staging', 'production'],
-    description: 'Enables TAQDEER Financial Decision Engine v2',
+    description: 'Enables Reni Financial Decision Engine v2',
   },
   {
     id: 'ff-2',

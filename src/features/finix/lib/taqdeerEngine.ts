@@ -1,8 +1,13 @@
 /**
  * taqdeerEngine.ts
- * Smart client-side credit card reasoning engine.
- * Parses user questions regarding merchants, banks, lounge access, fees,
- * and credit score health, and cross-references with the user's actual wallet.
+ * Reni's answers. Well-understood questions (which card for a spend, a card
+ * or bank, lounges, fees, credit score) are answered instantly on the device
+ * from the card data and the user's wallet; everything else goes to the
+ * grounded AI (/api/taqdeer).
+ *
+ * House style for every answer: the answer first, in one bold line; then at
+ * most three short points. No emojis, no headings, no greetings or sign-offs,
+ * and no figure that isn't in our data.
  */
 
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../data/cardDataset';
@@ -12,6 +17,8 @@ import type { TransactionEvaluationResult } from './evaluateTransaction';
 import { useDashboardStore } from '../../dashboard/store/dashboardStore';
 import { evaluatePayment } from '../../financial-engine/rewardsApi';
 import { deriveMonthlySpend } from '../../financial-engine/RewardsFacade';
+import { displayCardName } from '../../../public-platform/site/CardFace';
+import { addedValue, spendProfile } from '../../../pages/app/picks/picks';
 
 export interface TaqdeerMessage {
   id: string;
@@ -22,53 +29,73 @@ export interface TaqdeerMessage {
   evaluation?: TransactionEvaluationResult;
 }
 
-// Helper to normalize card names for matching
+/** Emoji and pictographs out of a string (AI text included): answers stay plain and professional. */
+export function stripEmoji(text: string): string {
+  return text
+    .replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\u{FE0F}\u{200D}\u{20E3}]/gu, '')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/^[ \t]+(?=\S)/gm, (m) => (m.length >= 2 ? m : ''));
+}
+
 function normalizeText(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-// Map spend category to user-friendly label
 const CATEGORY_LABELS: Record<SpendCategory, string> = {
-  dining: 'Dining',
-  travel: 'Travel',
-  groceries: 'Groceries',
-  shopping: 'Shopping',
-  fuel: 'Fuel',
-  entertainment: 'Entertainment',
-  utilities: 'Utilities',
-  transport: 'Transport',
-  health: 'Health',
-  subscriptions: 'Subscriptions',
-  other: 'General Spend',
+  dining: 'dining',
+  travel: 'travel',
+  groceries: 'groceries',
+  shopping: 'shopping',
+  fuel: 'fuel',
+  entertainment: 'movies and entertainment',
+  utilities: 'bills',
+  transport: 'transport',
+  health: 'health',
+  subscriptions: 'subscriptions',
+  other: 'general spend',
 };
 
-// Map spend category to emojis
-const CATEGORY_EMOJIS: Record<SpendCategory, string> = {
-  dining: '🍳',
-  travel: '✈️',
-  groceries: '🛍️',
-  shopping: '🛒',
-  fuel: '⛽',
-  entertainment: '🎬',
-  utilities: '⚡',
-  transport: '🚕',
-  health: '💊',
-  subscriptions: '🎵',
-  other: '📌',
+const rupees = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
+const reward = (n: number) => `₹${n.toFixed(n < 10 ? 2 : 0)}`;
+const feeText = (fee: number | null) => (fee === null ? 'fee not published' : fee === 0 ? 'lifetime free' : `${rupees(fee)} a year`);
+/** How issuers write their own names inside card names ("AMEX" cards say "American Express"). */
+const BANK_ALIASES: Record<string, string[]> = { amex: ['american express', 'amex'], sbi: ['sbi'], bob: ['bob', 'bank of baroda'] };
+const cardName = (c: FinixCard) => {
+  const name = c.name.toLowerCase();
+  const bank = c.bank.toLowerCase().split(' ')[0];
+  const named = (BANK_ALIASES[bank] ?? [bank]).some((a) => name.includes(a));
+  return displayCardName(named ? c.name : `${c.bank} ${c.name}`);
 };
+/** The data marks unlimited lounge access as 999. */
+const visits = (n: number | undefined) => ((n ?? 0) >= 99 ? 'unlimited' : `${n} a year`);
+
+function rateFor(card: FinixCard, category: SpendCategory): number {
+  return card.rewards?.find((r) => r.category === category)?.rate ?? card.baseRewardRate ?? 0;
+}
+
+/** Best card for a spend; on a tie, the card with a rate made for that spend. */
+function bestFor(cards: FinixCard[], category: SpendCategory): FinixCard {
+  const own = (c: FinixCard) => Number(c.rewards?.some((r) => r.category === category) ?? false);
+  return [...cards].sort((a, b) => rateFor(b, category) - rateFor(a, category) || own(b) - own(a))[0];
+}
+
+function topRate(card: FinixCard): { category: SpendCategory; rate: number } | null {
+  const best = [...(card.rewards ?? [])].sort((a, b) => b.rate - a.rate)[0];
+  return best ? { category: best.category, rate: best.rate } : null;
+}
+
+function walletCards(userCards: CardData[]): FinixCard[] {
+  return userCards.map((u) => CARD_DATASET.find((c) => c.id === u.id)).filter(Boolean) as FinixCard[];
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  INTENT REGISTRY PATTERN
+//  INTENT REGISTRY
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface IntentHandler {
   name: string;
   test: (lower: string, query: string, userCards: CardData[]) => boolean;
-  handler: (
-    query: string,
-    userCards: CardData[],
-    lower: string
-  ) => { content: string; cards?: FinixCard[] };
+  handler: (query: string, userCards: CardData[], lower: string) => { content: string; cards?: FinixCard[] };
 }
 
 const BANK_PATTERNS: [RegExp, string][] = [
@@ -77,430 +104,221 @@ const BANK_PATTERNS: [RegExp, string][] = [
   [/\bkotak\b/, 'kotak'], [/\bau (small finance )?bank\b/, 'au'], [/\b(bob|bank of baroda)\b/, 'bob'], [/\bpnb\b/, 'pnb'],
 ];
 
+const NAME_NOISE = new Set(['bank', 'credit', 'card', 'the', 'of', 'edition', 'metal']);
+
+/** A card named in the question: "axis atlas", "atlas axis", "Swiggy HDFC". The bank has to be named too. */
+function matchCard(lower: string): FinixCard | undefined {
+  const q = normalizeText(lower);
+  const hits = CARD_DATASET.filter((c) => {
+    if (q.includes(normalizeText(c.name))) return true;
+    const bankWords = c.bank.toLowerCase().split(/\s+/).filter((w) => !NAME_NOISE.has(w));
+    const rest = c.name.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter((w) => w && !NAME_NOISE.has(w) && !bankWords.includes(w));
+    const remainder = rest.join('');
+    // a real remainder ('' would match anything), and the bank named in the question
+    return remainder.length >= 3 && q.includes(remainder) && bankWords.some((w) => w.length >= 2 && new RegExp(`\\b${w}\\b`).test(lower));
+  });
+  // the most specific name wins ("Infinia Metal" over "Infinia")
+  return hits.sort((a, b) => b.name.length - a.name.length)[0];
+}
+
 const INTENT_REGISTRY: IntentHandler[] = [
-  // 1. GREETING & CASUAL CONVERSATION
   {
     name: 'greeting',
-    // Only when the message IS a greeting / "what can you do". Previously any
-    // message containing words like "evening", "help" or "bot" got the greeting,
-    // e.g. "best card for dinner this evening".
+    // Only when the message IS a greeting / "what can you do" (not "best card for dinner this evening").
     test: (lower) => {
       const words = lower.replace(/[^a-z' ]/g, ' ').trim().split(/\s+/).filter(Boolean);
       if (/^(who are you|what can you do|what do you do|help|help me)\??$/.test(lower.trim())) return true;
       return words.length <= 4 &&
-        /^(hi|hello|hey|hii+|greetings|wassup|what'?s up|whats up|sup|yo|howdy|hiya|how are you|good morning|good evening|good afternoon|namaste|namaskar|hey taqdeer|hi taqdeer|hello taqdeer)\b/.test(words.join(' '));
+        /^(hi|hello|hey|hii+|greetings|wassup|what'?s up|whats up|sup|yo|howdy|hiya|how are you|good morning|good evening|good afternoon|namaste|namaskar|hey taqdeer|hi taqdeer|hello taqdeer|hey reni|hi reni|hello reni)\b/.test(words.join(' '));
     },
-    handler: (_query, userCards, lower) => {
-      const isCasual = /\b(wassup|what'?s up|whats up|sup|yo|dwag|bro|dude)\b/i.test(lower);
-      const greetingHeader = isCasual
-        ? `👋 **Yo! All good here — ready to maximize your rewards!** 🚀`
-        : `👋 **Hey! I'm Taqdeer, your Credit Intelligence Assistant!** 🤖`;
-
-      const walletCount = userCards.length;
-      const walletStatus =
-        walletCount > 0
-          ? `I'm connected to your **${walletCount} wallet card${walletCount > 1 ? 's' : ''}**.`
-          : `You currently have 0 cards linked in your wallet.`;
-
+    handler: (_query, userCards) => {
+      const n = userCards.length;
       return {
-        content: `${greetingHeader}
-
-${walletStatus} I continuously analyze 130+ credit cards across India to help you get the highest cashback, miles, and lounge perks.
-
-**Try asking me:**
-• 🍳 *"Which card is best for Swiggy & Zomato?"*
-• ✈️ *"Which cards offer free airport lounge access?"*
-• 🌐 *"What are the best Zero Forex markup cards for abroad?"*
-• 💳 *"What is my wallet health score?"*
-• 📱 *"Which RuPay cards give the best cashback on UPI?"*
-• 📈 *"How can I improve my CIBIL score quickly?"*
-
-What purchase or strategy can I optimize for you?`,
+        content: `**I'm Reni. Ask me which card to use, or anything about your cards.**
+- ${n > 0 ? `I can see the ${n} ${n === 1 ? 'card' : 'cards'} in your wallet.` : 'Add your cards in Wallet and I can answer for them.'}
+- Try a purchase with an amount, like "₹1,200 on Swiggy", or a card's fees, lounges and rates.`,
       };
     },
   },
-  // 2. DETECT CIBIL SCORE / CREDIT HEALTH
   {
     name: 'cibil_health',
-    test: (lower) => /\b(cibil|credit score|improve score|credit rating|my score|utilization|usage|boost score)\b/i.test(lower),
+    test: (lower) => /\b(cibil|credit score|improve score|credit rating|my score|utili[sz]ation|boost score)\b/i.test(lower),
     handler: (_query, userCards) => {
-      let utilizationMsg = "";
       // only cards whose limit the user has told us count; never report "0% used" on unknown limits
       const withLimits = userCards.filter((c) => c.creditLimit > 0);
-      if (userCards.length > 0 && withLimits.length === 0) {
-        utilizationMsg = `\n\n📊 **Your utilisation:** add each card's credit limit in Wallet and I can show how much of it you're using.`;
-      } else if (withLimits.length > 0) {
-        const totalLimit = withLimits.reduce((sum, c) => sum + c.creditLimit, 0) / 100;
-        const totalAvail = withLimits.reduce((sum, c) => sum + c.availableCredit, 0) / 100;
-        const totalBalance = Math.max(0, totalLimit - totalAvail);
-        const utilPct = totalLimit > 0 ? Math.round((totalBalance / totalLimit) * 100) : 0;
-
-        utilizationMsg = `\n\n📊 **Your Real-time Utilization Stats:**
-• Total Wallet Limit: **₹${totalLimit.toLocaleString('en-IN')}**
-• Total Outstanding: **₹${totalBalance.toLocaleString('en-IN')}**
-• Current Utilization: **${utilPct}%** ${utilPct > 30 ? '⚠️ *(High! Keep below 30% to avoid CIBIL drops)*' : '🟢 *(Healthy! Below 30% target)*'}`;
+      let util = '- Add each card\'s limit in Wallet and I can tell you how much of it you\'re using.';
+      if (withLimits.length > 0) {
+        const limit = withLimits.reduce((s, c) => s + c.creditLimit, 0) / 100;
+        const used = Math.max(0, limit - withLimits.reduce((s, c) => s + c.availableCredit, 0) / 100);
+        const pct = limit > 0 ? Math.round((used / limit) * 100) : 0;
+        util = `- You're using ${pct}% of your limits (${rupees(used)} of ${rupees(limit)})${pct > 30 ? ', above the 30% bureaus like to see.' : ', within the healthy range.'}`;
       }
-
       return {
-        content: `📈 **CIBIL Credit Score Optimization Guide**
-
-Your CIBIL score is evaluated based on these key factors:
-1. **Payment History (35%)** — Pay card bills on time. Even one late payment can drop your score by 50+ points.
-2. **Credit Utilization Ratio (30%)** — The percentage of your credit limit you actually use. Always keep this **under 30%**.
-3. **Credit History Age (15%)** — Older credit lines raise your score. Do not close your oldest active card.
-4. **Credit Mix (15%)** — A healthy mix of secured (loans) and unsecured (cards) debt.
-5. **New Inquiries (5%)** — Multiple credit searches within a short period trigger hard inquiries.${utilizationMsg}
-
-💡 **Pro Tip:** Pay outstanding balances 3-5 days before the statement generation date so that a near-zero balance is reported to Experian/CIBIL!`,
+        content: `**Paying on time and keeping utilisation under 30% move your score the most.**
+${util}
+- Pay before the statement date, so a low balance is what gets reported.
+- Keep your oldest card open, and space out new card applications.`,
       };
     },
   },
-  // 3. WALLET HEALTH ANALYZER
   {
     name: 'wallet_health',
-    test: (lower) => /\b(wallet health|wallet score|wallet status|optimize wallet|my wallet|wallet analysis|portfolio)\b/i.test(lower),
+    test: (lower) => /\b(wallet health|wallet score|wallet status|optimi[sz]e (my )?wallet|my wallet|wallet analysis|portfolio)\b/i.test(lower),
     handler: (_query, userCards) => {
-      if (userCards.length === 0) {
-        return {
-          content: `📊 **Your Wallet Health Score: 0/100**
-
-⚠️ **Your wallet is currently empty!**
-Please add one or more credit cards on the **Dashboard** home screen to evaluate your spending coverage and reward multipliers.`,
-        };
-      }
-
-      const categoriesToTest: SpendCategory[] = ['dining', 'travel', 'shopping', 'groceries', 'fuel', 'utilities'];
-      const coverageDetails: string[] = [];
-      let coveredCount = 0;
-
-      categoriesToTest.forEach((cat) => {
-        let maxRate = 0;
-        userCards.forEach((uc) => {
-          const datasetCard = CARD_DATASET.find((dc) => dc.id === uc.id);
-          if (datasetCard) {
-            const rate = datasetCard.rewards?.find((r) => r.category === cat)?.rate ?? datasetCard.baseRewardRate;
-            if (rate > maxRate) maxRate = rate;
-          } else {
-            if (1 > maxRate) maxRate = 1;
-          }
-        });
-
-        const emoji = CATEGORY_EMOJIS[cat];
-        const label = CATEGORY_LABELS[cat];
-        if (maxRate >= 3) {
-          coveredCount += 2;
-          coverageDetails.push(`• 🟢 **${label} ${emoji}**: Excellent coverage (Max multiplier: **${maxRate}%**).`);
-        } else if (maxRate >= 1.5) {
-          coveredCount += 1.2;
-          coverageDetails.push(`• 🟡 **${label} ${emoji}**: Average coverage (Max multiplier: **${maxRate}%**). Consider upgrading.`);
-        } else {
-          coverageDetails.push(`• 🔴 **${label} ${emoji}**: Poor coverage (Max multiplier: **${maxRate}%**). You are missing out on cashback!`);
-        }
+      const wallet = walletCards(userCards);
+      if (wallet.length === 0) return { content: '**Your wallet is empty.**\n- Add the cards you own in Wallet and I\'ll show where each one earns most.' };
+      const cats: SpendCategory[] = ['dining', 'travel', 'shopping', 'groceries', 'fuel', 'utilities'];
+      const rows = cats.map((cat) => {
+        const mine = bestFor(wallet, cat);
+        const market = bestFor(CARD_DATASET, cat);
+        return { cat, mine, mineRate: rateFor(mine, cat), market, marketRate: rateFor(market, cat) };
       });
-
-      const finalScore = Math.min(100, Math.round((coveredCount / 12) * 100));
-
-      const suggestions: string[] = [];
-      if (!userCards.some(c => c.id.includes('fuel'))) {
-        suggestions.push('• **ICICI HPCL Super Saver** (4% back on Fuel + surcharge waivers)');
-      }
-      if (!userCards.some(c => c.id.includes('amazon') || c.id.includes('shopping'))) {
-        suggestions.push('• **Amazon Pay ICICI** (5% back on shopping for Prime members)');
-      }
-      if (!userCards.some(c => c.id.includes('black') || c.id.includes('diners') || c.id.includes('infinia'))) {
-        suggestions.push('• **HDFC Diners Club Black / Infinia** (Premium dining/travel multiplier up to 10-33%)');
-      }
-
+      const gap = [...rows].sort((a, b) => (b.marketRate - b.mineRate) - (a.marketRate - a.mineRate))[0];
       return {
-        content: `📊 **Your Wallet Health Score: ${finalScore}/100**
+        content: `**Your best rate for each kind of spend:**
+${rows.map((r) => `- ${CATEGORY_LABELS[r.cat][0].toUpperCase()}${CATEGORY_LABELS[r.cat].slice(1)}: ${r.mineRate}% (${cardName(r.mine)})`).join('\n')}
 
-Here is the breakdown of your reward category coverage:
-${coverageDetails.join('\n')}
-
-${suggestions.length > 0 ? `🚀 **How to improve your score:**\nAdd one of these cards to fill the gaps in your rewards coverage:\n${suggestions.join('\n')}` : '🎉 **Outstanding!** Your wallet has excellent reward coverage across all key spending categories!'}`,
+${gap.marketRate > gap.mineRate ? `Biggest gap: ${CATEGORY_LABELS[gap.cat]}, where ${cardName(gap.market)} pays ${gap.marketRate}%. Picks for you shows what it would add a year.` : 'No card in our data beats your wallet by much on any of these.'}`,
+        cards: gap.marketRate > gap.mineRate ? [gap.market] : undefined,
       };
     },
   },
-  // 4. FOREX & INTERNATIONAL SPEND
   {
     name: 'forex_international',
     test: (lower) => /\b(forex|international|foreign|zero forex|0 forex|fx markup|cross border|abroad|dollar|overseas|currency markup)\b/i.test(lower),
-    handler: () => {
-      const forexCards = CARD_DATASET.filter((c) =>
-        c.highlights.some(h => /forex|international|travel/i.test(h)) ||
-        c.name.toLowerCase().includes('atlas') ||
-        c.name.toLowerCase().includes('safari')
-      ).slice(0, 3);
-
-      return {
-        content: `🌐 **Zero Forex & International Travel Cards Guide**
-
-Standard credit cards charge **3.5% + 18% GST** (total ~4.13%) as forex markup fee on foreign currency transactions!
-
-🏆 **Top 0% to Low Forex Cards in India:**
-• **Scapia Federal Card**: **0% Forex markup** + unlimited domestic lounge access (on ₹5k monthly spend).
-• **Niyo Global / Equitas**: **0% Forex markup** on international POS & online transactions.
-• **RBL World Safari**: **0% Forex markup** on all foreign currency spends + travel insurance.
-• **Axis Atlas**: 2% reward rate on international flights/hotels, effective forex yield positive.
-• **IDFC FIRST WOW**: **0% Forex markup** (FD backed, lifetime free).
-
-💡 **Pro Tip:** Always choose to be billed in the **local currency** (EUR, USD, AED) at POS machines abroad to avoid dynamic currency conversion (DCC) extra charges!`,
-        cards: forexCards,
-      };
-    },
+    handler: () => ({
+      content: `**Most cards add a forex markup of about 3.5% plus GST (around 4.1%) on foreign-currency spends.**
+- We don't hold every card's forex markup yet, so I won't rank cards on it.
+- Abroad, choose to pay in the local currency, not rupees, to avoid the terminal's conversion charge.`,
+    }),
   },
-  // 5. AIRPORT LOUNGE ACCESS
   {
     name: 'lounge_access',
     test: (lower) => /\b(lounge|lounges|airport lounge|domestic lounge|international lounge|priority pass|dreamfolks)\b/i.test(lower),
     handler: (_query, userCards) => {
-      const userLoungeCards = userCards
-        .map((uc) => {
-          const dc = CARD_DATASET.find((c) => c.id === uc.id);
-          return { label: uc.label || dc?.name, visits: dc?.loungeAccess ?? 0 };
-        })
-        .filter((c) => c.visits > 0);
-
-      const topLoungeCards = CARD_DATASET.filter((c) => (c.loungeAccess ?? 0) >= 8)
-        .sort((a, b) => (b.loungeAccess ?? 0) - (a.loungeAccess ?? 0))
-        .slice(0, 3);
-
-      let userCardsMsg = "";
-      if (userLoungeCards.length > 0) {
-        userCardsMsg = `💳 **Lounge access in your wallet:**\n${userLoungeCards.map((c) => `• **${c.label}**: ${c.visits} complimentary visits/year`).join('\n')}\n\n`;
-      } else {
-        userCardsMsg = `💳 **Lounge access in your wallet:**\n• ❌ None of your active cards offer complimentary airport lounge access.\n\n`;
-      }
-
+      const mine = walletCards(userCards).filter((c) => (c.loungeAccess ?? 0) > 0);
+      const top = [...CARD_DATASET].filter((c) => (c.loungeAccess ?? 0) > 0).sort((a, b) => (b.loungeAccess ?? 0) - (a.loungeAccess ?? 0)).slice(0, 2);
       return {
-        content: `✈️ **Airport Lounge Access Analysis**
-
-${userCardsMsg}🏆 **Top cards in the market for lounge access:**
-${topLoungeCards.map((c) => `• **${c.bank} ${c.name}**: ${c.loungeAccess} visits/year (Annual Fee: ₹${c.annualFee})`).join('\n')}
-
-💡 *Note: Most Indian banks now require a minimum spend of ₹10,000 to ₹35,000 in the previous calendar quarter to unlock complimentary lounge access visits.*`,
-        cards: topLoungeCards,
+        content: `${mine.length > 0
+          ? `**${mine.length === 1 ? 'One' : mine.length} of your cards ${mine.length === 1 ? 'includes' : 'include'} free lounge visits: ${mine.map((c) => `${cardName(c)} (${visits(c.loungeAccess)})`).join(', ')}.**`
+          : '**None of your cards includes free lounge visits.**'}
+- Most issuers now ask for a minimum spend in the previous quarter to unlock them.
+- Most visits in our data: ${top.map((c) => `${cardName(c)} (${visits(c.loungeAccess)}, ${feeText(c.annualFee)})`).join('; ')}.`,
+        cards: top,
       };
     },
   },
-  // 6. POP CULTURE & CELEBRITIES (e.g. Shah Rukh Khan, actors, movies)
-  {
-    name: 'celebrity_popculture',
-    test: (lower) => /\b(shahrukh|shah rukh|srk|salman|aamir|actor|bollywood|celebrity|virat|kohli|dhoni)\b/i.test(lower),
-    handler: (_query, _userCards, lower) => {
-      const isSRK = /\b(shahrukh|shah rukh|srk)\b/i.test(lower);
-      const title = isSRK ? `👑 **Shah Rukh Khan (SRK) — King Khan of Bollywood!** 🎬` : `⭐ **Bollywood & Pop Culture Spotlight** 🎬`;
-
-      return {
-        content: `${title}
-
-${isSRK ? `Shah Rukh Khan is one of the world's biggest movie icons and the King of Romance!` : `A legendary icon in Indian entertainment!`}
-
-🎟️ **Planning to watch their next blockbuster on the big screen?**
-Here are the top credit cards to get **Buy 1 Get 1 Free (B1G1)** tickets on BookMyShow & PVR:
-• **Axis Neo / My Zone**: **Buy 1 Get 1 Free** on BookMyShow & Paytm Movies.
-• **RBL BookMyShow Play**: ₹500 off on movie bookings every month.
-• **ICICI Sapphiro / Rubyx**: **Buy 1 Get 1 Free** (up to 2 free tickets per month).
-• **Kotak PVR INOX**: Free PVR movie tickets on reaching spend milestones.
-
-💡 *Ask me: "Which cards offer Buy 1 Get 1 free on movie tickets?"*`,
-      };
-    },
-  },
-  // 7. MOVIE & ENTERTAINMENT
-  {
-    name: 'movie_entertainment',
-    test: (lower) => /\b(movie|movies|cinema|theatre|theater|pvr|inox|bookmyshow|bms|cinepolis)\b/i.test(lower),
-    handler: () => ({
-      content: `🎬 **Best Credit Cards for Movie Tickets (BookMyShow, PVR & INOX)**
-
-Never pay full price for movie tickets! Here are the best cards for cinema savings:
-
-🏆 **Top Movie & Entertainment Cards:**
-• **RBL Play Credit Card**: Free ₹500 discount every month on BookMyShow (on spending ₹5,000/month).
-• **Axis My Zone Credit Card**: **Buy 1 Get 1 Free** on Paytm Movies (up to ₹200 discount, 100% discount on 2nd ticket).
-• **ICICI Sapphiro Credit Card**: **Buy 1 Get 1 Free** on BookMyShow (up to ₹500 off on the second ticket, twice a month).
-• **Kotak PVR INOX Card**: Earn 1-2 free PVR tickets every month on monthly spend milestones.
-• **IndusInd Legend**: **Buy 1 Get 1 Free** on BookMyShow (up to 3 free tickets per month).
-
-💡 **Pro Tip:** Daily quotas for bank movie discounts reset at midnight or 10 AM. Book your weekend tickets early to claim the quota!`,
-    }),
-  },
-  // 8. JOKES & HUMOR
-  {
-    name: 'jokes_fun',
-    test: (lower) => /\b(joke|jokes|make me laugh|funny|humor|tell me a joke)\b/i.test(lower),
-    handler: () => ({
-      content: `😄 **Here's a financial joke for you:**
-
-*Why did the credit card go to therapy?*
-Because it had too much emotional baggage and couldn't stop *revolving* its balance at 42% APR! 💳😂
-
-*Pro Tip:* Don't let your credit balance revolve! Always pay the **Total Amount Due** to keep your interest rate at 0% and your CIBIL score high.
-
-What credit perk or purchase can I calculate for you today?`,
-    }),
-  },
-  // 9. ABOUT RENOCRED & TAQDEER
   {
     name: 'about_platform',
     test: (lower) => /\b(renocred|about taqdeer|what is taqdeer|what is renocred|how do you work|how does taqdeer work)\b/i.test(lower),
     handler: () => ({
-      content: `⚡ **About RenoCred & Taqdeer AI**
-
-**RenoCred** is India's premier credit card intelligence platform.
-**Taqdeer** is our smart AI decision engine designed to:
-• 🧠 **Maximize Cashback:** Instantly calculates exact reward points and merchant MCC rates across 130+ cards.
-• 💳 **Wallet Personalization:** Compares your connected cards against live bank rules.
-• ✈️ **Perks & Privileges:** Tracks airport lounge access, milestone bonuses, and fee waivers.
-
-Try asking:
-• *"Which card should I use for Amazon or Swiggy?"*
-• *"What are the best lifetime free cards?"*
-• *"Analyze my wallet health"*`,
+      content: `**I answer questions about your cards from each issuer's published terms.**
+- Which of your cards to use for a purchase, and what it earns.
+- A card's fees, rates and lounge visits, and how it compares with yours.
+- Credit-score basics. I'm not a financial adviser.`,
     }),
   },
-  // 10. LIFETIME FREE CARDS / ANNUAL FEES
   {
     name: 'free_cards',
     test: (lower) => /\b(free cards?|annual fees?|joining fee|lifetime free|ltf|fee waiver|no (annual )?fee|zero fee)\b/i.test(lower),
     handler: () => {
-      const freeCards = CARD_DATASET.filter((c) => c.annualFee === 0).slice(0, 4);
-
+      const free = CARD_DATASET.filter((c) => c.annualFee === 0)
+        .sort((a, b) => (topRate(b)?.rate ?? b.baseRewardRate ?? 0) - (topRate(a)?.rate ?? a.baseRewardRate ?? 0))
+        .slice(0, 3);
       return {
-        content: `💰 **Lifetime Free (LTF) & Fee Waiver Recommendations**
+        content: `**Lifetime-free cards with the best rates in our data:**
+${free.map((c) => { const t = topRate(c); return `- ${cardName(c)}: ${t ? `${t.rate}% on ${CATEGORY_LABELS[t.category]}` : `${c.baseRewardRate ?? 0}% on everything`}`; }).join('\n')}
 
-Avoid annual maintenance charges! Here are the top **Lifetime Free** credit cards (No annual fees ever):
-${freeCards.map((c) => `• **${c.bank} ${c.name}**: Base reward rate ${c.baseRewardRate}% (Highlights: ${c.highlights.slice(0, 2).join(', ')})`).join('\n')}
-
-💡 **How Fee Waivers Work:**
-Most premium credit cards waive the annual fee if you cross a specific spend milestone. For example:
-• **Axis Atlas**: Annual fee ₹5,000 waived on spending ₹3 Lakhs/year.
-• **Indian Bank Select**: Annual fee ₹500 waived on spending ₹50,000/year.`,
-        cards: freeCards,
+A paid card can still win if your spend clears its fee waiver. Ask me about a specific card.`,
+        cards: free,
       };
     },
   },
-  // 7. RUPAY CREDIT CARDS ON UPI
   {
     name: 'rupay_upi',
     test: (lower) => /\b(rupay|upi|gpay|phonepe|paytm upi|scan and pay|qr code|link upi)\b/i.test(lower),
     handler: () => {
-      const rupayCards = CARD_DATASET.filter((c) =>
-        c.name.toLowerCase().includes('rupay') ||
-        c.name.toLowerCase().includes('neu') ||
-        c.highlights.some(h => /upi|rupay/i.test(h))
-      ).slice(0, 3);
-
+      const rupay = CARD_DATASET.filter((c) => c.network === 'RuPay').slice(0, 3);
       return {
-        content: `📱 **RuPay Credit Cards on UPI Guide**
-
-You can link RuPay Credit Cards to Google Pay, PhonePe, Paytm, and BHIM to earn reward points directly on QR code merchant payments!
-
-🏆 **Top RuPay Cards for UPI Spending:**
-• **Tata Neu Infinity HDFC RuPay**: **1.5% NeuCoins on UPI payments** (up to 5% on Tata Neu ecosystem).
-• **Tata Neu Plus HDFC RuPay**: **1.0% NeuCoins on UPI payments**.
-• **Jupiter CSB Edge RuPay**: **2% cashback on UPI** across select categories.
-• **ICICI Coral RuPay**: Base rewards on UPI transactions + complimentary lounge access.
-
-💡 **Pro Tip:** UPI credit card payments are only valid on **Merchant QR codes (P2M)**, not peer-to-peer (P2P) transfers to personal phone numbers!`,
-        cards: rupayCards,
+        content: `**RuPay credit cards can be linked to UPI and earn rewards on merchant QR payments.**
+- Payments to people (not merchants) don't count.
+- ${rupay.length ? `RuPay cards in our data: ${rupay.map(cardName).join(', ')}.` : 'Check whether your card is on the RuPay network.'}
+- UPI reward rates vary by card; check the issuer's terms.`,
+        cards: rupay,
       };
     },
   },
-  // 8. MINIMUM DUE & APR INTEREST WARNING
   {
     name: 'minimum_due',
-    test: (lower) => /\b(minimum due|interest rate|apr|finance charge|debt|late fee|revolving credit)\b/i.test(lower),
+    test: (lower) => /\b(minimum due|interest rate|apr|finance charge|late fee|revolving)\b/i.test(lower),
     handler: () => ({
-      content: `⚠️ **The Minimum Due Trap & APR Explanation**
-
-Paying only the **"Minimum Amount Due"** is one of the costliest financial mistakes:
-
-1. **42% to 48% APR Interest:** Banks charge 3.5% to 4.0% interest **per month** (compounded daily) on the entire unpaid balance.
-2. **Loss of 50-Day Interest-Free Period:** Once you revolve a balance, ALL new purchases start accumulating interest from day one!
-3. **CIBIL Score Drop:** High outstanding utilization signals credit distress to CIBIL and Experian.
-
-💡 **Smart Solution:** Always set up **Auto-Debit for Total Amount Due (TAD)**. If facing temporary cash flow crunch, convert big purchases into a fixed low-interest EMI instead of revolving!`,
+      content: `**Pay the total due, not the minimum.**
+- The unpaid balance is charged about 3 to 4% a month, over 40% a year.
+- Once you carry a balance, new purchases lose their interest-free period.
+- If cash is short, converting a large purchase to EMI usually costs less than revolving.`,
     }),
   },
-  // 9. CHECK FOR SPECIFIC CARD/BANK IN QUERY
   {
     name: 'specific_card',
-    test: (lower) => {
-      const queryNormalized = normalizeText(lower);
-      return CARD_DATASET.some((c) => {
-        const cardNormalized = normalizeText(c.name);
-        const bankNormalized = normalizeText(c.bank);
-        // c.name minus the bank can be '' (and ''.includes is always true) — require a real remainder.
-        const remainder = normalizeText(c.name.replace(c.bank, '').replace(/credit card/i, ''));
-        return queryNormalized.includes(cardNormalized) ||
-          (remainder.length >= 3 && queryNormalized.includes(bankNormalized) && queryNormalized.includes(remainder));
-      });
-    },
+    test: (lower) => !!matchCard(lower),
     handler: (_query, userCards, lower) => {
-      const queryNormalized = normalizeText(lower);
-      const foundCard = CARD_DATASET.find((c) => {
-        const cardNormalized = normalizeText(c.name);
-        const bankNormalized = normalizeText(c.bank);
-        // c.name minus the bank can be '' (and ''.includes is always true) — require a real remainder.
-        const remainder = normalizeText(c.name.replace(c.bank, '').replace(/credit card/i, ''));
-        return queryNormalized.includes(cardNormalized) ||
-          (remainder.length >= 3 && queryNormalized.includes(bankNormalized) && queryNormalized.includes(remainder));
-      })!;
-
-      const userHasIt = userCards.some((uc) => uc.id === foundCard.id);
+      const c = matchCard(lower)!;
+      const held = userCards.some((u) => u.id === c.id);
+      const t = topRate(c);
+      const rates = [...c.rewards].sort((a, b) => b.rate - a.rate).map((r) => `${CATEGORY_LABELS[r.category]} ${r.rate}%`);
+      if (c.baseRewardRate != null) rates.push(`everything else ${c.baseRewardRate}%`);
+      // "is X worth it / should I get X": answer in rupees on the user's own spend
+      if (!held && /\b(worth|should i (get|apply|take)|apply for)\b/.test(lower)) {
+        const { profile, assumed } = spendProfile(useDashboardStore.getState().transactions, []);
+        const v = addedValue(c, walletCards(userCards), profile);
+        const top = v.wins.slice(0, 2).map((w) => `${w.label.toLowerCase()} (${w.rate}% vs your ${w.yourRate}%)`).join(' and ');
+        const basis = assumed ? 'a typical' : 'your';
+        const lines = [
+          top ? `Gains come from ${top}.` : "It doesn't beat your cards on any kind of spend.",
+          `Fee: ${feeText(c.annualFee)}${v.feeWaived ? ', waived at this spend' : c.feeWaiverSpend && c.annualFee ? `, waived after ${rupees(c.feeWaiverSpend)} a year` : ''}.`,
+          ...(assumed ? ['Based on a typical ₹25,000 month; log your spending for your own numbers.'] : []),
+        ];
+        return {
+          content: `${v.net > 0
+            ? `**Yes: on ${basis} spend it would add about ${rupees(v.net)} a year over your cards, after its fee.**`
+            : v.net === 0
+              ? `**No: on ${basis} spend it wouldn't add anything over your cards.**`
+              : `**Probably not: on ${basis} spend it would leave you ${rupees(Math.abs(v.net))} a year worse off than your cards, after its fee.**`}
+${lines.map((l) => `- ${l}`).join('\n')}`,
+          cards: [c],
+        };
+      }
       return {
-        content: `🃏 **Card Analysis: ${foundCard.bank} ${foundCard.name}**
-${userHasIt ? '🟢 *You have this card linked in your wallet!*' : '⚪ *This card is not in your wallet.*'}
-
-• **Annual Fee**: ${foundCard.annualFee === 0 ? 'Lifetime Free' : `₹${foundCard.annualFee}`}
-• **Lounge Access**: ${foundCard.loungeAccess ? `${foundCard.loungeAccess} visits/year` : 'Not available'}
-• **Base Reward Rate**: ${foundCard.baseRewardRate}%
-• **Welcome Bonus**: ${foundCard.welcomeBonus || 'None'}
-• **Highlights**: ${foundCard.highlights.join(', ')}
-
-📊 **Rewards Rates**:
-${foundCard.rewards.map((r) => `• ${CATEGORY_EMOJIS[r.category] || '📌'} ${CATEGORY_LABELS[r.category]}: **${r.rate}%**`).join('\n')}
-
-${userHasIt ? '' : `💡 *Cross-reference this card with your profile in the **Analyzer** tab to see if you are eligible!*`}`,
-        cards: [foundCard],
+        content: `**${cardName(c)}: ${feeText(c.annualFee)}${t ? `, best at ${CATEGORY_LABELS[t.category]} (${t.rate}%)` : ''}.** ${held ? 'It\'s in your wallet.' : 'You don\'t hold it.'}
+- Rates: ${rates.join(', ') || 'not published'}.
+- Lounge visits: ${c.loungeAccess ? visits(c.loungeAccess) : 'none'}.${c.feeWaiverSpend && c.annualFee ? `\n- Fee waived after ${rupees(c.feeWaiverSpend)} a year of spend.` : ''}`,
+        cards: [c],
       };
     },
   },
-  // 10. CHECK FOR BANK NAME ALONE
   {
     name: 'specific_bank',
     // Whole words only: 'au' used to match "restaurant"/"because", 'yes' any "yes".
     test: (lower) => BANK_PATTERNS.some(([re]) => re.test(lower)),
     handler: (_query, _userCards, lower) => {
       const bankNorm = BANK_PATTERNS.find(([re]) => re.test(lower))![1];
-      const bankCards = CARD_DATASET.filter((c) => c.bank.toLowerCase().includes(bankNorm)).slice(0, 3);
-      if (bankCards.length > 0) {
-        return {
-          content: `🏦 **Top credit cards offered by ${bankCards[0].bank}:**
-
-${bankCards.map((c, i) => `${i + 1}. **${c.name}** (Fee: ₹${c.annualFee})
-   • Base rate: ${c.baseRewardRate}% | Lounge: ${c.loungeAccess ? `${c.loungeAccess}/yr` : 'No'}
-   • Benefits: ${c.highlights.slice(0, 2).join(', ')}`).join('\n\n')}
-
-💡 *Compare these cards inside the **Analyzer** tab to view personalized reward scores based on your credit eligibility.*`,
-          cards: bankCards,
-        };
-      }
-      return { content: `I couldn't find any cards for that bank.` };
+      const cards = CARD_DATASET.filter((c) => c.bank.toLowerCase().includes(bankNorm))
+        .sort((a, b) => (topRate(b)?.rate ?? 0) - (topRate(a)?.rate ?? 0))
+        .slice(0, 3);
+      if (cards.length === 0) return { content: '**I couldn\'t find cards from that bank in our data.**' };
+      return {
+        content: `**${cards[0].bank} cards in our data, by best rate:**
+${cards.map((c) => { const t = topRate(c); return `- ${displayCardName(c.name)}: ${t ? `${t.rate}% on ${CATEGORY_LABELS[t.category]}` : `${c.baseRewardRate ?? 0}% base`}, ${feeText(c.annualFee)}`; }).join('\n')}`,
+        cards,
+      };
     },
   },
-  // 11. OFFERS & DEALS
   {
     name: 'offers',
     test: (lower) => /\b(offer|offers|discount|discounts|deal|deals)\b/i.test(lower),
     handler: () => ({
-      content: `🎁 **Credit Card Offers & Deals**
-
-I noticed you are looking for current offers!
-
-To see the most accurate and personalized offers for your cards, please visit the **Offers** tab in the main navigation. It cross-references your exact wallet with our live merchant database to show you exactly where you can save money today!`,
+      content: `**Partner offers are in Experiences, by category.**
+- For a specific shop, ask me which of your cards earns most there.`,
     }),
   },
 ];
@@ -534,7 +352,7 @@ export function parseAmount(query: string): number | null {
   return v > 0 && v < 1e8 ? v : null;
 }
 
-const SPEND_QUESTION = /\b(best card|which card|what card|card (for|to use)|use for|pay (for|with|at)|swipe|spend|spending|cashback on|rewards? on|buy|buying|purchase|order|ordering|book|booking)\b/i;
+const SPEND_QUESTION = /\b(best card|which card|what card|card (for|to use)|use for|pay (for|with|at)|swipe|spend|spending|cashback on|rewards? on|buy|buying|purchase|order|ordering|book|booking|on swiggy|on amazon|on zomato|on flipkart)\b/i;
 
 /**
  * Deterministic, instant answers. Returns null when the question needs the
@@ -550,63 +368,44 @@ export function answerLocally(query: string, userCards: CardData[] = []): Taqdee
   // Merchant / category spend question → exact wallet evaluation
   const merchant = extractMerchant(lower);
   const category = merchant ? detectCategory(merchant) : detectCategory(lower);
-  if ((merchant || category !== 'other') && SPEND_QUESTION.test(lower)) {
+  if ((merchant || category !== 'other') && (SPEND_QUESTION.test(lower) || (merchant && parseAmount(query)))) {
     return { ...spendAnswer(merchant, category, parseAmount(query), userCards), source: 'local' };
   }
   return null;
 }
 
 function spendAnswer(merchant: string | null, category: SpendCategory, amount: number | null, userCards: CardData[]): TaqdeerAnswer {
-  const emoji = CATEGORY_EMOJIS[category] || '📌';
-  const displayCategory = CATEGORY_LABELS[category] || 'General spend';
-  const merchantStr = merchant || displayCategory;
+  const label = CATEGORY_LABELS[category] || 'general spend';
+  const where = merchant || label;
   // No amount in the question: evaluate per ₹1,000 so the numbers are easy to scale.
   const evalAmount = amount ?? 1000;
-  const amountLabel = `₹${evalAmount.toLocaleString('en-IN')}`;
+  const amountLabel = rupees(evalAmount);
 
   const transactions = useDashboardStore.getState().transactions;
-  const result = evaluatePayment(merchantStr, evalAmount, userCards.map((c) => c.id), { previousTransactions: transactions, category });
-
-  const bestGlobalCard = getBestCardForCategory(category);
-  const maxGlobalRate = getCardRewardForCategory(bestGlobalCard, category);
-  const runners = CARD_DATASET
-    .filter((c) => c.id !== bestGlobalCard.id)
-    .sort((a, b) => getCardRewardForCategory(b, category) - getCardRewardForCategory(a, category))
-    .slice(0, 2);
-  const market = `🔥 **Top cards in the market for ${displayCategory}:**
-1. **${bestGlobalCard.name}** — ${maxGlobalRate}%
-${runners.map((c, i) => `${i + 2}. **${c.name}** — ${getCardRewardForCategory(c, category)}%`).join('\n')}`;
+  const result = evaluatePayment(where, evalAmount, userCards.map((c) => c.id), { previousTransactions: transactions, category });
+  const market = getBestCardForCategory(category);
+  const marketRate = getCardRewardForCategory(market, category);
 
   if (!result || !result.best) {
     return {
-      content: `🏆 **${merchantStr} (${displayCategory} ${emoji})**
-
-Add your cards to your wallet and I'll tell you exactly which one to use and what it earns.
-
-${market}`,
-      cards: [bestGlobalCard, ...runners],
+      content: `**Add your cards in Wallet and I'll tell you which one to use at ${where}.**
+- Best rate in our data for ${label}: ${cardName(market)} at ${marketRate}%.`,
+      cards: [market],
     };
   }
 
   const best = result.best;
   const approx = best.confidence !== 'EXACT' ? '~' : '';
-  const isActuallyOptimal = best.rewardRate >= maxGlobalRate;
-  let walletAdvice = `💳 **Use ${best.card.name}** — ${best.rewardRate}% on ${displayCategory.toLowerCase()} = **${approx}₹${best.cappedRewardValue.toFixed(best.cappedRewardValue < 10 ? 2 : 0)}** on ${amountLabel}.`;
-  if (result.secondBest && result.delta > 0) {
-    walletAdvice += `\nThat's ₹${result.delta.toFixed(result.delta < 10 ? 2 : 0)} more than ${result.secondBest.card.name}.`;
-  }
-  walletAdvice += isActuallyOptimal
-    ? `\n🟢 No card in our catalog pays more for this.`
-    : `\n🟡 ${bestGlobalCard.name} would pay ${maxGlobalRate}% here (you don't hold it).`;
-  if (best.limitations[0]) walletAdvice += `\n⚠️ *${best.limitations[0]}*`;
+  const points = [
+    result.secondBest && result.delta > 0 ? `${reward(result.delta)} more than ${displayCardName(result.secondBest.card.name)}.` : null,
+    best.rewardRate >= marketRate ? `No card in our data pays more for ${label}.` : `${cardName(market)} pays ${marketRate}% here; you don't hold it.`,
+    best.limitations[0] ?? null,
+  ].filter(Boolean);
 
   return {
-    content: `🏆 **${merchantStr} (${displayCategory} ${emoji})**
-
-${walletAdvice}
-
-${market}`,
-    cards: [bestGlobalCard, ...runners],
+    content: `**Use ${displayCardName(best.card.name)}: ${approx}${reward(best.cappedRewardValue)} back on ${amountLabel}** (${best.rewardRate}% on ${label}${merchant ? ` at ${merchant}` : ''}).
+${points.map((p) => `- ${p}`).join('\n')}`,
+    cards: [market],
     evaluation: result,
   };
 }
@@ -614,15 +413,10 @@ ${market}`,
 function genericHelp(): TaqdeerAnswer {
   return {
     source: 'local',
-    content: `👋 **Taqdeer**
-
-I can tell you which card to use for a purchase, compare cards, and explain fees, lounges and credit scores.
-
-**Try asking:**
-• 🍳 *"Which card for ₹1,200 on Swiggy?"*
-• ✈️ *"Which cards give free airport lounge access?"*
-• 💳 *"What is my wallet health score?"*
-• 🌐 *"Zero forex markup cards for a trip abroad"*`,
+    content: `**I can help with your cards and spending.**
+- Which of your cards to use, e.g. "₹1,200 on Swiggy".
+- A card's fees, rates and lounge visits, or how two cards compare.
+- Credit-score and bill-payment basics.`,
   };
 }
 
@@ -684,17 +478,17 @@ async function askAi(query: string, userCards: CardData[], opts: TaqdeerOptions)
         buffer = buffer.slice(idx + 2);
         if (!raw) continue;
         const ev = JSON.parse(raw);
-        if (ev.error) return text ? { content: text, source: 'ai' } : null;
+        if (ev.error) return text ? { content: stripEmoji(text), source: 'ai' } : null;
         if (ev.t) {
           text += ev.t;
-          opts.onToken?.(text);
+          opts.onToken?.(stripEmoji(text));
         }
         if (ev.done) cardIds = ev.cards ?? [];
       }
     }
     if (!text) return null;
     const cards = cardIds.map((id) => CARD_DATASET.find((c) => c.id === id)).filter(Boolean) as FinixCard[];
-    return { content: text, cards: cards.slice(0, 3), source: 'ai' };
+    return { content: stripEmoji(text), cards: cards.slice(0, 3), source: 'ai' };
   } catch {
     return null;
   } finally {
@@ -720,6 +514,14 @@ export async function generateTaqdeerResponse(
   if (!opts.localOnly) {
     const ai = await askAi(query, userCards, opts);
     if (ai) return ai;
+    const fallback = answerLocally(query, userCards);
+    if (fallback) return fallback;
+    // the AI was needed and couldn't be reached: say so, rather than answer something else
+    return {
+      source: 'local',
+      content: `**I can't answer that one right now.**
+- I can still answer instantly: which of your cards to use for a purchase, a card's fees and rates, lounges, and your credit score.`,
+    };
   }
   return answerLocally(query, userCards) ?? genericHelp();
 }

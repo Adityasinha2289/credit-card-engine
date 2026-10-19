@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ReniMark } from '../../features/taqdeer/components/ReniMark';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Compass, MapPin, ShoppingBag, Book, Sparkles, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -29,14 +30,14 @@ export function CommandCenter() {
     navigate(path);
   };
 
-  const TaqdeerIcon = () => <img src="/taqdeer-logo.png" alt="Taqdeer AI" className="w-full h-full object-cover rounded-lg" />;
+  const TaqdeerIcon = () => <ReniMark size={20} tone="ink" />;
 
   const suggestions = [
     { icon: Compass, label: 'Plan a Trip', path: '/app/lifestyle/plan', badge: 'Popular' },
     { icon: MapPin, label: 'Plan a Date', path: '/app/lifestyle/plan/date' },
     { icon: ShoppingBag, label: 'Shop Smarter', path: '/app/lifestyle/shop' },
     { icon: Book, label: 'Start a Hobby', path: '/app/lifestyle/invest' },
-    { icon: TaqdeerIcon, label: 'Ask Taqdeer', path: '/app/taqdeer' },
+    { icon: TaqdeerIcon, label: 'Ask Reni', path: '/app/reni' },
   ];
 
   return (

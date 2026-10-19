@@ -39,7 +39,7 @@ export function CoreDashboard({ onNavigateToTab }: CoreDashboardProps) {
               <span className="font-extrabold">first wallet.</span>
             </h1>
             <p className="text-xl text-text-muted max-w-lg leading-relaxed mb-16">
-              Add your existing credit cards to unlock intelligent recommendations, or let TAQDEER find the perfect first card for you.
+              Add your existing credit cards to unlock intelligent recommendations, or let Reni find the perfect first card for you.
             </p>
             <button 
               onClick={() => onNavigateToTab('discover')}

@@ -10,6 +10,7 @@ import { cn } from '../../lib/utils';
 import { Container } from '../../public-platform/site/primitives';
 import { MY_RENOCRED } from '../../public-platform/site/nav';
 import { useAskTaqdeer } from '../layout/SiteAppLayout';
+import { ReniMark } from '../../features/taqdeer/components/ReniMark';
 
 export interface HeroStat { value: ReactNode; label: string }
 
@@ -66,7 +67,7 @@ export function AppHero({ eyebrow, title, lede, stats, actions, aside }: {
               )}
               {ask && (
                 <button type="button" onClick={ask} className="ml-auto inline-flex h-9 shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-1 pr-3.5 text-[13px] font-medium text-rc-cream active:bg-white/10 md:hidden">
-                  <img src="/taqdeer-logo.png" alt="" className="h-7 w-7 rounded-full object-cover" /> Ask Taqdeer
+                  <ReniMark size={28} tone="pistachio" /> Ask Reni
                 </button>
               )}
             </div>
@@ -109,7 +110,7 @@ export function AppBand({ eyebrow, title, children, center }: { eyebrow?: ReactN
           {eyebrow && <p className="min-w-0 truncate text-[13px] font-medium text-rc-mist">{eyebrow}</p>}
           {ask && (
             <button type="button" onClick={ask} className="ml-auto inline-flex h-9 shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-1 pr-3.5 text-[13px] font-medium text-rc-cream active:bg-white/10 md:hidden">
-              <img src="/taqdeer-logo.png" alt="" className="h-7 w-7 rounded-full object-cover" /> Ask Taqdeer
+              <ReniMark size={28} tone="pistachio" /> Ask Reni
             </button>
           )}
         </div>

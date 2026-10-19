@@ -22,8 +22,8 @@ export function PrivacyPage() {
         <h2>Accounts and storage</h2>
         <p>We use Clerk to manage sign-in and Supabase to store your account data. Database access rules restrict each record to the account that owns it.</p>
 
-        <h2>Taqdeer, the assistant</h2>
-        <p>When you ask Taqdeer a question while signed in, the question, recent conversation turns and relevant facts about your cards and spending summary are sent to Google's Gemini API to generate the answer.</p>
+        <h2>Reni, the assistant</h2>
+        <p>When you ask Reni a question while signed in, the question, recent conversation turns and relevant facts about your cards and spending summary are sent to Google's Gemini API to generate the answer.</p>
 
         <h2>Reminders and notifications</h2>
         <p>If you turn on subscription reminders, we send emails through Resend. If you enable push notifications, your browser's push subscription is stored so we can deliver them; you can switch either off at any time.</p>

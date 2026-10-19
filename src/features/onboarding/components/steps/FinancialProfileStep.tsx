@@ -75,7 +75,7 @@ export function FinancialProfileStep({ onBack, onContinue, initialSalary, initia
         Your Financial Baseline
       </SectionHeading>
       <SectionDescription className="mb-12">
-        TAQDEER uses this to tailor your card recommendations to your profile.
+        Reni uses this to tailor your card recommendations to your profile.
       </SectionDescription>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 mb-14">

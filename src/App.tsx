@@ -217,7 +217,8 @@ export default function App() {
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/account" element={<AccountPage />} />
 
-        <Route path="/taqdeer" element={<TaqdeerPage />} />
+        <Route path="/reni" element={<TaqdeerPage />} />
+        <Route path="/taqdeer" element={<Navigate to="/app/reni" replace />} />
 
         {/* old addresses */}
         <Route path="/credit/*" element={<Navigate to="/app/discover" replace />} />

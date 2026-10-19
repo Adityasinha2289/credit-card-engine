@@ -1,5 +1,5 @@
 /**
- * POST /api/taqdeer — grounded, streaming Taqdeer answers (Gemini).
+ * POST /api/taqdeer — grounded, streaming Reni answers (Gemini).
  *
  * Body: { query, history?: [{ role: 'user'|'ai', content }], walletCardIds?: string[],
  *         spendSummary?: { [category]: monthlyRupees }, stream?: boolean }
@@ -74,6 +74,11 @@ export function _resetTaqdeerState() {
 
 type Turn = { role: 'user' | 'ai'; content: string };
 
+/** Answers stay plain: no emoji or pictographs, even if the model adds them. */
+export function plain(text: string): string {
+  return text.replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\u{FE0F}\u{200D}\u{20E3}]/gu, '');
+}
+
 function sanitizeHistory(history: unknown): Turn[] {
   if (!Array.isArray(history)) return [];
   return history
@@ -128,7 +133,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const authResult = await auth.verifyToken(req.headers.authorization);
   if (!authResult.authenticated || !authResult.userId) {
-    return res.status(401).json({ success: false, localOnly: true, error: authResult.error || 'Sign in to use Taqdeer AI' });
+    return res.status(401).json({ success: false, localOnly: true, error: authResult.error || 'Sign in to use Reni AI' });
   }
   const userId = authResult.userId;
 
@@ -191,7 +196,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const geminiBody = {
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
     contents,
-    generationConfig: { temperature: 0.3, maxOutputTokens: 600, topP: 0.9 },
+    generationConfig: { temperature: 0.2, maxOutputTokens: 320, topP: 0.9 },
   };
 
   const controller = new AbortController();
@@ -204,8 +209,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         send.start();
         started = true;
       }
-      content += chunk;
-      send.event({ t: chunk });
+      const clean = plain(chunk);
+      content += clean;
+      if (clean) send.event({ t: clean });
     }
     clearTimeout(timer);
     if (!content) throw new Error('Empty model response');

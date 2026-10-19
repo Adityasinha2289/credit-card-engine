@@ -19,7 +19,7 @@ export function EmptyWalletGuidance({ onAddCard }: EmptyWalletGuidanceProps) {
 
       <h3 className="text-xl font-display font-semibold text-text-primary mb-2">Let's build your wallet</h3>
       <p className="text-xs text-text-muted max-w-[200px] mb-6">
-        Add your first card to unlock TAQDEER's intelligence and insights.
+        Add your first card to unlock Reni's intelligence and insights.
       </p>
 
       <button

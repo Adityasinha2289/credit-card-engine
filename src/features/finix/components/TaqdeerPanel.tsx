@@ -100,7 +100,7 @@ export function TaqdeerPanel() {
     {
       id: 'welcome',
       role: 'ai',
-      content:"Hey! I'm Taqdeer, your AI credit card advisor 🤖\n\nAsk me which card to use at any merchant, how to maximize rewards, or which new card to get!",
+      content:"Hey! I'm Reni, your AI credit card advisor 🤖\n\nAsk me which card to use at any merchant, how to maximize rewards, or which new card to get!",
       timestamp: new Date(),
     },
   ]);
@@ -174,7 +174,7 @@ export function TaqdeerPanel() {
       {/* ── Floating Button ────────────────────────────────────────────── */}
       <motion.button
         id="taqdeer-chat-button"
-        aria-label="Open Taqdeer AI chat"
+        aria-label="Open Reni AI chat"
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
@@ -228,7 +228,7 @@ export function TaqdeerPanel() {
                   <Bot size={16} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white">Taqdeer AI</p>
+                  <p className="text-sm font-bold text-white">Reni AI</p>
                   <div className="flex items-center gap-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
                     <p className="text-xs text-white/70">Always available</p>
@@ -287,7 +287,7 @@ export function TaqdeerPanel() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about cards, rewards..."
-                aria-label="Message Taqdeer AI"
+                aria-label="Message Reni AI"
                 disabled={isTyping}
                 className="flex-1 input-premium text-sm"
               />

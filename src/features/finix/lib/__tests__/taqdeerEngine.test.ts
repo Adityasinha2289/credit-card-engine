@@ -8,8 +8,8 @@ const wallet = (ids: string[]) => ids.map((id) => ({ id, status: 'active', label
 
 describe('Taqdeer local routing', () => {
   it('greets only real greetings (regression: "evening"/"help"/"bot" anywhere triggered it)', () => {
-    expect(answerLocally('hi')?.content).toMatch(/Taqdeer/);
-    expect(answerLocally('Hello Taqdeer')?.content).toMatch(/Taqdeer/);
+    expect(answerLocally('hi')?.content).toMatch(/Reni/);
+    expect(answerLocally('Hello Taqdeer')?.content).toMatch(/Reni/);
     const dinner = answerLocally('best card for dinner at a restaurant this evening');
     expect(dinner?.content ?? '').not.toMatch(/Credit Intelligence Assistant/);
   });

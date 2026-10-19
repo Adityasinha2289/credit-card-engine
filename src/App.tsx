@@ -2,7 +2,8 @@ import { analytics } from './lib/analytics';
 import './index.css';
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { useUser, RedirectToSignIn, RedirectToSignUp } from '@clerk/clerk-react';
-import { Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
+import { authPathFor } from './features/dashboard/lib/returnPath';
 
 import { SiteAppLayout } from './components/layout/SiteAppLayout';
 import { LoaderHold } from './components/BrandLoader';
@@ -24,6 +25,12 @@ const HomePage = lazy(() => import('./pages/app/HomePage'));
 const DiscoverPage = lazy(() => import('./pages/app/DiscoverPage'));
 const AccountPage = lazy(() => import('./pages/app/AccountPage'));
 // the website's tools, opened inside the app shell
+/** A signed-out visit to a page in the app: sign in, then land on that page. */
+function SignInFirst() {
+  const { pathname, search } = useLocation();
+  return <Navigate to={authPathFor('signin', pathname + search)} replace />;
+}
+
 /** /app/cards/:slug from older links: the card page lives on the website. */
 function CardRedirect() {
   const { slug } = useParams();
@@ -184,7 +191,8 @@ export default function App() {
       <Routes>
         <Route path="/sign-in/*" element={<LoginScreen defaultMode="signin" />} />
         <Route path="/sign-up/*" element={<LoginScreen defaultMode="signup" />} />
-        <Route path="*" element={<Navigate to="/app/sign-up" replace />} />
+        {/* any other page in the app: sign in first, then come back to it */}
+        <Route path="*" element={<SignInFirst />} />
       </Routes>
     );
   }

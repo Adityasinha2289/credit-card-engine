@@ -110,14 +110,19 @@ export default {
           200: '#0A0A0A',
           300: '#111111',
         },
+        // Legacy surface tokens, re-tinted from the old dark theme to the brand's light one
+        // (the app is light now; dark values here made text vanish on cream).
         surface: {
-          shell: '#050806',
-          primary: '#07120D', 
-          card: '#07120D', 
-          elevated: '#081A12', 
-          intelligence: '#0A2418',
-          'intelligence-elevated': '#0A2418',
-          secondary: '#07120D',
+          shell: '#F6F4EC',
+          base: '#F6F4EC',
+          primary: '#FBFAF6',
+          card: '#FBFAF6',
+          secondary: '#FBFAF6',
+          raised: '#FFFFFF',
+          muted: '#EFEDE3',
+          elevated: '#EFEDE3',
+          intelligence: '#E3EED4',
+          'intelligence-elevated': '#D8E6C6',
         },
         // V3 SEMANTIC EMERALD (Only for savings/value)
         brand: {
@@ -141,18 +146,18 @@ export default {
         
         // V3 TYPOGRAPHY COLORS
         text: {
-          primary: '#F2F4F2',
-          secondary: '#A0AAA5',
-          tertiary: '#737C77',
-          muted: '#59615D',
-          disabled: 'rgba(242, 244, 242, 0.20)',
+          primary: '#0F2A1D',
+          secondary: '#4D6354',
+          tertiary: '#5E7363',
+          muted: '#5E7363',
+          disabled: 'rgba(15, 42, 29, 0.35)',
         },
         border: {
-          subtle: '#242D29',
-          strong: '#242D29',
-          intelligence: '#164534',
-          hover: '#1E6549',
-          emerald: 'rgba(42, 157, 92, 0.3)',
+          subtle: 'rgba(15, 42, 29, 0.10)',
+          strong: 'rgba(15, 42, 29, 0.18)',
+          intelligence: 'rgba(55, 85, 52, 0.25)',
+          hover: 'rgba(15, 42, 29, 0.28)',
+          emerald: 'rgba(55, 85, 52, 0.3)',
         }
       },
       fontFamily: {

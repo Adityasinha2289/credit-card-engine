@@ -1,11 +1,17 @@
 import { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
 import { PageHeader } from './PageHeader';
+import type { HeroStat } from './AppHero';
 
 export interface PageContainerProps {
   eyebrow?: string;
-  title?: string;
-  subtitle?: string;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  /** key numbers shown in the page's hero panel */
+  heroStats?: HeroStat[];
+  heroActions?: ReactNode;
+  /** a visual on the right of the hero panel (wide screens) */
+  heroAside?: ReactNode;
   children: ReactNode;
   className?: string;
   hideHeader?: boolean;
@@ -15,17 +21,20 @@ export function PageContainer({
   eyebrow,
   title,
   subtitle,
+  heroStats,
+  heroActions,
+  heroAside,
   children,
   className,
   hideHeader = false,
 }: PageContainerProps) {
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 pt-8 lg:pt-12 pb-24 flex flex-col flex-1">
+    <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-4 pb-24 pt-2 md:px-8 lg:px-12">
       {!hideHeader && title && (
-        <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
+        <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} stats={heroStats} actions={heroActions} aside={heroAside} />
       )}
-      
-      <div className={cn("w-full flex flex-col gap-8", className)}>
+
+      <div className={cn('flex w-full flex-col gap-8', className)}>
         {children}
       </div>
     </div>

@@ -1,32 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { ArrowChip, Container, EASE_OUT } from '../site/primitives';
-import { LogoLink } from '../site/Brand';
+import { ArrowChip, EASE_OUT, useMediaQuery } from '../site/primitives';
+import { BrandMark } from '../site/Brand';
 import { useSignedInHint } from '../site/SiteLink';
 import { prefetchAuth, prefetchAuthProps } from '../site/prefetchAuth';
 import { CARD_NEEDS, MY_RENOCRED, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 import { analytics } from '../../lib/analytics';
+import { useAskTaqdeer } from '../../components/layout/askReni';
+import { ReniMark } from '../../features/taqdeer/components/ReniMark';
 
-const PRIMARY = [
-  { label: 'Cards', to: '/cards' },
-  { label: 'Tools', to: TOOLS[0].to, match: '/calculators' },
-  { label: 'How we rank', to: '/methodology' },
-  { label: 'For business', to: '/business' },
+/** The four places most visits go, as tiles at the top of the menu. */
+const LINKS = [
+  { label: 'Cards', to: '/cards', note: 'Every Indian card, side by side' },
+  { label: 'Tools', to: TOOLS[0].to, match: '/calculators', note: 'Which card, rewards, utilisation' },
+  { label: 'How we rank', to: '/methodology', note: 'Two questions, two rules' },
+  { label: 'Business', to: '/business', note: 'Partner with RenoCred' },
+];
+
+const MORE = [
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ];
 
-
-/** Shown inline in the header on wide screens; everything else lives in the menu. */
-const INLINE = [
-  { label: 'Cards', to: '/cards' },
-  { label: 'Tools', to: TOOLS[0].to, match: '/calculators' },
-  { label: 'How we rank', to: '/methodology' },
-  { label: 'Business', to: '/business' },
-];
+const isCurrent = (pathname: string, l: { to: string; match?: string }) =>
+  pathname === l.to || pathname.startsWith(`${l.to}/`) || (!!l.match && pathname.startsWith(l.match));
 
 /** Two lines of unequal length that meet in an X; the short one grows on hover. */
 function MenuIcon({ open }: { open: boolean }) {
@@ -38,102 +38,147 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
-function MenuOverlay({ onClose, signedIn }: { onClose: () => void; signedIn: boolean }) {
+/**
+ * How far down the page you are, drawn as a line around the bar's border: the
+ * same line that counts down the spend tabs, so the site reads as one thing.
+ */
+function ScrollTrace({ radius, hidden }: { radius: number; hidden: boolean }) {
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 38, restDelta: 0.001 });
+  const opacity = useTransform(progress, [0, 0.015], [0, 1]);
+  return (
+    <svg aria-hidden className={cn('pointer-events-none absolute inset-0 h-full w-full overflow-visible transition-opacity duration-300', hidden && 'opacity-0')}>
+      <motion.rect
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        rx={radius}
+        ry={radius}
+        fill="none"
+        stroke="#E3EED4"
+        strokeWidth="1.5"
+        style={{ pathLength: progress, opacity }}
+      />
+    </svg>
+  );
+}
+
+/** The menu opens out of the bar, rather than covering the page. */
+function MenuPanel({ signedIn, pathname, onClose }: { signedIn: boolean; pathname: string; onClose: () => void }) {
   const reduce = useReducedMotion();
-  const item = (i: number) => ({
-    initial: reduce ? false : { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: EASE_OUT, delay: 0.08 + i * 0.05 },
-  });
+  const label = 'mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70';
   return (
     <motion.div
       id="site-menu"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Menu"
-      initial={reduce ? false : { opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className="fixed inset-0 z-[60] overflow-y-auto bg-rc-night text-rc-cream"
+      initial={reduce ? false : { height: 0, opacity: 0 }}
+      animate={{ height: 'auto', opacity: 1 }}
+      exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+      transition={{ duration: 0.45, ease: EASE_OUT }}
+      className="overflow-hidden"
     >
-      <Container className="flex h-16 items-center justify-between lg:h-[76px]">
-        <LogoLink dark onClick={onClose} />
-        <button type="button" onClick={onClose} aria-label="Close menu" className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/20 transition-colors hover:border-white/60 hover:bg-white/[0.06]">
-          <MenuIcon open />
-        </button>
-      </Container>
-      <Container className="grid gap-16 pb-16 pt-10 lg:grid-cols-12 lg:pt-16">
-        <nav aria-label="Main" className="lg:col-span-7">
-          <ul>
-            {PRIMARY.map((l, i) => (
-              <motion.li key={l.to} {...item(i)}>
-                <Link to={l.to} onClick={onClose} className="group flex items-baseline gap-5 py-2">
-                  <span className="w-7 text-[12px] tabular-nums text-rc-mist/60">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="font-serif text-[clamp(2.5rem,6vw,4.75rem)] font-semibold leading-[1.02] tracking-[-0.03em] transition-colors group-hover:text-rc-pistachio">{l.label}</span>
-                </Link>
-              </motion.li>
-            ))}
-          </ul>
-        </nav>
-        <motion.div {...item(PRIMARY.length)} className="space-y-12 lg:col-span-4 lg:col-start-9">
-          {signedIn && (
+      <div className="max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain p-2.5 lg:p-3">
+        <div className="grid gap-2.5 lg:grid-cols-12 lg:gap-3">
+          <nav aria-label="Main" className="lg:col-span-7">
+            <ul className="grid grid-cols-2 gap-2 lg:gap-2.5">
+              {LINKS.map((l) => {
+                const on = isCurrent(pathname, l);
+                return (
+                  <li key={l.to}>
+                    <Link
+                      to={l.to}
+                      onClick={onClose}
+                      aria-current={on ? 'page' : undefined}
+                      className={cn(
+                        'group flex h-full min-h-[96px] flex-col justify-between rounded-[20px] border p-4 transition-colors lg:min-h-[132px] lg:p-5',
+                        on ? 'border-rc-pistachio/50 bg-rc-pistachio/[0.08]' : 'border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]',
+                      )}
+                    >
+                      <span className="flex items-start justify-between gap-2">
+                        <span className="font-serif text-[21px] font-semibold leading-[1.05] tracking-[-0.02em] lg:text-[28px]">{l.label}</span>
+                        <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-rc-mist transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-rc-pistachio" />
+                      </span>
+                      <span className="mt-3 text-[12.5px] leading-snug text-rc-mist lg:text-[13.5px]">{l.note}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="space-y-6 px-2 pb-1 pt-3 lg:col-span-5 lg:px-3 lg:pt-2">
+            {signedIn && (
+              <div>
+                <p className={label}>Your dashboard</p>
+                <ul className="flex flex-wrap gap-1.5">
+                  {MY_RENOCRED.map((l) => (
+                    <li key={l.to}><Link to={l.to} onClick={onClose} className="inline-flex rounded-full bg-rc-pistachio/15 px-3 py-1.5 text-[13px] font-medium text-rc-cream transition-colors hover:bg-rc-pistachio hover:text-rc-ink">{l.label}</Link></li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div>
-              <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70">My RenoCred</p>
-              <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
-                {MY_RENOCRED.map((l) => (
-                  <li key={l.to}><Link to={l.to} onClick={onClose} className="text-[15px] text-rc-cream transition-colors hover:text-rc-pistachio">{l.label}</Link></li>
+              <p className={label}>Best cards for</p>
+              <ul className="flex flex-wrap gap-1.5">
+                {CARD_NEEDS.map((n) => (
+                  <li key={n.to}><Link to={n.to} onClick={onClose} className="inline-flex rounded-full border border-white/[0.12] px-3 py-1.5 text-[13px] text-rc-mist transition-colors hover:border-white/40 hover:text-rc-cream">{n.label}</Link></li>
                 ))}
               </ul>
             </div>
-          )}
-          <div>
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Best cards for</p>
-            <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
-              {CARD_NEEDS.map((n) => (
-                <li key={n.to}><Link to={n.to} onClick={onClose} className="text-[15px] text-rc-mist transition-colors hover:text-rc-cream">{n.label}</Link></li>
-              ))}
-            </ul>
+            <div>
+              <p className={label}>Free tools</p>
+              <ul className="space-y-2">
+                {TOOLS.map((t) => (
+                  <li key={t.to}><Link to={t.to} onClick={onClose} className="text-[14px] text-rc-mist transition-colors hover:text-rc-cream">{t.label}</Link></li>
+                ))}
+              </ul>
+            </div>
+            <Link
+              to={SIGN_UP}
+              onClick={() => { analytics.track('Partner Offer Clicked', { partner: 'greenox', placement: 'menu' }); onClose(); }}
+              className="flex items-center gap-3.5 rounded-[18px] border border-white/10 p-2.5 transition-colors hover:border-white/30"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white"><img src="/greenox_logo.png" alt="GreeNox" className="h-8 w-8 object-contain" /></span>
+              <span className="min-w-0">
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70">Member perk</span>
+                <span className="block text-[14px] font-medium text-rc-cream">20% off at GreeNox</span>
+              </span>
+            </Link>
           </div>
-          <div>
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Free tools</p>
-            <ul className="space-y-2.5">
-              {TOOLS.map((t) => (
-                <li key={t.to}><Link to={t.to} onClick={onClose} className="text-[15px] text-rc-mist transition-colors hover:text-rc-cream">{t.label}</Link></li>
-              ))}
-            </ul>
-          </div>
-          <Link
-            to={SIGN_UP}
-            onClick={() => { analytics.track('Partner Offer Clicked', { partner: 'greenox', placement: 'menu' }); onClose(); }}
-            className="flex items-center gap-5 rounded-[24px] border border-white/15 p-4 transition-colors hover:border-white/40 hover:bg-white/[0.03]"
-          >
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white"><img src="/greenox_logo.png" alt="GreeNox" className="h-10 w-10 object-contain" /></span>
-            <span>
-              <span className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Member perk</span>
-              <span className="mt-1 block font-serif text-[20px] leading-snug">20% off at GreeNox</span>
-            </span>
-          </Link>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px]">
-            {!signedIn && <Link to={SIGN_IN} onClick={onClose} className="text-rc-mist hover:text-rc-cream">Log in</Link>}
+        </div>
+
+        <div className="mt-2.5 flex flex-col gap-3 border-t border-white/10 px-2 pb-1 pt-3.5 sm:flex-row sm:items-center sm:justify-between lg:px-3">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
+            {MORE.map((l) => <Link key={l.to} to={l.to} onClick={onClose} className="text-rc-mist hover:text-rc-cream">{l.label}</Link>)}
             {SOCIAL.map((s) => (
               <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-rc-mist hover:text-rc-cream">
                 {s.label} <ArrowUpRight className="h-3 w-3" />
               </a>
             ))}
           </div>
-        </motion.div>
-      </Container>
+          {!signedIn && (
+            <div className="grid grid-cols-2 gap-2 sm:hidden">
+              <Link {...prefetchAuthProps} to={SIGN_IN} onClick={onClose} className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 px-5 text-[14px] font-medium text-rc-cream hover:border-white/40">Log in</Link>
+              <Link {...prefetchAuthProps} to={SIGN_UP} onClick={onClose} className="inline-flex h-11 items-center justify-center rounded-full bg-rc-cream px-5 text-[14px] font-semibold text-rc-ink hover:bg-white">Get started</Link>
+            </div>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }
 
-/** Every public page opens on a dark band, so the header is always light-on-dark. */
+/**
+ * The site header: two floating pieces. On the left the brand, whose name folds into
+ * the mark as you scroll while a line runs round it to show how far you've read; on
+ * the right what you can do, and the menu, which opens beneath both. Every page opens
+ * on a dark band, so it is always light-on-dark.
+ */
 export function PublicHeader() {
   const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [hovered, setHovered] = useState<string | null>(null);
+  const [peek, setPeek] = useState(false);
   // signed-in visitors browse the site freely and always have a one-click way back into the app
   const signedIn = useSignedInHint();
   // returning members will almost certainly open My RenoCred: fetch it while they read
@@ -160,91 +205,117 @@ export function PublicHeader() {
     return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
   }, [open]);
 
+  const lg = useMediaQuery('(min-width: 1024px)');
+  // on a signed-in page, phones reach Reni from the bar (the tab bar below has the sections)
+  const ask = useAskTaqdeer();
+  const inApp = pathname.startsWith('/app');
+  // the name folds into the mark once you scroll; pointing at the mark unfolds it again
+  const folded = scrolled && !peek && !open;
+  const island = cn(
+    'relative flex h-[50px] items-center rounded-full border backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 lg:h-[54px]',
+    open
+      ? 'border-white/[0.14] bg-rc-ink'
+      : scrolled
+        ? 'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
+        : 'border-white/10 bg-white/[0.04]',
+  );
+  const cta = cn(
+    'group inline-flex h-10 items-center gap-2.5 rounded-full px-4 text-[13px] font-semibold transition-colors duration-300 sm:pl-5 sm:pr-1 sm:text-[14px] sm:font-medium lg:h-[42px]',
+    'bg-rc-cream text-rc-ink hover:bg-white',
+  );
+
   return (
     <>
-      {/* The bar is full width at the top of the page and tucks into a floating capsule once you scroll. */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="scrim"
+            aria-hidden
+            onClick={() => setOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 bg-rc-night/70 backdrop-blur-[3px]"
+          />
+        )}
+      </AnimatePresence>
+      {/* Two floating pieces: the brand on the left, what you can do on the right. */}
       <header className="sticky top-0 z-50 h-16 w-full px-3 sm:px-5 lg:h-[76px]">
-        <div
-          className={cn(
-            'mx-auto flex h-full items-center justify-between gap-4 rounded-full border transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] duration-700 ease-[cubic-bezier(.22,1,.36,1)]',
-            scrolled
-              ? cn(
-                'mt-2.5 h-[52px] max-w-[1040px] pl-3 pr-1.5 backdrop-blur-xl lg:mt-3 lg:h-[56px]',
-                'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
-              )
-              : 'max-w-[1280px] border-transparent px-2 sm:px-3 lg:px-7',
-          )}
-        >
-          <LogoLink dark />
+        <div className="relative mx-auto flex max-w-[1180px] items-start justify-between gap-3 pt-2 lg:pt-2.5">
+          <Link
+            to="/"
+            aria-label="RenoCred home"
+            onClick={() => setOpen(false)}
+            onMouseEnter={() => setPeek(true)}
+            onMouseLeave={() => setPeek(false)}
+            onFocus={() => setPeek(true)}
+            onBlur={() => setPeek(false)}
+            className={cn(island, 'shrink-0 p-[6px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4')}
+          >
+            <ScrollTrace radius={lg ? 27 : 25} hidden={open} />
+            <span className="relative flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-rc-pistachio lg:h-10 lg:w-10">
+              <BrandMark size={lg ? 23 : 21} />
+            </span>
+            <span
+              aria-hidden
+              className={cn(
+                'relative overflow-hidden whitespace-nowrap text-[17px] font-semibold tracking-[-0.02em] text-rc-cream transition-[max-width,opacity,padding] duration-500 ease-[cubic-bezier(.22,1,.36,1)] lg:text-[18px]',
+                folded ? 'max-w-0 px-0 opacity-0' : 'max-w-[140px] pl-2.5 pr-3.5 opacity-100',
+              )}
+            >
+              Reno<span className="text-rc-pistachio">Cred</span>
+            </span>
+          </Link>
 
-          <nav aria-label="Primary" className="hidden lg:block" onMouseLeave={() => setHovered(null)}>
-            <ul className="flex items-center">
-              {INLINE.map((l) => {
-                const current = pathname === l.to || (l.to !== '/' && pathname.startsWith(`${l.to}/`)) || ('match' in l && !!l.match && pathname.startsWith(l.match));
-                return (
-                  <li key={l.to} className="relative">
-                    {hovered === l.to && (
-                      <motion.span
-                        layoutId="nav-hover"
-                        aria-hidden
-                        className={cn('absolute inset-0 rounded-full', 'bg-white/[0.08]')}
-                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                      />
-                    )}
-                    <Link
-                      to={l.to}
-                      onMouseEnter={() => setHovered(l.to)}
-                      onFocus={() => setHovered(l.to)}
-                      aria-current={current ? 'page' : undefined}
-                      className={cn(
-                        'relative block rounded-full px-4 py-2 text-[14px] transition-colors',
-                        'text-rc-mist hover:text-rc-cream',
-                        current && 'text-rc-cream',
-                      )}
-                    >
-                      {l.label}
-                      {current && <span aria-hidden className={cn('absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full', 'bg-rc-pistachio')} />}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className={cn(island, 'gap-1 p-[5px] sm:gap-1.5')}>
             {!signedIn && (
               <Link {...prefetchAuthProps} to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
                 Log in
               </Link>
             )}
-            <Link
-              {...prefetchAuthProps}
-              to={signedIn ? '/app' : SIGN_UP}
-              className={cn(
-                'group inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-1 text-[14px] font-medium transition-colors duration-300 sm:h-11 sm:pl-5',
-                'bg-rc-cream text-rc-ink hover:bg-white',
-              )}
-            >
-              {signedIn ? 'My RenoCred' : 'Get started'}
-              <ArrowChip variant="cream" size="sm" />
+            {inApp && ask && (
+              <button
+                type="button"
+                onClick={() => { setOpen(false); ask(); }}
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-white/[0.07] pl-1 pr-3.5 text-[13px] font-medium text-rc-cream transition-colors active:bg-white/[0.12] md:hidden"
+              >
+                <ReniMark size={32} tone="pistachio" /> Ask Reni
+              </button>
+            )}
+            <Link {...prefetchAuthProps} to={signedIn ? '/app' : SIGN_UP} onClick={() => setOpen(false)} className={cn(cta, inApp && ask && 'hidden md:inline-flex')}>
+              {signedIn ? 'Dashboard' : <><span className="sm:hidden">Start free</span><span className="hidden sm:inline">Get started</span></>}
+              <ArrowChip variant="cream" size="sm" className="hidden sm:flex" />
             </Link>
             <button
               type="button"
-              aria-label="Open menu"
+              aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
               aria-controls="site-menu"
-              onClick={() => setOpen(true)}
-              className={cn(
-                'group flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11',
-                'border-white/15 text-rc-cream hover:border-white/50 hover:bg-white/[0.06]',
-              )}
+              onClick={() => setOpen((o) => !o)}
+              className="group flex h-10 items-center justify-center gap-2.5 rounded-full px-3 text-[14px] text-rc-cream transition-colors hover:bg-white/[0.08] lg:h-[42px] lg:px-4"
             >
-              <MenuIcon open={false} />
+              <span className="hidden lg:inline">{open ? 'Close' : 'Menu'}</span>
+              <MenuIcon open={open} />
             </button>
           </div>
+
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.div
+                key="menu"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: EASE_OUT }}
+                className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-[26px] border border-white/[0.14] bg-rc-ink shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)]"
+              >
+                <MenuPanel signedIn={signedIn} pathname={pathname} onClose={() => setOpen(false)} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </header>
-      <AnimatePresence>{open && <MenuOverlay signedIn={signedIn} onClose={() => setOpen(false)} />}</AnimatePresence>
     </>
   );
 }

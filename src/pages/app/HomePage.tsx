@@ -18,6 +18,7 @@ import { CardDueEngine } from '../../features/money/engines/SafeToSpendEngine';
 import { formatRupees } from '../../features/money/lib/moneyMath';
 import { displayCardName } from '../../public-platform/site/CardFace';
 import { EASE_OUT, Reveal } from '../../public-platform/site/primitives';
+import { BorderProgress } from '../../public-platform/site/BorderProgress';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { SPEND_CATEGORIES, cardsByIds, rankCards, rewardFor, type FinixCard, type SpendCategory } from '../../public-platform/site/swipeMath';
 import AddCardModal from '../../features/dashboard/components/AddCardModal';
@@ -187,7 +188,7 @@ export default function HomePage() {
       {wallet.length > 0 && (
         <>
           {/* what kind of spend */}
-          <div role="tablist" aria-label="Kind of spend" className={cn('-mx-5 mt-7 flex w-[calc(100%+2.5rem)] gap-1.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:w-full sm:flex-wrap sm:justify-center sm:px-0 [&::-webkit-scrollbar]:hidden', merchant.trim().length >= 2 && 'opacity-40')}>
+          <div role="tablist" aria-label="Kind of spend" className={cn('-mx-5 mt-7 flex w-[calc(100%+2.5rem)] gap-1.5 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] sm:mx-0 sm:w-full sm:flex-wrap sm:justify-center sm:px-0 [&::-webkit-scrollbar]:hidden', merchant.trim().length >= 2 && 'opacity-40')}>
             {SPEND_CATEGORIES.map((c) => {
               const on = !merchant && c.id === category;
               return (
@@ -199,12 +200,9 @@ export default function HomePage() {
                   onClick={() => { setCategory(c.id); setMerchant(''); setPinned(null); stopAuto(); }}
                   className={cn('relative h-9 shrink-0 rounded-full px-4 text-[13px] font-medium transition-colors duration-300', on ? 'text-rc-ink' : 'border border-white/10 text-rc-mist hover:border-white/30 hover:text-rc-cream')}
                 >
-                  {on && <motion.span layoutId="spend-pill" className="absolute inset-0 overflow-hidden rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 420, damping: 34 }}>
-                    {/* how long until the holder moves on */}
-                    {auto && !hovering && !pinned && !reduce && wallet.length > 1 && (
-                      <motion.span key={category} aria-hidden className="absolute bottom-0 left-0 h-[2px] bg-rc-forest" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: ROTATE_MS / 1000, ease: 'linear' }} />
-                    )}
-                  </motion.span>}
+                  {on && <motion.span layoutId="spend-pill" className="absolute inset-0 rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {/* how long until the holder moves on: a line closing around the tab */}
+                  {on && auto && !hovering && !pinned && !reduce && wallet.length > 1 && <BorderProgress key={category} duration={ROTATE_MS / 1000} radius={18} color="#375534" width={2} className="z-10" />}
                   <span className="relative">{c.label}</span>
                 </button>
               );

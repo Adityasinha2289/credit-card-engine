@@ -11,6 +11,7 @@ import { CardFace, displayCardName } from '../../site/CardFace';
 import { HERO_MOMENTS, SAMPLE_WALLET_IDS, SPEND_CATEGORIES, cardsByIds, rankCards } from '../../site/swipeMath';
 import { SIGN_UP } from '../../site/nav';
 import { HolderFront } from '../../site/Holder';
+import { BorderProgress } from '../../site/BorderProgress';
 
 const ROTATE_MS = 2600;
 
@@ -163,7 +164,7 @@ export function Hero() {
             )}
           </div>
 
-          <div role="tablist" aria-label="Example spends" className="mt-8 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] md:justify-center [&::-webkit-scrollbar]:hidden">
+          <div role="tablist" aria-label="Example spends" className="-mx-5 mt-7 flex gap-1.5 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] md:mx-0 md:justify-center md:px-1 [&::-webkit-scrollbar]:hidden">
             {HERO_MOMENTS.map((m, i) => {
               const on = i === index;
               return (
@@ -175,20 +176,11 @@ export function Hero() {
                   aria-label={`${m.label}, ${formatINR(m.amount)}`}
                   onClick={() => { setIndex(i); setPaused(true); }}
                   className={cn(
-                    'relative shrink-0 overflow-hidden rounded-full border px-4 py-2 text-[13px] font-medium transition-colors duration-300',
-                    on ? 'border-rc-pistachio bg-rc-pistachio text-rc-ink' : 'border-white/10 text-rc-mist hover:border-white/30 hover:text-rc-cream',
+                    'relative h-9 shrink-0 rounded-full border px-4 text-[13px] font-medium transition-colors duration-300',
+                    on ? cn('bg-rc-pistachio/15 text-rc-cream', paused || reduce ? 'border-rc-pistachio' : 'border-white/10') : 'border-white/10 text-rc-mist hover:border-white/30 hover:text-rc-cream',
                   )}
                 >
-                  {on && !paused && !reduce && (
-                    <motion.span
-                      key={index}
-                      aria-hidden
-                      className="absolute bottom-0 left-0 h-[2px] bg-rc-forest"
-                      initial={{ width: '0%' }}
-                      animate={{ width: '100%' }}
-                      transition={{ duration: ROTATE_MS / 1000, ease: 'linear' }}
-                    />
-                  )}
+                  {on && !paused && !reduce && <BorderProgress key={index} duration={ROTATE_MS / 1000} radius={18} color="#E3EED4" width={2.5} />}
                   {m.short}
                 </button>
               );

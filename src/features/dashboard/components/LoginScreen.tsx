@@ -5,7 +5,8 @@ import { SignIn, SignUp, GoogleOneTap, useUser } from '@clerk/clerk-react';
 import { useDashboardStore } from '../store/dashboardStore';
 import type { AppProfile, UserSegment, PrimaryGoal } from '../types/dashboard.types';
 import type { OnboardingState } from '../../onboarding/OnboardingFlow';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { RETURN_PARAM, authPathFor, safeReturnPath } from '../lib/returnPath';
 import { CardFace } from '../../../public-platform/site/CardFace';
 import { LoaderHold } from '../../../components/BrandLoader';
 
@@ -17,6 +18,9 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
   const [mode, setMode] = useState<'signin' | 'signup'>(defaultMode);
   const authPanelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  // the page someone asked for before signing in (only app paths are honoured)
+  const [params] = useSearchParams();
+  const returnTo = safeReturnPath(params.get(RETURN_PARAM)) ?? '/app';
 
   useEffect(() => {
     setMode(defaultMode);
@@ -111,7 +115,7 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
   const switchMode = () => {
     const next = mode === 'signin' ? 'signup' : 'signin';
     setMode(next);
-    navigate(next === 'signin' ? '/app/sign-in' : '/app/sign-up');
+    navigate(authPathFor(next, returnTo));
   };
 
   return (
@@ -195,9 +199,9 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
 
           <div ref={authPanelRef} className="mt-9 w-full">
             {mode === 'signin' ? (
-              <SignIn routing="path" path="/app/sign-in" signUpUrl="/app/sign-up" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
+              <SignIn routing="path" path="/app/sign-in" signUpUrl={authPathFor('signup', returnTo)} forceRedirectUrl={returnTo} fallbackRedirectUrl={returnTo} />
             ) : (
-              <SignUp routing="path" path="/app/sign-up" signInUrl="/app/sign-in" forceRedirectUrl="/app" fallbackRedirectUrl="/app" />
+              <SignUp routing="path" path="/app/sign-up" signInUrl={authPathFor('signin', returnTo)} forceRedirectUrl={returnTo} fallbackRedirectUrl={returnTo} />
             )}
           </div>
 

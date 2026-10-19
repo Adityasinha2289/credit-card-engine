@@ -9,8 +9,6 @@ import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import { Container } from '../../public-platform/site/primitives';
 import { MY_RENOCRED } from '../../public-platform/site/nav';
-import { useAskTaqdeer } from '../layout/SiteAppLayout';
-import { ReniMark } from '../../features/taqdeer/components/ReniMark';
 
 export interface HeroStat { value: ReactNode; label: string }
 
@@ -50,7 +48,6 @@ export function AppHero({ eyebrow, title, lede, stats, actions, aside }: {
   actions?: ReactNode;
   aside?: ReactNode;
 }) {
-  const ask = useAskTaqdeer();
   return (
     <section className="relative overflow-hidden text-rc-cream">
       <div aria-hidden className="pointer-events-none absolute -left-[15%] -top-[45%] h-[900px] w-[1000px] rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.10),transparent)]" />
@@ -64,11 +61,6 @@ export function AppHero({ eyebrow, title, lede, stats, actions, aside }: {
                 <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist">
                   <span aria-hidden className="h-2 w-2 rounded-full bg-rc-pistachio" /> {eyebrow}
                 </p>
-              )}
-              {ask && (
-                <button type="button" onClick={ask} className="ml-auto inline-flex h-9 shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-1 pr-3.5 text-[13px] font-medium text-rc-cream active:bg-white/10 md:hidden">
-                  <ReniMark size={28} tone="pistachio" /> Ask Reni
-                </button>
               )}
             </div>
             <h1 className="mt-4 max-w-[18ch] font-serif text-[clamp(2.4rem,5.4vw,4.6rem)] font-semibold leading-[1] tracking-[-0.035em] lining-nums [&_.italic]:text-rc-pistachio">
@@ -100,7 +92,6 @@ export function AppHero({ eyebrow, title, lede, stats, actions, aside }: {
  * (the card holder, the card stack, the receipt...), on the dark band.
  */
 export function AppBand({ eyebrow, title, children, center }: { eyebrow?: ReactNode; title?: ReactNode; children?: ReactNode; center?: boolean }) {
-  const ask = useAskTaqdeer();
   return (
     <section className="relative overflow-hidden text-rc-cream">
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-[30%] h-[720px] w-[1000px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.10),transparent)]" />
@@ -108,11 +99,6 @@ export function AppBand({ eyebrow, title, children, center }: { eyebrow?: ReactN
         <MyNav />
         <div className={cn('flex min-h-9 items-center justify-between gap-3', center && 'md:justify-center')}>
           {eyebrow && <p className="min-w-0 truncate text-[13px] font-medium text-rc-mist">{eyebrow}</p>}
-          {ask && (
-            <button type="button" onClick={ask} className="ml-auto inline-flex h-9 shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-1 pr-3.5 text-[13px] font-medium text-rc-cream active:bg-white/10 md:hidden">
-              <ReniMark size={28} tone="pistachio" /> Ask Reni
-            </button>
-          )}
         </div>
         {title && (
           <h1 className={cn('mt-1 font-serif text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] lining-nums sm:text-[38px] lg:text-[46px] [&_.italic]:text-rc-pistachio', center && 'md:text-center')}>

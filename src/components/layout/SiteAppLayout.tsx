@@ -2,10 +2,10 @@
  * Signed-in pages live on the website: the same header, footer and look as every
  * other page. The header's logo goes home, its nav reaches every tool, and
  * "My RenoCred" brings you back here. On phones a tab bar keeps every section
- * one tap away, and Reni opens from the page header instead of a floating
+ * one tap away, and Reni opens from the header bar instead of a floating
  * button that would sit over the content.
  */
-import { Suspense, createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { PublicHeader } from '../../public-platform/components/PublicHeader';
 import { PublicFooter } from '../../public-platform/components/PublicFooter';
@@ -14,10 +14,9 @@ import { TaqdeerDrawer } from '../../features/taqdeer/components/TaqdeerDrawer';
 import { MobileTabBar } from './MobileTabBar';
 import { LoaderHold } from '../BrandLoader';
 
-const AskContext = createContext<(() => void) | null>(null);
+import { AskContext } from './askReni';
 
-/** Opens Reni, when inside the signed-in layout. */
-export const useAskTaqdeer = () => useContext(AskContext);
+export { useAskTaqdeer } from './askReni';
 
 /** The six sections, fetched while the first one is read so switching is instant. */
 const SECTIONS = [

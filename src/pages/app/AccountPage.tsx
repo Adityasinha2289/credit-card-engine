@@ -10,6 +10,7 @@ import { ReminderSettings } from '../../features/subscriptions/components/Remind
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { Reveal } from '../../public-platform/site/primitives';
 import { MemberCard } from './account/MemberCard';
+import { AvatarPicker } from './account/AvatarPicker';
 
 function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
@@ -37,11 +38,14 @@ export default function AccountPage() {
       eyebrow={email}
       title={name ? <>{name.split(' ')[0]}, <span className="italic">your account.</span></> : <>Your <span className="italic">account.</span></>}
       center
-      band={<MemberCard name={name} since={since} cards={userCards.length} />}
+      band={<MemberCard name={name} since={since} cards={userCards.length} avatar={profile?.avatar || null} />}
     >
       <div className="mx-auto grid w-full max-w-[980px] grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-2 lg:gap-12">
         <Section title="Your details">
-          <ProfileTab embedded />
+          <div className="space-y-4">
+            <AvatarPicker />
+            <ProfileTab embedded />
+          </div>
         </Section>
 
         <div className="min-w-0 space-y-10">

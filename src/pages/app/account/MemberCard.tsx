@@ -6,8 +6,9 @@ import { useRef, type PointerEvent } from 'react';
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { BrandMark } from '../../../public-platform/site/Brand';
 import { useMediaQuery } from '../../../public-platform/site/primitives';
+import { Avatar } from './AvatarPicker';
 
-export function MemberCard({ name, since, cards }: { name: string; since: string | null; cards: number }) {
+export function MemberCard({ name, since, cards, avatar }: { name: string; since: string | null; cards: number; avatar?: string | null }) {
   const reduce = useReducedMotion();
   const wide = useMediaQuery('(min-width: 640px)');
   const W = wide ? 380 : 320;
@@ -56,9 +57,12 @@ export function MemberCard({ name, since, cards }: { name: string; since: string
           </div>
           <span aria-hidden className="h-[26px] w-[34px] rounded-[6px] bg-gradient-to-br from-[#efe6bd] to-[#b7a35e] opacity-90" />
           <div className="flex items-end justify-between gap-3">
-            <div className="min-w-0">
+            <div className="flex min-w-0 items-center gap-3">
+              <Avatar src={avatar ?? null} name={name} size={wide ? 44 : 38} className="ring-2 ring-rc-pistachio/40" />
+              <div className="min-w-0">
               <p className="truncate text-[17px] font-semibold uppercase tracking-[0.14em] [text-shadow:0_1px_0_rgba(0,0,0,0.4)] sm:text-[19px]">{name || 'Member'}</p>
               {since && <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-rc-mist">Since {since}</p>}
+              </div>
             </div>
             <p className="shrink-0 text-right">
               <span className="block font-serif text-[26px] font-semibold leading-none tabular-nums text-rc-pistachio">{cards}</span>

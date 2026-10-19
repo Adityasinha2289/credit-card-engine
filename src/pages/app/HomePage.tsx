@@ -3,7 +3,7 @@
  * The answer is the landing page's card holder, holding your own cards: pick a
  * spend (or type the shop and amount) and the best card rises out of it.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useShallow } from 'zustand/shallow';
 import { useUser } from '@clerk/clerk-react';
@@ -19,15 +19,21 @@ import { formatRupees } from '../../features/money/lib/moneyMath';
 import { displayCardName } from '../../public-platform/site/CardFace';
 import { EASE_OUT, Reveal } from '../../public-platform/site/primitives';
 import { PageContainer } from '../../components/shared/PageContainer';
-import { SPEND_CATEGORIES, cardsByIds, rankCards, type FinixCard, type SpendCategory } from '../../public-platform/site/swipeMath';
+import { SPEND_CATEGORIES, cardsByIds, rankCards, rewardFor, type FinixCard, type SpendCategory } from '../../public-platform/site/swipeMath';
 import AddCardModal from '../../features/dashboard/components/AddCardModal';
 import { WalletHolder } from './overview/WalletHolder';
 import { cn } from '../../lib/utils';
 
 const rupees = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 const MAX_IN_HOLDER = 5;
+const ROTATE_MS = 2800;
+const ROTATION = SPEND_CATEGORIES.filter((c) => c.id !== 'other').map((c) => c.id);
 
-interface Answer { card: FinixCard; reward: number; rate: number; label: string; ahead: number | null; estimate: boolean }
+interface Answer {
+  card: FinixCard; reward: number; rate: number; label: string; ahead: number | null; estimate: boolean;
+  /** a card you pulled yourself that isn't the best here: which one is, and by how much */
+  beatenBy?: { name: string; by: number };
+}
 
 export default function HomePage() {
   const reduce = useReducedMotion();
@@ -49,6 +55,12 @@ export default function HomePage() {
   const [amount, setAmount] = useState(2000);
   const [merchant, setMerchant] = useState('');
   const [adding, setAdding] = useState(false);
+  // a card you pulled out yourself; stays out until you pick a spend or type a shop
+  const [pinned, setPinned] = useState<string | null>(null);
+  // the holder walks through spends on its own until you touch it
+  const [auto, setAuto] = useState(true);
+  const [hovering, setHovering] = useState(false);
+  const stopAuto = () => setAuto(false);
 
   const activeIds = useMemo(() => userCards.filter((c) => c.status === 'active').map((c) => c.id), [userCards]);
   const wallet = useMemo(() => cardsByIds(activeIds), [activeIds]);
@@ -65,8 +77,22 @@ export default function HomePage() {
     const [best, next] = rankCards(wallet, category, amount);
     if (!best) return null;
     const label = SPEND_CATEGORIES.find((c) => c.id === category)?.label.toLowerCase() ?? category;
-    return { card: best.card, reward: best.reward, rate: best.rate, label: best.categoryMatch ? label : 'everything', ahead: next && best.reward > next.reward ? best.reward - next.reward : null, estimate: false };
-  }, [wallet, amount, merchant, activeIds, transactions, category]);
+    const own = pinned ? wallet.find((c) => c.id === pinned) : undefined;
+    if (own && own.id !== best.card.id) {
+      const mine = rewardFor(own, category, amount);
+      return {
+        card: own, reward: mine.reward, rate: mine.rate, label: mine.categoryMatch ? label : `${label} (base rate)`, ahead: null, estimate: false,
+        beatenBy: best.reward > mine.reward ? { name: displayCardName(best.card.name), by: best.reward - mine.reward } : undefined,
+      };
+    }
+    return { card: best.card, reward: best.reward, rate: best.rate, label: best.categoryMatch ? label : `${label} (base rate)`, ahead: next && best.reward > next.reward ? best.reward - next.reward : null, estimate: false };
+  }, [wallet, amount, merchant, activeIds, transactions, category, pinned]);
+
+  useEffect(() => {
+    if (!auto || hovering || reduce || merchant || pinned || wallet.length < 2) return;
+    const t = setInterval(() => setCategory((c) => ROTATION[(ROTATION.indexOf(c) + 1) % ROTATION.length]), ROTATE_MS);
+    return () => clearInterval(t);
+  }, [auto, hovering, reduce, merchant, pinned, wallet.length]);
 
   // up to five in the holder, always including the one that wins
   const inHolder = useMemo(() => {
@@ -75,11 +101,23 @@ export default function HomePage() {
     return answer ? [...rest.slice(0, 2), answer.card, ...rest.slice(2)] : wallet.slice(0, MAX_IN_HOLDER);
   }, [wallet, answer]);
 
-  // pull a card: show the spend it's best at
+  // pull a card yourself: it comes out, on the spend where it's your best card
+  // (or, if another card beats it everywhere, on the spend it earns most on)
   const pull = (card: FinixCard) => {
-    const top = [...(card.rewards ?? [])].sort((a, b) => b.rate - a.rate)[0];
+    stopAuto();
     setMerchant('');
-    if (top) setCategory(top.category);
+    const wins = ROTATION
+      .map((cat) => ({ cat, top: rankCards(wallet, cat, amount)[0] }))
+      .filter((w) => w.top?.card.id === card.id && w.top.reward > 0)
+      .sort((a, b) => b.top.reward - a.top.reward)[0];
+    if (wins) {
+      setCategory(wins.cat);
+      setPinned(null);
+    } else {
+      const best = [...(card.rewards ?? [])].sort((a, b) => b.rate - a.rate)[0];
+      if (best) setCategory(best.category);
+      setPinned(card.id);
+    }
   };
 
   // this week: card bills and renewals, in date order
@@ -119,7 +157,11 @@ export default function HomePage() {
                 {answer.estimate ? '~' : ''}+{rupees(answer.reward)}
               </p>
               <p className="mt-2 text-[14px] text-rc-cream">{answer.rate}% back on {answer.label} with {displayCardName(answer.card.name)}</p>
-              <p className="mt-0.5 text-[13px] text-rc-mist">{answer.ahead ? `${rupees(answer.ahead)} more than your next best card` : wallet.length > 1 ? 'Your other cards earn the same or less' : 'Add more cards to compare'}</p>
+              <p className="mt-0.5 text-[13px] text-rc-mist">
+                {answer.beatenBy
+                  ? `${answer.beatenBy.name} earns ${rupees(answer.beatenBy.by)} more here`
+                  : answer.ahead ? `${rupees(answer.ahead)} more than your next best card` : wallet.length > 1 ? 'Your other cards earn the same or less' : 'Add more cards to compare'}
+              </p>
             </motion.div>
           ) : wallet.length > 0 ? (
             <motion.p key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-6 text-[15px] text-rc-mist">
@@ -134,7 +176,7 @@ export default function HomePage() {
         </AnimatePresence>
       </div>
 
-      <div className="mt-4 w-full">
+      <div className="mt-4 w-full" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
         <WalletHolder cards={inHolder} pulledId={answer?.card.id ?? null} onPull={pull}>
           <button type="button" onClick={() => setAdding(true)} className="inline-flex h-12 items-center gap-2 rounded-full bg-rc-cream pl-5 pr-2 text-[15px] font-medium text-rc-ink shadow-[0_20px_40px_-20px_rgba(0,0,0,0.8)]">
             Add your first card <span className="flex h-9 w-9 items-center justify-center rounded-full bg-rc-ink text-rc-cream"><Plus size={17} /></span>
@@ -154,10 +196,15 @@ export default function HomePage() {
                   type="button"
                   role="tab"
                   aria-selected={on}
-                  onClick={() => { setCategory(c.id); setMerchant(''); }}
+                  onClick={() => { setCategory(c.id); setMerchant(''); setPinned(null); stopAuto(); }}
                   className={cn('relative h-9 shrink-0 rounded-full px-4 text-[13px] font-medium transition-colors duration-300', on ? 'text-rc-ink' : 'border border-white/10 text-rc-mist hover:border-white/30 hover:text-rc-cream')}
                 >
-                  {on && <motion.span layoutId="spend-pill" className="absolute inset-0 rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {on && <motion.span layoutId="spend-pill" className="absolute inset-0 overflow-hidden rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 420, damping: 34 }}>
+                    {/* how long until the holder moves on */}
+                    {auto && !hovering && !pinned && !reduce && wallet.length > 1 && (
+                      <motion.span key={category} aria-hidden className="absolute bottom-0 left-0 h-[2px] bg-rc-forest" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: ROTATE_MS / 1000, ease: 'linear' }} />
+                    )}
+                  </motion.span>}
                   <span className="relative">{c.label}</span>
                 </button>
               );
@@ -172,7 +219,7 @@ export default function HomePage() {
               id="pay-amount"
               inputMode="numeric"
               value={amount ? amount.toLocaleString('en-IN') : ''}
-              onChange={(e) => setAmount(Math.min(1000000, Number(e.target.value.replace(/[^\d]/g, '')) || 0))}
+              onChange={(e) => { stopAuto(); setAmount(Math.min(1000000, Number(e.target.value.replace(/[^\d]/g, '')) || 0)); }}
               style={{ width: `${Math.max(3, (amount ? amount.toLocaleString('en-IN') : '').length) + 0.5}ch` }}
               className="ml-1 bg-transparent font-medium tabular-nums text-rc-cream outline-none"
             />
@@ -182,7 +229,7 @@ export default function HomePage() {
             <input
               id="pay-shop"
               value={merchant}
-              onChange={(e) => setMerchant(e.target.value)}
+              onChange={(e) => { stopAuto(); setPinned(null); setMerchant(e.target.value); }}
               placeholder="any shop, e.g. Swiggy"
               enterKeyHint="search"
               className="ml-2 min-w-0 flex-1 bg-transparent text-rc-cream outline-none placeholder:text-rc-mist/60"

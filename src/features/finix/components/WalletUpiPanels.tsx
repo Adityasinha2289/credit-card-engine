@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { analytics } from '../../../lib/analytics';
@@ -166,7 +167,7 @@ function WalletOptimizerTab() {
                   <BankLogo bank={c.bank || 'Unknown'} className="w-12 h-8" />
                   <div className="flex flex-col min-w-0">
                     <p className="text-sm font-semibold text-text-primary truncate">{c.label}</p>
-                    <p className="text-xs text-text-muted">•• {c.pan.slice(-4)}</p>
+                    <p className="text-xs text-text-muted">{last4Of(c.pan) ? `•• ${last4Of(c.pan)}` : c.bank}</p>
                   </div>
                 </div>
               ))}

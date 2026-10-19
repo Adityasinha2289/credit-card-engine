@@ -56,8 +56,10 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
       onboardingCompleted: true,
     };
 
-    login(profile);
-    
+    // Wait for the profile row: the cards below reference it, and on a fresh
+    // sign-up the Clerk webhook that also creates it may not have run yet.
+    await login(profile);
+
     if (user) {
       user.update({
         unsafeMetadata: {
@@ -77,14 +79,16 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
         if (fullCard) {
           return store.addUserCard({
             id: fullCard.id,
-            pan: fullCard.first4Digits + ' **** **** ' + Math.floor(1000 + Math.random() * 9000),
+            // Picked from the catalogue: we know the product, not the user's number,
+            // expiry or limit, so those stay empty until the user adds them.
+            pan: '',
             cardholderName: profile.name,
-            expiry: '12/28',
+            expiry: '',
             network: fullCard.network.toLowerCase() as any,
             bank: fullCard.bank,
             status: 'active',
-            availableCredit: fullCard.minIncome ? Math.floor(fullCard.minIncome / 12) : 50000,
-            creditLimit: fullCard.minIncome ? Math.floor(fullCard.minIncome / 12) : 50000,
+            availableCredit: 0,
+            creditLimit: 0,
             label: fullCard.name,
             gradientFrom: fullCard.gradientFrom || '#1e3c72',
             gradientTo: fullCard.gradientTo || '#2a5298',

@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trash2, CreditCard as CreditCardIcon, Activity } from 'lucide-react';
 import { CardData } from '../../cards/types/card.types';
@@ -71,7 +72,7 @@ export function CardDetailsModal({ card, onClose, onRemove }: Props) {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Card Number</span>
-                <span className="text-sm font-mono text-gray-900">•••• {card.pan.slice(-4)}</span>
+                <span className="text-sm font-mono text-gray-900">{last4Of(card.pan) ? `•••• ${last4Of(card.pan)}` : 'Not added'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Status</span>

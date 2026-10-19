@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 import { cn } from '../../../lib/utils';
@@ -275,7 +276,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
                   <p className="text-[9px] font-semibold opacity-80 uppercase">{card.network}</p>
                 </div>
                 <div className="flex justify-between items-end">
-                  <p className="font-mono text-xs tracking-widest">•••• •••• •••• {card.pan.slice(-4)}</p>
+                  <p className="font-mono text-xs tracking-widest">{last4Of(card.pan) ? `•••• ${last4Of(card.pan)}` : ''}</p>
                   <div className="text-right">
                     <p className="text-[8px] text-white/60 uppercase">Due Date</p>
                     <p className="text-[10px] font-bold">

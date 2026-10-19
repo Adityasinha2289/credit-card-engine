@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { useState, useRef, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Download } from 'lucide-react';
@@ -334,7 +335,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                       <option value="">Bank account / UPI</option>
                       {userCards.map((c) => (
                         <option key={c.id} value={c.id}>
-                          {c.label || 'Credit Card'} (..{c.pan.slice(-4)})
+                          {c.label || 'Credit Card'}{last4Of(c.pan) ? ` (..${last4Of(c.pan)})` : ''}
                         </option>
                       ))}
                     </select>

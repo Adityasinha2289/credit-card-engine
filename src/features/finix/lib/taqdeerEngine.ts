@@ -125,9 +125,13 @@ What purchase or strategy can I optimize for you?`,
     test: (lower) => /\b(cibil|credit score|improve score|credit rating|my score|utilization|usage|boost score)\b/i.test(lower),
     handler: (_query, userCards) => {
       let utilizationMsg = "";
-      if (userCards.length > 0) {
-        const totalLimit = userCards.reduce((sum, c) => sum + c.creditLimit, 0) / 100;
-        const totalAvail = userCards.reduce((sum, c) => sum + c.availableCredit, 0) / 100;
+      // only cards whose limit the user has told us count; never report "0% used" on unknown limits
+      const withLimits = userCards.filter((c) => c.creditLimit > 0);
+      if (userCards.length > 0 && withLimits.length === 0) {
+        utilizationMsg = `\n\n📊 **Your utilisation:** add each card's credit limit in Wallet and I can show how much of it you're using.`;
+      } else if (withLimits.length > 0) {
+        const totalLimit = withLimits.reduce((sum, c) => sum + c.creditLimit, 0) / 100;
+        const totalAvail = withLimits.reduce((sum, c) => sum + c.availableCredit, 0) / 100;
         const totalBalance = Math.max(0, totalLimit - totalAvail);
         const utilPct = totalLimit > 0 ? Math.round((totalBalance / totalLimit) * 100) : 0;
 

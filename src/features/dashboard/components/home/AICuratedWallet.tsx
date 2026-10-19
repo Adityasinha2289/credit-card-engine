@@ -1,3 +1,4 @@
+import { last4Of } from '../../../cards/types/card.types';
 import { useState } from 'react';
 import { motion, LayoutGroup } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -186,7 +187,7 @@ export function AICuratedWallet({ cards, onOpenWallet, onAskTaqdeer, bestCardId,
                       {card.cardName || 'Credit Card'}
                     </p>
                     <p className="text-[10px] font-medium text-gray-600 tracking-widest">
-                      ••{card.pan.slice(-4)}
+                      {last4Of(card.pan) ? `••${last4Of(card.pan)}` : card.bank}
                     </p>
                   </div>
                 </motion.div>

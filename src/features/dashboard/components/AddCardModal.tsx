@@ -83,19 +83,18 @@ export default function AddCardModal({
                 <button
                   key={c.id}
                   onClick={() => {
-                    const randomPan = c.first4Digits + ' **** **** ' + Math.floor(1000 + Math.random() * 9000).toString();
-                    const limitNum = c.minIncome ? Math.floor(c.minIncome * 0.5) : 150000;
-                    
+                    // Only what we know: the product. Number, expiry and limit stay
+                    // empty rather than invented.
                     addUserCard({
                       id: c.id,
-                      pan: randomPan,
-                      cardholderName: profile?.name || 'Premium Member',
-                      expiry: '12/28',
+                      pan: '',
+                      cardholderName: profile?.name || '',
+                      expiry: '',
                       network: c.network.toLowerCase() as any,
                       bank: c.bank,
                       status: 'active',
-                      availableCredit: limitNum * 100,
-                      creditLimit: limitNum * 100,
+                      availableCredit: 0,
+                      creditLimit: 0,
                       label: c.name,
                       gradientFrom: getCardTheme(c.id).gradientFrom,
                       gradientTo: getCardTheme(c.id).gradientTo,

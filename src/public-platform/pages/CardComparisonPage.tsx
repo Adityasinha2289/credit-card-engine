@@ -91,7 +91,7 @@ export function CardComparisonPage() {
 
       <PageBody>
       <section className="py-16 lg:py-24">
-        <Container className="grid gap-12 lg:grid-cols-12">
+        <Container className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-12">
           <Reveal className="lg:col-span-4">
             <Eyebrow index="01">The short answer</Eyebrow>
             <p className="mt-6 font-serif text-[clamp(1.45rem,2.2vw,1.9rem)] leading-[1.3] text-rc-ink">{verdict}</p>

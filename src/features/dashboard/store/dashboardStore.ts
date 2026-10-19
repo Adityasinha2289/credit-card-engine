@@ -373,6 +373,8 @@ interface DashboardActions {
   /** Add / remove a savings goal */
   addGoal: (goal: SavingsGoal) => Promise<void>;
   deleteGoal: (goalId: string) => Promise<void>;
+  /** Remove a logged spend, and take it back off the card's outstanding balance. */
+  deleteTransaction: (id: string) => Promise<void>;
 
   /** Reset store to seed state — useful for development. */
   _reset: () => void;
@@ -1086,6 +1088,32 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
           const { error } = await (supabaseClient as any).from('savings_goals').delete()
             .eq('id', goalId).eq('user_id', profile.id);
           if (error && !isMissingSchemaError(error)) console.error('[DB Error] delete goal', error);
+        },
+
+        async deleteTransaction(id) {
+          const tx = get().transactions.find((t) => t.id === id);
+          if (!tx) return;
+          set((state) => {
+            state.transactions = state.transactions.filter((t) => t.id !== id);
+            const acc = state.creditAccounts.find((a) => a.cardId === tx.cardId);
+            if (acc) acc.currentBalance = Math.max(0, acc.currentBalance - tx.amount);
+          });
+          const { supabaseClient, profile, creditAccounts } = get();
+          if (!supabaseClient || !profile) return;
+          const db = supabaseClient as any;
+          const { error } = await db.from('transactions').delete().eq('id', id).eq('user_id', profile.id);
+          if (error) throw new Error(`delete transaction: ${error.message}`);
+          // the card's outstanding balance went up when it was logged; bring it back down
+          const acc = creditAccounts.find((a) => a.cardId === tx.cardId);
+          if (acc) {
+            await safeDbWrite(
+              db.from('credit_accounts').update({ current_balance: acc.currentBalance })
+                .eq('user_id', profile.id).eq('card_id', tx.cardId),
+              'undo transaction balance',
+            );
+          }
+          // reward points are server-managed (users.total_reward_points can only be changed by
+          // the database's own functions), so they aren't reversed here
         },
 
         // ── _reset ────────────────────────────────────────────────────────────

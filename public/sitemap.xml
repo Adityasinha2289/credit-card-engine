@@ -65,46 +65,46 @@
 
   <!-- High-Value Head-to-Head Comparison Engine Pages -->
   <url>
-    <loc>https://renocred.com/compare/sbi-cashback-vs-hdfc-regalia-gold</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://renocred.com/compare/hdfc-regalia-gold-credit-card-vs-sbi-cashback-credit-card</loc>
+    <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://renocred.com/compare/hdfc-infinia-vs-axis-atlas</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://renocred.com/compare/axis-bank-atlas-credit-card-vs-hdfc-infinia-metal-edition</loc>
+    <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://renocred.com/compare/amazon-pay-icici-vs-sbi-cashback</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://renocred.com/compare/amazon-pay-icici-card-vs-sbi-cashback-credit-card</loc>
+    <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://renocred.com/compare/airtel-axis-vs-axis-ace</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://renocred.com/compare/airtel-axis-bank-credit-card-vs-axis-bank-ace-credit-card</loc>
+    <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://renocred.com/compare/swiggy-hdfc-vs-sbi-cashback</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://renocred.com/compare/sbi-cashback-credit-card-vs-swiggy-hdfc-bank-credit-card</loc>
+    <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://renocred.com/compare/tata-neu-infinity-vs-hdfc-regalia-gold</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://renocred.com/compare/hdfc-regalia-gold-credit-card-vs-tata-neu-infinity-hdfc-credit-card</loc>
+    <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://renocred.com/compare/bpcl-sbi-octane-vs-icici-hpcl-super-saver</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://renocred.com/compare/bpcl-sbi-card-octane-vs-icici-bank-hpcl-super-saver</loc>
+    <lastmod>2026-10-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
 
   <!-- Public Utility Calculators -->
@@ -3484,6 +3484,12 @@
   </url>
 
   <!-- Platform Informational Pages -->
+  <url>
+    <loc>https://renocred.com/business</loc>
+    <lastmod>2026-10-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <url>
     <loc>https://renocred.com/about</loc>
     <lastmod>2026-08-14</lastmod>

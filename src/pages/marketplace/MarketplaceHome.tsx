@@ -95,8 +95,8 @@ export default function MarketplaceHome() {
         <ul className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
           {MARKETPLACE_CATEGORIES.map((c) => (
             <li key={c.id}>
-              <Link to={`/app/marketplace/${c.slug}`} className="group relative block aspect-[4/5] overflow-hidden rounded-[22px] bg-rc-ink sm:aspect-[4/3]">
-                <img src={c.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" />
+              <Link to={`/app/marketplace/${c.slug}`} className="group relative block aspect-[4/5] overflow-hidden rounded-[22px] bg-gradient-to-br from-rc-moss to-rc-night sm:aspect-[4/3]">
+                <img src={c.image} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" />
                 <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-rc-night via-rc-night/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-3.5 text-rc-cream sm:p-4">
                   <p className="flex items-center justify-between gap-2 text-[16px] font-semibold leading-tight">{c.name} <ArrowUpRight size={16} className="shrink-0 opacity-70" /></p>

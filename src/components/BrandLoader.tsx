@@ -6,11 +6,11 @@
 import { useLayoutEffect } from 'react';
 import { holdLoader, releaseLoader } from '../lib/bootLoader';
 
-export function LoaderHold({ fill = true }: { fill?: boolean }) {
+export function LoaderHold({ fill = true, now = false }: { fill?: boolean; now?: boolean }) {
   useLayoutEffect(() => {
-    holdLoader();
+    holdLoader(now);
     return releaseLoader;
-  }, []);
+  }, [now]);
   return fill ? <div aria-hidden className="min-h-[100dvh] w-full bg-rc-night" /> : null;
 }
 

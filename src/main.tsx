@@ -71,7 +71,7 @@ function DeferredAnalytics() {
 /** Signed-in pages hold the loading screen; public pages a plain dark fill (they load in a blink). */
 function RouteFallback() {
   const { pathname } = useLocation();
-  if (pathname.startsWith('/app')) return <LoaderHold />;
+  if (pathname.startsWith('/app')) return <LoaderHold now />;
   return <div className="min-h-[100dvh] bg-rc-night" />;
 }
 
@@ -80,9 +80,15 @@ function RouteFallback() {
 const bootHeld = window.location.pathname.startsWith('/app');
 if (bootHeld) holdLoaderNow();
 
+// once only: StrictMode runs effects twice in development, and a second release
+// would cancel the hold of whatever is still loading (the screen would blink off)
+let bootReleased = false;
 function BootRelease() {
   useLayoutEffect(() => {
-    if (bootHeld) releaseLoader();
+    if (bootHeld && !bootReleased) {
+      bootReleased = true;
+      releaseLoader();
+    }
   }, []);
   return null;
 }

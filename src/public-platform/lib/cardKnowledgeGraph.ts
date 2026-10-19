@@ -3,6 +3,7 @@ import { MASTER_CARD_DATASET } from '../../features/finix/data/masterDataset';
 import type { CreditCardIntelligence } from '../../features/card-intelligence/types';
 import type { FinixCard } from '../../features/finix/data/cardDataset';
 import { bankLabel } from '../site/banks';
+import CATALOGUE_CARDS from '../site/catalogueCards.json';
 
 export interface PublicCardEntity {
   id: string;
@@ -33,6 +34,16 @@ export interface PublicCardEntity {
   /** Per-category reward rates (catalogue cards only; curated cards describe rates in `rewardRate`) */
   rates?: { category: string; rate: number; cap?: number }[];
   baseRate?: number | null;
+  /** Key benefits as the issuer words them (full-catalogue cards) */
+  benefits?: string[];
+  /** Fee waiver condition as the issuer states it */
+  feeWaiver?: string | null;
+  /** The issuer has stopped taking new applications */
+  discontinued?: boolean;
+  /** The issuer's page for this card */
+  sourceUrl?: string | null;
+  /** false for cards we know only from the full catalogue (no per-category reward rates yet) */
+  hasRates?: boolean;
 }
 
 /**
@@ -43,6 +54,8 @@ export function monthlyIncome(minSalary?: number): number | undefined {
   if (!minSalary) return undefined;
   return minSalary >= 200000 ? Math.round(minSalary / 12) : minSalary;
 }
+
+const DEDUPE_STOPWORDS = new Set(['credit', 'card', 'bank', 'edition', 'the', 'of', 'hdfc', 'sbi', 'icici', 'axis', 'kotak', 'idfc', 'first', 'yes', 'rbl', 'au', 'hsbc', 'amex', 'american', 'express', 'indusind']);
 
 function slugify(text: string): string {
   return text
@@ -139,6 +152,76 @@ MASTER_CARD_DATASET.forEach((card) => {
     });
   }
 });
+
+// Finally every other card in the full catalogue: what the issuer publishes (fees,
+// key benefits, a link to their page), without per-category reward rates yet.
+interface CatalogueCard {
+  id: string; name: string; issuer: string; network: string | null; annualFee: number | null; joiningFee: number | null;
+  feeWaiver: string | null; lounge: boolean; benefits: string[]; discontinued: boolean; url: string | null;
+}
+
+const CATEGORY_WORDS: [string, RegExp][] = [
+  ['travel', /travel|lounge|air ?miles|flight|hotel|vistara|indigo|makemytrip|irctc/],
+  ['dining', /dining|swiggy|zomato|restaurant|food/],
+  ['shopping', /shopping|amazon|flipkart|myntra|online spend|e-?commerce/],
+  ['fuel', /fuel|petrol|hpcl|bpcl|indianoil|iocl/],
+  ['utilities', /utilit|bill payment|electricity|recharge/],
+  ['cashback', /cash ?back/],
+];
+
+/** Spacing and word order vary between sources ("SimplyCLICK" / "Simply CLICK", "TVS Credit RBL" / "RBL TVS Credit"). */
+const compact = (key: Set<string>) => [...key].sort().join('');
+const letters = (key: Set<string>) => [...key].join('');
+const knownCards = ALL_PUBLIC_CARDS.map((c) => {
+  const key = nameKey(c.cardName);
+  return { issuer: bankLabel(c.issuer), key, compact: compact(key), letters: letters(key) };
+});
+const isKnown = (issuer: string, key: Set<string>) => knownCards.some((k) => k.issuer === issuer
+  && (sameCard(key, k.key) || compact(key) === k.compact || letters(key) === k.letters));
+
+(CATALOGUE_CARDS as CatalogueCard[]).forEach((card) => {
+  const issuer = bankLabel(card.issuer);
+  const fullName = card.name.toLowerCase().includes(issuer.split(' ')[0].toLowerCase()) ? card.name : `${issuer} ${card.name}`;
+  const slug = slugify(fullName);
+  const key = nameKey(fullName.replace(/\(.*?\)/g, ' '));
+  if (seenSlugs.has(slug) || key.size === 0 || isKnown(issuer, key)) return;
+  seenSlugs.add(slug);
+  knownCards.push({ issuer, key, compact: compact(key), letters: letters(key) });
+  const text = `${card.name} ${card.benefits.join(' ')}`.toLowerCase();
+  const fee = (n: number | null) => (n === null ? 'Not Disclosed' : n === 0 ? 'Free Lifetime' : `₹${n.toLocaleString('en-IN')}`);
+  ALL_PUBLIC_CARDS.push({
+    id: `cat-${card.id}`,
+    slug,
+    url: `https://renocred.com/cards/${slug}`,
+    cardName: fullName,
+    issuer: card.issuer,
+    network: card.network || 'Visa',
+    annualFee: card.annualFee,
+    joiningFee: card.joiningFee,
+    formattedAnnualFee: fee(card.annualFee),
+    formattedJoiningFee: fee(card.joiningFee),
+    rewardType: /cash ?back/.test(text) ? 'cashback' : 'points',
+    rewardRate: 'Per-category reward rates for this card are not in our data yet. The benefits below are as the issuer publishes them.',
+    loungeAccess: card.lounge ? 'Lounge access (see the issuer\'s terms)' : 'No complimentary lounge access listed',
+    forexMarkup: null,
+    fuelBenefits: /fuel/.test(text) ? 'Fuel surcharge waiver (see the issuer\'s terms)' : 'Not disclosed',
+    welcomeBenefits: [],
+    milestoneBenefits: [],
+    eligibility: {},
+    categories: CATEGORY_WORDS.filter(([, re]) => re.test(text)).map(([c]) => c),
+    premiumTier: card.annualFee && card.annualFee >= 10000 ? 'super_premium' : card.annualFee && card.annualFee >= 2500 ? 'premium' : card.annualFee === 0 ? 'no_fee' : 'entry',
+    topBenefit: card.benefits[0] ?? `${fullName}${card.discontinued ? ', no longer open to new applicants' : ''}`,
+    isFlagship: false,
+    benefits: card.benefits,
+    feeWaiver: card.feeWaiver,
+    discontinued: card.discontinued,
+    sourceUrl: card.url,
+    hasRates: false,
+  });
+});
+
+/** Every card we list: the full catalogue, with reward rates where we have them. */
+export const DIRECTORY_SIZE = () => getDirectoryCards().length;
 
 // Helper Query Functions
 export function getAllPublicCards(): PublicCardEntity[] {
@@ -331,10 +414,9 @@ export function getPopularComparisons(): { slug: string; label: string }[] {
   });
 }
 
-const DEDUPE_STOPWORDS = new Set(['credit', 'card', 'bank', 'edition', 'the', 'of', 'hdfc', 'sbi', 'icici', 'axis', 'kotak', 'idfc', 'first', 'yes', 'rbl', 'au', 'hsbc', 'amex', 'american', 'express', 'indusind']);
 
 function nameKey(name: string): Set<string> {
-  return new Set(name.toLowerCase().replace(/[^a-z0-9+\s]/g, ' ').split(/\s+/).filter((w) => w && !DEDUPE_STOPWORDS.has(w)));
+  return new Set(name.toLowerCase().replace(/\(.*?\)/g, ' ').replace(/[^a-z0-9+\s]/g, ' ').split(/\s+/).filter((w) => w && !DEDUPE_STOPWORDS.has(w)));
 }
 
 function sameCard(a: Set<string>, b: Set<string>): boolean {

@@ -103,6 +103,8 @@ export function CardDetailPage() {
     { label: 'Fuel', value: card.fuelBenefits },
     ...card.welcomeBenefits.map((w) => ({ label: 'Welcome benefit', value: w })),
     ...card.milestoneBenefits.map((m) => ({ label: 'Milestone', value: m })),
+    ...(card.feeWaiver ? [{ label: 'Fee waiver', value: card.feeWaiver }] : []),
+    ...(card.benefits ?? []).map((b) => ({ label: 'From the issuer', value: b })),
   ];
 
   const productSchema = getCreditCardProductSchema({
@@ -133,7 +135,7 @@ export function CardDetailPage() {
         crumbs={[{ label: 'Home', to: '/' }, { label: 'Cards', to: '/cards' }, { label: name }]}
         eyebrow={`${issuer} · ${card.network}`}
         title={name}
-        lede={card.topBenefit}
+        lede={card.discontinued ? `${issuer} has stopped taking new applications for this card. Existing cardholders keep its benefits.` : card.hasRates === false ? (card.benefits?.[0] ?? card.topBenefit) : card.topBenefit}
         actions={(
           <>
             <ButtonLink to={SIGN_UP} variant="cream" size="lg">See how it fits your wallet</ButtonLink>
@@ -195,6 +197,11 @@ export function CardDetailPage() {
                 </ul>
               )}
               <p className="mt-6 text-[13px] leading-relaxed text-rc-muted">Rates are value back as a share of spend, from the issuer's published terms. Exclusions and redemption values vary.</p>
+              {card.sourceUrl && (
+                <a href={card.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" className="mt-3 inline-flex items-center gap-1.5 text-[14px] font-medium text-rc-forest underline decoration-rc-forest/30 underline-offset-4 hover:decoration-rc-forest">
+                  Read {issuer}'s page for this card <span aria-hidden>↗</span>
+                </a>
+              )}
             </Reveal>
           </Container>
         </section>

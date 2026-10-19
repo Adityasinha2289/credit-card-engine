@@ -6,6 +6,7 @@ import { cn } from '../../lib/utils';
 import { ArrowChip, Container, EASE_OUT } from '../site/primitives';
 import { LogoLink } from '../site/Brand';
 import { useSignedInHint } from '../site/SiteLink';
+import { prefetchAuth, prefetchAuthProps } from '../site/prefetchAuth';
 import { CARD_NEEDS, MY_RENOCRED, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 import { analytics } from '../../lib/analytics';
 
@@ -135,6 +136,12 @@ export function PublicHeader() {
   const [hovered, setHovered] = useState<string | null>(null);
   // signed-in visitors browse the site freely and always have a one-click way back into the app
   const signedIn = useSignedInHint();
+  // returning members will almost certainly open My RenoCred: fetch it while they read
+  useEffect(() => {
+    if (!signedIn) return;
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    if (w.requestIdleCallback) w.requestIdleCallback(prefetchAuth); else setTimeout(prefetchAuth, 1500);
+  }, [signedIn]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -206,11 +213,12 @@ export function PublicHeader() {
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             {!signedIn && (
-              <Link to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
+              <Link {...prefetchAuthProps} to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
                 Log in
               </Link>
             )}
             <Link
+              {...prefetchAuthProps}
               to={signedIn ? '/app' : SIGN_UP}
               className={cn(
                 'group inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-1 text-[14px] font-medium transition-colors duration-300 sm:h-11 sm:pl-5',

@@ -14,7 +14,7 @@
     "evaluate": "npx tsx scripts/evaluate.ts",
     "db:check": "node scripts/check-migrations.mjs",
     "api:check": "node scripts/check-api-esm.mjs",
-    "site:stats": "node scripts/gen-catalogue-stats.mjs"
+    "site:stats": "node scripts/gen-catalogue-stats.mjs && npx tsx scripts/count-listed.ts"
   },
   "dependencies": {
     "@clerk/backend": "^3.16.1",

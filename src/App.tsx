@@ -4,7 +4,8 @@ import { useState, useEffect, Suspense, lazy } from 'react';
 import { useUser, RedirectToSignIn, RedirectToSignUp } from '@clerk/clerk-react';
 import { Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
 
-import { SiteAppLayout, PageSkeleton } from './components/layout/SiteAppLayout';
+import { SiteAppLayout } from './components/layout/SiteAppLayout';
+import { BrandLoader } from './components/BrandLoader';
 import { useDashboardStore, useHydration } from './features/dashboard/store/dashboardStore';
 import { useSupabase } from './hooks/useSupabase';
 
@@ -162,9 +163,7 @@ export default function App() {
     // Exception for demo mode which requires no hydration or loading
     if (!window.location.search.includes('demo=onboarding') && !isProfileDemo) {
       return (
-        <SiteAppLayout>
-          <PageSkeleton />
-        </SiteAppLayout>
+        <BrandLoader label={isSignedIn ? 'Getting your cards ready' : 'Opening sign-in'} />
       );
     }
   }
@@ -172,7 +171,7 @@ export default function App() {
   // 0. Intercept Demo Onboarding
   if (window.location.search.includes('demo=onboarding')) {
     return (
-      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-[#F9FAFB]" />}>
+      <Suspense fallback={<BrandLoader label="Opening the tour" />}>
         <DemoOnboarding />
       </Suspense>
     );

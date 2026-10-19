@@ -21,10 +21,12 @@ const NEEDS: { id: string; label: string; match: (c: PublicCardEntity) => boolea
   { id: 'utilities', label: 'Bills', match: (c) => c.categories.includes('utilities') },
   { id: 'lifetime-free', label: 'Lifetime free', match: (c) => c.annualFee === 0 },
   { id: 'premium', label: 'Premium', match: (c) => c.premiumTier === 'premium' || c.premiumTier === 'super_premium' },
+  { id: 'rates', label: 'With reward rates', match: (c) => c.hasRates !== false },
 ];
 
 const SORTS = {
-  featured: { label: 'Featured', fn: (a: PublicCardEntity, b: PublicCardEntity) => Number(b.id.startsWith('card-')) - Number(a.id.startsWith('card-')) },
+  // cards with full reward rates first, then the rest of the catalogue, discontinued cards last
+  featured: { label: 'Featured', fn: (a: PublicCardEntity, b: PublicCardEntity) => featuredRank(a) - featuredRank(b) },
   'fee-asc': { label: 'Annual fee, low to high', fn: (a: PublicCardEntity, b: PublicCardEntity) => (a.annualFee ?? Infinity) - (b.annualFee ?? Infinity) },
   'fee-desc': { label: 'Annual fee, high to low', fn: (a: PublicCardEntity, b: PublicCardEntity) => (b.annualFee ?? -1) - (a.annualFee ?? -1) },
   name: { label: 'Name, A to Z', fn: (a: PublicCardEntity, b: PublicCardEntity) => a.cardName.localeCompare(b.cardName) },
@@ -38,6 +40,12 @@ function feeLabel(c: PublicCardEntity): string {
   return c.annualFee === 0 ? 'Lifetime free' : `₹${c.annualFee.toLocaleString('en-IN')}`;
 }
 
+function featuredRank(c: PublicCardEntity): number {
+  if (c.discontinued) return 3;
+  if (c.id.startsWith('card-')) return 0;
+  return c.hasRates === false ? 2 : 1;
+}
+
 function DirectoryCard({ card }: { card: PublicCardEntity }) {
   return (
     <Link to={`/cards/${card.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[32px] border border-rc-ink/10 bg-rc-paper transition-[border-color,box-shadow,transform] duration-500 hover:-translate-y-1 hover:border-rc-ink/20 hover:shadow-[0_30px_60px_-36px_rgba(15,42,29,0.45)]">
@@ -48,7 +56,12 @@ function DirectoryCard({ card }: { card: PublicCardEntity }) {
         </div>
       </div>
       <div className="flex flex-1 flex-col px-6 pb-6 pt-4">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-muted">{bankLabel(card.issuer)}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[12px] font-medium text-rc-muted">{bankLabel(card.issuer)}</p>
+          {card.discontinued
+            ? <span className="rounded-full bg-rc-ink/[0.06] px-2.5 py-0.5 text-[11px] font-medium text-rc-muted">Not issued now</span>
+            : card.hasRates !== false && <span className="rounded-full bg-rc-pistachio px-2.5 py-0.5 text-[11px] font-semibold text-rc-forest">Rates</span>}
+        </div>
         <h2 className="mt-2 font-serif text-[23px] font-semibold leading-snug tracking-[-0.01em] text-rc-ink">{displayCardName(card.cardName)}</h2>
         <p className="mb-6 mt-2 line-clamp-2 text-[14px] leading-relaxed text-rc-muted">{card.topBenefit}</p>
         <div className="mt-auto flex items-end justify-between gap-4 border-t border-rc-ink/10 pt-4">
@@ -123,12 +136,12 @@ export function CardsDirectoryPage({ embedded = false }: { embedded?: boolean } 
       {!embedded && (
         <PageHero
           eyebrow="Card directory"
-          title={<>Compare cards, <span className="italic">side by side.</span></>}
-          lede="Fees, reward rates, lounge access and eligibility for every card we hold full reward data on, filterable by what you spend on."
+          title={<>Every card, <span className="italic">side by side.</span></>}
+          lede="Every Indian credit card we have read: fees, benefits and lounge access, with full reward rates for the cards marked “rates”. Filter by what you spend on."
           actions={(
             <dl className="flex flex-wrap gap-x-10 gap-y-4">
               {[
-                [all.length, 'cards ranked'],
+                [all.length, 'cards'],
                 [issuers.length, 'issuers'],
                 [all.filter((c) => c.annualFee === 0).length, 'lifetime free'],
               ].map(([n, label]) => (

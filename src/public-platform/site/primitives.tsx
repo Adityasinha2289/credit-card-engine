@@ -5,6 +5,7 @@
  */
 import { useEffect, useState, type ReactNode, type ElementType } from 'react';
 import { SiteLink as Link } from './SiteLink';
+import { prefetchAuthProps } from './prefetchAuth';
 import { animate, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -96,7 +97,7 @@ export function ButtonLink({ to, href, children, variant = 'ink', size = 'md', a
       {arrow && <ArrowChip variant={variant} size={size === 'lg' ? 'lg' : 'md'} external={external} />}
     </>
   );
-  if (to) return <Link to={to} className={classes} onClick={onClick}>{content}</Link>;
+  if (to) return <Link to={to} className={classes} onClick={onClick} {...(to.startsWith('/app') ? prefetchAuthProps : {})}>{content}</Link>;
   return (
     <a href={href} className={classes} onClick={onClick} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
       {content}

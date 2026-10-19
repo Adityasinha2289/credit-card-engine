@@ -20,7 +20,7 @@ const METHODOLOGY_FAQS = [
   },
   {
     question: 'Where does the card data come from?',
-    answer: `From each issuer's own published terms. So far we have read ${CATALOGUE_STATS.cards} cards from ${CATALOGUE_STATS.issuers} issuers. Where an issuer has not published a figure, we show it as not disclosed rather than estimating it. If you spot something out of date, tell us.`,
+    answer: `From each issuer's own published terms. So far we have read ${CATALOGUE_STATS.listed} cards from ${CATALOGUE_STATS.issuers} issuers. Where an issuer has not published a figure, we show it as not disclosed rather than estimating it. If you spot something out of date, tell us.`,
   },
   {
     question: 'Does checking cards affect my credit score?',

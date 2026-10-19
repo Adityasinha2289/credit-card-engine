@@ -16,6 +16,16 @@ export default {
         'ag-glow-primary': '0 4px 16px 0 rgba(42, 157, 92, 0.10), 0 8px 32px 0 rgba(42, 157, 92, 0.05)',
       },
       keyframes: {
+        // brand loader: a card dips into the machine's slot and comes back out
+        'rc-dip': {
+          '0%, 12%': { transform: 'translate(-50%, -6px)' },
+          '45%, 62%': { transform: 'translate(-50%, 46px)' },
+          '100%': { transform: 'translate(-50%, -6px)' },
+        },
+        'rc-progress': {
+          '0%': { transform: 'translateX(-110%)' },
+          '100%': { transform: 'translateX(320%)' },
+        },
         'fade-in-up': {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
@@ -35,6 +45,8 @@ export default {
       },
       animation: {
         'rc-marquee': 'rc-marquee 40s linear infinite',
+        'rc-dip': 'rc-dip 1.8s cubic-bezier(.45,0,.25,1) infinite',
+        'rc-progress': 'rc-progress 1.4s cubic-bezier(.45,0,.55,1) infinite',
         'rc-rise': 'rc-rise 70s linear infinite',
         'rc-fall': 'rc-fall 70s linear infinite',
       },

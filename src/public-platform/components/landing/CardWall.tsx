@@ -216,7 +216,7 @@ export function CardWall() {
           </p>
           <h2 className="mt-6 font-serif font-semibold tracking-[-0.04em]">
             <span className="block text-[clamp(6rem,17vw,13.5rem)] leading-[0.86] text-rc-pistachio lining-nums tabular-nums">
-              <CountUp to={CATALOGUE_STATS.cards} start={seen} duration={1.8} delay={0.1} />
+              <CountUp to={CATALOGUE_STATS.listed} start={seen} duration={1.8} delay={0.1} />
             </span>
             <span className="mt-3 block text-[clamp(2.25rem,4.4vw,3.9rem)] leading-[1] tracking-[-0.03em]">cards. Read so<br />you don't have to.</span>
           </h2>

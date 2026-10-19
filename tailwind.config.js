@@ -16,10 +16,39 @@ export default {
         'ag-glow-primary': '0 4px 16px 0 rgba(42, 157, 92, 0.10), 0 8px 32px 0 rgba(42, 157, 92, 0.05)',
       },
       keyframes: {
+        // brand loader: a card dips into the machine's slot and comes back out
+        'rc-dip': {
+          '0%, 12%': { transform: 'translate(-50%, -6px)' },
+          '45%, 62%': { transform: 'translate(-50%, 46px)' },
+          '100%': { transform: 'translate(-50%, -6px)' },
+        },
+        'rc-progress': {
+          '0%': { transform: 'translateX(-110%)' },
+          '100%': { transform: 'translateX(320%)' },
+        },
         'fade-in-up': {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
-        }
+        },
+        'rc-rise': {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-50%)' },
+        },
+        'rc-fall': {
+          '0%': { transform: 'translateY(-50%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        'rc-marquee': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        'rc-marquee': 'rc-marquee 40s linear infinite',
+        'rc-dip': 'rc-dip 1.8s cubic-bezier(.45,0,.25,1) infinite',
+        'rc-progress': 'rc-progress 1.4s cubic-bezier(.45,0,.55,1) infinite',
+        'rc-rise': 'rc-rise 70s linear infinite',
+        'rc-fall': 'rc-fall 70s linear infinite',
       },
       colors: {
         // V2 SEMANTIC SYSTEM
@@ -44,6 +73,37 @@ export default {
           intelligence: 'var(--color-border-intelligence)',
         },
         
+        // Tailwind's grey scale, re-tinted to the brand: cream (50) to ink (900).
+        gray: {
+          50: '#F6F4EC',
+          100: '#EFEDE3',
+          200: '#E2E3D8',
+          300: '#CBD0C4',
+          400: '#9AA89D',
+          500: '#6B7F70',
+          600: '#4D6354',
+          700: '#37503F',
+          800: '#1E3A2B',
+          900: '#0F2A1D',
+          950: '#0A1F15',
+        },
+
+        // RENOCRED SITE SYSTEM (public website). Same brand palette as `editorial`,
+        // plus the text/line tones needed to keep body copy at AA contrast on cream.
+        rc: {
+          night: '#0A1F15',     // deepest surface (cinematic sections)
+          ink: '#0F2A1D',       // primary text on light, primary dark surface
+          moss: '#16382A',      // raised surface on dark
+          forest: '#375534',
+          sage: '#6B9071',      // decorative / large text only (3.3:1 on cream)
+          mist: '#AEC3B0',      // secondary text on dark, hairlines
+          pistachio: '#E3EED4',
+          cream: '#F6F4EC',     // page background
+          paper: '#FBFAF6',     // raised surface on cream
+          muted: '#4D6354',     // secondary text on light (6:1 on cream)
+          emerald: '#2A9D5C',   // money / positive value only
+        },
+
         // EDITORIAL THEME
         editorial: {
           'deep-forest': '#0F2A1D',
@@ -62,14 +122,19 @@ export default {
           200: '#0A0A0A',
           300: '#111111',
         },
+        // Legacy surface tokens, re-tinted from the old dark theme to the brand's light one
+        // (the app is light now; dark values here made text vanish on cream).
         surface: {
-          shell: '#050806',
-          primary: '#07120D', 
-          card: '#07120D', 
-          elevated: '#081A12', 
-          intelligence: '#0A2418',
-          'intelligence-elevated': '#0A2418',
-          secondary: '#07120D',
+          shell: '#F6F4EC',
+          base: '#F6F4EC',
+          primary: '#FBFAF6',
+          card: '#FBFAF6',
+          secondary: '#FBFAF6',
+          raised: '#FFFFFF',
+          muted: '#EFEDE3',
+          elevated: '#EFEDE3',
+          intelligence: '#E3EED4',
+          'intelligence-elevated': '#D8E6C6',
         },
         // V3 SEMANTIC EMERALD (Only for savings/value)
         brand: {
@@ -83,7 +148,8 @@ export default {
           700: '#0BCC88',
           800: '#0DE699',
           900: '#2A9D5C', // Primary brand action/value
-          emerald: '#2A9D5C',
+          // actions and accents in the app read in forest; money keeps `profit` emerald
+          emerald: '#375534',
         },
         // Action / Status
         profit: '#2A9D5C',
@@ -92,23 +158,24 @@ export default {
         
         // V3 TYPOGRAPHY COLORS
         text: {
-          primary: '#F2F4F2',
-          secondary: '#A0AAA5',
-          tertiary: '#737C77',
-          muted: '#59615D',
-          disabled: 'rgba(242, 244, 242, 0.20)',
+          primary: '#0F2A1D',
+          secondary: '#4D6354',
+          tertiary: '#5E7363',
+          muted: '#5E7363',
+          disabled: 'rgba(15, 42, 29, 0.35)',
         },
         border: {
-          subtle: '#242D29',
-          strong: '#242D29',
-          intelligence: '#164534',
-          hover: '#1E6549',
-          emerald: 'rgba(42, 157, 92, 0.3)',
+          subtle: 'rgba(15, 42, 29, 0.10)',
+          strong: 'rgba(15, 42, 29, 0.18)',
+          intelligence: 'rgba(55, 85, 52, 0.25)',
+          hover: 'rgba(15, 42, 29, 0.28)',
+          emerald: 'rgba(55, 85, 52, 0.3)',
         }
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['Plus Jakarta Sans', 'Inter', 'ui-sans-serif', 'sans-serif'],
+        // app page titles: the same serif as the website
+        display: ['Playfair Display', 'Georgia', 'serif'],
         serif: ['Playfair Display', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },

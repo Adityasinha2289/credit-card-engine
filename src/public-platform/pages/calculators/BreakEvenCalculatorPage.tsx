@@ -1,125 +1,124 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import { SEO } from '../../components/SEO';
-import { getFlagshipPublicCards } from '../../lib/cardKnowledgeGraph';
+import { getCardBySlug, getDirectoryCards, getRatesFor } from '../../lib/cardKnowledgeGraph';
 import { getBreadcrumbSchema, getOrganizationSchema, getWebSiteSchema } from '../../lib/schemaBuilders';
-import { Calculator, Sparkles, ArrowRight, Shield, CheckCircle2 } from 'lucide-react';
+import { cn } from '../../../lib/utils';
+import { ButtonLink, formatINR } from '../../site/primitives';
+import { CalculatorShell } from '../../site/CalculatorShell';
+import { CardSelect } from '../../site/CardSelect';
+import { DEFAULT_PROFILE, blendedRate, breakEvenMonthly, type Profile } from '../../site/calc';
+import { SIGN_UP } from '../../site/nav';
+
+const ROUTE = '/calculators/annual-fee-break-even';
+
+const MIXES: { id: string; label: string; shares: Profile }[] = [
+  { id: 'balanced', label: 'A bit of everything', shares: DEFAULT_PROFILE },
+  { id: 'online', label: 'Mostly online shopping', shares: { shopping: 60, dining: 15, utilities: 10, other: 15 } },
+  { id: 'travel', label: 'Mostly travel', shares: { travel: 60, dining: 15, shopping: 10, other: 15 } },
+  { id: 'dining', label: 'Mostly food & dining', shares: { dining: 55, groceries: 20, shopping: 10, other: 15 } },
+  { id: 'bills', label: 'Mostly bills', shares: { utilities: 50, groceries: 20, fuel: 15, other: 15 } },
+];
+
+/** Rewards-per-year line against the flat annual fee, with the crossing marked. */
+function BreakEvenChart({ fee, monthly, ratePct }: { fee: number; monthly: number; ratePct: number }) {
+  const maxX = Math.max(monthly * 2, 20000);
+  const maxY = Math.max(fee * 2, 1);
+  const W = 320, H = 180, P = 8;
+  const x = (v: number) => P + (v / maxX) * (W - 2 * P);
+  const y = (v: number) => H - P - (Math.min(v, maxY) / maxY) * (H - 2 * P);
+  const rewardsAt = (m: number) => m * 12 * (ratePct / 100);
+  const endX = Math.min(maxX, maxY / (12 * (ratePct / 100)));
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={`Rewards reach the ${formatINR(fee)} fee at ${formatINR(monthly)} a month`}>
+      <line x1={P} y1={H - P} x2={W - P} y2={H - P} stroke="white" strokeOpacity="0.15" />
+      <line x1={P} y1={y(fee)} x2={W - P} y2={y(fee)} stroke="#AEC3B0" strokeDasharray="5 5" strokeWidth="1.5" />
+      <line x1={x(0)} y1={y(0)} x2={x(endX)} y2={y(rewardsAt(endX))} stroke="#E3EED4" strokeWidth="2.5" />
+      <circle cx={x(monthly)} cy={y(fee)} r="6" fill="#2A9D5C" />
+      <circle cx={x(monthly)} cy={y(fee)} r="13" fill="#2A9D5C" fillOpacity="0.2" />
+      <text x={P + 2} y={y(fee) - 8} fontSize="10" fill="#AEC3B0" fontFamily="Inter">Annual fee</text>
+      <text x={W - P} y={H - P - 8} fontSize="10" fill="#AEC3B0" fontFamily="Inter" textAnchor="end">{formatINR(maxX)}/mo</text>
+    </svg>
+  );
+}
 
 export function BreakEvenCalculatorPage() {
-  const cards = getFlagshipPublicCards();
-  const [selectedCardId, setSelectedCardId] = useState<string>(cards[0].id);
+  const cards = useMemo(() => getDirectoryCards().filter((c) => (c.annualFee ?? 0) > 0), []);
+  const [card, setCard] = useState(() => getCardBySlug('hdfc-regalia-gold-credit-card') ?? cards[0]);
+  const [mix, setMix] = useState(MIXES[0].id);
 
-  const selectedCard = cards.find((c) => c.id === selectedCardId) || cards[0];
-
-  const annualFee = selectedCard.annualFee;
-  // Estimate break-even spend required to recover annual fee via rewards
-  const returnRate = selectedCard.annualFee >= 10000 ? 0.05 : 0.02;
-  const breakEvenAnnualSpend = annualFee === 0 ? 0 : Math.round(annualFee / returnRate);
-  const breakEvenMonthlySpend = Math.round(breakEvenAnnualSpend / 12);
+  const shares = MIXES.find((m) => m.id === mix)!.shares;
+  const rates = getRatesFor(card);
+  const ratePct = rates ? blendedRate(rates, shares) : 0;
+  const monthly = breakEvenMonthly(card, shares);
+  const fee = card.annualFee ?? 0;
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', item: '/' },
-    { name: 'Calculators', item: '/calculators/annual-fee-break-even' },
-    { name: 'Annual Fee Break-Even Calculator', item: '/calculators/annual-fee-break-even' },
+    { name: 'Annual Fee Break-Even Calculator', item: ROUTE },
   ]);
 
   return (
-    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
+    <>
       <SEO
-        title="Credit Card Annual Fee Break-Even Calculator (2026) | RenoCred"
-        description="Calculate the exact annual and monthly spending required to recover your credit card annual fee. Compare fee waiver thresholds across Indian credit cards."
-        canonicalUrl="https://renocred.com/calculators/annual-fee-break-even"
+        title="Credit Card Annual Fee Break-Even Calculator | RenoCred"
+        description="Find out how much you need to spend for a credit card's rewards to cover its annual fee, and when the fee is waived."
+        canonicalUrl={`https://renocred.com${ROUTE}`}
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
-
-      {/* Hero Header */}
-      <section className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-6 text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider mb-4">
-          <Calculator size={14} /> Public Utility Tool
-        </div>
-        <h1 className="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight mb-3">
-          Annual Fee <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Break-Even Calculator</span>
-        </h1>
-        <p className="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto leading-relaxed">
-          Determine the spending required to offset your annual credit card fee through rewards and milestone waivers.
-        </p>
-      </section>
-
-      {/* Calculator Main */}
-      <main className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 p-6 sm:p-8 rounded-3xl bg-[#0D120F] border border-white/10">
-          <div className="md:col-span-6 space-y-6">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/5 pb-3">
-              <Sparkles size={18} className="text-emerald-400" />
-              1. Select Card Entity
-            </h2>
-
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-gray-300 uppercase tracking-wider block">
-                Credit Card:
-              </label>
-              <select
-                value={selectedCardId}
-                onChange={(e) => setSelectedCardId(e.target.value)}
-                className="w-full bg-[#151515] border border-white/10 text-sm text-white rounded-xl p-3 focus:outline-none focus:border-emerald-500"
-              >
-                {cards.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.cardName} ({c.formattedAnnualFee})
-                  </option>
+      <CalculatorShell
+        current={ROUTE}
+        title={<>Annual fee <span className="italic text-rc-forest">break-even</span></>}
+        lede="How much you need to spend before a card's rewards pay for its fee, and the spend at which the issuer waives it altogether."
+        note="Break-even uses the card's published rate for each category in the spend mix you choose, ignoring monthly caps, so it is the lowest spend at which the fee can pay for itself. Waiver thresholds are the issuer's yearly spend targets."
+        inputs={
+          <div className="space-y-12">
+            <CardSelect cards={cards} value={card} onChange={setCard} label="Card with a fee" />
+            <fieldset>
+              <legend className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Where does your money go?</legend>
+              <div role="radiogroup" className="grid gap-2 sm:grid-cols-2">
+                {MIXES.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={mix === m.id}
+                    onClick={() => setMix(m.id)}
+                    className={cn('rounded-2xl border px-5 py-4 text-left text-[15px] transition-colors', mix === m.id ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/15 bg-white text-rc-ink hover:border-rc-ink/40')}
+                  >
+                    {m.label}
+                  </button>
                 ))}
-              </select>
-            </div>
-
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 text-xs text-gray-300">
-              <span className="font-semibold text-emerald-400">Card Fee & Waiver Milestones:</span>
-              <p>Annual Fee: {selectedCard.formattedAnnualFee}</p>
-              <p>Milestone Waiver: {selectedCard.milestoneBenefits[0] || 'Standard fee terms'}</p>
-            </div>
-          </div>
-
-          <div className="md:col-span-6 flex flex-col justify-between p-6 rounded-2xl bg-white/[0.02] border border-emerald-500/20 space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/5 pb-3">
-                <Calculator size={18} className="text-emerald-400" />
-                2. Estimated Break-Even Spend
-              </h2>
-
-              <div className="space-y-4 pt-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">Annual Card Fee:</span>
-                  <span className="font-mono text-base font-bold text-white">{selectedCard.formattedAnnualFee}</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">Required Monthly Break-Even Spend:</span>
-                  <span className="font-mono text-lg font-bold text-emerald-400">₹{breakEvenMonthlySpend.toLocaleString('en-IN')}/mo</span>
-                </div>
-                <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-                  <span className="text-sm font-bold text-white uppercase tracking-wider">Required Annual Break-Even Spend:</span>
-                  <span className="font-mono text-2xl font-bold text-emerald-400">₹{breakEvenAnnualSpend.toLocaleString('en-IN')}</span>
-                </div>
               </div>
+            </fieldset>
+          </div>
+        }
+        result={
+          <div className="overflow-hidden rounded-[28px] bg-rc-ink text-rc-cream">
+            <div className="p-7 sm:p-9">
+              {monthly == null ? (
+                <p className="text-[16px] leading-relaxed text-rc-mist">We don't have per-category rates for this card yet, so we can't work out its break-even honestly. Try another card.</p>
+              ) : (
+                <>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist">Rewards cover the {formatINR(fee)} fee at</p>
+                  <p className="mt-3 font-serif text-[clamp(3rem,6vw,4.25rem)] leading-none tabular-nums">{formatINR(monthly)}</p>
+                  <p className="mt-3 text-[14px] text-rc-mist">a month, about {formatINR(monthly * 12)} a year, at {ratePct.toFixed(2)}% back</p>
+                  <div className="mt-8"><BreakEvenChart fee={fee} monthly={monthly} ratePct={ratePct} /></div>
+                </>
+              )}
             </div>
-
-            <div className="pt-4">
-              <Link
-                to="/app"
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition-all shadow-[0_0_20px_rgba(52,211,153,0.3)] active:scale-95"
-              >
-                <span>Calculate Yield in RenoCred</span>
-                <ArrowRight size={16} />
-              </Link>
+            {rates?.feeWaiverSpend ? (
+              <div className="border-t border-white/10 p-7 sm:p-9">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist">Fee waived entirely at</p>
+                <p className="mt-2 font-serif text-[30px] leading-none tabular-nums">{formatINR(rates.feeWaiverSpend)}<span className="ml-2 font-sans text-[14px] text-rc-mist">a year</span></p>
+                <p className="mt-2 text-[13px] text-rc-mist">About {formatINR(Math.ceil(rates.feeWaiverSpend / 12))} a month.</p>
+              </div>
+            ) : null}
+            <div className="border-t border-white/10 p-7 sm:p-9">
+              <ButtonLink to={SIGN_UP} variant="cream" className="w-full">See if it pays off for you</ButtonLink>
             </div>
           </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-gray-400 space-y-1">
-          <p className="font-semibold text-gray-300">Calculator Disclaimer & Assumptions</p>
-          <p>
-            Break-even estimates calculate reward value recovery based on standard category spend multipliers. Milestone annual fee waivers (e.g. ₹2L spend waiver) provide 100% fee recovery upon reaching the target spend threshold.
-          </p>
-        </div>
-      </main>
-    </div>
+        }
+      />
+    </>
   );
 }

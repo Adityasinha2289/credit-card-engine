@@ -1,83 +1,82 @@
 import { SEO } from '../components/SEO';
-import { ContentMeta } from '../components/ContentMeta';
-import { motion } from 'framer-motion';
+import { ButtonLink, Container, Display, Eyebrow, Reveal } from '../site/primitives';
+import { PageBody, PageHero } from '../site/PageHero';
+import { CATALOGUE_STATS } from '../site/swipeMath';
+import { SIGN_UP } from '../site/nav';
+
+const PRINCIPLES = [
+  {
+    title: 'Clarity over hype',
+    body: 'Reward structures, caps, fee waivers and eligibility rules, written so you can act on them. No "up to" headlines without the fine print next to them.',
+  },
+  {
+    title: 'Your interest first',
+    body: 'Cards are ranked by the value they add to your wallet after fees. Commercial relationships never change that order.',
+  },
+  {
+    title: 'Show the working',
+    body: 'Every estimate traces back to a published rate and your own numbers. When we do not know something, we say so.',
+  },
+];
 
 export function AboutPage() {
   return (
-    <div className="w-full min-h-[100dvh] relative overflow-hidden bg-[#0A0A0A] text-white selection:bg-brand-emerald-glow">
-      <SEO 
-        title="About RenoCred | Optimizing Your Credit Card Strategy"
-        description="Learn about RenoCred's mission to bring clarity and transparency to the Indian credit card ecosystem."
+    <div className="flex w-full flex-1 flex-col">
+      <SEO
+        title="About RenoCred | Credit card intelligence for India"
+        description="RenoCred's mission is to bring clarity and transparency to the Indian credit card ecosystem."
         canonicalUrl="https://renocred.com/about"
       />
-      
-      {/* Background Effects */}
-      <div className="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-brand-emerald/5 to-transparent pointer-events-none" />
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-brand-emerald/3 rounded-full blur-[160px] pointer-events-none" />
 
-      {/* Hero Section */}
-      <section className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12 text-center z-10">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="flex justify-center mb-8"
-        >
-          {/* RenoCred Logo Badge */}
-          <div className="w-20 h-20 bg-gradient-to-br from-[#111] to-[#050505] border border-white/[0.08] rounded-[1.5rem] flex items-center justify-center shadow-[0_0_50px_rgba(0,229,153,0.15)] relative overflow-hidden group">
-             <div className="absolute inset-0 bg-brand-emerald/10 blur-2xl group-hover:bg-brand-emerald/20 transition-colors duration-700" />
-             <img src="/logo.jpg" alt="RenoCred Logo" className="w-12 h-12 rounded-xl object-cover relative z-10" />
-          </div>
-        </motion.div>
+      <PageHero
+        eyebrow="About RenoCred"
+        wide
+        title={<>Choosing a card shouldn't need <span className="italic">a spreadsheet.</span></>}
+        lede="We built RenoCred to solve a simple problem: getting real value from credit cards in India is far too complicated."
+      />
 
-        <motion.h1 
-          className="text-4xl md:text-6xl font-display font-bold mb-6 tracking-tight"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          About <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-emerald to-teal-800">RenoCred</span>
-        </motion.h1>
-        
-        <motion.p 
-          className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          We built RenoCred to solve a simple problem: maximizing credit card rewards and financial value is entirely too complicated.
-        </motion.p>
-        <div className="max-w-2xl mx-auto mt-8 flex justify-center">
-        </div>
+      <PageBody>
+      <section className="py-24 lg:py-32">
+        <Container className="grid gap-14 lg:grid-cols-12">
+          <Reveal className="lg:col-span-4">
+            <Eyebrow index="01">Why we exist</Eyebrow>
+          </Reveal>
+          <Reveal delay={0.08} className="rc-prose lg:col-span-7 lg:col-start-6">
+            <p>The credit card ecosystem in India is full of hidden benefits, complex reward structures, shifting eligibility rules and opaque terms. For most people, a confident decision about which card to use, or which to apply for next, means building a spreadsheet.</p>
+            <blockquote>By matching how each card works to how you actually spend, RenoCred makes sure no swipe leaves money on the table.</blockquote>
+            <p>We are building RenoCred to be the place where you manage the cards you have, get more from everyday spending, and make data-driven decisions at a glance, starting with {CATALOGUE_STATS.listed} cards from {CATALOGUE_STATS.issuers} issuers.</p>
+          </Reveal>
+        </Container>
       </section>
 
-      {/* Main Content Area */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 z-10 relative">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-[#111111] border border-white/[0.04] rounded-3xl p-8 md:p-12 shadow-2xl"
-        >
-          <div className="prose prose-invert max-w-none prose-p:text-gray-400 prose-p:leading-relaxed prose-p:text-lg space-y-8">
-            <p>
-              The modern credit card ecosystem in India is filled with hidden benefits, complex reward structures, shifting eligibility rules, and opaque terms. For the average consumer, making a confident decision about which card to use—or which card to apply for next—usually requires building a complex spreadsheet.
-            </p>
-            <p>
-              Our philosophy is built entirely on <strong className="text-white">clarity and transparency</strong>. We aim to structure credit card information logically and provide intelligent AI-driven tools that help you understand your own spending habits instantly.
-            </p>
-            <div className="p-6 bg-[#0A0A0A] border border-white/[0.04] rounded-2xl my-8">
-              <h3 className="text-xl font-bold text-white mb-3">Our Mission</h3>
-              <p className="text-gray-400 m-0">
-                By evaluating how different cards align with your personal expenses in real-time, we ensure you optimize your wallet and never leave money on the table without the guesswork.
-              </p>
-            </div>
-            <p>
-              We are building RenoCred to be your ultimate credit card command center—a beautiful, intelligent hub where you can manage your existing cards, optimize your everyday spending, and make confident, data-driven financial decisions at a glance.
-            </p>
+      <section className="mx-3 rounded-[40px] bg-rc-ink py-24 text-rc-cream sm:mx-5 lg:rounded-[56px] lg:py-32 2xl:mx-auto 2xl:max-w-[1360px]">
+        <Container>
+          <Reveal>
+            <Eyebrow index="02" tone="cream">What we believe</Eyebrow>
+            <Display className="mt-6 max-w-[18ch]">Three rules we <span className="italic text-rc-pistachio">don't break.</span></Display>
+          </Reveal>
+          <div className="mt-16 grid gap-12 md:grid-cols-3">
+            {PRINCIPLES.map((p, i) => (
+              <Reveal key={p.title} delay={i * 0.08} className="rounded-[28px] border border-white/10 bg-white/[0.03] p-7">
+                <p className="text-[12px] tabular-nums text-rc-mist">{String(i + 1).padStart(2, '0')}</p>
+                <p className="mt-4 font-serif text-[28px] font-semibold leading-tight">{p.title}</p>
+                <p className="mt-3 text-[15px] leading-relaxed text-rc-mist">{p.body}</p>
+              </Reveal>
+            ))}
           </div>
-        </motion.div>
-      </div>
+        </Container>
+      </section>
+
+      <section className="py-24 lg:py-32">
+        <Container className="flex flex-col items-start gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <Display size="md" className="max-w-[20ch] text-rc-ink">See how it works with <span className="italic text-rc-forest">your own cards.</span></Display>
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink to={SIGN_UP} size="lg">Get started</ButtonLink>
+            <ButtonLink to="/methodology" variant="outline" size="lg" arrow={false}>How we rank cards</ButtonLink>
+          </div>
+        </Container>
+      </section>
+      </PageBody>
     </div>
   );
 }

@@ -1,28 +1,50 @@
+import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import { SEO } from '../components/SEO';
+import { ContentPage } from '../site/ContentPage';
+import { SOCIAL } from '../site/nav';
 
 export function ContactPage() {
+  const [params] = useSearchParams();
+  const partner = params.get('intent') === 'partner';
+  // LinkedIn first for partnership enquiries
+  const channels = partner ? [...SOCIAL].sort((a, b) => Number(b.label === 'LinkedIn') - Number(a.label === 'LinkedIn')) : SOCIAL;
+
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-20">
-      <SEO 
-        title="Contact Us | Renocred"
-        description="Get in touch with the Renocred team."
+    <>
+      <SEO
+        title="Contact Us | RenoCred"
+        description="Get in touch with the RenoCred team."
         canonicalUrl="https://www.renocred.com/contact"
       />
-      <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Contact Us</h1>
-      <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
-        <p>Renocred is currently in active development.</p>
-        <p>Formal contact channels and support infrastructure are being established. At this time, we do not have a monitored public support email or a functioning contact form.</p>
-        <p>While we do not offer customer support through direct messages, you can follow our progress and connect with us on our official social media channels:</p>
-        <div className="flex flex-col sm:flex-row gap-4 mt-6">
-          <a href="https://www.instagram.com/social_renocred/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white">
-            Instagram
-          </a>
-          <a href="https://www.linkedin.com/company/renocred" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white">
-            LinkedIn
-          </a>
+      <ContentPage
+        eyebrow={partner ? 'Partnerships' : 'Contact'}
+        title={partner ? 'Partner with RenoCred' : 'Where to find us'}
+        lede={partner
+          ? 'Our partnership desk is being set up. The quickest way to start a conversation today is a message to our LinkedIn page.'
+          : 'RenoCred is in active development. Formal support channels are being set up; until then, the best way to reach the team is on social media.'}
+      >
+        {partner
+          ? <p>Tell us about your brand, the customers you want to reach and the offer you have in mind.</p>
+          : <p>We do not have a monitored support inbox or contact form yet, and we do not provide support through direct messages. Follow along for updates as we roll out the public platform:</p>}
+        <div className="grid gap-4 sm:grid-cols-2">
+          {channels.map((s) => (
+            <a
+              key={s.href}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-between rounded-2xl border border-rc-ink/10 bg-rc-paper px-6 py-5 !no-underline transition-colors hover:border-rc-ink/40"
+            >
+              <span className="font-serif text-[24px] text-rc-ink">{s.label}</span>
+              <ArrowUpRight className="h-5 w-5 text-rc-ink transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a>
+          ))}
         </div>
-        <p className="mt-8">Please check back soon as we continue to roll out the public platform.</p>
-      </div>
-    </div>
+        {partner
+          ? <p>Read how partnerships work on <Link to="/business">RenoCred for business</Link>.</p>
+          : <p>For business partnerships, see <Link to="/business">RenoCred for business</Link>.</p>}
+      </ContentPage>
+    </>
   );
 }

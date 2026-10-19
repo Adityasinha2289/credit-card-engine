@@ -76,7 +76,7 @@ export function CreditScoreDial({ score, size = 120, className, animate = true }
           key={validScore}
           initial={{ scale: 0.9, opacity: 0.5 }}
           animate={{ scale: 1, opacity: 1 }}
-          className={cn("text-3xl font-display font-extrabold tabular-nums tracking-tighter", colorClass.split(' ')[0])}
+          className={cn("text-3xl font-display font-semibold tabular-nums tracking-tighter", colorClass.split(' ')[0])}
         >
           {validScore}
         </motion.span>

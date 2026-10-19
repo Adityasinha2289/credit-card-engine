@@ -1,241 +1,250 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { interactivePrimary, interactiveSecondary } from '../../motion';
-import { CardsMegaMenu } from './header/CardsMegaMenu';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
+import { cn } from '../../lib/utils';
+import { ArrowChip, Container, EASE_OUT } from '../site/primitives';
+import { LogoLink } from '../site/Brand';
+import { useSignedInHint } from '../site/SiteLink';
+import { prefetchAuth, prefetchAuthProps } from '../site/prefetchAuth';
+import { CARD_NEEDS, MY_RENOCRED, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
+import { analytics } from '../../lib/analytics';
 
-// Wrap Link to allow Framer Motion props
-const MotionLink = motion.create ? motion.create(Link as any) : motion(Link as any);
-const MotionAnchor = motion.a;
+const PRIMARY = [
+  { label: 'Cards', to: '/cards' },
+  { label: 'Tools', to: TOOLS[0].to },
+  { label: 'How we rank', to: '/methodology' },
+  { label: 'For business', to: '/business' },
+  { label: 'About', to: '/about' },
+  { label: 'Contact', to: '/contact' },
+];
 
+
+/** Shown inline in the header on wide screens; everything else lives in the menu. */
+const INLINE = [
+  { label: 'Cards', to: '/cards' },
+  { label: 'Tools', to: TOOLS[0].to },
+  { label: 'How we rank', to: '/methodology' },
+  { label: 'Business', to: '/business' },
+];
+
+/** Two lines of unequal length that meet in an X; the short one grows on hover. */
+function MenuIcon({ open }: { open: boolean }) {
+  return (
+    <span aria-hidden className="relative block h-3 w-[18px]">
+      <span className={cn('absolute right-0 h-[1.5px] rounded-full bg-current transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]', open ? 'top-[5px] w-[18px] rotate-45' : 'top-0.5 w-[18px]')} />
+      <span className={cn('absolute right-0 h-[1.5px] rounded-full bg-current transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:w-[18px]', open ? 'top-[5px] w-[18px] -rotate-45' : 'top-[9px] w-[11px]')} />
+    </span>
+  );
+}
+
+function MenuOverlay({ onClose, signedIn }: { onClose: () => void; signedIn: boolean }) {
+  const reduce = useReducedMotion();
+  const item = (i: number) => ({
+    initial: reduce ? false : { opacity: 0, y: 24 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: EASE_OUT, delay: 0.08 + i * 0.05 },
+  });
+  return (
+    <motion.div
+      id="site-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-[60] overflow-y-auto bg-rc-night text-rc-cream"
+    >
+      <Container className="flex h-16 items-center justify-between lg:h-[76px]">
+        <LogoLink dark onClick={onClose} />
+        <button type="button" onClick={onClose} aria-label="Close menu" className="group flex h-11 w-11 items-center justify-center rounded-full border border-white/20 transition-colors hover:border-white/60 hover:bg-white/[0.06]">
+          <MenuIcon open />
+        </button>
+      </Container>
+      <Container className="grid gap-16 pb-16 pt-10 lg:grid-cols-12 lg:pt-16">
+        <nav aria-label="Main" className="lg:col-span-7">
+          <ul>
+            {PRIMARY.map((l, i) => (
+              <motion.li key={l.to} {...item(i)}>
+                <Link to={l.to} onClick={onClose} className="group flex items-baseline gap-5 py-2">
+                  <span className="w-7 text-[12px] tabular-nums text-rc-mist/60">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="font-serif text-[clamp(2.5rem,6vw,4.75rem)] font-semibold leading-[1.02] tracking-[-0.03em] transition-colors group-hover:text-rc-pistachio">{l.label}</span>
+                </Link>
+              </motion.li>
+            ))}
+          </ul>
+        </nav>
+        <motion.div {...item(PRIMARY.length)} className="space-y-12 lg:col-span-4 lg:col-start-9">
+          {signedIn && (
+            <div>
+              <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70">My RenoCred</p>
+              <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+                {MY_RENOCRED.map((l) => (
+                  <li key={l.to}><Link to={l.to} onClick={onClose} className="text-[15px] text-rc-cream transition-colors hover:text-rc-pistachio">{l.label}</Link></li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div>
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Best cards for</p>
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+              {CARD_NEEDS.map((n) => (
+                <li key={n.to}><Link to={n.to} onClick={onClose} className="text-[15px] text-rc-mist transition-colors hover:text-rc-cream">{n.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Free tools</p>
+            <ul className="space-y-2.5">
+              {TOOLS.map((t) => (
+                <li key={t.to}><Link to={t.to} onClick={onClose} className="text-[15px] text-rc-mist transition-colors hover:text-rc-cream">{t.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <Link
+            to={SIGN_UP}
+            onClick={() => { analytics.track('Partner Offer Clicked', { partner: 'greenox', placement: 'menu' }); onClose(); }}
+            className="flex items-center gap-5 rounded-[24px] border border-white/15 p-4 transition-colors hover:border-white/40 hover:bg-white/[0.03]"
+          >
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white"><img src="/greenox_logo.png" alt="GreeNox" className="h-10 w-10 object-contain" /></span>
+            <span>
+              <span className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Member perk</span>
+              <span className="mt-1 block font-serif text-[20px] leading-snug">20% off at GreeNox</span>
+            </span>
+          </Link>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px]">
+            {!signedIn && <Link to={SIGN_IN} onClick={onClose} className="text-rc-mist hover:text-rc-cream">Log in</Link>}
+            {SOCIAL.map((s) => (
+              <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-rc-mist hover:text-rc-cream">
+                {s.label} <ArrowUpRight className="h-3 w-3" />
+              </a>
+            ))}
+          </div>
+        </motion.div>
+      </Container>
+    </motion.div>
+  );
+}
+
+/** Every public page opens on a dark band, so the header is always light-on-dark. */
 export function PublicHeader() {
-  const { scrollY } = useScroll();
-  const shouldReduceMotion = useReducedMotion();
-  const [isCardsMenuOpen, setIsCardsMenuOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { pathname, search } = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
+  // signed-in visitors browse the site freely and always have a one-click way back into the app
+  const signedIn = useSignedInHint();
+  // returning members will almost certainly open My RenoCred: fetch it while they read
+  useEffect(() => {
+    if (!signedIn) return;
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    if (w.requestIdleCallback) w.requestIdleCallback(prefetchAuth); else setTimeout(prefetchAuth, 1500);
+  }, [signedIn]);
 
   useEffect(() => {
-    return scrollY.on("change", (latest) => {
-      setIsScrolled(latest > 50);
-    });
-  }, [scrollY]);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setIsCardsMenuOpen(true);
-  };
+  useEffect(() => { setOpen(false); }, [pathname, search]);
 
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsCardsMenuOpen(false);
-    }, 150); // slight delay to prevent flickering when moving to dropdown
-  };
-
-  // Continuous GPU-accelerated interpolation (0px to 50px of scroll)
-  const backgroundColor = useTransform(
-    scrollY,
-    [0, 50],
-    ['rgba(246, 244, 236, 0)', 'rgba(246, 244, 236, 0.85)']
-  );
-  
-  const borderBottomColor = useTransform(
-    scrollY,
-    [0, 50],
-    ['rgba(15, 42, 29, 0)', 'rgba(15, 42, 29, 0.1)']
-  );
-
-  const paddingY = useTransform(
-    scrollY,
-    [0, 50],
-    ['1.5rem', '1rem'] // py-6 to py-4 equivalent
-  );
-
-  const backdropBlur = useTransform(
-    scrollY,
-    [0, 50],
-    ['blur(0px)', 'blur(12px)']
-  );
-
-  // Fallback physics if reduced motion is enabled
-  const hoverPhysicsSecondary = shouldReduceMotion ? undefined : interactiveSecondary.hover;
-  const tapPhysicsSecondary = shouldReduceMotion ? undefined : interactiveSecondary.tap;
-  
-  const hoverPhysicsPrimary = shouldReduceMotion ? undefined : interactivePrimary.hover;
-  const tapPhysicsPrimary = shouldReduceMotion ? undefined : interactivePrimary.tap;
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', onKey); };
+  }, [open]);
 
   return (
     <>
-    <motion.header
-      className="fixed top-0 left-0 right-0 z-50 w-full"
-      style={{
-        backgroundColor,
-        borderBottomColor,
-        borderBottomWidth: '1px',
-        borderBottomStyle: 'solid',
-        paddingTop: paddingY,
-        paddingBottom: paddingY,
-        backdropFilter: backdropBlur,
-        WebkitBackdropFilter: backdropBlur,
-      }}
-    >
-      <div className="mx-auto max-w-7xl px-6 flex items-center justify-between relative">
-        
-        {/* Logo */}
-        <MotionLink 
-          to="/" 
-          whileHover={hoverPhysicsSecondary}
-          whileTap={tapPhysicsSecondary}
-          className="font-display font-bold text-xl tracking-tight flex items-center gap-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md shrink-0"
+      {/* The bar is full width at the top of the page and tucks into a floating capsule once you scroll. */}
+      <header className="sticky top-0 z-50 h-16 w-full px-3 sm:px-5 lg:h-[76px]">
+        <div
+          className={cn(
+            'mx-auto flex h-full items-center justify-between gap-4 rounded-full border transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] duration-700 ease-[cubic-bezier(.22,1,.36,1)]',
+            scrolled
+              ? cn(
+                'mt-2.5 h-[52px] max-w-[1040px] pl-3 pr-1.5 backdrop-blur-xl lg:mt-3 lg:h-[56px]',
+                'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
+              )
+              : 'max-w-[1280px] border-transparent px-2 sm:px-3 lg:px-7',
+          )}
         >
-          <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover shrink-0" />
-          <span className={`transition-colors duration-200 whitespace-nowrap hidden sm:block text-editorial-deep-forest`}>RenoCred</span>
-        </MotionLink>
-        
-        {/* Links */}
-        <nav className="hidden md:flex items-center gap-8">
-          <MotionAnchor 
-            href="/#how-it-works" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Product
-          </MotionAnchor>
-          
-          <div 
-            className="relative h-full flex items-center"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <MotionLink 
-              to="/cards"
-              whileHover={hoverPhysicsSecondary}
-              whileTap={tapPhysicsSecondary}
-              className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 flex items-center gap-1 ${isCardsMenuOpen ? 'text-editorial-forest' : 'text-editorial-deep-forest hover:text-editorial-forest'}`}
-            >
-              Cards <ChevronDown size={14} className={`transition-transform duration-200 ${isCardsMenuOpen ? 'rotate-180 text-semantic-brand-strong' : ''}`} />
-            </MotionLink>
-            <AnimatePresence>
-              {isCardsMenuOpen && (
-                <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                  <CardsMegaMenu onClose={() => setIsCardsMenuOpen(false)} />
-                </div>
+          <LogoLink dark />
+
+          <nav aria-label="Primary" className="hidden lg:block" onMouseLeave={() => setHovered(null)}>
+            <ul className="flex items-center">
+              {INLINE.map((l) => {
+                const current = pathname === l.to || (l.to !== '/' && pathname.startsWith(`${l.to}/`));
+                return (
+                  <li key={l.to} className="relative">
+                    {hovered === l.to && (
+                      <motion.span
+                        layoutId="nav-hover"
+                        aria-hidden
+                        className={cn('absolute inset-0 rounded-full', 'bg-white/[0.08]')}
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    <Link
+                      to={l.to}
+                      onMouseEnter={() => setHovered(l.to)}
+                      onFocus={() => setHovered(l.to)}
+                      aria-current={current ? 'page' : undefined}
+                      className={cn(
+                        'relative block rounded-full px-4 py-2 text-[14px] transition-colors',
+                        'text-rc-mist hover:text-rc-cream',
+                        current && 'text-rc-cream',
+                      )}
+                    >
+                      {l.label}
+                      {current && <span aria-hidden className={cn('absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full', 'bg-rc-pistachio')} />}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {!signedIn && (
+              <Link {...prefetchAuthProps} to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
+                Log in
+              </Link>
+            )}
+            <Link
+              {...prefetchAuthProps}
+              to={signedIn ? '/app' : SIGN_UP}
+              className={cn(
+                'group inline-flex h-10 items-center gap-2.5 rounded-full pl-4 pr-1 text-[14px] font-medium transition-colors duration-300 sm:h-11 sm:pl-5',
+                'bg-rc-cream text-rc-ink hover:bg-white',
               )}
-            </AnimatePresence>
+            >
+              {signedIn ? 'My RenoCred' : 'Get started'}
+              <ArrowChip variant="cream" size="sm" />
+            </Link>
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={open}
+              aria-controls="site-menu"
+              onClick={() => setOpen(true)}
+              className={cn(
+                'group flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11',
+                'border-white/15 text-rc-cream hover:border-white/50 hover:bg-white/[0.06]',
+              )}
+            >
+              <MenuIcon open={false} />
+            </button>
           </div>
-
-          <MotionLink 
-            to="/calculators/credit-card-reward-calculator" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Rewards
-          </MotionLink>
-          <MotionLink 
-            to="/cards" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Offers
-          </MotionLink>
-          <MotionLink 
-            to="/calculators/credit-utilization" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Credit Health
-          </MotionLink>
-        </nav>
-        
-        {/* CTAs */}
-        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
-          <MotionLink 
-            to="/cards"
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`hidden sm:block md:hidden text-xs sm:text-sm font-medium whitespace-nowrap transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-1 sm:px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Explore Cards
-          </MotionLink>
-          <MotionLink 
-            to="/app/sign-in" 
-            whileHover={hoverPhysicsSecondary}
-            whileTap={tapPhysicsSecondary}
-            className={`hidden md:block text-sm font-medium transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-semantic-brand-strong/50 rounded-md px-2 py-1 text-editorial-deep-forest hover:text-editorial-forest`}
-          >
-            Log In
-          </MotionLink>
-          <MotionLink 
-            to="/app/sign-up" 
-            whileHover={hoverPhysicsPrimary}
-            whileTap={tapPhysicsPrimary}
-            className="bg-editorial-deep-forest text-white text-xs sm:text-sm font-semibold whitespace-nowrap py-1.5 px-3 sm:py-2 sm:px-4 md:py-2.5 md:px-6 rounded-full transition-all hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2A9D5C]/50 shrink-0"
-          >
-            Get Started
-          </MotionLink>
-          
-          <button 
-            className={`md:hidden p-2 -mr-2 transition-colors duration-200 text-editorial-deep-forest`}
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu className="w-6 h-6" />
-          </button>
         </div>
-      </div>
-    </motion.header>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-editorial-light-cream flex flex-col p-6"
-          >
-            <div className="flex items-center justify-between mb-12">
-              <div className="font-display font-bold text-xl tracking-tight flex items-center gap-2">
-                <img src="/logo.jpg" alt="RenoCred Logo" className="w-8 h-8 rounded-lg object-cover" />
-                <span className="text-editorial-deep-forest">RenoCred</span>
-              </div>
-              <button 
-                className="p-2 -mr-2 text-editorial-deep-forest hover:text-editorial-forest bg-black/5 rounded-full"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            
-            <nav className="flex flex-col gap-6 text-xl font-medium">
-              <a href="/#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Product</a>
-              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10 flex justify-between items-center">
-                Cards <ChevronDown size={20} className="-rotate-90" />
-              </Link>
-              <Link to="/calculators/credit-card-reward-calculator" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Rewards</Link>
-              <Link to="/cards" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Offers</Link>
-              <Link to="/calculators/credit-utilization" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Credit Health</Link>
-              <Link to="/app/sign-in" onClick={() => setIsMobileMenuOpen(false)} className="text-editorial-deep-forest hover:text-editorial-forest pb-4 border-b border-black/10">Log In</Link>
-            </nav>
-            
-            <div className="mt-auto mb-8">
-              <Link 
-                to="/app/sign-up"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full bg-editorial-deep-forest text-white text-lg font-semibold py-4 rounded-full flex items-center justify-center transition-all hover:bg-editorial-forest"
-              >
-                Get Started
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </header>
+      <AnimatePresence>{open && <MenuOverlay signedIn={signedIn} onClose={() => setOpen(false)} />}</AnimatePresence>
     </>
   );
 }

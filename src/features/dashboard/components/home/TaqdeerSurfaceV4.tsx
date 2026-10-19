@@ -72,7 +72,7 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="w-full bg-transparent border-b border-border-subtle  text-text-primary text-2xl sm:text-3xl md:text-4xl font-display font-medium py-6 pl-14 pr-16 focus:outline-none focus:border-brand-emerald/50 transition-colors placeholder:text-transparent"
+          className="w-full bg-transparent border-b border-border-subtle  text-text-primary text-2xl sm:text-3xl md:text-4xl font-display font-semibold py-6 pl-14 pr-16 focus:outline-none focus:border-brand-emerald/50 transition-colors placeholder:text-transparent"
         />
         
         {/* Animated Placeholder Layer */}
@@ -85,7 +85,7 @@ export function TaqdeerSurfaceV4({ onAsk }: TaqdeerSurfaceV4Props) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.4, ease:"easeOut" }}
-                className="text-2xl sm:text-3xl md:text-4xl font-display font-medium text-text-muted"
+                className="text-2xl sm:text-3xl md:text-4xl font-display font-semibold text-text-muted"
               >
                 {PLACEHOLDERS[placeholderIdx]}
               </motion.span>

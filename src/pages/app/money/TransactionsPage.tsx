@@ -14,7 +14,7 @@ const FILTERS: { key: Filter; label: string; test: (t: Transaction) => boolean }
   { key: 'CARD_PAYMENTS', label: 'Card payments', test: isCardPayment },
 ];
 
-export default function TransactionsPage() {
+export default function TransactionsPage({ embedded = false }: { embedded?: boolean }) {
   const transactions = useDashboardStore(s => s.transactions);
   const userCards = useDashboardStore(s => s.userCards);
   const [filter, setFilter] = useState<Filter>('ALL');
@@ -34,8 +34,8 @@ export default function TransactionsPage() {
   }, [transactions, filter]);
 
   return (
-    <PageContainer title="Recent Transactions" className="pb-safe max-w-3xl mx-auto">
-      <div className="py-6 space-y-4 animate-in fade-in slide-in-from-bottom-4">
+    <PageContainer bare={embedded} eyebrow="Money" title={<>Where it <span className="italic">went.</span></>} subtitle="Your recent spending, by card and category." className="pb-safe max-w-3xl mx-auto">
+      <div className="space-y-4">
 
         {/* Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -71,7 +71,7 @@ export default function TransactionsPage() {
                   <p className={`font-medium ${inflow ? 'text-emerald-600' : 'text-gray-900'}`}>
                     {inflow ? '+' : ''}{formatRupees(t.amount)}
                   </p>
-                  <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-1">
+                  <p className="text-[13px] font-medium text-rc-muted mt-1">
                     {new Date(t.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' })}
                   </p>
                 </div>

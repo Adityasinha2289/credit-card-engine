@@ -59,3 +59,9 @@ export function normalizeGoal(goal?: string): string | undefined {
   
   return goal;
 }
+
+/** The goal as a person would say it ("Get More Cashback"), whatever form it was stored in. */
+export function goalTitle(goal?: string): string | undefined {
+  const id = normalizeGoal(goal);
+  return id ? PRIMARY_GOALS_CONFIG[id]?.title ?? goal : undefined;
+}

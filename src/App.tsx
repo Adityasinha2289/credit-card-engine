@@ -2,10 +2,10 @@ import { analytics } from './lib/analytics';
 import './index.css';
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { useUser, RedirectToSignIn, RedirectToSignUp } from '@clerk/clerk-react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
 
-import { DashboardLayout } from './components/layout/DashboardLayout';
-import { DashboardSkeleton } from './components/layout/DashboardSkeleton';
+import { SiteAppLayout } from './components/layout/SiteAppLayout';
+import { BrandLoader } from './components/BrandLoader';
 import { useDashboardStore, useHydration } from './features/dashboard/store/dashboardStore';
 import { useSupabase } from './hooks/useSupabase';
 
@@ -21,13 +21,22 @@ const DemoOnboarding = lazy(() => import('./features/onboarding/demo/DemoOnboard
 import { DemoAppProvider } from './features/demo/DemoAppProvider';
 
 const HomePage = lazy(() => import('./pages/app/HomePage'));
+const DiscoverPage = lazy(() => import('./pages/app/DiscoverPage'));
+const AccountPage = lazy(() => import('./pages/app/AccountPage'));
+// the website's tools, opened inside the app shell
+/** /app/cards/:slug from older links: the card page lives on the website. */
+function CardRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/cards/${slug ?? ''}`} replace />;
+}
+
+/** /app/tools/<tool> from older links: the calculators live on the website. */
+function ToolRedirect() {
+  const { tool } = useParams();
+  return <Navigate to={`/calculators/${tool ?? 'which-card-to-use'}`} replace />;
+}
 const WalletPage = lazy(() => import('./pages/app/WalletPage'));
-const CreditPage = lazy(() => import('./pages/app/CreditPage'));
-const ExplorePage = lazy(() => import('./pages/app/ExplorePage'));
-const InsightsPage = lazy(() => import('./pages/app/InsightsPage'));
 const TaqdeerPage = lazy(() => import('./pages/app/TaqdeerPage'));
-const ProfilePage = lazy(() => import('./pages/app/ProfilePage'));
-const SettingsPage = lazy(() => import('./pages/app/SettingsPage'));
 
 // Marketplace
 const MarketplaceHome = lazy(() => import('./pages/marketplace/MarketplaceHome'));
@@ -43,9 +52,6 @@ const OccasionPlannerPage = lazy(() => import('./pages/app/plan/OccasionPlannerP
 
 // Money Imports
 const MoneyManagerPage = lazy(() => import('./pages/app/money/MoneyManagerPage'));
-const TransactionsPage = lazy(() => import('./pages/app/money/TransactionsPage'));
-const PaymentCoachPage = lazy(() => import('./pages/app/money/PaymentCoachPage'));
-const SubscriptionsPage = lazy(() => import('./pages/app/money/SubscriptionsPage'));
 
 // Lifestyle (Phase 5A Prototype) - Redirecting to marketplace
 const LifestyleHub = lazy(() => import('./pages/app/lifestyle/LifestyleHub'));
@@ -149,18 +155,15 @@ export default function App() {
     return () => window.removeEventListener('STORE_LOGOUT', handleLogout);
   }, []);
 
-  const isTestKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY?.includes('test');
+  // wait for Clerk on every key type: a test key used to skip this and briefly look signed out,
+  // which bounced deep links (/app/wallet) to sign-up and then to /app
+  const usesDemoData = import.meta.env.VITE_USE_DEMO_DATA === 'true';
   
-  if (!isHydrated || (!isLoaded && !isTestKey && !isProfileDemo) || isHydratingFromSupabase) {
+  if (!isHydrated || (!isLoaded && !usesDemoData && !isProfileDemo) || isHydratingFromSupabase) {
     // Exception for demo mode which requires no hydration or loading
     if (!window.location.search.includes('demo=onboarding') && !isProfileDemo) {
       return (
-        <DashboardLayout
-          isDark={true}
-          onToggleTheme={() => {}}
-        >
-          <DashboardSkeleton />
-        </DashboardLayout>
+        <BrandLoader label={isSignedIn ? 'Getting your cards ready' : 'Opening sign-in'} />
       );
     }
   }
@@ -168,7 +171,7 @@ export default function App() {
   // 0. Intercept Demo Onboarding
   if (window.location.search.includes('demo=onboarding')) {
     return (
-      <Suspense fallback={<div className="min-h-[100dvh] w-full bg-[#F9FAFB]" />}>
+      <Suspense fallback={<BrandLoader label="Opening the tour" />}>
         <DemoOnboarding />
       </Suspense>
     );
@@ -202,25 +205,34 @@ export default function App() {
     <Routes>
       {/* Customer App Routes */}
       <Route element={
-        <DashboardLayout isDark={true} onToggleTheme={() => {}}>
-          <Suspense fallback={
-            <div className="p-6 md:p-12 w-full max-w-7xl mx-auto">
-              <DashboardSkeleton />
-            </div>
-          }>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
+        // signed-in pages wear the website's header and footer
+        <SiteAppLayout>
+          <Outlet />
+        </SiteAppLayout>
       }>
+        {/* My RenoCred: overview, wallet, money, picks and account. Tools and cards are website pages. */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/credit/*" element={<CreditPage />} />
         <Route path="/wallet" element={<WalletPage />} />
+        <Route path="/money" element={<MoneyManagerPage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
+        <Route path="/account" element={<AccountPage />} />
+
         <Route path="/taqdeer" element={<TaqdeerPage />} />
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/insights" element={<InsightsPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        
+
+        {/* old addresses */}
+        <Route path="/credit/*" element={<Navigate to="/app/discover" replace />} />
+        <Route path="/cards" element={<Navigate to="/cards" replace />} />
+        <Route path="/cards/:slug" element={<CardRedirect />} />
+        <Route path="/tools" element={<Navigate to="/calculators/which-card-to-use" replace />} />
+        <Route path="/tools/:tool" element={<ToolRedirect />} />
+        <Route path="/money/subscriptions" element={<Navigate to="/app/money?tab=subscriptions" replace />} />
+        <Route path="/money/transactions" element={<Navigate to="/app/money?tab=activity" replace />} />
+        <Route path="/money/coach" element={<Navigate to="/app" replace />} />
+        <Route path="/profile" element={<Navigate to="/app/account" replace />} />
+        <Route path="/settings" element={<Navigate to="/app/account" replace />} />
+        <Route path="/insights" element={<Navigate to="/app" replace />} />
+        <Route path="/explore" element={<Navigate to="/app/discover" replace />} />
+
         {/* Plan Routes */}
         <Route path="/plan" element={<PlanHubPage />} />
         <Route path="/plan/trip" element={<TripPlannerPage />} />
@@ -231,10 +243,6 @@ export default function App() {
         <Route path="/plan/occasion" element={<OccasionPlannerPage />} />
         
         {/* Money Routes */}
-        <Route path="/money" element={<MoneyManagerPage />} />
-        <Route path="/money/transactions" element={<TransactionsPage />} />
-        <Route path="/money/coach" element={<PaymentCoachPage />} />
-        <Route path="/money/subscriptions" element={<SubscriptionsPage />} />
         
         
         {/* Marketplace Routes in Dashboard */}

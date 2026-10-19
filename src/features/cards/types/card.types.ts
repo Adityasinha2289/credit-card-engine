@@ -1,4 +1,10 @@
 export type CardNetwork = 'visa' | 'mastercard' | 'amex' | 'discover';
+
+/** The card's real last four digits, or '' when the user never gave them. */
+export const last4Of = (pan?: string): string => {
+  const digits = (pan ?? '').replace(/\D/g, '');
+  return digits.length >= 4 ? digits.slice(-4) : '';
+};
 export type CardStatus = 'active' | 'frozen' | 'pending';
 
 export interface CardData {

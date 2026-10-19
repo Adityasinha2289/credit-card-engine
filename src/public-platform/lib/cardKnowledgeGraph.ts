@@ -2,6 +2,8 @@ import { MOCK_CARDS_INTELLIGENCE } from '../../features/card-intelligence/mockCa
 import { MASTER_CARD_DATASET } from '../../features/finix/data/masterDataset';
 import type { CreditCardIntelligence } from '../../features/card-intelligence/types';
 import type { FinixCard } from '../../features/finix/data/cardDataset';
+import { bankLabel } from '../site/banks';
+import CATALOGUE_CARDS from '../site/catalogueCards.json';
 
 export interface PublicCardEntity {
   id: string;
@@ -29,7 +31,31 @@ export interface PublicCardEntity {
   premiumTier: string;
   topBenefit: string;
   isFlagship: boolean;
+  /** Per-category reward rates (catalogue cards only; curated cards describe rates in `rewardRate`) */
+  rates?: { category: string; rate: number; cap?: number }[];
+  baseRate?: number | null;
+  /** Key benefits as the issuer words them (full-catalogue cards) */
+  benefits?: string[];
+  /** Fee waiver condition as the issuer states it */
+  feeWaiver?: string | null;
+  /** The issuer has stopped taking new applications */
+  discontinued?: boolean;
+  /** The issuer's page for this card */
+  sourceUrl?: string | null;
+  /** false for cards we know only from the full catalogue (no per-category reward rates yet) */
+  hasRates?: boolean;
 }
+
+/**
+ * Minimum income in the source data is a mix of monthly and annual figures.
+ * Nobody qualifies for a card on under ₹2L a year, so anything below that is monthly.
+ */
+export function monthlyIncome(minSalary?: number): number | undefined {
+  if (!minSalary) return undefined;
+  return minSalary >= 200000 ? Math.round(minSalary / 12) : minSalary;
+}
+
+const DEDUPE_STOPWORDS = new Set(['credit', 'card', 'bank', 'edition', 'the', 'of', 'hdfc', 'sbi', 'icici', 'axis', 'kotak', 'idfc', 'first', 'yes', 'rbl', 'au', 'hsbc', 'amex', 'american', 'express', 'indusind']);
 
 function slugify(text: string): string {
   return text
@@ -98,27 +124,104 @@ MASTER_CARD_DATASET.forEach((card) => {
       issuer: card.bank,
       network: card.network || 'Visa',
       annualFee: card.annualFee,
-      joiningFee: card.annualFee,
+      // the catalogue does not record joining fees, forex markup or fuel waivers;
+      // leave them unknown rather than guess
+      joiningFee: null,
       formattedAnnualFee: card.annualFee === null ? 'Not Disclosed' : card.annualFee === 0 ? 'Free Lifetime' : `₹${card.annualFee.toLocaleString('en-IN')}`,
-      formattedJoiningFee: card.annualFee === null ? 'Not Disclosed' : card.annualFee === 0 ? 'Free' : `₹${card.annualFee.toLocaleString('en-IN')}`,
+      formattedJoiningFee: 'Not Disclosed',
       rewardType: (card.baseRewardRate ?? 0) >= 1.0 ? 'cashback' : 'points',
       rewardRate: card.baseRewardRate !== null ? `${card.baseRewardRate}% base reward rate on eligible transactions` : 'Reward terms unconfirmed',
       loungeAccess: card.loungeAccess && card.loungeAccess > 0 ? `${card.loungeAccess} Complimentary Lounge visits/year` : 'No complimentary lounge access',
-      forexMarkup: card.annualFee && card.annualFee >= 5000 ? 2.0 : 3.5,
-      fuelBenefits: '1% fuel surcharge waiver on eligible transactions',
-      welcomeBenefits: card.welcomeBonus ? [card.welcomeBonus] : ['Standard bank welcome privileges'],
-      milestoneBenefits: card.feeWaiverSpend ? [`Annual fee waiver on ₹${(card.feeWaiverSpend / 100000).toFixed(1)} Lakh spend`] : ['Standard bank milestone privileges'],
+      forexMarkup: null,
+      fuelBenefits: (() => {
+        const fuel = card.rewards?.find((r) => r.category === 'fuel');
+        return fuel ? `${fuel.rate}% value back on fuel` : 'Not disclosed';
+      })(),
+      welcomeBenefits: card.welcomeBonus ? [card.welcomeBonus] : [],
+      milestoneBenefits: card.feeWaiverSpend ? [`Annual fee waived on ₹${(card.feeWaiverSpend / 100000).toFixed(1)} lakh yearly spend`] : [],
       eligibility: {
         minSalary: card.minIncome || undefined,
-        minCreditScore: card.minCibil || 700,
+        minCreditScore: card.minCibil || undefined,
       },
       categories,
       premiumTier: card.annualFee && card.annualFee >= 10000 ? 'super_premium' : card.annualFee && card.annualFee >= 2500 ? 'premium' : card.annualFee === 0 ? 'no_fee' : 'entry',
       topBenefit: card.highlights?.[0] ? card.highlights[0] : `${card.name} by ${card.bank}`,
       isFlagship: false,
+      rates: card.rewards?.map((r) => ({ category: r.category, rate: r.rate, cap: r.cap })),
+      baseRate: card.baseRewardRate,
     });
   }
 });
+
+// Finally every other card in the full catalogue: what the issuer publishes (fees,
+// key benefits, a link to their page), without per-category reward rates yet.
+interface CatalogueCard {
+  id: string; name: string; issuer: string; network: string | null; annualFee: number | null; joiningFee: number | null;
+  feeWaiver: string | null; lounge: boolean; benefits: string[]; discontinued: boolean; url: string | null;
+}
+
+const CATEGORY_WORDS: [string, RegExp][] = [
+  ['travel', /travel|lounge|air ?miles|flight|hotel|vistara|indigo|makemytrip|irctc/],
+  ['dining', /dining|swiggy|zomato|restaurant|food/],
+  ['shopping', /shopping|amazon|flipkart|myntra|online spend|e-?commerce/],
+  ['fuel', /fuel|petrol|hpcl|bpcl|indianoil|iocl/],
+  ['utilities', /utilit|bill payment|electricity|recharge/],
+  ['cashback', /cash ?back/],
+];
+
+/** Spacing and word order vary between sources ("SimplyCLICK" / "Simply CLICK", "TVS Credit RBL" / "RBL TVS Credit"). */
+const compact = (key: Set<string>) => [...key].sort().join('');
+const letters = (key: Set<string>) => [...key].join('');
+const knownCards = ALL_PUBLIC_CARDS.map((c) => {
+  const key = nameKey(c.cardName);
+  return { issuer: bankLabel(c.issuer), key, compact: compact(key), letters: letters(key) };
+});
+const isKnown = (issuer: string, key: Set<string>) => knownCards.some((k) => k.issuer === issuer
+  && (sameCard(key, k.key) || compact(key) === k.compact || letters(key) === k.letters));
+
+(CATALOGUE_CARDS as CatalogueCard[]).forEach((card) => {
+  const issuer = bankLabel(card.issuer);
+  const fullName = card.name.toLowerCase().includes(issuer.split(' ')[0].toLowerCase()) ? card.name : `${issuer} ${card.name}`;
+  const slug = slugify(fullName);
+  const key = nameKey(fullName.replace(/\(.*?\)/g, ' '));
+  if (seenSlugs.has(slug) || key.size === 0 || isKnown(issuer, key)) return;
+  seenSlugs.add(slug);
+  knownCards.push({ issuer, key, compact: compact(key), letters: letters(key) });
+  const text = `${card.name} ${card.benefits.join(' ')}`.toLowerCase();
+  const fee = (n: number | null) => (n === null ? 'Not Disclosed' : n === 0 ? 'Free Lifetime' : `₹${n.toLocaleString('en-IN')}`);
+  ALL_PUBLIC_CARDS.push({
+    id: `cat-${card.id}`,
+    slug,
+    url: `https://renocred.com/cards/${slug}`,
+    cardName: fullName,
+    issuer: card.issuer,
+    network: card.network || 'Visa',
+    annualFee: card.annualFee,
+    joiningFee: card.joiningFee,
+    formattedAnnualFee: fee(card.annualFee),
+    formattedJoiningFee: fee(card.joiningFee),
+    rewardType: /cash ?back/.test(text) ? 'cashback' : 'points',
+    rewardRate: 'Per-category reward rates for this card are not in our data yet. The benefits below are as the issuer publishes them.',
+    loungeAccess: card.lounge ? 'Lounge access (see the issuer\'s terms)' : 'No complimentary lounge access listed',
+    forexMarkup: null,
+    fuelBenefits: /fuel/.test(text) ? 'Fuel surcharge waiver (see the issuer\'s terms)' : 'Not disclosed',
+    welcomeBenefits: [],
+    milestoneBenefits: [],
+    eligibility: {},
+    categories: CATEGORY_WORDS.filter(([, re]) => re.test(text)).map(([c]) => c),
+    premiumTier: card.annualFee && card.annualFee >= 10000 ? 'super_premium' : card.annualFee && card.annualFee >= 2500 ? 'premium' : card.annualFee === 0 ? 'no_fee' : 'entry',
+    topBenefit: card.benefits[0] ?? `${fullName}${card.discontinued ? ', no longer open to new applicants' : ''}`,
+    isFlagship: false,
+    benefits: card.benefits,
+    feeWaiver: card.feeWaiver,
+    discontinued: card.discontinued,
+    sourceUrl: card.url,
+    hasRates: false,
+  });
+});
+
+/** Every card we list: the full catalogue, with reward rates where we have them. */
+export const DIRECTORY_SIZE = () => getDirectoryCards().length;
 
 // Helper Query Functions
 export function getAllPublicCards(): PublicCardEntity[] {
@@ -297,5 +400,115 @@ export function getComparisonPairBySlug(pairSlug: string): ComparisonPair | unde
     pairSlug: canonicalSlug,
     canonicalUrl: `https://renocred.com/compare/${canonicalSlug}`,
     verdict: matched?.verdict || `${card1.cardName} and ${card2.cardName} serve distinct financial profiles based on fee structure, reward multipliers, and travel perks.`,
+  };
+}
+
+/** Approved comparisons that resolve to real cards, as menu-ready links. */
+export function getPopularComparisons(): { slug: string; label: string }[] {
+  const byId = new Map(ALL_PUBLIC_CARDS.map((c) => [c.id, c]));
+  const short = (name: string) => name.replace(/\s*Credit Card$/i, '').replace(/\s*Bank\b/i, '').trim();
+  return APPROVED_COMPARISON_PAIRS.flatMap((p) => {
+    const a = byId.get(p.cardAId);
+    const b = byId.get(p.cardBId);
+    return a && b ? [{ slug: getComparisonPairSlug(a, b), label: `${short(a.cardName)} vs ${short(b.cardName)}` }] : [];
+  });
+}
+
+
+function nameKey(name: string): Set<string> {
+  return new Set(name.toLowerCase().replace(/\(.*?\)/g, ' ').replace(/[^a-z0-9+\s]/g, ' ').split(/\s+/).filter((w) => w && !DEDUPE_STOPWORDS.has(w)));
+}
+
+function sameCard(a: Set<string>, b: Set<string>): boolean {
+  return [...a].every((w) => b.has(w)) && [...b].every((w) => a.has(w) || w === 'metal');
+}
+
+/** The curated entry describing the same card as a catalogue entry, if there is one. */
+function curatedEquivalent(c: PublicCardEntity): PublicCardEntity {
+  if (c.id.startsWith('card-')) return c;
+  const key = nameKey(c.cardName);
+  if (key.size === 0) return c;
+  const issuer = bankLabel(c.issuer);
+  return ALL_PUBLIC_CARDS.find((k) => k.id.startsWith('card-') && bankLabel(k.issuer) === issuer && sameCard(key, nameKey(k.cardName))) ?? c;
+}
+
+/**
+ * Cards for listings. Curated entries ("HDFC Infinia Metal Edition") and catalogue
+ * entries ("HDFC Infinia Metal") can describe the same card; list it once, keeping
+ * the curated entry. Detail pages for both slugs keep working.
+ */
+export function getDirectoryCards(): PublicCardEntity[] {
+  return ALL_PUBLIC_CARDS.filter((c) => curatedEquivalent(c) === c);
+}
+
+export interface HubEntry {
+  card: PublicCardEntity;
+  /** The figure the hub is ranked by, as % value back */
+  rate: number;
+  /** What the rate applies to: "on dining", "top rate" */
+  context: string;
+}
+
+const HUB_CATEGORY: Record<string, string> = { travel: 'travel', dining: 'dining', fuel: 'fuel', shopping: 'shopping', utilities: 'utilities', cashback: 'shopping' };
+
+/**
+ * Cards for a category hub, ranked by the published rate that matters for it
+ * (from the catalogue, which has per-category rates), resolved to their public pages.
+ */
+export function getCardsForHub(slug: string, limit = 12): HubEntry[] {
+  const rate = (m: FinixCard, cat: string) => m.rewards?.find((r) => r.category === cat)?.rate ?? 0;
+  const best = (m: FinixCard) => Math.max(m.baseRewardRate ?? 0, ...(m.rewards ?? []).map((r) => r.rate));
+  const fee = (m: FinixCard) => m.annualFee ?? Infinity;
+  const cat = HUB_CATEGORY[slug];
+
+  let ranked: { m: FinixCard; value: number; label: string }[];
+  if (slug === 'cashback') {
+    ranked = MASTER_CARD_DATASET
+      .filter((m) => (m.baseRewardRate ?? 0) >= 1 && rate(m, 'shopping') >= 2)
+      .map((m) => ({ m, value: rate(m, 'shopping'), label: 'online' }));
+  } else if (cat) {
+    ranked = MASTER_CARD_DATASET
+      .filter((m) => rate(m, cat) >= 2)
+      .map((m) => ({ m, value: rate(m, cat), label: cat === 'utilities' ? 'bills' : cat }));
+  } else if (slug === 'lifetime-free') {
+    ranked = MASTER_CARD_DATASET.filter((m) => m.annualFee === 0).map((m) => ({ m, value: best(m), label: 'best category' }));
+  } else if (slug === 'premium') {
+    ranked = MASTER_CARD_DATASET.filter((m) => (m.annualFee ?? 0) >= 5000).map((m) => ({ m, value: best(m), label: 'best category' }));
+  } else {
+    return [];
+  }
+  ranked.sort((a, b) => b.value - a.value || fee(a.m) - fee(b.m));
+
+  const seen = new Set<string>();
+  const out: HubEntry[] = [];
+  for (const r of ranked) {
+    const entity = getCardBySlug(slugify(r.m.name));
+    if (!entity) continue;
+    const card = curatedEquivalent(entity);
+    if (seen.has(card.id)) continue;
+    seen.add(card.id);
+    out.push({ card, rate: r.value, context: r.label === 'best category' ? 'top rate' : `on ${r.label}` });
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+/**
+ * Per-category rates for any public card. Curated entries carry prose only, so
+ * fall back to the catalogue card that describes the same product.
+ */
+export function getRatesFor(card: PublicCardEntity): { rates: { category: string; rate: number; cap?: number }[]; baseRate: number | null; feeWaiverSpend?: number } | null {
+  const own = MASTER_CARD_DATASET.find((m) => m.id === card.id);
+  if (card.rates) return { rates: card.rates, baseRate: card.baseRate ?? null, feeWaiverSpend: own?.feeWaiverSpend };
+  const bySlug = MASTER_CARD_DATASET.find((m) => slugify(m.name) === card.slug);
+  const twin = bySlug ?? MASTER_CARD_DATASET.find((m) => {
+    const entity = getCardBySlug(slugify(m.name));
+    return entity && !entity.id.startsWith('card-') && curatedEquivalent(entity).id === card.id;
+  });
+  if (!twin) return null;
+  return {
+    rates: (twin.rewards ?? []).map((r) => ({ category: r.category, rate: r.rate, cap: r.cap })),
+    baseRate: twin.baseRewardRate,
+    feeWaiverSpend: twin.feeWaiverSpend,
   };
 }

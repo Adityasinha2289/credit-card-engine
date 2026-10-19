@@ -87,7 +87,7 @@ function CardPicker({ onSelect, onClose, excludeIds }: {
       >
         <div className="flex items-center justify-between p-6 pb-4 border-b border-border-subtle">
           <div>
-            <h3 className="text-lg font-display font-bold text-text-primary">Pick a Card</h3>
+            <h3 className="text-lg font-display font-semibold text-text-primary">Pick a Card</h3>
             <p className="text-xs text-text-muted mt-0.5">{CARD_DATASET.length} cards available</p>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-white/[0.06] transition-all">
@@ -236,7 +236,7 @@ export function CardComparisonPanel() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-base font-display font-bold text-text-primary flex items-center gap-2">
+            <h3 className="text-base font-sans font-bold text-text-primary flex items-center gap-2">
               <Scale size={18} className="text-brand-emerald" /> Card Comparison
             </h3>
             <p className="text-xs text-text-muted mt-0.5">Select 2–3 cards to compare side-by-side</p>

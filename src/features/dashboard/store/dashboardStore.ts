@@ -331,6 +331,8 @@ interface DashboardActions {
 
   /** Set (or clear with null) the payment due date for a card. ISO date. */
   setCardDueDate: (cardId: string, dueDate: string | null) => Promise<void>;
+  /** Set a card's credit limit, in paise. */
+  setCardLimit: (cardId: string, limitPaise: number) => Promise<void>;
 
   /** Redeem reward points. */
   redeemPoints: (points: number) => Promise<void>;
@@ -684,6 +686,36 @@ export const useDashboardStore = create<DashboardState & DashboardActions>()(
                 .eq('user_id', profile.id)
                 .eq('card_id', cardId),
               'set card due date',
+            );
+          }
+        },
+
+        // ── setCardLimit ─────────────────────────────────────────────────────
+        async setCardLimit(cardId, limitPaise) {
+          const limit = Math.max(0, Math.round(limitPaise));
+          let available = limit;
+          set((state) => {
+            const card = state.userCards.find((c) => c.id === cardId);
+            const acc = state.creditAccounts.find((a) => a.cardId === cardId);
+            available = Math.max(0, limit - (acc?.currentBalance ?? 0));
+            if (card) { card.creditLimit = limit; card.availableCredit = available; }
+            if (acc) acc.totalLimit = limit;
+          });
+          const { supabaseClient, profile } = get();
+          if (supabaseClient && profile) {
+            await safeDbWrite(
+              (supabaseClient as any).from('user_cards')
+                .update({ credit_limit: limit })
+                .eq('user_id', profile.id)
+                .eq('card_id', cardId),
+              'set card limit',
+            );
+            await safeDbWrite(
+              (supabaseClient as any).from('credit_accounts')
+                .update({ available_credit: available })
+                .eq('user_id', profile.id)
+                .eq('card_id', cardId),
+              'set card available credit',
             );
           }
         },

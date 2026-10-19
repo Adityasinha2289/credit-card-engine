@@ -29,7 +29,7 @@ export function SavingsMetricDisplay({ amount, period = "This month", className 
             </h4>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-display font-bold text-text-primary tracking-tight">
+            <span className="text-4xl font-display font-semibold text-text-primary tracking-tight">
               ₹{amount.toLocaleString('en-IN')}
             </span>
           </div>

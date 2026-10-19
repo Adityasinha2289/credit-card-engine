@@ -104,7 +104,8 @@ export function mapUserCardRow(row: Row, fallbackName: string): CardData {
   const cardDef = Array.isArray(row.cards) ? row.cards[0] : row.cards;
   return {
     id: row.card_id,
-    pan: `**** **** **** ${row.last_4_digits || '0000'}`,
+    // no stored digits means the user never gave them: leave it empty, don't show 0000
+    pan: row.last_4_digits ? `**** **** **** ${row.last_4_digits}` : '',
     cardholderName: row.cardholder_name || fallbackName,
     expiry: row.expiry || '',
     network: cardDef?.network || 'visa',

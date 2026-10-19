@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { useState, useRef, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Download } from 'lucide-react';
@@ -334,7 +335,7 @@ function QuickAddForm({ onClose, activeCardId }: QuickAddFormProps) {
                       <option value="">Bank account / UPI</option>
                       {userCards.map((c) => (
                         <option key={c.id} value={c.id}>
-                          {c.label || 'Credit Card'} (..{c.pan.slice(-4)})
+                          {c.label || 'Credit Card'}{last4Of(c.pan) ? ` (..${last4Of(c.pan)})` : ''}
                         </option>
                       ))}
                     </select>
@@ -433,7 +434,7 @@ function EmptyState() {
         </motion.div>
       </div>
 
-      <p className="text-sm font-display font-bold text-text-primary mb-2">No Transactions Yet</p>
+      <p className="text-sm font-sans font-bold text-text-primary mb-2">No Transactions Yet</p>
       <p className="text-xs text-text-muted max-w-[220px] leading-relaxed">
         Your spending history will appear here once you make your first purchase.
       </p>
@@ -542,7 +543,7 @@ export function TransactionFeed({ limit = 12, className }: TransactionFeedProps)
       {/* ── Header ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-base font-display font-bold text-text-primary tracking-tight">
+          <h2 className="text-base font-sans font-bold text-text-primary tracking-tight">
             Recent Activity
           </h2>
           <p className="text-[11px] text-text-muted font-medium mt-0.5">

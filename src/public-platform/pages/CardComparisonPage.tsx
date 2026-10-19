@@ -1,280 +1,159 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { SEO } from '../components/SEO';
-import { 
-  getComparisonPairBySlug, 
-  getAllPublicCards 
-} from '../lib/cardKnowledgeGraph';
-import { 
-  getBreadcrumbSchema, 
-  getOrganizationSchema, 
-  getWebSiteSchema 
-} from '../lib/schemaBuilders';
-import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
-import { 
-  Scale, Sparkles, CheckCircle2, ArrowRight, Shield, 
-  Award, HelpCircle, ExternalLink 
-} from 'lucide-react';
+import { getComparisonPairBySlug, getPopularComparisons, getRatesFor, monthlyIncome, type PublicCardEntity } from '../lib/cardKnowledgeGraph';
+import { getBreadcrumbSchema, getOrganizationSchema, getWebSiteSchema } from '../lib/schemaBuilders';
+import { cn } from '../../lib/utils';
+import { ButtonLink, Container, Eyebrow, Reveal, formatINR, useMediaQuery } from '../site/primitives';
+import { PageBody, PageHero } from '../site/PageHero';
+import { CardFace, displayCardName } from '../site/CardFace';
+import { bankLabel } from '../site/banks';
+import { SPEND_CATEGORIES } from '../site/swipeMath';
+import { SIGN_UP } from '../site/nav';
+
+const fee = (c: PublicCardEntity) => (c.annualFee === null ? 'Not disclosed' : c.annualFee === 0 ? 'Lifetime free' : formatINR(c.annualFee));
+const label = (id: string) => SPEND_CATEGORIES.find((c) => c.id === id)?.label ?? id.charAt(0).toUpperCase() + id.slice(1);
+
+function Row({ name, a, b, better }: { name: string; a: string; b: string; better?: 'a' | 'b' | null }) {
+  const cell = (v: string, win: boolean) => (
+    <td className={cn('px-4 py-4 align-top text-[15px] leading-relaxed sm:px-6', win ? 'font-medium text-rc-ink' : 'text-rc-ink/80', v === 'Not disclosed' && 'text-rc-muted')}>
+      {v}
+      {win && <span className="ml-2 inline-block rounded-full bg-rc-pistachio px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-[0.12em] text-rc-forest">Better</span>}
+    </td>
+  );
+  return (
+    <tr className="border-b border-rc-ink/10 last:border-0">
+      <th scope="row" className="w-[26%] px-4 py-4 text-left align-top text-[13px] font-normal text-rc-muted sm:px-6">{name}</th>
+      {cell(a, better === 'a')}
+      {cell(b, better === 'b')}
+    </tr>
+  );
+}
 
 export function CardComparisonPage() {
-  const { pairSlug } = useParams<{ pairSlug: string }>();
-  const pair = pairSlug ? getComparisonPairBySlug(pairSlug) : undefined;
+  // routed as /compare/:categoryOrPairSlug (CompareRouter decides hub vs. pair)
+  const { categoryOrPairSlug } = useParams<{ categoryOrPairSlug: string }>();
+  const pair = categoryOrPairSlug ? getComparisonPairBySlug(categoryOrPairSlug) : undefined;
+  const wide = useMediaQuery('(min-width: 640px)');
 
-  if (!pair) {
-    return <Navigate to="/cards" replace />;
-  }
+  if (!pair) return <Navigate to="/cards" replace />;
 
   const { cardA, cardB, canonicalUrl, verdict } = pair;
-  const fakeLast4A = ((cardA.id.length * 13) % 9000 + 1000).toString();
-  const fakeLast4B = ((cardB.id.length * 13) % 9000 + 1000).toString();
+  const nameA = displayCardName(cardA.cardName);
+  const nameB = displayCardName(cardB.cardName);
+  const ratesA = getRatesFor(cardA);
+  const ratesB = getRatesFor(cardB);
+  const categories = [...new Set([...(ratesA?.rates ?? []), ...(ratesB?.rates ?? [])].map((r) => r.category))];
+  const rateOf = (r: typeof ratesA, cat: string) => r?.rates.find((x) => x.category === cat)?.rate ?? r?.baseRate ?? null;
+  const pick = (a: number | null, b: number | null, higherWins = true): 'a' | 'b' | null => {
+    if (a == null || b == null || a === b) return null;
+    return (a > b) === higherWins ? 'a' : 'b';
+  };
+  const incomeA = monthlyIncome(cardA.eligibility?.minSalary);
+  const incomeB = monthlyIncome(cardB.eligibility?.minSalary);
+  const others = getPopularComparisons().filter((c) => c.slug !== pair.pairSlug).slice(0, 4);
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', item: '/' },
-    { name: 'Card Comparisons', item: '/cards' },
+    { name: 'Credit Cards Directory', item: '/cards' },
     { name: `${cardA.cardName} vs ${cardB.cardName}`, item: `/compare/${pair.pairSlug}` },
   ]);
 
   return (
-    <div className="w-full relative min-h-[100dvh] bg-[#0A0A0A] text-white selection:bg-emerald-500/30 font-sans">
+    <div className="flex w-full flex-1 flex-col">
       <SEO
-        title={`${cardA.cardName} vs ${cardB.cardName} Comparison (2026) | RenoCred`}
-        description={`Compare ${cardA.cardName} and ${cardB.cardName} side-by-side. Analyze annual fees (${cardA.formattedAnnualFee} vs ${cardB.formattedAnnualFee}), reward rates, lounge access, and milestone perks.`}
+        title={`${nameA} vs ${nameB}: Fees, Rewards & Perks Compared | RenoCred`}
+        description={`Compare ${nameA} and ${nameB} side by side: annual fees (${cardA.formattedAnnualFee} vs ${cardB.formattedAnnualFee}), reward rates, lounge access and eligibility.`}
         canonicalUrl={canonicalUrl}
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
 
-      {/* Hero Header */}
-      <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-8">
-        {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-gray-400 mb-6 overflow-x-auto whitespace-nowrap hide-scrollbar">
-          <Link to="/" className="hover:text-emerald-400 transition-colors shrink-0">Home</Link>
-          <span className="shrink-0">/</span>
-          <Link to="/cards" className="hover:text-emerald-400 transition-colors shrink-0">Comparisons</Link>
-          <span className="shrink-0">/</span>
-          <span className="text-white font-medium truncate">{cardA.cardName} vs {cardB.cardName}</span>
-        </nav>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-6 space-y-4 text-center sm:text-left">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-              <Scale size={14} /> Head-to-Head Card Comparison
-            </span>
-            <h1 className="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight leading-tight">
-              {cardA.cardName} <span className="text-gray-500 font-light">vs</span> {cardB.cardName}
-            </h1>
-            <p className="text-sm sm:text-base text-gray-300 max-w-3xl leading-relaxed">
-              Data-backed comparison evaluating annual fees, net reward rates, milestone bonuses, and lounge access thresholds.
-            </p>
+      <PageHero
+        crumbs={[{ label: 'Home', to: '/' }, { label: 'Cards', to: '/cards' }, { label: `${nameA} vs ${nameB}` }]}
+        eyebrow="Head to head"
+        title={<>{nameA} <span className="italic">vs</span> {nameB}</>}
+        lede="Fees, reward rates, lounge access and eligibility, side by side from each issuer's published terms."
+        aside={(
+          <div className="relative flex items-center justify-center py-6">
+            {[cardA, cardB].map((c, i) => (
+              <Link key={c.id} to={`/cards/${c.slug}`} className={cn('group relative flex flex-col items-center', i === 0 ? '-mr-1 sm:-mr-10' : '-ml-1 sm:-ml-10')}>
+                <div className={cn('transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)]', i === 0 ? 'rotate-[-9deg] group-hover:rotate-[-4deg] group-hover:-translate-y-2' : 'rotate-[9deg] group-hover:rotate-[4deg] group-hover:-translate-y-2')}>
+                  <CardFace name={c.cardName} bank={c.issuer} network={c.network} width={wide ? 230 : 140} />
+                </div>
+                <p className="mt-6 max-w-[11ch] text-center font-serif text-[15px] font-semibold leading-snug text-rc-cream sm:max-w-[16ch] sm:text-[17px]">{displayCardName(c.cardName)}</p>
+                <p className="mt-1 text-[13px] text-rc-mist">{fee(c)}{c.annualFee ? ' a year' : ''}</p>
+              </Link>
+            ))}
+            <span aria-hidden className="absolute left-1/2 top-[30%] z-10 flex h-12 w-12 text-[18px] sm:top-[34%] sm:h-16 sm:w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-rc-pistachio font-serif font-semibold italic text-rc-ink sm:text-[22px] shadow-[0_0_0_8px_rgba(10,31,21,1)]">vs</span>
           </div>
+        )}
+      />
 
-          {/* 2D Visual Cards Showcase */}
-          <div className="lg:col-span-6 grid grid-cols-2 gap-4 items-center justify-center">
-            <Link to={`/cards/${cardA.slug}`} className="group flex flex-col items-center">
-              <div className="scale-90 sm:scale-100 group-hover:scale-105 group-hover:-translate-y-1 transition-transform duration-300 origin-center">
-                <PhysicalCard
-                  card={{
-                    id: cardA.id,
-                    pan: `•••• •••• •••• ${fakeLast4A}`,
-                    cardholderName: 'RENOCRED MEMBER',
-                    expiry: '12/28',
-                    network: cardA.network.toLowerCase() as any,
-                    bank: cardA.issuer,
-                    status: 'active',
-                    availableCredit: 0,
-                    creditLimit: 0,
-                    label: cardA.cardName,
-                  }}
-                  variant="compact"
-                />
-              </div>
-              <span className="text-xs font-semibold text-emerald-400 mt-3 group-hover:underline flex items-center gap-1">
-                {cardA.cardName} <ArrowRight size={10} />
-              </span>
-            </Link>
+      <PageBody>
+      <section className="py-16 lg:py-24">
+        <Container className="grid gap-12 lg:grid-cols-12">
+          <Reveal className="lg:col-span-4">
+            <Eyebrow index="01">The short answer</Eyebrow>
+            <p className="mt-6 font-serif text-[clamp(1.45rem,2.2vw,1.9rem)] leading-[1.3] text-rc-ink">{verdict}</p>
+          </Reveal>
+          <Reveal delay={0.08} className="lg:col-span-8">
+            <div className="overflow-x-auto rounded-[28px] border border-rc-ink/10 bg-rc-paper">
+              <table className="w-full min-w-[560px] border-collapse">
+                <thead>
+                  <tr className="border-b border-rc-ink/10">
+                    <th className="px-4 py-4 sm:px-6"><span className="sr-only">Feature</span></th>
+                    <th scope="col" className="px-4 py-4 text-left font-serif text-[18px] font-normal text-rc-ink sm:px-6">{nameA}</th>
+                    <th scope="col" className="px-4 py-4 text-left font-serif text-[18px] font-normal text-rc-ink sm:px-6">{nameB}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <Row name="Annual fee" a={fee(cardA)} b={fee(cardB)} better={pick(cardA.annualFee, cardB.annualFee, false)} />
+                  <Row name="Network" a={cardA.network} b={cardB.network} />
+                  {categories.map((cat) => {
+                    const a = rateOf(ratesA, cat);
+                    const b = rateOf(ratesB, cat);
+                    return <Row key={cat} name={`${label(cat)} rate`} a={a != null ? `${a}%` : 'Not disclosed'} b={b != null ? `${b}%` : 'Not disclosed'} better={pick(a, b)} />;
+                  })}
+                  <Row name="Rewards, in their words" a={cardA.rewardRate} b={cardB.rewardRate} />
+                  <Row name="Lounge access" a={cardA.loungeAccess} b={cardB.loungeAccess} />
+                  <Row name="Forex markup" a={cardA.forexMarkup != null ? `${cardA.forexMarkup}%` : 'Not disclosed'} b={cardB.forexMarkup != null ? `${cardB.forexMarkup}%` : 'Not disclosed'} better={pick(cardA.forexMarkup, cardB.forexMarkup, false)} />
+                  <Row name="Typical income" a={incomeA ? `${formatINR(incomeA)} a month` : 'Not disclosed'} b={incomeB ? `${formatINR(incomeB)} a month` : 'Not disclosed'} />
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-4 text-[13px] leading-relaxed text-rc-muted">"Better" marks the higher reward rate, or the lower fee or markup. Rates are value back as a share of spend from issuers' published terms.</p>
+          </Reveal>
+        </Container>
+      </section>
 
-            <Link to={`/cards/${cardB.slug}`} className="group flex flex-col items-center">
-              <div className="scale-90 sm:scale-100 group-hover:scale-105 group-hover:-translate-y-1 transition-transform duration-300 origin-center">
-                <PhysicalCard
-                  card={{
-                    id: cardB.id,
-                    pan: `•••• •••• •••• ${fakeLast4B}`,
-                    cardholderName: 'RENOCRED MEMBER',
-                    expiry: '12/28',
-                    network: cardB.network.toLowerCase() as any,
-                    bank: cardB.issuer,
-                    status: 'active',
-                    availableCredit: 0,
-                    creditLimit: 0,
-                    label: cardB.cardName,
-                  }}
-                  variant="compact"
-                />
-              </div>
-              <span className="text-xs font-semibold text-teal-400 mt-3 group-hover:underline flex items-center gap-1">
-                {cardB.cardName} <ArrowRight size={10} />
-              </span>
-            </Link>
-          </div>
+      <section className="px-3 sm:px-5">
+        <div className="relative mx-auto max-w-[1360px] overflow-hidden rounded-[40px] bg-rc-ink py-16 text-rc-cream lg:rounded-[56px] lg:py-20">
+          <div aria-hidden className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.16),transparent)]" />
+          <Container className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <p className="max-w-[22ch] font-serif text-[clamp(2rem,3.6vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.025em]">The right pick depends on <span className="italic text-rc-pistachio">how you spend.</span></p>
+            <ButtonLink to={SIGN_UP} variant="cream" size="lg">Compare with your spending</ButtonLink>
+          </Container>
         </div>
       </section>
 
-      <main className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-10">
-        {/* Quick Verdict Box */}
-        <section className="p-6 rounded-2xl bg-[#0D120F] border border-emerald-500/30 space-y-3">
-          <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
-            <Sparkles size={18} />
-            <span>Quick Verdict & Analytical Summary</span>
-          </div>
-          <p className="text-base text-gray-200 leading-relaxed font-medium">
-            {verdict}
-          </p>
-        </section>
-
-        {/* Factual Side-by-Side Comparison Table */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-display font-bold text-white flex items-center gap-2">
-            <Scale className="text-emerald-400" size={22} />
-            Feature Comparison Matrix
-          </h2>
-
-          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#0D120F]">
-            <table className="w-full text-left text-sm text-gray-300 ">
-              <thead className="bg-white/5 text-xs text-gray-400 uppercase tracking-wider font-semibold">
-                <tr>
-                  <th className="py-4 px-6 w-1/3">Feature</th>
-                  <th className="py-4 px-6 w-1/3 text-emerald-400">{cardA.cardName}</th>
-                  <th className="py-4 px-6 w-1/3 text-teal-400">{cardB.cardName}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 font-medium">
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Issuer Bank</td>
-                  <td className="py-4 px-6 text-white">{cardA.issuer}</td>
-                  <td className="py-4 px-6 text-white">{cardB.issuer}</td>
-                </tr>
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Card Network</td>
-                  <td className="py-4 px-6 text-white">{cardA.network}</td>
-                  <td className="py-4 px-6 text-white">{cardB.network}</td>
-                </tr>
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Annual Fee</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardA.formattedAnnualFee}</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardB.formattedAnnualFee}</td>
-                </tr>
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Joining Fee</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardA.formattedJoiningFee}</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardB.formattedJoiningFee}</td>
-                </tr>
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Reward Structure</td>
-                  <td className="py-4 px-6 text-emerald-400">{cardA.rewardRate}</td>
-                  <td className="py-4 px-6 text-teal-400">{cardB.rewardRate}</td>
-                </tr>
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Lounge Access</td>
-                  <td className="py-4 px-6 text-white">{cardA.loungeAccess}</td>
-                  <td className="py-4 px-6 text-white">{cardB.loungeAccess}</td>
-                </tr>
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Forex Surcharge</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardA.forexMarkup !== null ? `${cardA.forexMarkup}%` : 'Not Disclosed'}</td>
-                  <td className="py-4 px-6 text-white font-mono">{cardB.forexMarkup !== null ? `${cardB.forexMarkup}%` : 'Not Disclosed'}</td>
-                </tr>
-                <tr className="hover:bg-white/[0.02]">
-                  <td className="py-4 px-6 text-gray-400">Fuel Surcharge Waiver</td>
-                  <td className="py-4 px-6 text-white">{cardA.fuelBenefits}</td>
-                  <td className="py-4 px-6 text-white">{cardB.fuelBenefits}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Who Should Choose Which Card? */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Card A Recommendation Profile */}
-          <div className="p-6 rounded-2xl bg-[#0D120F] border border-emerald-500/20 space-y-4">
-            <h3 className="text-xl font-bold text-emerald-400 flex items-center gap-2">
-              <CheckCircle2 size={20} />
-              Who Should Choose {cardA.cardName}?
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">•</span>
-                <span>Primary focus: {cardA.topBenefit}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">•</span>
-                <span>Users who spend across {cardA.categories.join(', ')}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">•</span>
-                <span>Prefers {cardA.issuer}'s digital ecosystem & rewards portal</span>
-              </li>
+      {others.length > 0 && (
+        <section className="pb-28 pt-16 lg:pb-36 lg:pt-20">
+          <Container>
+            <Eyebrow>More comparisons</Eyebrow>
+            <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
+              {others.map((o) => (
+                <li key={o.slug}>
+                  <Link to={`/compare/${o.slug}`} className="group flex items-center justify-between gap-4 rounded-[22px] border border-rc-ink/10 bg-rc-paper px-6 py-5 transition-colors hover:border-rc-ink/30">
+                    <span className="text-[15px] text-rc-ink">{o.label}</span>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-rc-ink transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                </li>
+              ))}
             </ul>
-            <div className="pt-2">
-              <Link to={`/cards/${cardA.slug}`} className="text-xs font-semibold text-emerald-400 hover:underline flex items-center gap-1">
-                View Full {cardA.cardName} Entity Profile <ArrowRight size={12} />
-              </Link>
-            </div>
-          </div>
-
-          {/* Card B Recommendation Profile */}
-          <div className="p-6 rounded-2xl bg-[#0D120F] border border-teal-500/20 space-y-4">
-            <h3 className="text-xl font-bold text-teal-400 flex items-center gap-2">
-              <CheckCircle2 size={20} />
-              Who Should Choose {cardB.cardName}?
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li className="flex items-start gap-2">
-                <span className="text-teal-400 font-bold">•</span>
-                <span>Primary focus: {cardB.topBenefit}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-teal-400 font-bold">•</span>
-                <span>Users who spend across {cardB.categories.join(', ')}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-teal-400 font-bold">•</span>
-                <span>Prefers {cardB.issuer}'s rewards portal & fee waiver terms</span>
-              </li>
-            </ul>
-            <div className="pt-2">
-              <Link to={`/cards/${cardB.slug}`} className="text-xs font-semibold text-teal-400 hover:underline flex items-center gap-1">
-                View Full {cardB.cardName} Entity Profile <ArrowRight size={12} />
-              </Link>
-            </div>
-          </div>
+          </Container>
         </section>
-
-        {/* RenoCred Analysis Disclosure */}
-        <section className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-gray-400 space-y-1">
-          <p className="font-semibold text-gray-300">RenoCred Factual & Analytical Disclosure</p>
-          <p>
-            Card terms, fees, and reward rates are verified against official bank schedule disclosures. RenoCred does not issue credit cards or guarantee card approvals.
-          </p>
-        </section>
-
-        {/* Product Conversion CTA */}
-        <section className="p-8 rounded-3xl bg-gradient-to-r from-emerald-950/60 to-teal-950/60 border border-emerald-500/30 text-center space-y-4">
-          <h2 className="text-2xl font-display font-bold text-white">
-            Calculate Net Reward Yield for Your Exact Spends
-          </h2>
-          <p className="text-sm text-gray-300 max-w-xl mx-auto">
-            Use RenoCred's Taqdeer AI recommendation engine to simulate your exact monthly spending pattern against both cards.
-          </p>
-          <div className="pt-2">
-            <Link
-              to="/app"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition-all shadow-[0_0_25px_rgba(52,211,153,0.3)] active:scale-95"
-            >
-              <span>Simulate Spend Yield in RenoCred</span>
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-        </section>
-      </main>
+      )}
+      </PageBody>
     </div>
   );
 }

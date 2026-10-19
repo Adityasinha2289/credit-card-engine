@@ -127,7 +127,7 @@ export function PerksDashboard() {
               </div>
               <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Total Rewards</span>
             </div>
-            <p className="text-4xl font-display font-bold text-text-primary tracking-tight">
+            <p className="text-4xl font-display font-semibold text-text-primary tracking-tight">
               {availablePoints.toLocaleString()}
             </p>
             <p className="text-sm font-medium text-text-muted mt-1">Available points</p>
@@ -144,7 +144,7 @@ export function PerksDashboard() {
               </div>
               <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Active Deals</span>
             </div>
-            <p className="text-4xl font-display font-bold text-text-primary tracking-tight">
+            <p className="text-4xl font-display font-semibold text-text-primary tracking-tight">
               {offers.length}
             </p>
             <p className="text-sm font-medium text-text-muted mt-1">High-value merchant offers</p>
@@ -161,10 +161,10 @@ export function PerksDashboard() {
               </div>
               <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Subscriptions / month</span>
             </div>
-            <p className="text-4xl font-display font-bold text-text-primary tracking-tight">
+            <p className="text-4xl font-display font-semibold text-text-primary tracking-tight">
               {formatCents(monthlySubs)}
             </p>
-            <p className="text-sm font-medium text-text-muted mt-1">{subscriptions.length} active · <Link to="/app/money/subscriptions" className="underline">manage</Link></p>
+            <p className="text-sm font-medium text-text-muted mt-1">{subscriptions.length} active · <Link to="/app/money?tab=subscriptions" className="underline">manage</Link></p>
           </div>
         </motion.div>
       </div>
@@ -303,7 +303,7 @@ export function PerksDashboard() {
                 <div className={cn("w-12 h-12 rounded-full bg-white dark:bg-black/20 flex items-center justify-center mb-3 shadow-sm", selectedPartner.color)}>
                   <selectedPartner.icon size={20} />
                 </div>
-                <p className="text-3xl font-display font-bold text-text-primary">
+                <p className="text-3xl font-display font-semibold text-text-primary">
                   {Math.floor(availablePoints * selectedPartner.ratio).toLocaleString()}
                 </p>
                 <p className="text-xs font-bold uppercase tracking-wider text-text-muted mt-1">
@@ -409,7 +409,7 @@ export function PerksDashboard() {
             className="w-full max-w-md bg-surface-primary  rounded-[2rem] p-6 shadow-ag-modal border border-border-subtle"
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-display font-bold text-text-primary">Add a Renewal</h3>
+              <h3 className="text-xl font-display font-semibold text-text-primary">Add a Renewal</h3>
               <button 
                 onClick={() => {
                   setShowAddRenewal(false);

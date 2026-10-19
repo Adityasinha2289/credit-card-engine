@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { cn } from '../../../../lib/utils';
+import { Wordmark } from '../../../../public-platform/site/Brand';
 
 interface OnboardingLayoutProps {
   children: React.ReactNode;
@@ -29,48 +29,25 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps, d
     }),
   };
   return (
-    <div className="relative min-h-[100dvh] w-full flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: '#FAFBF9' }}
-    >
-      {/* Subtle emerald atmosphere — never overwhelming */}
-      <div
-        className="absolute top-[-200px] right-[-100px] w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(93,143,116,0.06) 0%, transparent 70%)' }}
-      />
-      <div
-        className="absolute bottom-[-200px] left-[-100px] w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(93,143,116,0.04) 0%, transparent 70%)' }}
-      />
+    <div className="relative flex min-h-[100dvh] w-full justify-center overflow-hidden bg-rc-cream text-rc-ink">
+      <div aria-hidden className="pointer-events-none absolute -right-[160px] -top-[220px] h-[640px] w-[640px] rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.9),transparent)]" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-[240px] -left-[160px] h-[560px] w-[560px] rounded-full bg-[radial-gradient(closest-side,rgba(174,195,176,0.35),transparent)]" />
 
       {/* Header */}
-      <div className="absolute top-0 left-0 w-full px-6 md:px-10 py-6 md:py-8 flex justify-between items-center z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center"
-            style={{ border: '1px solid #E5E7EB' }}
-          >
-            <img src="/icons/icon-192.png" alt="RenoCred" width={36} height={36} className="w-full h-full object-cover" />
-          </div>
-          <span className="font-display font-bold text-xl tracking-tight hidden sm:block"
-            style={{ color: '#111827' }}
-          >
-            renocred
-          </span>
-        </div>
+      <div className="absolute left-0 top-0 z-50 flex w-full items-center justify-between px-6 py-6 md:px-10 md:py-8">
+        <Wordmark dark={false} />
 
-        {/* Progress — minimal line indicator */}
         {currentStep > 0 && totalSteps > 0 && (
           <div className="flex items-center gap-3 md:gap-4">
-            <span className="text-[12px] font-bold tracking-widest"
-              style={{ color: '#111827' }}
-            >
-              {String(currentStep).padStart(2, '0')} <span style={{ color: '#9CA3AF' }}>/ {String(totalSteps).padStart(2, '0')}</span>
+            <span className="text-[12px] font-semibold tabular-nums tracking-[0.16em] text-rc-ink">
+              {String(currentStep).padStart(2, '0')} <span className="text-rc-ink/40">/ {String(totalSteps).padStart(2, '0')}</span>
             </span>
-            <div className="w-16 md:w-24 h-1 bg-[#E5E7EB] rounded-full overflow-hidden">
+            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-rc-ink/10 md:w-24">
               <motion.div
-                className="h-full bg-[#2A9D5C]"
+                className="h-full rounded-full bg-rc-forest"
                 initial={false}
                 animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               />
             </div>
           </div>
@@ -78,7 +55,8 @@ export function OnboardingLayout({ children, stepKey, currentStep, totalSteps, d
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-[720px] px-6 md:px-10 flex flex-col justify-center min-h-[500px]">
+      {/* top-aligned under the header, so tall steps never slide beneath it */}
+      <div className="relative z-10 flex w-full max-w-[720px] flex-col px-6 pb-16 pt-28 md:px-10 md:pt-36">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={stepKey}

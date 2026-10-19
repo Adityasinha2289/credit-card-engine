@@ -31,7 +31,7 @@ interface PlanCategory {
 const CATEGORIES: PlanCategory[] = [
   {
     id: 'trip',
-    title: 'PLAN A TRIP',
+    title: 'Plan a trip',
     description: 'Build the whole journey.',
     icon: PlaneTakeoff,
     status: 'FULLY_ACTIVE',
@@ -41,7 +41,7 @@ const CATEGORIES: PlanCategory[] = [
   },
   {
     id: 'date',
-    title: 'ROMANTIC DATE',
+    title: 'Romantic date',
     description: 'Plan something worth remembering.',
     icon: Heart,
     status: 'UI_READY',
@@ -51,7 +51,7 @@ const CATEGORIES: PlanCategory[] = [
   },
   {
     id: 'movie',
-    title: 'MOVIE PLAN',
+    title: 'Movie plan',
     description: 'Tickets, food and the rest of the night.',
     icon: Film,
     status: 'UI_READY',
@@ -61,7 +61,7 @@ const CATEGORIES: PlanCategory[] = [
   },
   {
     id: 'weekend',
-    title: 'WEEKEND ESCAPE',
+    title: 'Weekend escape',
     description: 'Find a break without the planning headache.',
     icon: MapIcon,
     status: 'UI_READY',
@@ -71,7 +71,7 @@ const CATEGORIES: PlanCategory[] = [
   },
   {
     id: 'food',
-    title: 'FOOD DAY',
+    title: 'Food day',
     description: 'Build your perfect food itinerary.',
     icon: Utensils,
     status: 'UI_READY',
@@ -81,7 +81,7 @@ const CATEGORIES: PlanCategory[] = [
   },
   {
     id: 'birthday',
-    title: 'BIRTHDAY / OCCASION',
+    title: 'Birthday or occasion',
     description: 'Make the whole day work.',
     icon: Gift,
     status: 'UI_READY',
@@ -147,7 +147,7 @@ export default function PlanHubPage() {
   return (
     <PageContainer
       eyebrow="RenoCred Plan"
-      title="WHAT ARE WE PLANNING?"
+      title="What are we planning?"
       subtitle="Build the whole plan. We'll handle the details."
       className="max-w-5xl mx-auto pb-24"
     >
@@ -158,7 +158,7 @@ export default function PlanHubPage() {
             {activePlans.map(session => (
               <div key={session.id} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex justify-between items-center group cursor-pointer hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-all" onClick={() => navigate({ pathname: CATEGORIES.find(c => c.id === session.planType || (c.id === 'date' && session.planType === 'romantic_date'))?.path || '/app/plan/trip', search: `?session=${session.id}` })}>
                 <div>
-                  <h3 className="font-display font-medium text-lg text-gray-900 mb-1 uppercase tracking-tight">{renderDraftTitle(session)}</h3>
+                  <h3 className="font-sans font-medium text-lg text-gray-900 mb-1 uppercase tracking-tight">{renderDraftTitle(session)}</h3>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <span>{renderDraftDetails(session)}</span>
                     {renderDraftDetails(session) && <span>·</span>}
@@ -181,7 +181,7 @@ export default function PlanHubPage() {
             {readyPlans.map(session => (
               <div key={session.id} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex justify-between items-center group cursor-pointer hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-all" onClick={() => navigate({ pathname: CATEGORIES.find(c => c.id === session.planType || (c.id === 'date' && session.planType === 'romantic_date'))?.path || '/app/plan/trip', search: `?session=${session.id}` })}>
                 <div>
-                  <h3 className="font-display font-medium text-lg text-gray-900 mb-1 uppercase tracking-tight">{renderDraftTitle(session)}</h3>
+                  <h3 className="font-sans font-medium text-lg text-gray-900 mb-1 uppercase tracking-tight">{renderDraftTitle(session)}</h3>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <span>{renderDraftDetails(session)}</span>
                     {renderDraftDetails(session) && <span>·</span>}
@@ -261,7 +261,7 @@ export default function PlanHubPage() {
 
                 <div>
                   <h3 className={cn(
-                    "text-xl font-display font-medium tracking-tight mt-4",
+                    "text-xl font-display font-semibold tracking-tight mt-4",
                     isActive ? "text-gray-900" : "text-gray-500"
                   )}>
                     {cat.title}

@@ -28,35 +28,35 @@ export function UpiSimulator() {
   }, [merchant, amountStr, userCards]);
 
   return (
-    <section className="bg-white border border-gray-300 rounded-[24px] p-6 md:p-8 space-y-6">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-xl bg-brand-emerald text-gray-900 flex items-center justify-center font-bold shrink-0 shadow-[0_0_15px_rgba(4,59,39,0.3)]">
-          <Smartphone size={20} />
+    <section className="space-y-5 rounded-[28px] bg-rc-pistachio p-6 text-rc-ink md:p-7">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-rc-ink text-rc-pistachio">
+          <Smartphone size={18} />
         </div>
         <div>
-          <h3 className="text-xl md:text-2xl font-display font-bold text-text-primary tracking-tight">UPI Simulator</h3>
-          <p className="text-sm text-text-secondary mt-0.5">Live card optimization</p>
+          <h3 className="font-display text-[22px] font-semibold leading-tight tracking-[-0.01em]">About to pay?</h3>
+          <p className="mt-0.5 text-[14px] text-rc-ink/70">Type the shop and amount; we'll pick the card.</p>
         </div>
       </div>
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
-            <label className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-1">Merchant</label>
-            <input 
-              type="text" 
-              placeholder="e.g. Swiggy, Uber, Amazon" 
-              className="w-full bg-surface-secondary border border-border-subtle rounded-xl px-4 py-3 text-sm font-medium text-text-primary focus:outline-none focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald transition-all"
+            <label className="mb-1.5 block text-[12px] font-medium text-rc-ink/70">Where</label>
+            <input
+              type="text"
+              placeholder="e.g. Swiggy, Uber, Amazon"
+              className="h-12 w-full rounded-full bg-white px-5 text-[15px] text-rc-ink outline-none ring-1 ring-rc-ink/10 transition focus:ring-2 focus:ring-rc-forest"
               value={merchant}
               onChange={(e) => setMerchant(e.target.value)}
             />
           </div>
           <div className="w-full md:w-32">
-            <label className="text-xs font-bold uppercase tracking-wider text-text-muted block mb-1">Amount (₹)</label>
-            <input 
-              type="number" 
-              placeholder="850" 
-              className="w-full bg-surface-secondary border border-border-subtle rounded-xl px-4 py-3 text-sm font-medium text-text-primary focus:outline-none focus:border-brand-emerald focus:ring-1 focus:ring-brand-emerald transition-all"
+            <label className="mb-1.5 block text-[12px] font-medium text-rc-ink/70">Amount, ₹</label>
+            <input
+              type="number"
+              placeholder="850"
+              className="h-12 w-full rounded-full bg-white px-5 text-[15px] tabular-nums text-rc-ink outline-none ring-1 ring-rc-ink/10 transition focus:ring-2 focus:ring-rc-forest"
               value={amountStr}
               onChange={(e) => setAmountStr(e.target.value)}
             />
@@ -75,17 +75,16 @@ export function UpiSimulator() {
             {result.best ? (
               <div className="mt-4">
                 <DecisionCard 
-                  title="Best Card For This"
+                  title="Use this card"
                   bestFit={result.best.card.name}
-                  why={result.delta > 0 && result.secondBest ? `Using this card earns you +₹${result.delta.toFixed(2)} more than your next best option. ${result.best.limitations.length > 0 ? result.best.limitations[0] : ''}` : result.best.reason}
+                  why={result.delta > 0 && result.secondBest ? `₹${result.delta.toFixed(0)} more than your next best card. ${result.best.limitations.length > 0 ? result.best.limitations[0] : ''}` : result.best.reason}
                   expectedValue={`${result.best.confidence !== 'EXACT' ? '~' : ''}₹${result.best.cappedRewardValue.toFixed(2)}`}
                   tradeoff={result.secondBest ? `Next best: ${result.secondBest.card.name} (${result.secondBest.confidence !== 'EXACT' ? '~' : ''}₹${result.secondBest.cappedRewardValue.toFixed(2)})` : undefined}
-                  actionText="Swipe Now"
                 />
               </div>
             ) : (
-              <div className="mt-4 p-4 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-500 text-center">
-                Unable to confidently determine the best card for this transaction.
+              <div className="mt-4 rounded-[20px] bg-white/70 p-4 text-center text-[14px] text-rc-muted">
+                We couldn't tell which card is best for this one. Try the shop's name, like "Swiggy" or "Amazon".
               </div>
             )}
           </motion.div>

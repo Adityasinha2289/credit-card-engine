@@ -122,14 +122,14 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
                   className="flex flex-col h-full"
                 >
                   <div className="flex flex-col gap-1 mt-4 mb-8">
-                    <h1 className="text-3xl font-display font-medium text-gray-900 mb-2">Decision Engine</h1>
+                    <h1 className="text-3xl font-display font-semibold text-gray-900 mb-2">Ask Taqdeer</h1>
                     <p className="text-[15px] text-gray-600 leading-relaxed">
-                      Describe any purchase. Taqdeer will analyze your wallet and recommend the best strategy.
+                      Which card to use, whether a card is worth its fee, or how to lift your score. In English, Hindi or Hinglish.
                     </p>
                   </div>
 
                   <div className="mt-2">
-                    <p className="text-[11px] font-bold tracking-wider uppercase text-gray-400 mb-3">Popular Scenarios</p>
+                    <p className="mb-3 text-[13px] font-medium text-rc-muted">Try asking</p>
                     <div className="flex flex-col gap-3">
                       {[
                         { icon: <CreditCard size={18} />, text: 'Buying a MacBook Pro on Amazon' },

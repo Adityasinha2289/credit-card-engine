@@ -121,7 +121,7 @@ export default function FoodPlannerPage() {
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-2xl">⚠️</span>
             </div>
-            <h2 className="text-3xl font-display font-medium text-gray-900 mb-4">LIVE DATA UNAVAILABLE</h2>
+            <h2 className="text-3xl font-display font-semibold text-gray-900 mb-4">Live data unavailable</h2>
             <p className="text-gray-500 mb-8 max-w-md mx-auto">
               {session.selectedPlan.providerError}
             </p>
@@ -142,7 +142,7 @@ export default function FoodPlannerPage() {
     return (
       <PageContainer hideHeader className="max-w-3xl mx-auto pb-safe">
         <div className="py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h1 className="text-3xl font-display font-medium text-gray-900 mb-2">YOUR FOOD ITINERARY</h1>
+          <h1 className="text-3xl font-display font-semibold text-gray-900 mb-2">Your food itinerary</h1>
           <p className="text-gray-500 mb-8 uppercase tracking-wide text-sm font-medium">{draft.location?.name || ''} • {draft.cuisine}</p>
           
           <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6">
@@ -150,7 +150,7 @@ export default function FoodPlannerPage() {
             <div className="flex justify-between items-end mb-6 pb-6 border-b border-gray-100">
               <div>
                 <p className="text-sm font-medium text-gray-500 mb-1">{session.selectedPlan.isDemoMode ? 'DEMO TOTAL' : 'CALCULATED TOTAL'}</p>
-                <p className="text-4xl font-display font-medium text-gray-900">₹{v.budget.estimatedTotal.toLocaleString('en-IN')}</p>
+                <p className="text-4xl font-display font-semibold text-gray-900">₹{v.budget.estimatedTotal.toLocaleString('en-IN')}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-500 mb-1">Per Person</p>
@@ -186,7 +186,7 @@ export default function FoodPlannerPage() {
     return (
       <AdaptivePlanningShell session={session}>
         <div className="flex flex-col items-center justify-center h-full">
-          <h2 className="text-3xl font-display font-medium text-gray-900 mb-4 animate-pulse">FINDING RESTAURANTS</h2>
+          <h2 className="text-3xl font-display font-semibold text-gray-900 mb-4 animate-pulse">Finding restaurants</h2>
           <p className="text-gray-500 mb-8 text-center max-w-md">Scanning the city for top places...</p>
         </div>
       </AdaptivePlanningShell>
@@ -201,7 +201,7 @@ export default function FoodPlannerPage() {
     return (
       <div className="h-full flex flex-col justify-between pt-8 animate-in fade-in slide-in-from-bottom-4">
         <div>
-          <h2 className="text-3xl font-display font-medium mb-8 uppercase">{nextQuestion.label}</h2>
+          <h2 className="text-3xl font-sans font-medium mb-8 uppercase">{nextQuestion.label}</h2>
           
           {id === 'food_city' && (
             <div className="mb-8">

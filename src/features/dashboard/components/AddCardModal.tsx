@@ -53,7 +53,7 @@ export default function AddCardModal({
       >
         <>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-display font-bold text-text-primary">Add Card to Wallet</h3>
+            <h3 className="text-lg font-display font-semibold text-text-primary">Add Card to Wallet</h3>
             <button
               onClick={handleCloseModal}
               className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-gray-100"
@@ -83,19 +83,18 @@ export default function AddCardModal({
                 <button
                   key={c.id}
                   onClick={() => {
-                    const randomPan = c.first4Digits + ' **** **** ' + Math.floor(1000 + Math.random() * 9000).toString();
-                    const limitNum = c.minIncome ? Math.floor(c.minIncome * 0.5) : 150000;
-                    
+                    // Only what we know: the product. Number, expiry and limit stay
+                    // empty rather than invented.
                     addUserCard({
                       id: c.id,
-                      pan: randomPan,
-                      cardholderName: profile?.name || 'Premium Member',
-                      expiry: '12/28',
+                      pan: '',
+                      cardholderName: profile?.name || '',
+                      expiry: '',
                       network: c.network.toLowerCase() as any,
                       bank: c.bank,
                       status: 'active',
-                      availableCredit: limitNum * 100,
-                      creditLimit: limitNum * 100,
+                      availableCredit: 0,
+                      creditLimit: 0,
                       label: c.name,
                       gradientFrom: getCardTheme(c.id).gradientFrom,
                       gradientTo: getCardTheme(c.id).gradientTo,

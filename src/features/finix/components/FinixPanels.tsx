@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 import { cn } from '../../../lib/utils';
@@ -249,7 +250,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
         {step === 1 && (
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-display font-bold text-text-primary">Pay Credit Card Bill</h3>
+              <h3 className="text-base font-sans font-bold text-text-primary">Pay Credit Card Bill</h3>
               <p className="text-[11px] text-text-muted">Safe & secure instant settlement</p>
             </div>
             <button
@@ -275,7 +276,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
                   <p className="text-[9px] font-semibold opacity-80 uppercase">{card.network}</p>
                 </div>
                 <div className="flex justify-between items-end">
-                  <p className="font-mono text-xs tracking-widest">•••• •••• •••• {card.pan.slice(-4)}</p>
+                  <p className="font-mono text-xs tracking-widest">{last4Of(card.pan) ? `•••• ${last4Of(card.pan)}` : ''}</p>
                   <div className="text-right">
                     <p className="text-[8px] text-white/60 uppercase">Due Date</p>
                     <p className="text-[10px] font-bold">
@@ -296,7 +297,7 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
                   step="0.01"
                   value={payAmount}
                   onChange={(e) => { setPayAmount(e.target.value); setError(null); }}
-                  className="w-full input-premium pl-8 pr-4 py-2.5 font-display font-extrabold text-base text-text-primary"
+                  className="w-full input-premium pl-8 pr-4 py-2.5 font-sans font-extrabold text-base text-text-primary"
                   autoFocus
                 />
               </div>
@@ -381,14 +382,14 @@ function PayBillModal({ bill, onClose }: PayBillModalProps) {
             </motion.div>
             
             <div>
-              <p className="text-lg font-display font-extrabold text-text-primary">Payment Successful!</p>
+              <p className="text-lg font-display font-semibold text-text-primary">Payment Successful!</p>
               <p className="text-xs text-text-muted mt-1">₹{parseFloat(payAmount).toLocaleString('en-IN')} paid towards {bill.cardName}</p>
             </div>
 
             {/* Reward Points Box */}
             <div className="w-full bg-brand-50/30 dark:bg-brand-emerald/[0.04] border border-brand-emerald/10 rounded-2xl p-4 flex flex-col items-center gap-1 mt-2">
               <p className="text-[10px] font-bold text-brand-emerald uppercase tracking-widest">renocred cashback rewards</p>
-              <p className="text-2xl font-display font-bold text-profit">+{pointsEarned.toLocaleString()}</p>
+              <p className="text-2xl font-display font-semibold text-profit">+{pointsEarned.toLocaleString()}</p>
               <p className="text-[10px] text-text-muted">Reward Points credited to your ledger</p>
             </div>
 
@@ -440,7 +441,7 @@ export function BillTrackerPanel() {
         <div className="w-16 h-16 rounded-2xl bg-surface-secondary/60 dark:bg-surface-elevated/20 flex items-center justify-center mb-5 shadow-ag-base text-text-muted text-2xl">
           💳
         </div>
-        <p className="text-sm font-display font-bold text-text-secondary mb-1">No upcoming bills</p>
+        <p className="text-sm font-sans font-bold text-text-secondary mb-1">No upcoming bills</p>
         <p className="text-xs text-text-muted max-w-[240px] leading-relaxed">
           When you have cards with outstanding balances, your bills will automatically show up here.
         </p>
@@ -457,7 +458,7 @@ export function BillTrackerPanel() {
       <div className="grid grid-cols-2 gap-3">
         <div className="panel-glass rounded-2xl shadow-ag-base p-4">
           <p className="text-xs text-text-muted uppercase tracking-widest">Total Due</p>
-          <p className="text-2xl font-display font-bold text-text-primary mt-1">
+          <p className="text-2xl font-display font-semibold text-text-primary mt-1">
             ₹{totalDue.toLocaleString('en-IN')}
           </p>
         </div>
@@ -467,7 +468,7 @@ export function BillTrackerPanel() {
         )}>
           <p className="text-xs text-text-muted uppercase tracking-widest">Urgent</p>
           <p className={cn(
-            'text-2xl font-display font-bold mt-1',
+            'text-2xl font-display font-semibold mt-1',
             urgentCount > 0 ? 'text-loss' : 'text-profit',
           )}>
             {urgentCount} bill{urgentCount !== 1 ? 's' : ''}
@@ -668,7 +669,7 @@ export function InsightsPanel() {
         <div className="w-16 h-16 rounded-2xl bg-surface-secondary/60 dark:bg-surface-elevated/20 flex items-center justify-center mb-5 shadow-ag-base text-text-muted text-2xl">
           📊
         </div>
-        <p className="text-sm font-display font-bold text-text-secondary mb-1">No spend insights yet</p>
+        <p className="text-sm font-sans font-bold text-text-secondary mb-1">No spend insights yet</p>
         <p className="text-xs text-text-muted max-w-[245px] leading-relaxed">
           Perform a transaction or pay bills on your cards to view categories analysis and smart credit nudges.
         </p>
@@ -746,7 +747,7 @@ export function InsightsPanel() {
         <div className="flex flex-col gap-5">
           <div>
             <p className="text-[10px] font-black text-brand-emerald uppercase tracking-widest mb-1">What Happened?</p>
-            <p className="text-2xl font-display font-bold text-text-primary tracking-tight">
+            <p className="text-2xl font-display font-semibold text-text-primary tracking-tight">
               You spent ₹{total.toLocaleString('en-IN', { maximumFractionDigits: 0 })} this cycle.
             </p>
           </div>

@@ -11,7 +11,7 @@ export function GlobalTaqdeerButton({ onClick, isOpen }: GlobalTaqdeerButtonProp
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="fixed bottom-[88px] lg:bottom-6 right-4 lg:right-6 z-[100] flex items-center justify-center">
+    <div className="fixed bottom-5 right-4 z-[100] flex items-center justify-center sm:bottom-6 sm:right-6">
       <div 
         className="relative flex items-center justify-center"
         onMouseEnter={() => setIsHovered(true)}

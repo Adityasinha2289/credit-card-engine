@@ -67,7 +67,7 @@ export default function LifestyleHub() {
       label: 'Debt', 
       desc: 'Smart tools and offers to help you manage and repay better.', 
       icon: Receipt, 
-      path: '/app/credit/advisor',
+      path: '/app/discover',
       image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=600&auto=format&fit=crop',
       level: 'tertiary'
     },
@@ -94,8 +94,6 @@ export default function LifestyleHub() {
       className="text-gray-900 font-body"
     >
       <div className="w-full flex flex-col gap-10 relative">
-        {/* Global Background Atmosphere: Obsidian */}
-        <div className="fixed inset-0 pointer-events-none z-[-1] bg-white" />
 
         {/* HERO SURFACE */}
         {heroCategory && (
@@ -119,7 +117,7 @@ export default function LifestyleHub() {
                   <heroCategory.icon className="w-5 h-5 text-[#2A9D5C]" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h3 className="text-3xl md:text-4xl font-display font-medium text-gray-900 mb-2">{heroCategory.label}</h3>
+                  <h3 className="text-3xl md:text-4xl font-display font-semibold text-gray-900 mb-2">{heroCategory.label}</h3>
                   <p className="text-base md:text-lg text-gray-600 max-w-lg">{heroCategory.desc}</p>
                 </div>
                 <div className="flex items-center gap-2 text-sm font-medium text-[#2A9D5C] mt-2 group-hover:text-gray-900 transition-colors">

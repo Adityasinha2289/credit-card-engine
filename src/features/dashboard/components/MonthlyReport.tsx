@@ -171,7 +171,7 @@ function StatCard({ icon: Icon, label, value, sub, color }: {
           <Icon size={13} style={{ color }} />
         </div>
       </div>
-      <p className="text-xl font-display font-bold text-text-primary tabular-nums">{value}</p>
+      <p className="text-xl font-display font-semibold text-text-primary tabular-nums">{value}</p>
       {sub && <p className="text-[11px] text-text-muted">{sub}</p>}
     </div>
   );
@@ -275,7 +275,7 @@ export function MonthlyReport() {
             <ChevronLeft size={16} />
           </button>
           <div className="text-center min-w-[160px]">
-            <p className="text-lg font-display font-bold text-text-primary">{MONTHS[month]} {year}</p>
+            <p className="text-lg font-display font-semibold text-text-primary">{MONTHS[month]} {year}</p>
             <p className="text-[10px] text-text-muted uppercase tracking-wider">{isCurrentMonth ? 'Current Month' : 'Past Month'}</p>
           </div>
           <button onClick={goNext} disabled={isCurrentMonth}
@@ -302,7 +302,7 @@ export function MonthlyReport() {
         <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
           <div>
             <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Monthly Spending Report</p>
-            <p className="text-xl font-display font-bold text-text-primary">{MONTHS[month]} {year}</p>
+            <p className="text-xl font-display font-semibold text-text-primary">{MONTHS[month]} {year}</p>
           </div>
           <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold', trendIcon.color,
             data.spendChange > 2 ? 'bg-loss/10' : data.spendChange < -2 ? 'bg-profit/10' : 'bg-gray-100')}>

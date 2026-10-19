@@ -74,7 +74,7 @@ export function MarketplaceCategoryCard({ category, variant = 'secondary', class
         
         {variant === 'hero' && (
           <div>
-            <h3 className="text-3xl md:text-4xl font-display font-medium text-white mb-2">{category.name}</h3>
+            <h3 className="text-3xl md:text-4xl font-display font-semibold text-white mb-2">{category.name}</h3>
             <p className="text-base md:text-lg text-white/80 max-w-lg">{category.description}</p>
           </div>
         )}

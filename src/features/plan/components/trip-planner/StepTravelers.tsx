@@ -15,8 +15,8 @@ export function StepTravelers({ initialTravelers, onNext, onBack }: StepTraveler
   return (
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-500">
       <div className="flex-1 flex flex-col justify-center items-center">
-        <h2 className="text-3xl font-display font-medium text-gray-900 tracking-tight mb-12 text-center">
-          WHO'S COMING?
+        <h2 className="text-3xl font-display font-semibold text-gray-900 tracking-tight mb-12 text-center">
+          Who's coming?
         </h2>
 
         <div className="flex items-center gap-8">
@@ -29,7 +29,7 @@ export function StepTravelers({ initialTravelers, onNext, onBack }: StepTraveler
           </button>
           
           <div className="flex flex-col items-center justify-center w-32">
-            <span className="text-7xl font-display font-medium text-gray-900">{count}</span>
+            <span className="text-7xl font-display font-semibold text-gray-900">{count}</span>
             <span className="text-sm font-medium text-gray-500 uppercase tracking-widest mt-2">
               {count === 1 ? 'Person' : 'People'}
             </span>

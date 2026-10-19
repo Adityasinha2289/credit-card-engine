@@ -46,7 +46,7 @@ export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
              {offer.partnerLogo ? (
                 <img src={offer.partnerLogo} alt={offer.partnerName} className="w-full h-full object-contain rounded-full" />
               ) : (
-                <span className="text-[#050806] font-display font-bold text-4xl">{offer.partnerName.charAt(0)}</span>
+                <span className="text-[#050806] font-display font-semibold text-4xl">{offer.partnerName.charAt(0)}</span>
               )}
           </div>
           <div className="absolute bottom-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
@@ -65,7 +65,7 @@ export function OfferCard({ offer, isFeatured = false }: OfferCardProps) {
                 {offer.partnerLogo ? (
                   <img src={offer.partnerLogo} alt={offer.partnerName} className="w-full h-full object-contain rounded-full" />
                 ) : (
-                  <span className="text-[#050806] font-display font-bold text-xl">{offer.partnerName.charAt(0)}</span>
+                  <span className="text-[#050806] font-display font-semibold text-xl">{offer.partnerName.charAt(0)}</span>
                 )}
               </div>
             )}

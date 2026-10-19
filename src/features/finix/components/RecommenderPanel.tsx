@@ -238,7 +238,7 @@ export function RecommenderPanel() {
             className="flex flex-col gap-6 text-left max-w-2xl mx-auto w-full"
           >
             <div>
-              <h3 className="text-3xl font-display font-extrabold text-text-primary tracking-tight">What are you optimizing for?</h3>
+              <h3 className="text-3xl font-display font-semibold text-text-primary tracking-tight">What are you optimizing for?</h3>
               <p className="text-base text-text-secondary mt-2">Select your primary goals to find the best fit.</p>
             </div>
 
@@ -281,7 +281,7 @@ export function RecommenderPanel() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-display font-bold text-text-primary">Your Matches</h3>
+                <h3 className="text-xl font-display font-semibold text-text-primary">Your Matches</h3>
                 <p className="text-sm text-text-muted">{results.length} cards ranked for your profile</p>
               </div>
               <button
@@ -327,7 +327,7 @@ export function RecommenderPanel() {
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-4 border-b border-border-subtle  pb-3">
-                <h3 className="text-lg font-display font-bold text-text-primary flex items-center gap-2">
+                <h3 className="text-lg font-display font-semibold text-text-primary flex items-center gap-2">
                   <BookOpen className="text-brand-emerald" size={18} /> Credit Health Guide
                 </h3>
                 <button

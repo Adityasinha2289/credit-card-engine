@@ -1,31 +1,44 @@
 import { SEO } from '../components/SEO';
+import { ContentPage, RelatedLinks } from '../site/ContentPage';
 
 export function PrivacyPage() {
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-20">
-      <SEO 
-        title="Privacy Policy | Renocred"
-        description="Read how Renocred handles, protects, and respects your privacy and personal data."
+    <>
+      <SEO
+        title="Privacy Policy | RenoCred"
+        description="Read how RenoCred handles, protects, and respects your privacy and personal data."
         canonicalUrl="https://www.renocred.com/privacy"
       />
-      <h1 className="text-4xl font-display font-bold mb-8 tracking-tight">Privacy Policy</h1>
-      <div className="prose prose-invert max-w-none text-gray-300 space-y-6 text-lg leading-relaxed">
-        <p>This is a baseline privacy overview for Renocred, which is currently in active development.</p>
-        
-        <h2 className="text-2xl font-bold text-white mt-12 mb-4">Information You Provide</h2>
-        <p>When you use the Renocred application, you may input financial information such as estimated salary, monthly spend across categories, and your current credit cards. Currently, much of this application state is persisted locally in your browser using local storage.</p>
-        
-        <h2 className="text-2xl font-bold text-white mt-12 mb-4">Authentication and Databases</h2>
-        <p>Our platform utilizes third-party authentication and database infrastructure (Clerk and Supabase) to securely manage user accounts and sync application state across devices. Your data is transmitted and stored securely according to the policies of those providers.</p>
-        
-        <h2 className="text-2xl font-bold text-white mt-12 mb-4">Analytics and Monitoring</h2>
-        <p>To improve our product and fix bugs, we use third-party services:</p>
-        <ul className="list-disc pl-6 space-y-2">
-          <li><strong>PostHog:</strong> Used for product analytics to understand how users interact with the platform.</li>
-          <li><strong>Sentry:</strong> Used for error tracking and performance monitoring.</li>
+      <ContentPage
+        eyebrow="Legal"
+        title="Privacy policy"
+        lede="A plain-language overview of the information RenoCred handles and the services that process it. RenoCred is in active development, and this page will grow with it."
+        aside={<RelatedLinks links={[{ label: 'Terms of service', to: '/terms' }, { label: 'Contact', to: '/contact' }]} />}
+      >
+        <h2>Information you provide</h2>
+        <p>When you use the RenoCred app, you may enter financial information such as your income range, monthly spending by category, the credit cards you hold, transactions, budgets, savings goals and subscriptions.</p>
+        <p>You add cards by choosing them from our catalogue. We never ask for a full card number or CVV; you can optionally add a card's last four digits so SMS alerts can be matched to it.</p>
+
+        <h2>Accounts and storage</h2>
+        <p>We use Clerk to manage sign-in and Supabase to store your account data. Database access rules restrict each record to the account that owns it.</p>
+
+        <h2>Taqdeer, the assistant</h2>
+        <p>When you ask Taqdeer a question while signed in, the question, recent conversation turns and relevant facts about your cards and spending summary are sent to Google's Gemini API to generate the answer.</p>
+
+        <h2>Reminders and notifications</h2>
+        <p>If you turn on subscription reminders, we send emails through Resend. If you enable push notifications, your browser's push subscription is stored so we can deliver them; you can switch either off at any time.</p>
+
+        <h2>Analytics and monitoring</h2>
+        <p>To improve the product and fix bugs, we use:</p>
+        <ul>
+          <li><strong>PostHog</strong> for product analytics, to understand how people use the platform.</li>
+          <li><strong>Sentry</strong> for error tracking and performance monitoring.</li>
         </ul>
-        <p>These services may collect technical information about your device, browser, and interactions with our application.</p>
-      </div>
-    </div>
+        <p>These services may collect technical information about your device, browser, and interactions with the app.</p>
+
+        <h2>Credit reports</h2>
+        <p>RenoCred does not pull your credit report. Eligibility estimates rely only on the information you choose to share.</p>
+      </ContentPage>
+    </>
   );
 }

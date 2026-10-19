@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { analytics } from '../../../lib/analytics';
@@ -166,7 +167,7 @@ function WalletOptimizerTab() {
                   <BankLogo bank={c.bank || 'Unknown'} className="w-12 h-8" />
                   <div className="flex flex-col min-w-0">
                     <p className="text-sm font-semibold text-text-primary truncate">{c.label}</p>
-                    <p className="text-xs text-text-muted">•• {c.pan.slice(-4)}</p>
+                    <p className="text-xs text-text-muted">{last4Of(c.pan) ? `•• ${last4Of(c.pan)}` : c.bank}</p>
                   </div>
                 </div>
               ))}
@@ -232,7 +233,7 @@ function WalletOptimizerTab() {
               {!selectedTemplate ? (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-display font-bold text-text-primary">Add Card to Wallet</h3>
+                    <h3 className="text-lg font-display font-semibold text-text-primary">Add Card to Wallet</h3>
                     <button
                       onClick={handleCloseModal}
                       className="w-8 h-8 rounded-full flex items-center justify-center text-text-muted hover:text-text-secondary hover:bg-surface-secondary dark:hover:bg-white/[0.04]"
@@ -289,7 +290,7 @@ function WalletOptimizerTab() {
                 <div className="flex flex-col gap-4 text-left">
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <h3 className="text-base font-display font-bold text-text-primary">Enter Card Details</h3>
+                      <h3 className="text-base font-sans font-bold text-text-primary">Enter Card Details</h3>
                       <p className="text-xs text-text-muted">{selectedTemplate.name}</p>
                     </div>
                     <button

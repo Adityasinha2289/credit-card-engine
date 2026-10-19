@@ -56,7 +56,7 @@ export function PersonalizedPreview({ state, onComplete }: PersonalizedPreviewPr
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center text-center px-6"
           >
-            <h2 className="font-display text-3xl md:text-5xl uppercase tracking-tight text-white mb-4">
+            <h2 className="mb-4 font-display text-3xl font-semibold tracking-[-0.03em] text-white md:text-5xl">
               Your wallet is ready.
             </h2>
             <div className="w-16 h-1 bg-[#2A9D5C] rounded-full mt-4" />
@@ -74,7 +74,7 @@ export function PersonalizedPreview({ state, onComplete }: PersonalizedPreviewPr
             className="w-full max-w-[340px] md:max-w-[400px] flex flex-col items-center"
           >
             <h3 className="text-xs font-bold tracking-[0.2em] text-[#9CA3AF] uppercase mb-8">
-              Your Reno Cred
+              Your RenoCred
             </h3>
             
             <div className="w-full bg-[#111827] rounded-3xl p-6 md:p-8 flex flex-col gap-6 shadow-[0_20px_60px_rgba(42,157,92,0.15)] border border-[#1f2937]">
@@ -149,7 +149,7 @@ export function PersonalizedPreview({ state, onComplete }: PersonalizedPreviewPr
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center text-center px-6"
           >
-            <h2 className="font-display text-4xl md:text-6xl uppercase tracking-tight text-white mb-6">
+            <h2 className="mb-6 font-display text-4xl font-semibold tracking-[-0.03em] text-white md:text-6xl">
               Your money <br/><span className="text-[#2A9D5C]">is ready to move.</span>
             </h2>
           </motion.div>

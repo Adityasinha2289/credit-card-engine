@@ -1,3 +1,4 @@
+import { last4Of } from '../../cards/types/card.types';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Check, ChevronRight } from 'lucide-react';
@@ -74,7 +75,7 @@ export function WalletV4Panel() {
 
       {/* Header */}
       <div className="flex flex-col gap-1 px-2">
-        <h1 className="text-[22px] font-display font-medium text-text-primary flex items-center gap-2">
+        <h1 className="text-[22px] font-display font-semibold text-text-primary flex items-center gap-2">
           Your card intelligence <Sparkles size={18} className="text-brand-emerald" />
         </h1>
         <p className="text-[13px] text-text-secondary">AI picks the best card for every category.</p>
@@ -109,7 +110,7 @@ export function WalletV4Panel() {
                 <span className="text-white/90 text-[13px] font-semibold tracking-wider">{heroCard.name || 'Infinia Metal'}</span>
               </div>
               <div className="flex flex-col gap-3">
-                <p className="text-white/60 font-mono tracking-[0.2em] text-[15px]">•••• •••• •••• {heroCard.pan ? heroCard.pan.slice(-4) : '5559'}</p>
+                <p className="text-white/60 font-mono tracking-[0.2em] text-[15px]">{last4Of(heroCard.pan) ? `•••• ${last4Of(heroCard.pan)}` : ''}</p>
                 <div className="flex justify-end">
                   <span className="text-white font-bold italic text-xl">VISA</span>
                 </div>
@@ -133,7 +134,7 @@ export function WalletV4Panel() {
             </div>
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Dining</span>
           </div>
-          <h2 className="text-[28px] font-display font-medium text-text-primary leading-tight">{heroCard.name || 'HDFC Infinia'}</h2>
+          <h2 className="text-[28px] font-display font-semibold text-text-primary leading-tight">{heroCard.name || 'HDFC Infinia'}</h2>
           
           <div className="flex flex-col mt-2">
             <span className="text-[12px] text-text-muted mb-1">Estimated savings</span>

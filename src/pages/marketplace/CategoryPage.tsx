@@ -36,7 +36,6 @@ export default function CategoryPage() {
 
   return (
     <PageContainer hideHeader className="gap-8 relative text-[#F2F4F2] max-w-[1400px] mx-auto">
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
       
       {/* Category Hero */}
       <motion.section 
@@ -56,7 +55,7 @@ export default function CategoryPage() {
           <button onClick={() => navigate(basePath)} className="flex items-center gap-2 text-sm text-white/50 hover:text-white mb-2 w-fit group transition-colors">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Marketplace
           </button>
-          <h1 className="text-4xl md:text-6xl font-display font-medium text-white tracking-tight leading-tight">{category.name}</h1>
+          <h1 className="text-4xl md:text-6xl font-display font-semibold text-white tracking-tight leading-tight">{category.name}</h1>
           <p className="text-lg md:text-xl text-white/70 font-light">{category.description}</p>
         </div>
       </motion.section>
@@ -139,7 +138,7 @@ export default function CategoryPage() {
             <div className="w-20 h-20 rounded-full bg-[#0a1a13] flex items-center justify-center mb-6 border border-[#2A9D5C]/20 shadow-[0_0_40px_rgba(42,157,92,0.1)]">
               <Sparkles className="w-8 h-8 text-[#2A9D5C]" />
             </div>
-            <h4 className="text-2xl font-display font-medium text-white mb-3">Premium {category.name} offers are coming.</h4>
+            <h4 className="text-2xl font-display font-semibold text-white mb-3">Premium {category.name} offers are coming.</h4>
             <p className="text-base text-white/50 max-w-md">We are currently negotiating exclusive rewards with top-tier brands in this category to ensure you get the maximum value.</p>
           </motion.div>
         )}

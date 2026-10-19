@@ -7,39 +7,62 @@ import path from 'path'
 const vercelApiPlugin = () => ({
   name: 'vercel-api-plugin',
   configureServer(server: any) {
+    // Runs api/*.ts locally the way Vercel does: req.query, req.cookies, req.body,
+    // res.status/json/send. A handler that throws answers 500; it must never take
+    // the dev server down with it.
     server.middlewares.use(async (req: any, res: any, next: any) => {
-      if (req.url && req.url.startsWith('/api/')) {
-        try {
-          const apiFile = '.' + req.url.split('?')[0] + '.ts';
-          if (fs.existsSync(apiFile)) {
-            const handler = await server.ssrLoadModule(apiFile);
-            
-            let body = '';
-            req.on('data', (chunk: Buffer) => { body += chunk; });
-            req.on('end', async () => {
-              if (body) {
-                try { req.body = JSON.parse(body); } catch(e) {}
-              }
-              
-              // Mock VercelResponse methods
-              res.status = (code: number) => { res.statusCode = code; return res; };
-              res.json = (data: any) => {
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify(data));
-              };
-              
-              await handler.default(req, res);
-            });
-            return;
-          }
-        } catch(err) {
-          console.error('API Error:', err);
+      if (!req.url || !req.url.startsWith('/api/')) return next();
+      const [pathname, search = ''] = req.url.split('?');
+      const apiFile = ['.' + pathname + '.ts', '.' + pathname + '/index.ts'].find((f) => fs.existsSync(f));
+      if (!apiFile) return next();
+
+      const fail = (err: unknown) => {
+        console.error(`API error in ${pathname}:`, err);
+        if (!res.headersSent) {
           res.statusCode = 500;
-          res.end('Internal Server Error');
-          return;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Internal Server Error' }));
         }
+      };
+
+      try {
+        const handler = await server.ssrLoadModule(apiFile);
+        const params = new URLSearchParams(search);
+        req.query = Object.fromEntries([...new Set(params.keys())].map((k) => {
+          const all = params.getAll(k);
+          return [k, all.length > 1 ? all : all[0]];
+        }));
+        req.cookies = Object.fromEntries(String(req.headers.cookie || '').split(/;\s*/).filter(Boolean).map((c: string) => {
+          const i = c.indexOf('=');
+          return [c.slice(0, i), decodeURIComponent(c.slice(i + 1))];
+        }));
+
+        let body = '';
+        req.on('data', (chunk: Buffer) => { body += chunk; });
+        req.on('end', async () => {
+          if (body) {
+            try { req.body = JSON.parse(body); } catch { req.body = body; }
+          }
+          res.status = (code: number) => { res.statusCode = code; return res; };
+          res.json = (data: any) => {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(data));
+            return res;
+          };
+          res.send = (data: any) => {
+            if (data !== null && typeof data === 'object' && !Buffer.isBuffer(data)) return res.json(data);
+            res.end(data);
+            return res;
+          };
+          try {
+            await handler.default(req, res);
+          } catch (err) {
+            fail(err);
+          }
+        });
+      } catch (err) {
+        fail(err);
       }
-      next();
     });
   }
 });

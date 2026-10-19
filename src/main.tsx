@@ -8,6 +8,8 @@ import { HomePage } from './public-platform/pages/HomePage';
 import { NotFoundPage } from './public-platform/pages/NotFoundPage';
 
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { BrandLoader } from './components/BrandLoader'
+import { useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { ScrollToTop } from './components/ScrollToTop'
 
@@ -29,6 +31,7 @@ const CardDetailPage = lazy(() => import('./public-platform/pages/CardDetailPage
 const RewardCalculatorPage = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
 const BreakEvenCalculatorPage = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
 const CreditUtilizationPage = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
+const WhichCardPage = lazy(() => import('./public-platform/pages/calculators/WhichCardPage').then((m) => ({ default: m.WhichCardPage })));
 const AuthenticatedAppWrapper = lazy(() => import('./components/AuthenticatedAppWrapper'));
 const CompareRouter = lazy(() => import('./public-platform/pages/CompareRouter'));
 
@@ -64,11 +67,18 @@ function DeferredAnalytics() {
   return null;
 }
 
+/** Signed-in pages get the branded loader; public pages a plain dark fill (they load in a blink). */
+function RouteFallback() {
+  const { pathname } = useLocation();
+  if (pathname.startsWith('/app')) return <BrandLoader label={pathname.includes('sign-') ? 'Opening sign-in' : 'Getting your cards ready'} />;
+  return <div className="min-h-[100dvh] bg-rc-night" />;
+}
+
 const appContent = (
   <BrowserRouter>
     <ScrollToTop />
     <DeferredAnalytics />
-    <Suspense fallback={<div className="min-h-[100dvh] bg-[#F9FAFB]" />}>
+    <Suspense fallback={<RouteFallback />}>
       <Routes>
         {/* Private App Route */}
         <Route path="/app/*" element={<AuthenticatedAppWrapper />} />
@@ -89,6 +99,7 @@ const appContent = (
         <Route path="/calculators/credit-card-reward-calculator" element={<PublicLayout><RewardCalculatorPage /></PublicLayout>} />
         <Route path="/calculators/annual-fee-break-even" element={<PublicLayout><BreakEvenCalculatorPage /></PublicLayout>} />
         <Route path="/calculators/credit-utilization" element={<PublicLayout><CreditUtilizationPage /></PublicLayout>} />
+        <Route path="/calculators/which-card-to-use" element={<PublicLayout><WhichCardPage /></PublicLayout>} />
 
         <Route path="/business" element={<PublicLayout><BusinessPartnerPage /></PublicLayout>} />
         <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />

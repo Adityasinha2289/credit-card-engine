@@ -1,284 +1,127 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { SiteLink as Link } from '../../site/SiteLink';
+import { ArrowRight } from 'lucide-react';
 import { SEO } from '../../components/SEO';
-import { getFlagshipPublicCards } from '../../lib/cardKnowledgeGraph';
+import { getCardBySlug, getDirectoryCards } from '../../lib/cardKnowledgeGraph';
 import { getBreadcrumbSchema, getOrganizationSchema, getWebSiteSchema } from '../../lib/schemaBuilders';
-import { Calculator, ArrowRight, ShieldCheck } from 'lucide-react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ButtonLink, formatINR } from '../../site/primitives';
+import { displayCardName } from '../../site/CardFace';
+import { CalculatorShell } from '../../site/CalculatorShell';
+import { CardSelect, MoneyInput } from '../../site/CardSelect';
+import { DEFAULT_PROFILE, SPEND_ROWS, cardValue, type Profile } from '../../site/calc';
+import { SIGN_UP } from '../../site/nav';
 
-// Helper component for animating number changes
-function AnimatedNumber({ value, prefix = '₹', className = '' }: { value: number, prefix?: string, className?: string }) {
-  const shouldReduceMotion = useReducedMotion();
-  
-  if (shouldReduceMotion) {
-    return <span className={className}>{prefix}{value.toLocaleString('en-IN')}</span>;
-  }
-  
-  return (
-    <span className={`inline-flex relative ${className}`}>
-      {prefix}
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
-          key={value}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="inline-block"
-        >
-          {value.toLocaleString('en-IN')}
-        </motion.span>
-      </AnimatePresence>
-    </span>
-  );
-}
+const ROUTE = '/calculators/credit-card-reward-calculator';
 
 export function RewardCalculatorPage() {
-  const cards = getFlagshipPublicCards();
-  const [selectedCardId, setSelectedCardId] = useState<string>(cards[0]?.id || '');
-  const [monthlySpend, setMonthlySpend] = useState<number>(50000);
-  const shouldReduceMotion = useReducedMotion();
+  const cards = useMemo(() => getDirectoryCards().filter((c) => c.annualFee !== null), []);
+  const [card, setCard] = useState(() => getCardBySlug('sbi-cashback-credit-card') ?? cards[0]);
+  const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
 
-  const selectedCard = cards.find((c) => c.id === selectedCardId) || cards[0];
-
-  // =========================================================
-  // DO NOT CHANGE FUNCTIONAL BEHAVIOR / FINANCIAL LOGIC
-  // =========================================================
-  const isCashback = selectedCard?.rewardType === 'cashback';
-  const effectiveRate = selectedCard?.annualFee >= 10000 ? 0.05 : isCashback ? 0.04 : 0.02;
-  const estimatedMonthlyReward = Math.round(monthlySpend * effectiveRate);
-  const estimatedAnnualReward = estimatedMonthlyReward * 12;
-  const annualFee = selectedCard?.annualFee || 0;
-  const estimatedNetAnnualValue = Math.max(0, estimatedAnnualReward - annualFee);
-  // =========================================================
+  const value = useMemo(() => cardValue(card, profile), [card, profile]);
+  const monthlyTotal = Object.values(profile).reduce((s, v) => s + v, 0);
+  const best = useMemo(() => {
+    let top: { card: typeof card; net: number } | null = null;
+    for (const c of cards) {
+      const v = cardValue(c, profile);
+      if (v.known && (!top || v.net > top.net)) top = { card: c, net: v.net };
+    }
+    return top;
+  }, [cards, profile]);
+  const maxYearly = Math.max(1, ...value.byCategory.map((c) => c.yearly));
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', item: '/' },
-    { name: 'Calculators', item: '/calculators/credit-card-reward-calculator' },
-    { name: 'Credit Card Reward Calculator', item: '/calculators/credit-card-reward-calculator' },
+    { name: 'Credit Card Reward Calculator', item: ROUTE },
   ]);
 
   return (
-    <div className="w-full relative min-h-[100dvh] bg-editorial-light-cream text-editorial-deep-forest selection:bg-[#008933]/20 font-sans flex flex-col">
+    <>
       <SEO
-        title="Credit Card Reward Calculator (2026) | Estimate Cashback & Points | RenoCred"
-        description="Calculate your estimated monthly and annual reward earnings across Indian credit cards. Calculate net annual value after annual fee deductions."
-        canonicalUrl="https://renocred.com/calculators/credit-card-reward-calculator"
+        title="Credit Card Reward Calculator | Estimate Cashback & Points | RenoCred"
+        description="Estimate what an Indian credit card returns on your spending, category by category, after caps, fee waivers and the annual fee."
+        canonicalUrl={`https://renocred.com${ROUTE}`}
         schemaData={[getOrganizationSchema(), getWebSiteSchema(), breadcrumbSchema]}
       />
-
-      {/* Main Content Area - constrained for optimal desktop viewport (MacBook Air 1280x800) */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-24 lg:py-32 flex flex-col gap-12 lg:gap-16">
-        
-        {/* Page Hero */}
-        <header className="w-full max-w-3xl">
-          <motion.div 
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            className="flex items-center gap-2 mb-4"
-          >
-            <div className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest border border-editorial-soft-sage/30 px-3 py-1.5 rounded-full flex items-center gap-1.5 bg-white/50">
-              <Calculator size={12} /> PUBLIC UTILITY
+      <CalculatorShell
+        current={ROUTE}
+        title={<>Reward <span className="italic text-rc-forest">calculator</span></>}
+        lede="What a card actually returns on your spending, category by category, after monthly caps, fee waivers and the annual fee."
+        note="Rates are the effective value back as a share of spend, from each issuer's published terms, with monthly caps and fee-waiver thresholds where stated. Portal-only multipliers, exclusions and redemption choices change real outcomes."
+        inputs={
+          <div className="space-y-12">
+            <CardSelect cards={cards} value={card} onChange={setCard} label="Your card" />
+            <div>
+              <div className="mb-2 flex items-baseline justify-between">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-muted">Monthly spend</p>
+                <p className="text-[14px] text-rc-muted">Total <span className="font-medium text-rc-ink tabular-nums">{formatINR(monthlyTotal)}</span></p>
+              </div>
+              {SPEND_ROWS.map((r) => (
+                <MoneyInput key={r.id} id={`spend-${r.id}`} label={r.label} value={profile[r.id] ?? 0} onChange={(n) => setProfile((p) => ({ ...p, [r.id]: n }))} />
+              ))}
             </div>
-          </motion.div>
-          
-          <motion.h1 
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-serif font-medium tracking-tight leading-[1.05] text-editorial-deep-forest mb-6"
-          >
-            Credit Card Reward<br className="hidden sm:block" /> Calculator.
-          </motion.h1>
-          
-          <motion.p 
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.2 }}
-            className="text-base sm:text-lg text-editorial-muted-sage font-light max-w-xl leading-relaxed"
-          >
-            Estimate the reward value of your card and understand what it can actually return after annual fees.
-          </motion.p>
-        </header>
-
-        {/* Layout: Input (Left) & Result (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] xl:grid-cols-[1fr_440px] gap-8 lg:gap-16 items-start">
-          
-          {/* LEFT: INPUT / CARD SELECTION */}
-          <motion.div 
-            initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ delay: 0.3 }}
-            className="flex flex-col gap-8 w-full"
-          >
-            
-            <div className="bg-white border border-editorial-soft-sage/30 rounded-3xl p-6 sm:p-10 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow duration-500">
-              {/* Subtle ambient lighting inside card */}
-              <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-editorial-soft-sage/5 rounded-full blur-[80px] pointer-events-none" />
-              
-              <div className="relative z-10 flex flex-col gap-10">
-                
-                {/* Card Selection */}
-                <div className="flex flex-col gap-4">
-                  <label htmlFor="card-select" className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest flex items-center gap-2">
-                    <span className="w-4 h-[1px] bg-editorial-muted-sage/30"></span>
-                    Select your card
-                  </label>
-                  
-                  <div className="relative">
-                    <select
-                      id="card-select"
-                      value={selectedCardId}
-                      onChange={(e) => setSelectedCardId(e.target.value)}
-                      className="w-full appearance-none bg-editorial-light-cream/50 border border-editorial-soft-sage/40 text-base lg:text-lg text-editorial-deep-forest font-medium rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-[#008933]/20 focus:border-[#008933]/50 transition-all cursor-pointer hover:bg-white"
-                    >
-                      {cards.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.cardName} ({c.issuer})
-                        </option>
-                      ))}
-                    </select>
-                    {/* Custom Arrow */}
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-editorial-muted-sage">
-                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
+          </div>
+        }
+        result={
+          <div className="overflow-hidden rounded-[28px] bg-rc-ink text-rc-cream">
+            <div className="p-7 sm:p-9">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist">Net value a year</p>
+              {value.known ? (
+                <>
+                  <p className={`mt-3 font-serif text-[clamp(3rem,6vw,4.25rem)] leading-none tabular-nums ${value.net < 0 ? 'text-[#F2B8A0]' : 'text-rc-cream'}`}>
+                    {value.net < 0 ? '−' : ''}{formatINR(Math.abs(value.net))}
+                  </p>
+                  <p className="mt-3 text-[14px] text-rc-mist">{value.blendedRate.toFixed(2)}% back on {formatINR(monthlyTotal)} a month</p>
+                </>
+              ) : (
+                <p className="mt-3 text-[16px] leading-relaxed text-rc-mist">We don't have per-category rates for this card yet, so we won't guess. Try another card.</p>
+              )}
+              {value.known && (
+                <dl className="mt-8 space-y-3 border-t border-white/10 pt-6 text-[14px]">
+                  <div className="flex justify-between"><dt className="text-rc-mist">Rewards a year</dt><dd className="tabular-nums">{formatINR(value.gross)}</dd></div>
+                  <div className="flex justify-between">
+                    <dt className="text-rc-mist">Annual fee</dt>
+                    <dd className="tabular-nums">{value.fee === 0 ? 'None' : value.feeWaived ? <span>Waived <span className="text-rc-mist line-through">{formatINR(value.fee)}</span></span> : `−${formatINR(value.fee)}`}</dd>
                   </div>
-                </div>
-
-                {/* Monthly Spend Slider */}
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 border-b border-editorial-soft-sage/20 pb-4">
-                    <label htmlFor="spend-slider" className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest flex items-center gap-2">
-                      <span className="w-4 h-[1px] bg-editorial-muted-sage/30"></span>
-                      Estimated Monthly Spend
-                    </label>
-                    <div className="text-3xl font-serif text-[#008933] font-medium leading-none">
-                      <AnimatedNumber value={monthlySpend} />
-                    </div>
-                  </div>
-                  
-                  <div className="relative pt-2 pb-6">
-                    <input
-                      id="spend-slider"
-                      type="range"
-                      min={5000}
-                      max={500000}
-                      step={5000}
-                      value={monthlySpend}
-                      onChange={(e) => setMonthlySpend(Number(e.target.value))}
-                      className="w-full h-1.5 bg-editorial-soft-sage/20 rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#008933]/20
-                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#008933] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110"
-                      style={{
-                        background: `linear-gradient(to right, #008933 ${(monthlySpend - 5000) / (500000 - 5000) * 100}%, rgba(174, 195, 176, 0.3) ${(monthlySpend - 5000) / (500000 - 5000) * 100}%)`
-                      }}
-                    />
-                    <div className="flex justify-between text-[10px] text-editorial-muted-sage mt-3 font-medium uppercase tracking-wider">
-                      <span>₹5,000</span>
-                      <span>₹5,00,000</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
+                  {value.feeWaiverSpend && !value.feeWaived && value.fee > 0 && (
+                    <p className="text-[12px] text-rc-mist">Fee is waived above {formatINR(value.feeWaiverSpend)} a year of spend.</p>
+                  )}
+                </dl>
+              )}
             </div>
-
-            {/* Selected Card Details Info Block */}
-            <div className="bg-editorial-soft-sage/5 border border-editorial-soft-sage/20 rounded-2xl p-5 sm:p-6 text-sm flex flex-col gap-3">
-              <div className="text-[10px] font-bold text-editorial-muted-sage uppercase tracking-widest flex items-center gap-2 mb-1">
-                <ShieldCheck size={14} className="text-editorial-muted-sage" />
-                Selected Card
-              </div>
-              <div className="font-serif text-lg text-editorial-deep-forest font-medium">
-                {selectedCard?.cardName} <span className="font-sans text-sm font-normal text-editorial-muted-sage ml-1">({selectedCard?.issuer})</span>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mt-2">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] text-editorial-muted-sage uppercase tracking-wider font-bold">Reward Structure</span>
-                  <span className="text-editorial-deep-forest">{selectedCard?.rewardRate}</span>
-                </div>
-                <div className="w-[1px] bg-editorial-soft-sage/20 hidden sm:block"></div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] text-editorial-muted-sage uppercase tracking-wider font-bold">Annual Fee</span>
-                  <span className="text-editorial-deep-forest">{selectedCard?.formattedAnnualFee}</span>
-                </div>
-              </div>
-            </div>
-
-          </motion.div>
-
-          {/* RIGHT: RESULT / OUTPUT */}
-          <motion.div 
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ delay: 0.4 }}
-            className="w-full flex flex-col gap-6 sticky top-28"
-          >
-            {/* The Result Card */}
-            <div className="bg-[#0b1c11] text-white border border-[#1b3c25] rounded-[2rem] p-8 sm:p-10 shadow-xl relative overflow-hidden flex flex-col">
-              
-              <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[#008933]/10 rounded-full blur-[60px] pointer-events-none" />
-
-              <div className="text-[10px] font-bold text-editorial-soft-sage uppercase tracking-widest mb-10 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#008933]"></span>
-                Your Estimate
-              </div>
-
-              <div className="flex flex-col gap-8 relative z-10 flex-1">
-                
-                {/* Primary Metric */}
-                <div className="flex flex-col gap-3 pb-8 border-b border-white/10">
-                  <span className="text-xs text-editorial-soft-sage uppercase tracking-widest font-semibold">Estimated Net Annual Value</span>
-                  <div className="text-[clamp(3rem,5vw,4rem)] font-serif text-white leading-none tracking-tight">
-                    <AnimatedNumber value={estimatedNetAnnualValue} />
-                  </div>
-                </div>
-
-                {/* Secondary Metrics */}
-                <div className="flex flex-col gap-5">
-                  <div className="flex justify-between items-center group">
-                    <span className="text-sm text-editorial-soft-sage font-light group-hover:text-white transition-colors">Monthly reward value</span>
-                    <span className="text-base font-mono text-white"><AnimatedNumber value={estimatedMonthlyReward} /></span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center group">
-                    <span className="text-sm text-editorial-soft-sage font-light group-hover:text-white transition-colors">Gross annual rewards</span>
-                    <span className="text-base font-mono text-white"><AnimatedNumber value={estimatedAnnualReward} /></span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center group">
-                    <span className="text-sm text-editorial-soft-sage/70 font-light">Annual fee</span>
-                    <span className="text-sm font-mono text-white/50">- <AnimatedNumber value={annualFee} /></span>
-                  </div>
-                </div>
-
-              </div>
-              
-              <div className="pt-10 mt-2 relative z-10">
-                <Link
-                  to="/app"
-                  className="w-full group flex items-center justify-between px-6 py-4 rounded-xl bg-white text-editorial-deep-forest font-bold text-sm transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-[0.98]"
-                >
-                  <span>Optimize in RenoCred</span>
-                  <ArrowRight size={16} className="text-editorial-deep-forest/50 group-hover:translate-x-1 group-hover:text-editorial-deep-forest transition-all" />
+            {value.known && (
+              <ul className="space-y-2.5 border-t border-white/10 bg-white/[0.03] p-7 sm:p-9">
+                {value.byCategory.filter((c) => c.monthly > 0).map((c) => (
+                  <li key={c.id} className="grid grid-cols-[7.5rem_1fr_auto] items-center gap-3 text-[13px]">
+                    <span className="truncate text-rc-mist">{SPEND_ROWS.find((r) => r.id === c.id)?.label}</span>
+                    <span className="h-1 overflow-hidden rounded-full bg-white/10"><span className="block h-full rounded-full bg-rc-pistachio" style={{ width: `${(c.yearly / maxYearly) * 100}%` }} /></span>
+                    <span className="tabular-nums">{c.rate}%{c.capped ? '*' : ''} · {formatINR(c.yearly)}</span>
+                  </li>
+                ))}
+                {value.byCategory.some((c) => c.capped) && <li className="pt-1 text-[11px] text-rc-mist">* hits the monthly cap</li>}
+              </ul>
+            )}
+            {best && best.card.id !== card.id && (
+              <div className="border-t border-white/10 p-7 sm:p-9">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist">Best for this spend</p>
+                <Link to={`/cards/${best.card.slug}`} className="group mt-3 flex items-center justify-between gap-4">
+                  <span className="font-serif text-[22px] leading-snug">{displayCardName(best.card.cardName)}</span>
+                  <span className="shrink-0 text-right">
+                    <span className="block font-serif text-[22px] text-rc-pistachio tabular-nums">{formatINR(best.net)}</span>
+                    <span className="text-[11px] text-rc-mist">net a year</span>
+                  </span>
                 </Link>
+                <button type="button" onClick={() => setCard(best.card)} className="mt-4 inline-flex items-center gap-1.5 text-[13px] text-rc-cream underline decoration-white/30 underline-offset-4 hover:decoration-white">
+                  Calculate for this card <ArrowRight className="h-3.5 w-3.5" />
+                </button>
               </div>
-              
+            )}
+            <div className="border-t border-white/10 p-7 sm:p-9">
+              <ButtonLink to={SIGN_UP} variant="cream" className="w-full">Track it with your real spending</ButtonLink>
             </div>
-
-            {/* Disclaimer */}
-            <div className="px-2">
-              <p className="text-[11px] leading-relaxed text-editorial-muted-sage">
-                <strong className="font-semibold block mb-1">Calculator Disclaimer</strong>
-                Calculated figures are estimates based on standard reward multipliers. Actual payouts depend on category spend breakdowns, portal multipliers (e.g. SmartBuy), reward redemption choices, and monthly capping policies.
-              </p>
-            </div>
-            
-          </motion.div>
-          
-        </div>
-      </main>
-    </div>
+          </div>
+        }
+      />
+    </>
   );
 }

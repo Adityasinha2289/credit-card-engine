@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, CreditCard, ChevronRight, Wallet, Activity, ArrowRight, ShieldCheck, PieChart, Sparkles, Building2, Smartphone, AlertTriangle, Loader2, Info } from 'lucide-react';
+import { Plus, CreditCard, Wallet, Activity, ArrowRight, ShieldCheck, PieChart, Sparkles, Building2, Smartphone, Info } from 'lucide-react';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { CommerceOptimizationService } from '../../features/commerce';
-import { loadWalletIntelligence } from './walletIntelligence';
+import { walletCoverage } from './walletCoverage';
 import { cn } from '../../lib/utils';
 import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
 import { toast } from 'sonner';
@@ -14,7 +14,11 @@ import { useUser } from '@clerk/clerk-react';
 import { useProfileQuery, useUserCardsQuery } from '../../hooks/queries';
 import { useDashboardMutations } from '../../hooks/queries/useDashboardMutations';
 import { CardDetailsModal } from '../../features/dashboard/components/CardDetailsModal';
-import { UpiSimulator } from '../../features/dashboard/components/v3/UpiSimulator';
+import { ArrowChip } from '../../public-platform/site/primitives';
+import { CardFan } from '../../public-platform/site/CardFan';
+import { SPEND_CATEGORIES, cardsByIds, slugifyCardName } from '../../public-platform/site/swipeMath';
+import { Link } from 'react-router-dom';
+
 
 export default function WalletPage() {
   const { user } = useUser();
@@ -30,320 +34,167 @@ export default function WalletPage() {
   const [showHowItWorksModal, setShowHowItWorksModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any>(null);
 
-  const [analysisStatus, setAnalysisStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
-  const [coverageData, setCoverageData] = useState<{name: string, value: number}[]>([]);
-  const [topPaths, setTopPaths] = useState<{category: string, card: string, value: number}[]>([]);
-  const [optimizationGap, setOptimizationGap] = useState<any>(null);
-  const [availableValue, setAvailableValue] = useState(0);
-  const [coveragePercent, setCoveragePercent] = useState(0);
+  // What a card is best at: its highest published category rate.
+  const bestJob = (cardId: string) => {
+    const [catalogCard] = cardsByIds([cardId]);
+    const top = [...(catalogCard?.rewards ?? [])].sort((x, y) => y.rate - x.rate)[0];
+    if (!top) return null;
+    return { label: (SPEND_CATEGORIES.find((c) => c.id === top.category)?.label ?? top.category).toLowerCase(), rate: top.rate };
+  };
 
-  // Deriving basic stats
+  // How well the wallet covers each kind of spend, from published reward rates.
+  const coverage = useMemo(() => walletCoverage(userCards.map((c) => c.id)), [userCards]);
+
   const totalCards = userCards.length;
   const activeCards = userCards.filter(c => c.status === 'active').length;
 
-  useEffect(() => {
-    let mounted = true;
-    
-    async function loadIntelligence() {
-      try {
-        setAnalysisStatus('loading');
-        const userId = profile?.id;
-        if (!userId) return;
-        const { isEmpty, coveragePercent, availableValue, coverageData, topPaths, optimizationGap } = await loadWalletIntelligence(userId);
-        
-        if (isEmpty) {
-          setAnalysisStatus('empty');
-          return;
-        }
-        
-        setCoveragePercent(coveragePercent);
-        setAvailableValue(availableValue);
-        setCoverageData(coverageData);
-        setTopPaths(topPaths);
-        setOptimizationGap(optimizationGap);
-        setAnalysisStatus('ready');
-
-      } catch (err) {
-        console.error('Failed to load wallet intelligence', err);
-        if (mounted) setAnalysisStatus('error');
-      }
-    }
-    
-    loadIntelligence();
-    
-    return () => { mounted = false; };
-  }, [userCards, profile?.id]);
-
-  const renderIntelligenceContent = () => {
-    if (analysisStatus === 'loading') {
-      return (
-        <div className="flex items-center gap-4 text-emerald-400">
-          <Loader2 className="animate-spin" size={24} />
-          <h3 className="text-xl md:text-2xl font-display leading-tight text-gray-900">
-            Analyzing your wallet...
-          </h3>
-        </div>
-      );
-    }
-    
-    if (analysisStatus === 'error') {
-      return (
-        <div className="flex items-center gap-4 text-amber-500">
-          <AlertTriangle size={24} />
-          <h3 className="text-xl md:text-2xl font-display leading-tight text-gray-900">
-            We couldn't calculate your wallet intelligence right now.
-          </h3>
-        </div>
-      );
-    }
-
-    if (analysisStatus === 'empty') {
-      return (
-        <div className="space-y-2">
-          <h3 className="text-xl md:text-2xl font-display leading-tight text-gray-900">
-            No optimization paths available yet.
-          </h3>
-          <p className="text-gray-600">Add more payment methods to unlock intelligence.</p>
-        </div>
-      );
-    }
-
-    return (
-      <>
-        <h3 className="text-xl md:text-2xl font-display leading-tight text-gray-900">
-          RenoCred can optimize most of your everyday spending with your current wallet.
-        </h3>
-        <div className="flex flex-wrap gap-8">
-          <div>
-            <div className="text-3xl font-mono text-emerald-400 font-light tracking-tight">{coveragePercent}%</div>
-            <div className="text-sm text-gray-600 mt-1">Coverage</div>
-          </div>
-          <div>
-            <div className="text-3xl font-mono text-gray-900 font-light tracking-tight">₹{availableValue.toLocaleString()}</div>
-            <div className="text-sm text-gray-600 mt-1">Available optimization value</div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
   const renderCoverageMatrix = () => {
-    if (analysisStatus === 'loading') return <div className="text-sm text-gray-600">Calculating your coverage...</div>;
-    if (analysisStatus === 'empty' || analysisStatus === 'error') return <div className="text-sm text-gray-600">Building from your wallet...</div>;
-    
+    if (!coverage) return <p className="text-[14px] text-rc-muted">Add a card to see which spends it covers.</p>;
     return (
-      <div className="space-y-5">
-        {coverageData.map(cat => (
-          <div key={cat.name} className="flex items-center justify-between group">
-            <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{cat.name}</span>
-            <div className="flex items-center gap-3">
-              <div className="w-24 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                <div 
-                  className="h-full bg-emerald-500/80 rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${cat.value}%` }}
-                />
-              </div>
-              <span className="text-xs font-mono text-gray-900 w-8 text-right">{cat.value}%</span>
-            </div>
-          </div>
+      <ul className="space-y-3.5">
+        {coverage.rows.map((row) => (
+          <li key={row.category} className="grid grid-cols-[7.5rem_1fr_auto] items-center gap-3">
+            <span className="text-[14px] text-rc-ink">{row.label}</span>
+            <span className="h-2 overflow-hidden rounded-full bg-rc-ink/10">
+              <span className="block h-full rounded-full bg-rc-forest transition-all duration-1000 ease-out" style={{ width: `${Math.max(row.coverage, 3)}%` }} />
+            </span>
+            <span className="w-24 text-right text-[13px] tabular-nums text-rc-muted">
+              <span className="font-semibold text-rc-ink">{row.yourRate}%</span> of {row.marketRate}%
+            </span>
+          </li>
         ))}
-      </div>
+      </ul>
     );
   };
 
   const renderTopPaths = () => {
-    if (analysisStatus === 'loading') return <div className="text-sm text-gray-600">Analyzing...</div>;
-    if (analysisStatus === 'empty' || analysisStatus === 'error') return <div className="text-sm text-gray-600">Add payment methods to reveal paths.</div>;
-
+    if (!coverage) return <p className="text-[14px] text-rc-muted">Add a card to see the best one for each spend.</p>;
     return (
-      <div className="space-y-3">
-        {topPaths.map((item, i) => (
-          <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:border-gray-300 transition-colors">
-            <div>
-              <div className="text-xs text-gray-600 uppercase tracking-wider font-semibold">{item.category}</div>
-              <div className="text-sm font-medium text-gray-900 mt-1 flex items-center gap-1.5">
-                <ArrowRight size={12} className="text-emerald-500/50" />
-                {item.card}
-              </div>
+      <ul className="space-y-2">
+        {coverage.rows.filter((r) => r.yourCard).map((row) => (
+          <li key={row.category} className="flex items-center justify-between gap-4 rounded-[18px] bg-white/70 px-4 py-3">
+            <div className="min-w-0">
+              <div className="text-[12px] text-rc-muted">{row.label}</div>
+              <div className="mt-0.5 truncate text-[15px] font-medium text-rc-ink">{row.yourCard!.name}</div>
             </div>
-            <div className="text-right">
-              <div className="text-xs text-gray-600">Potential</div>
-              <div className="text-sm font-mono text-emerald-400 mt-0.5">₹{item.value.toLocaleString()}</div>
-            </div>
-          </div>
+            <div className="shrink-0 font-display text-[19px] font-semibold tabular-nums text-rc-forest">{row.yourRate}%</div>
+          </li>
         ))}
-      </div>
+      </ul>
     );
   };
 
   return (
-    <PageContainer 
-      eyebrow="YOUR PORTFOLIO"
-      title="Your Wallet"
-      className="text-gray-900 font-body"
+    <PageContainer
+      eyebrow="Wallet"
+      title={totalCards > 0 ? <>Every card, <span className="italic">one job each.</span></> : <>Your wallet, <span className="italic">waiting.</span></>}
+      subtitle={totalCards > 0
+        ? 'What each of your cards is best at, so the right one comes out at the till.'
+        : 'Add the cards you own and RenoCred works out which one to use for each kind of spend.'}
+      heroStats={totalCards > 0 ? [
+        { value: activeCards, label: activeCards === 1 ? 'active card' : 'active cards' },
+        ...(coverage ? [{ value: `${coverage.overall}%`, label: 'of the best rates on the market' }] : []),
+        ...(coverage ? [{ value: coverage.rows.filter((r) => r.coverage === 100).length, label: 'spends where you hold the top card' }] : []),
+      ] : undefined}
+      heroActions={(
+        <>
+          <button type="button" onClick={() => setShowAddModal(true)} className="group inline-flex h-12 items-center gap-3 rounded-full bg-rc-cream pl-6 pr-1.5 text-[14px] font-medium text-rc-ink transition-colors hover:bg-white">
+            Add a card <ArrowChip variant="cream" size="md" />
+          </button>
+        </>
+      )}
+      heroAside={totalCards > 0 ? (
+        <CardFan width={180} cards={userCards.slice(0, 5).map((c) => ({ id: c.id, name: c.label || 'Credit card', bank: c.bank || '', network: c.network }))} />
+      ) : undefined}
     >
-      {/* Global Background Atmosphere: Obsidian */}
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-white" />
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        {/* your cards, each with the job it does best */}
+        <section className="lg:col-span-7">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-display text-[26px] font-semibold tracking-[-0.02em] text-rc-ink">Your cards</h2>
+            <button onClick={() => setShowAddModal(true)} className="inline-flex items-center gap-1.5 rounded-full bg-rc-ink/[0.06] px-4 py-2 text-[13px] font-medium text-rc-ink hover:bg-rc-ink/[0.1]">
+              <Plus size={14} /> Add
+            </button>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* LEFT COLUMN: Payment Methods */}
-          <div className="lg:col-span-7 space-y-8">
-            
-            {/* HERO PAYMENT METHODS */}
-            <section className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl md:text-2xl font-display font-medium text-gray-900 flex items-center gap-2">
-                  <CreditCard size={20} className="text-gray-600" />
-                  Payment Methods
-                </h2>
-                <button 
-                  onClick={() => setShowAddModal(true)}
-                  className="text-sm text-emerald-500 hover:text-emerald-400 font-medium transition-colors flex items-center gap-1"
-                >
-                  <Plus size={14} />
-                  Add method
-                </button>
-              </div>
-
-              <div className="grid gap-4">
-                {userCards.length === 0 ? (
-                  <div className="bg-white border border-gray-300 rounded-[24px] p-8 flex flex-col items-center justify-center text-center space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-gray-600">
-                      <Wallet size={24} />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">Your wallet is empty</h3>
-                      <p className="text-gray-600 mt-1">Add a payment method to unlock intelligence.</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 gap-4 lg:gap-6 pb-6 md:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    {userCards.map((card, idx) => {
-                      const isPreferred = idx === 0;
-                      return (
-                        <motion.div
-                          key={card.id}
-                          whileHover={{ y: -4, scale: 1.02 }}
-                          whileTap={{ scale: 0.98, y: 0 }}
-                          onClick={() => setSelectedCard(card)}
-                          className={cn(
-                            "group relative rounded-[24px] transition-all duration-300 cursor-pointer snap-center shrink-0 w-[85%] md:w-auto",
-                            card.status !== 'active' && "opacity-60 grayscale"
+          {userCards.length === 0 ? (
+            <button
+              type="button"
+              onClick={() => setShowAddModal(true)}
+              className="flex w-full flex-col items-center justify-center rounded-[28px] border border-dashed border-rc-ink/20 px-6 py-14 text-center transition-colors hover:border-rc-ink/40"
+            >
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-rc-pistachio text-rc-ink"><Wallet size={22} /></span>
+              <span className="mt-5 font-display text-[24px] font-semibold text-rc-ink">Add your first card</span>
+              <span className="mt-1 text-[15px] text-rc-muted">Pick it from the catalogue; no card number needed.</span>
+            </button>
+          ) : (
+            <ul className="grid gap-4 sm:grid-cols-2">
+              {userCards.map((card) => {
+                const job = bestJob(card.id);
+                return (
+                  <li key={card.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCard(card)}
+                      className={cn(
+                        'group block w-full rounded-[28px] border border-rc-ink/10 bg-rc-paper p-3 text-left transition-[transform,border-color,box-shadow] duration-500 hover:-translate-y-1 hover:border-rc-ink/20 hover:shadow-[0_30px_60px_-36px_rgba(15,42,29,0.45)]',
+                        card.status !== 'active' && 'opacity-60 grayscale',
+                      )}
+                    >
+                      <PhysicalCard card={card} variant="wallet" className="!max-w-none" />
+                      <div className="px-2 pb-1 pt-4">
+                        <p className="truncate font-display text-[19px] font-semibold leading-tight text-rc-ink">{card.label}</p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px]">
+                          {job ? (
+                            <span className="rounded-full bg-rc-pistachio px-3 py-1 font-semibold text-rc-ink">Best at {job.label}, {job.rate}%</span>
+                          ) : (
+                            <span className="rounded-full bg-rc-ink/[0.06] px-3 py-1 text-rc-muted">Reward rates not published</span>
                           )}
-                        >
-                          <div className="relative flex flex-col justify-between h-full">
-                            <PhysicalCard card={card} variant="wallet" className="w-full h-auto object-contain drop-shadow-2xl" />
-                            
-                            {/* Desktop Hover Info Overlay */}
-                            <div className="absolute inset-0 bg-gray-900/90 rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-6 backdrop-blur-sm pointer-events-none sm:pointer-events-auto">
-                              <h3 className="font-bold text-lg mb-2">{card.name}</h3>
-                              <div className="space-y-2 text-sm text-center">
-                                <div className="flex justify-between w-full max-w-[200px] border-b border-white/20 pb-1">
-                                  <span className="text-gray-300">Reward Rate:</span>
-                                  <span className="font-semibold text-brand-emerald">{card.baseRewardRate || '1.5'}%</span>
-                                </div>
-                                <div className="flex justify-between w-full max-w-[200px] border-b border-white/20 pb-1">
-                                  <span className="text-gray-300">Limit:</span>
-                                  <span className="font-semibold">₹{(card.creditLimit || 50000).toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between w-full max-w-[200px] pt-1">
-                                  <span className="text-gray-300">Status:</span>
-                                  <span className="font-semibold text-brand-emerald">Active</span>
-                                </div>
-                              </div>
-                              <div className="mt-4 px-4 py-1.5 rounded-full bg-white/10 text-xs font-semibold uppercase tracking-wider backdrop-blur-md">
-                                Tap for details
-                              </div>
-                            </div>
-                            
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                )}
+                          <span className="text-rc-muted">{card.creditLimit > 0 ? `Limit ₹${(card.creditLimit / 100).toLocaleString('en-IN')}` : 'Limit not added'}</span>
+                        </div>
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
+        <div className="space-y-6 lg:col-span-5">
+          {/* where the wallet is strong, and where it isn't */}
+          <section className="rounded-[28px] border border-rc-ink/10 bg-rc-paper p-6 md:p-7">
+            <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] text-rc-ink">Where your wallet earns</h3>
+            <p className="mt-1 text-[14px] text-rc-muted">Your best rate for each spend, against the best card on the market.</p>
+            <div className="mt-6">{renderCoverageMatrix()}</div>
+
+            {coverage?.gap && (
+              <div className="mt-6 rounded-[22px] bg-rc-ink p-5 text-rc-cream">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rc-mist">Most to gain: {coverage.gap.label.toLowerCase()}</p>
+                <p className="mt-2 font-display text-[20px] font-semibold leading-snug">{coverage.gap.marketCard!.name}</p>
+                <p className="mt-1 text-[14px] leading-relaxed text-rc-mist">
+                  {coverage.gap.marketRate}% on {coverage.gap.label.toLowerCase()}, against {coverage.gap.yourRate}% from your best card today.
+                </p>
+                <Link to={`/app/cards/${slugifyCardName(coverage.gap.marketCard!.name)}`} className="mt-4 inline-flex items-center gap-2 rounded-full bg-rc-cream px-4 py-2 text-[13px] font-medium text-rc-ink hover:bg-white">
+                  See the card <ArrowRight size={14} />
+                </Link>
               </div>
-            </section>
-          </div>
+            )}
+          </section>
 
-          {/* RIGHT COLUMN: Coverage & Attention */}
-          <div className="lg:col-span-5 space-y-8">
-            
-            {/* P0.3: UPI SIMULATOR */}
-            <UpiSimulator />
-
-            {/* OPTIMIZATION COVERAGE */}
-            <section className="bg-white border border-gray-300 rounded-[24px] p-6 md:p-8 space-y-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-300 flex items-center justify-center">
-                  <PieChart size={18} className="text-gray-900" />
-                </div>
-                <div>
-                  <h3 className="text-xl md:text-2xl font-display font-medium text-gray-900">Optimization Coverage</h3>
-                  <p className="text-sm text-gray-600 mt-0.5">Category readiness</p>
-                </div>
-              </div>
-              
-              {renderCoverageMatrix()}
-
-              {/* ACTIONABLE GAP ANALYSIS */}
-              {optimizationGap && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{optimizationGap.category} Gap</h4>
-                      <p className="text-xs text-gray-600 mt-1">Your lowest coverage category ({optimizationGap.coverage}%).</p>
-                    </div>
-                  </div>
-                  <div className="bg-brand-forest-deep p-5 rounded-2xl flex flex-col sm:flex-row items-center gap-5">
-                    <div className="shrink-0 w-24">
-                      <PhysicalCard card={{ ...optimizationGap.card, pan: '•••• 1234', cardholderName: 'YOU' }} variant="compact" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h5 className="text-sm font-bold text-brand-cream">{optimizationGap.card.name}</h5>
-                      <p className="text-xs text-brand-cream/70 mt-1 leading-relaxed">{optimizationGap.why}</p>
-                      <button className="mt-3 bg-brand-cream text-brand-forest-deep px-4 py-2 rounded-lg text-xs font-bold hover:bg-white transition-colors">See Card</button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </section>
-
-            {/* HOW RENOCRED USES YOUR WALLET */}
-            <section className="bg-white border border-gray-300 rounded-[24px] p-6 md:p-8 space-y-6">
-              <div 
-                className="cursor-pointer group flex items-start justify-between"
-                onClick={() => setShowHowItWorksModal(true)}
-              >
-                <div>
-                  <h3 className="text-xl md:text-2xl font-display font-medium text-gray-900 group-hover:text-[#2A9D5C] transition-colors">How RenoCred Uses Your Wallet</h3>
-                  <p className="text-sm text-gray-600 mt-1">Highest value paths currently available</p>
-                </div>
-                <div className="w-8 h-8 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-[#2A9D5C]/10 group-hover:text-[#2A9D5C] group-hover:border-[#2A9D5C]/20 transition-all shrink-0">
-                  <Info size={16} />
-                </div>
-              </div>
-
-              {renderTopPaths()}
-            </section>
-
-            {/* ATTENTION SYSTEM */}
-            <section className="bg-amber-500/5 border border-amber-500/20 rounded-[24px] p-6 space-y-4">
-              <div className="flex items-center gap-2 text-amber-500">
-                <AlertTriangle size={16} />
-                <span className="text-sm font-medium">Attention Required</span>
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                Add your preferred UPI method to improve utility bill recommendations and tracking.
-              </p>
-              <button className="text-xs font-medium text-gray-900 hover:text-gray-900 transition-colors flex items-center gap-1">
-                Resolve now <ChevronRight size={12} />
-              </button>
-            </section>
-
-          </div>
+          {/* the best paths right now */}
+          <section className="rounded-[28px] border border-rc-ink/10 bg-rc-paper p-6 md:p-7">
+            <button type="button" className="group flex w-full items-start justify-between gap-4 text-left" onClick={() => setShowHowItWorksModal(true)}>
+              <span>
+                <span className="block font-display text-[22px] font-semibold tracking-[-0.01em] text-rc-ink">Best card by spend</span>
+                <span className="mt-1 block text-[14px] text-rc-muted">Which of your cards pays the most for each spend.</span>
+              </span>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rc-ink/[0.06] text-rc-muted group-hover:text-rc-ink"><Info size={15} /></span>
+            </button>
+            <div className="mt-5">{renderTopPaths()}</div>
+          </section>
         </div>
+      </div>
 
         {/* ADD PAYMENT METHOD MODAL */}
         <AnimatePresence>

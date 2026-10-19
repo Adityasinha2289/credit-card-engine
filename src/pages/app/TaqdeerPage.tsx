@@ -48,7 +48,7 @@ export default function TaqdeerPage() {
   };
 
   return (
-    <PageContainer title="Taqdeer AI" subtitle="Your card and money copilot">
+    <PageContainer eyebrow="Taqdeer" title={<>Ask anything, <span className="italic">in Hinglish too.</span></>} subtitle="Which card to use, whether a card is worth its fee, or how to lift your credit score. Answers come from your own cards.">
       <div className="flex flex-col glass-panel rounded-3xl overflow-hidden border-border-subtle max-w-3xl w-full mx-auto min-h-[70vh] max-h-[80vh]">
         <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
           {messages.map((msg, i) => (

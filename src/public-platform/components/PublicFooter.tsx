@@ -47,7 +47,7 @@ export function PublicFooter() {
             <p className="mt-6 max-w-[30ch] text-[15px] leading-relaxed text-rc-mist">
               Credit card intelligence for India. Know which card to use, what you earn and what's about to renew.
             </p>
-            <ButtonLink to={signedIn ? '/app' : SIGN_UP} variant="cream" className="mt-8">{signedIn ? 'My RenoCred' : "Get started, it's free"}</ButtonLink>
+            <ButtonLink to={signedIn ? '/app' : SIGN_UP} variant="cream" className="mt-8">{signedIn ? 'Dashboard' : "Get started, it's free"}</ButtonLink>
           </div>
           <div className="border-t border-white/10 sm:grid sm:grid-cols-4 sm:gap-10 sm:border-0 lg:col-span-8">
             <Column title="Cards" links={[{ label: 'All cards', to: '/cards' }, ...CARD_NEEDS.slice(0, 6)]} />

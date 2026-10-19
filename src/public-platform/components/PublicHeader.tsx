@@ -79,7 +79,7 @@ function MenuOverlay({ onClose, signedIn }: { onClose: () => void; signedIn: boo
         <motion.div {...item(PRIMARY.length)} className="space-y-12 lg:col-span-4 lg:col-start-9">
           {signedIn && (
             <div>
-              <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70">My RenoCred</p>
+              <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70">Your dashboard</p>
               <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
                 {MY_RENOCRED.map((l) => (
                   <li key={l.to}><Link to={l.to} onClick={onClose} className="text-[15px] text-rc-cream transition-colors hover:text-rc-pistachio">{l.label}</Link></li>
@@ -173,18 +173,17 @@ export function PublicHeader() {
       >
         <div
           className={cn(
-            'mx-auto flex h-full items-center justify-between gap-3 px-4 sm:gap-4 sm:rounded-full sm:border sm:transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] sm:duration-700 sm:ease-[cubic-bezier(.22,1,.36,1)]',
+            'mx-auto flex h-full items-center gap-3 px-4 sm:gap-4 sm:rounded-full sm:border sm:transition-[max-width,height,margin,padding,background-color,border-color,box-shadow] sm:duration-700 sm:ease-[cubic-bezier(.22,1,.36,1)]',
+            // wider screens: always a bar, the links inside it; it tightens into a floating capsule as you scroll
+            'sm:mt-2.5 sm:h-[52px] sm:pl-3 sm:pr-1.5 sm:backdrop-blur-xl lg:mt-3 lg:h-[56px]',
             scrolled
-              ? cn(
-                'sm:mt-2.5 sm:h-[52px] sm:max-w-[1040px] sm:pl-3 sm:pr-1.5 sm:backdrop-blur-xl lg:mt-3 lg:h-[56px]',
-                'sm:border-white/10 sm:bg-rc-ink/85 sm:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
-              )
-              : 'max-w-[1280px] sm:border-transparent sm:px-3 lg:px-7',
+              ? 'sm:max-w-[1040px] sm:border-white/10 sm:bg-rc-ink/85 sm:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
+              : 'sm:max-w-[1180px] sm:border-white/10 sm:bg-white/[0.04]',
           )}
         >
           <LogoLink dark compact />
 
-          <nav aria-label="Primary" className="hidden lg:block" onMouseLeave={() => setHovered(null)}>
+          <nav aria-label="Primary" className="ml-4 hidden lg:block" onMouseLeave={() => setHovered(null)}>
             <ul className="flex items-center">
               {INLINE.map((l) => {
                 const current = pathname === l.to || (l.to !== '/' && pathname.startsWith(`${l.to}/`)) || ('match' in l && !!l.match && pathname.startsWith(l.match));
@@ -218,7 +217,7 @@ export function PublicHeader() {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
             {!signedIn && (
               <Link {...prefetchAuthProps} to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
                 Log in
@@ -232,7 +231,7 @@ export function PublicHeader() {
                 'bg-rc-cream text-rc-ink hover:bg-white',
               )}
             >
-              {signedIn ? 'My RenoCred' : <><span className="sm:hidden">Start free</span><span className="hidden sm:inline">Get started</span></>}
+              {signedIn ? 'Dashboard' : <><span className="sm:hidden">Start free</span><span className="hidden sm:inline">Get started</span></>}
               <ArrowChip variant="cream" size="sm" className="hidden sm:flex" />
             </Link>
             <button

@@ -64,7 +64,7 @@ export function PageHero({ eyebrow, title, lede, crumbs, meta, actions, aside, w
       <div aria-hidden className="pointer-events-none absolute -bottom-[40%] right-[-10%] h-[700px] w-[800px] rounded-full bg-[radial-gradient(closest-side,rgba(42,157,92,0.14),transparent)]" />
 
       <Container className={cn('relative grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10', inApp ? 'py-10 lg:py-14' : 'pb-28 pt-8 lg:pb-36 lg:pt-12')}>
-        <div className={cn(aside ? 'lg:col-span-7' : wide ? 'lg:col-span-12' : 'lg:col-span-10')}>
+        <div className={cn('min-w-0', aside ? 'lg:col-span-7' : wide ? 'lg:col-span-12' : 'lg:col-span-10')}>
           {crumbs && <Enter><Breadcrumbs items={crumbs} /></Enter>}
           {eyebrow && (
             <Enter delay={0.04}>

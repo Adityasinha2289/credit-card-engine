@@ -14,21 +14,19 @@ export const CARD_NEEDS = [
 export const TOOLS = [
   {
     label: 'Which card to use',
+    short: 'Which card',
     to: '/calculators/which-card-to-use',
     description: 'Rank the cards you own for any spend.',
   },
   {
-    label: 'Reward calculator',
+    label: 'Rewards and fees',
+    short: 'Rewards & fees',
     to: '/calculators/credit-card-reward-calculator',
-    description: 'What a card returns on your spend, after its fee.',
-  },
-  {
-    label: 'Annual fee break-even',
-    to: '/calculators/annual-fee-break-even',
-    description: 'How much you need to spend before a fee pays for itself.',
+    description: 'What a card returns on your spend, and the spend at which its fee pays for itself.',
   },
   {
     label: 'Credit utilisation',
+    short: 'Utilisation',
     to: '/calculators/credit-utilization',
     description: 'How much of your limit you use, and what it does to your score.',
   },

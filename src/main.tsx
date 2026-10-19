@@ -30,7 +30,6 @@ const DisclaimerPage = lazy(() => import('./public-platform/pages/DisclaimerPage
 const CardsDirectoryPage = lazy(() => import('./public-platform/pages/CardsDirectoryPage').then((m) => ({ default: m.CardsDirectoryPage })));
 const CardDetailPage = lazy(() => import('./public-platform/pages/CardDetailPage').then((m) => ({ default: m.CardDetailPage })));
 const RewardCalculatorPage = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
-const BreakEvenCalculatorPage = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
 const CreditUtilizationPage = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
 const WhichCardPage = lazy(() => import('./public-platform/pages/calculators/WhichCardPage').then((m) => ({ default: m.WhichCardPage })));
 const AuthenticatedAppWrapper = lazy(() => import('./components/AuthenticatedAppWrapper'));
@@ -116,7 +115,9 @@ const appContent = (
         
         {/* Utility Calculators */}
         <Route path="/calculators/credit-card-reward-calculator" element={<PublicLayout><RewardCalculatorPage /></PublicLayout>} />
-        <Route path="/calculators/annual-fee-break-even" element={<PublicLayout><BreakEvenCalculatorPage /></PublicLayout>} />
+        {/* fee break-even is part of the rewards and fees calculator now */}
+        <Route path="/calculators/annual-fee-break-even" element={<Navigate to="/calculators/credit-card-reward-calculator" replace />} />
+        <Route path="/tools" element={<Navigate to="/calculators/which-card-to-use" replace />} />
         <Route path="/calculators/credit-utilization" element={<PublicLayout><CreditUtilizationPage /></PublicLayout>} />
         <Route path="/calculators/which-card-to-use" element={<PublicLayout><WhichCardPage /></PublicLayout>} />
 

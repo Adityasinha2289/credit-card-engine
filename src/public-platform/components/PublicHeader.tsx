@@ -12,7 +12,7 @@ import { analytics } from '../../lib/analytics';
 
 const PRIMARY = [
   { label: 'Cards', to: '/cards' },
-  { label: 'Tools', to: TOOLS[0].to },
+  { label: 'Tools', to: TOOLS[0].to, match: '/calculators' },
   { label: 'How we rank', to: '/methodology' },
   { label: 'For business', to: '/business' },
   { label: 'About', to: '/about' },
@@ -23,7 +23,7 @@ const PRIMARY = [
 /** Shown inline in the header on wide screens; everything else lives in the menu. */
 const INLINE = [
   { label: 'Cards', to: '/cards' },
-  { label: 'Tools', to: TOOLS[0].to },
+  { label: 'Tools', to: TOOLS[0].to, match: '/calculators' },
   { label: 'How we rank', to: '/methodology' },
   { label: 'Business', to: '/business' },
 ];
@@ -180,7 +180,7 @@ export function PublicHeader() {
           <nav aria-label="Primary" className="hidden lg:block" onMouseLeave={() => setHovered(null)}>
             <ul className="flex items-center">
               {INLINE.map((l) => {
-                const current = pathname === l.to || (l.to !== '/' && pathname.startsWith(`${l.to}/`));
+                const current = pathname === l.to || (l.to !== '/' && pathname.startsWith(`${l.to}/`)) || ('match' in l && !!l.match && pathname.startsWith(l.match));
                 return (
                   <li key={l.to} className="relative">
                     {hovered === l.to && (

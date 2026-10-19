@@ -8,7 +8,7 @@ import { ButtonLink, formatINR } from '../../site/primitives';
 import { displayCardName } from '../../site/CardFace';
 import { CalculatorShell } from '../../site/CalculatorShell';
 import { CardSelect, MoneyInput } from '../../site/CardSelect';
-import { DEFAULT_PROFILE, SPEND_ROWS, cardValue, type Profile } from '../../site/calc';
+import { DEFAULT_PROFILE, SPEND_ROWS, breakEvenMonthly, cardValue, type Profile } from '../../site/calc';
 import { SIGN_UP } from '../../site/nav';
 
 const ROUTE = '/calculators/credit-card-reward-calculator';
@@ -29,6 +29,8 @@ export function RewardCalculatorPage() {
     return top;
   }, [cards, profile]);
   const maxYearly = Math.max(1, ...value.byCategory.map((c) => c.yearly));
+  // the monthly spend, in your mix, at which rewards cover the fee
+  const breakEven = useMemo(() => (value.fee > 0 && monthlyTotal > 0 ? breakEvenMonthly(card, profile) : null), [card, profile, value.fee, monthlyTotal]);
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', item: '/' },
@@ -45,8 +47,8 @@ export function RewardCalculatorPage() {
       />
       <CalculatorShell
         current={ROUTE}
-        title={<>Reward <span className="italic text-rc-forest">calculator</span></>}
-        lede="What a card actually returns on your spending, category by category, after monthly caps, fee waivers and the annual fee."
+        title={<>Rewards and <span className="italic text-rc-forest">fees</span></>}
+        lede="What a card actually returns on your spending, category by category, after monthly caps and its annual fee, and the spend at which the fee pays for itself."
         note="Rates are the effective value back as a share of spend, from each issuer's published terms, with monthly caps and fee-waiver thresholds where stated. Portal-only multipliers, exclusions and redemption choices change real outcomes."
         inputs={
           <div className="space-y-12">
@@ -83,8 +85,17 @@ export function RewardCalculatorPage() {
                     <dt className="text-rc-mist">Annual fee</dt>
                     <dd className="tabular-nums">{value.fee === 0 ? 'None' : value.feeWaived ? <span>Waived <span className="text-rc-mist line-through">{formatINR(value.fee)}</span></span> : `−${formatINR(value.fee)}`}</dd>
                   </div>
+                  {breakEven != null && (
+                    <div className="flex justify-between">
+                      <dt className="text-rc-mist">Fee pays for itself at</dt>
+                      <dd className="text-right tabular-nums">{formatINR(breakEven)} <span className="text-rc-mist">a month</span></dd>
+                    </div>
+                  )}
                   {value.feeWaiverSpend && !value.feeWaived && value.fee > 0 && (
-                    <p className="text-[12px] text-rc-mist">Fee is waived above {formatINR(value.feeWaiverSpend)} a year of spend.</p>
+                    <div className="flex justify-between">
+                      <dt className="text-rc-mist">Fee waived at</dt>
+                      <dd className="text-right tabular-nums">{formatINR(value.feeWaiverSpend)} <span className="text-rc-mist">a year</span></dd>
+                    </div>
                   )}
                 </dl>
               )}

@@ -6,14 +6,15 @@ import { cn } from '../../lib/utils';
 import { ArrowChip, Container, EASE_OUT } from '../site/primitives';
 import { LogoLink } from '../site/Brand';
 import { useSignedInHint } from '../site/SiteLink';
-import { CARD_NEEDS, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
+import { CARD_NEEDS, EXPERIENCES, MY_RENOCRED, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 import { analytics } from '../../lib/analytics';
 
 const PRIMARY = [
   { label: 'Cards', to: '/cards' },
   { label: 'Tools', to: TOOLS[0].to },
-  { label: 'How we rank', to: '/methodology' },
+  { label: 'Experiences', to: EXPERIENCES },
   { label: 'For business', to: '/business' },
+  { label: 'How we rank', to: '/methodology' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ];
@@ -23,7 +24,7 @@ const PRIMARY = [
 const INLINE = [
   { label: 'Cards', to: '/cards' },
   { label: 'Tools', to: TOOLS[0].to },
-  { label: 'How we rank', to: '/methodology' },
+  { label: 'Experiences', to: EXPERIENCES },
   { label: 'Business', to: '/business' },
 ];
 
@@ -76,6 +77,16 @@ function MenuOverlay({ onClose, signedIn }: { onClose: () => void; signedIn: boo
           </ul>
         </nav>
         <motion.div {...item(PRIMARY.length)} className="space-y-12 lg:col-span-4 lg:col-start-9">
+          {signedIn && (
+            <div>
+              <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70">My RenoCred</p>
+              <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+                {MY_RENOCRED.map((l) => (
+                  <li key={l.to}><Link to={l.to} onClick={onClose} className="text-[15px] text-rc-cream transition-colors hover:text-rc-pistachio">{l.label}</Link></li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div>
             <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-rc-mist/70">Best cards for</p>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
@@ -104,7 +115,7 @@ function MenuOverlay({ onClose, signedIn }: { onClose: () => void; signedIn: boo
             </span>
           </Link>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[14px]">
-            <Link to={signedIn ? '/app' : SIGN_IN} onClick={onClose} className="text-rc-mist hover:text-rc-cream">{signedIn ? 'Open the app' : 'Log in'}</Link>
+            {!signedIn && <Link to={SIGN_IN} onClick={onClose} className="text-rc-mist hover:text-rc-cream">Log in</Link>}
             {SOCIAL.map((s) => (
               <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-rc-mist hover:text-rc-cream">
                 {s.label} <ArrowUpRight className="h-3 w-3" />
@@ -207,7 +218,7 @@ export function PublicHeader() {
                 'bg-rc-cream text-rc-ink hover:bg-white',
               )}
             >
-              {signedIn ? 'Open app' : 'Get started'}
+              {signedIn ? 'My RenoCred' : 'Get started'}
               <ArrowChip variant="cream" size="sm" />
             </Link>
             <button

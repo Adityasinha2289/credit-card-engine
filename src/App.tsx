@@ -2,10 +2,9 @@ import { analytics } from './lib/analytics';
 import './index.css';
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { useUser, RedirectToSignIn, RedirectToSignUp } from '@clerk/clerk-react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
 
-import { DashboardLayout } from './components/layout/DashboardLayout';
-import { DashboardSkeleton } from './components/layout/DashboardSkeleton';
+import { SiteAppLayout, PageSkeleton } from './components/layout/SiteAppLayout';
 import { useDashboardStore, useHydration } from './features/dashboard/store/dashboardStore';
 import { useSupabase } from './hooks/useSupabase';
 
@@ -24,11 +23,17 @@ const HomePage = lazy(() => import('./pages/app/HomePage'));
 const DiscoverPage = lazy(() => import('./pages/app/DiscoverPage'));
 const AccountPage = lazy(() => import('./pages/app/AccountPage'));
 // the website's tools, opened inside the app shell
-const WhichCardTool = lazy(() => import('./public-platform/pages/calculators/WhichCardPage').then((m) => ({ default: m.WhichCardPage })));
-const RewardCalculatorTool = lazy(() => import('./public-platform/pages/calculators/RewardCalculatorPage').then((m) => ({ default: m.RewardCalculatorPage })));
-const BreakEvenTool = lazy(() => import('./public-platform/pages/calculators/BreakEvenCalculatorPage').then((m) => ({ default: m.BreakEvenCalculatorPage })));
-const UtilizationTool = lazy(() => import('./public-platform/pages/calculators/CreditUtilizationPage').then((m) => ({ default: m.CreditUtilizationPage })));
-const CardDetailTool = lazy(() => import('./public-platform/pages/CardDetailPage').then((m) => ({ default: m.CardDetailPage })));
+/** /app/cards/:slug from older links: the card page lives on the website. */
+function CardRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/cards/${slug ?? ''}`} replace />;
+}
+
+/** /app/tools/<tool> from older links: the calculators live on the website. */
+function ToolRedirect() {
+  const { tool } = useParams();
+  return <Navigate to={`/calculators/${tool ?? 'which-card-to-use'}`} replace />;
+}
 const WalletPage = lazy(() => import('./pages/app/WalletPage'));
 const TaqdeerPage = lazy(() => import('./pages/app/TaqdeerPage'));
 
@@ -157,12 +162,9 @@ export default function App() {
     // Exception for demo mode which requires no hydration or loading
     if (!window.location.search.includes('demo=onboarding') && !isProfileDemo) {
       return (
-        <DashboardLayout
-          isDark={true}
-          onToggleTheme={() => {}}
-        >
-          <DashboardSkeleton />
-        </DashboardLayout>
+        <SiteAppLayout>
+          <PageSkeleton />
+        </SiteAppLayout>
       );
     }
   }
@@ -204,35 +206,26 @@ export default function App() {
     <Routes>
       {/* Customer App Routes */}
       <Route element={
-        <DashboardLayout isDark={true} onToggleTheme={() => {}}>
-          <Suspense fallback={
-            <div className="p-6 md:p-12 w-full max-w-7xl mx-auto">
-              <DashboardSkeleton />
-            </div>
-          }>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
+        // signed-in pages wear the website's header and footer
+        <SiteAppLayout>
+          <Outlet />
+        </SiteAppLayout>
       }>
-        {/* The four sections and the account. Everything else redirects into one of them. */}
+        {/* My RenoCred: overview, wallet, money, picks and account. Tools and cards are website pages. */}
         <Route path="/" element={<HomePage />} />
         <Route path="/wallet" element={<WalletPage />} />
         <Route path="/money" element={<MoneyManagerPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/account" element={<AccountPage />} />
 
-        {/* detail screens under Discover */}
-        <Route path="/cards/:slug" element={<CardDetailTool />} />
-        <Route path="/tools/which-card-to-use" element={<WhichCardTool />} />
-        <Route path="/tools/credit-card-reward-calculator" element={<RewardCalculatorTool />} />
-        <Route path="/tools/annual-fee-break-even" element={<BreakEvenTool />} />
-        <Route path="/tools/credit-utilization" element={<UtilizationTool />} />
         <Route path="/taqdeer" element={<TaqdeerPage />} />
 
         {/* old addresses */}
         <Route path="/credit/*" element={<Navigate to="/app/discover" replace />} />
-        <Route path="/cards" element={<Navigate to="/app/discover?tab=cards" replace />} />
-        <Route path="/tools" element={<Navigate to="/app/discover?tab=tools" replace />} />
+        <Route path="/cards" element={<Navigate to="/cards" replace />} />
+        <Route path="/cards/:slug" element={<CardRedirect />} />
+        <Route path="/tools" element={<Navigate to="/calculators/which-card-to-use" replace />} />
+        <Route path="/tools/:tool" element={<ToolRedirect />} />
         <Route path="/money/subscriptions" element={<Navigate to="/app/money?tab=subscriptions" replace />} />
         <Route path="/money/transactions" element={<Navigate to="/app/money?tab=activity" replace />} />
         <Route path="/money/coach" element={<Navigate to="/app" replace />} />

@@ -46,7 +46,7 @@ export default function AccountPage() {
     <PageContainer
       eyebrow="Account"
       title={name ? <>{name.split(' ')[0]}, <span className="italic">your account.</span></> : <>Your <span className="italic">account.</span></>}
-      subtitle={[email, goal ? `Optimising for ${goal.toLowerCase()}` : null].filter(Boolean).join(' · ')}
+      subtitle={[email, goal ? `Goal: ${goal}` : null].filter(Boolean).join(' · ')}
     >
       <ProfileTab embedded />
 

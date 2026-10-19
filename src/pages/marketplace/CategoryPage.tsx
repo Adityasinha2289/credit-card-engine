@@ -36,7 +36,6 @@ export default function CategoryPage() {
 
   return (
     <PageContainer hideHeader className="gap-8 relative text-[#F2F4F2] max-w-[1400px] mx-auto">
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
       
       {/* Category Hero */}
       <motion.section 

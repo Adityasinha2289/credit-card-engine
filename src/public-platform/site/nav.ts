@@ -56,3 +56,14 @@ export const SOCIAL = [
 
 export const SIGN_UP = '/app/sign-up';
 export const SIGN_IN = '/app/sign-in';
+
+/** Signed-in pages. They live on the website, under the same header and footer. */
+export const MY_RENOCRED = [
+  { label: 'Overview', to: '/app' },
+  { label: 'Wallet', to: '/app/wallet' },
+  { label: 'Money', to: '/app/money' },
+  { label: 'Picks for you', to: '/app/discover' },
+  { label: 'Account', to: '/app/account' },
+];
+
+export const EXPERIENCES = '/app/marketplace';

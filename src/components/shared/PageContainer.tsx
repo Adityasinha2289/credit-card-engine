@@ -1,16 +1,17 @@
 import { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
-import { PageHeader } from './PageHeader';
-import type { HeroStat } from './AppHero';
+import { AppHero, MyNav, type HeroStat } from './AppHero';
+import { Container } from '../../public-platform/site/primitives';
 
 export interface PageContainerProps {
   eyebrow?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
-  /** key numbers shown in the page's hero panel */
+  /** key numbers shown in the page's hero band */
   heroStats?: HeroStat[];
+  /** controls in the hero band (a form, buttons) */
   heroActions?: ReactNode;
-  /** a visual on the right of the hero panel (wide screens) */
+  /** a visual on the right of the hero band (wide screens) */
   heroAside?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -19,6 +20,10 @@ export interface PageContainerProps {
   bare?: boolean;
 }
 
+/**
+ * A signed-in page, framed like the website's inner pages: the dark hero band,
+ * then a cream body that tucks over it with a rounded top.
+ */
 export function PageContainer({
   eyebrow,
   title,
@@ -32,14 +37,18 @@ export function PageContainer({
   bare = false,
 }: PageContainerProps) {
   if (bare) return <div className={cn('flex w-full flex-col gap-8', className)}>{children}</div>;
+  const hero = !hideHeader && title;
   return (
-    <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-4 pb-24 pt-2 md:px-8 lg:px-12">
-      {!hideHeader && title && (
-        <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} stats={heroStats} actions={heroActions} aside={heroAside} />
+    <div className="flex w-full flex-1 flex-col">
+      {hero ? (
+        <AppHero eyebrow={eyebrow} title={title} lede={subtitle} stats={heroStats} actions={heroActions} aside={heroAside} />
+      ) : (
+        <Container className="pt-6"><MyNav /></Container>
       )}
-
-      <div className={cn('flex w-full flex-col gap-8', className)}>
-        {children}
+      <div className={cn('relative z-10 flex-1 rounded-t-[40px] bg-rc-cream pb-28 text-rc-ink lg:rounded-t-[56px]', hero ? '-mt-12 lg:-mt-14' : '')}>
+        <Container className={cn('flex flex-col gap-10 pt-10 lg:pt-14', className)}>
+          {children}
+        </Container>
       </div>
     </div>
   );

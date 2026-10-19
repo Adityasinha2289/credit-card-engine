@@ -94,8 +94,6 @@ export default function LifestyleHub() {
       className="text-gray-900 font-body"
     >
       <div className="w-full flex flex-col gap-10 relative">
-        {/* Global Background Atmosphere: Obsidian */}
-        <div className="fixed inset-0 pointer-events-none z-[-1] bg-white" />
 
         {/* HERO SURFACE */}
         {heroCategory && (

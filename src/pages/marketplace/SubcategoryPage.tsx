@@ -40,7 +40,6 @@ export default function SubcategoryPage() {
 
   return (
     <PageContainer hideHeader className="gap-8 relative text-[#F2F4F2] max-w-[1400px] mx-auto">
-      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[#050806]" />
       
       {/* Header section matching 9.5/10 style */}
       <section className="flex flex-col gap-4 pt-6 pb-2">

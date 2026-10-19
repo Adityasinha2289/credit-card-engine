@@ -16,7 +16,8 @@ import { istDate } from '../../features/subscriptions/billingCycle';
 import { CardDueEngine } from '../../features/money/engines/SafeToSpendEngine';
 import { formatRupees } from '../../features/money/lib/moneyMath';
 import { CardFace, displayCardName } from '../../public-platform/site/CardFace';
-import { ArrowChip, EASE_OUT } from '../../public-platform/site/primitives';
+import { ButtonLink, EASE_OUT } from '../../public-platform/site/primitives';
+import { PageContainer } from '../../components/shared/PageContainer';
 import { SPEND_CATEGORIES, cardsByIds } from '../../public-platform/site/swipeMath';
 import { cn } from '../../lib/utils';
 
@@ -92,103 +93,88 @@ export default function HomePage() {
 
   const hasCards = userCards.length > 0;
 
+  const whichCard = hasCards ? (
+    <div className="max-w-[720px]">
+      <form onSubmit={(e) => e.preventDefault()} className="grid gap-2.5 sm:grid-cols-[1fr_170px]">
+        <label className="block">
+          <span className="sr-only">Where are you paying?</span>
+          <input
+            value={merchant}
+            onChange={(e) => setMerchant(e.target.value)}
+            placeholder="Where? e.g. Swiggy"
+            className="h-14 w-full rounded-full bg-rc-cream px-6 text-[16px] text-rc-ink outline-none placeholder:text-rc-ink/40 focus:ring-2 focus:ring-rc-pistachio"
+          />
+        </label>
+        <label className="relative block">
+          <span className="sr-only">Amount in rupees</span>
+          <span aria-hidden className="absolute left-6 top-1/2 -translate-y-1/2 text-[16px] text-rc-ink/50">₹</span>
+          <input
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            inputMode="numeric"
+            placeholder="Amount"
+            className="h-14 w-full rounded-full bg-rc-cream pl-10 pr-6 text-[16px] tabular-nums text-rc-ink outline-none placeholder:text-rc-ink/40 focus:ring-2 focus:ring-rc-pistachio"
+          />
+        </label>
+      </form>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {QUICK.map((q) => (
+          <button
+            key={q.label}
+            type="button"
+            onClick={() => { setMerchant(q.merchant); setAmount(String(q.amount)); }}
+            className={cn('rounded-full border px-3.5 py-1.5 text-[13px] transition-colors', merchant === q.merchant ? 'border-rc-pistachio bg-rc-pistachio text-rc-ink' : 'border-white/15 text-rc-mist hover:border-white/40 hover:text-rc-cream')}
+          >
+            {q.label}
+          </button>
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait" initial={false}>
+        {result?.best && (
+          <motion.div
+            key={`${result.best.card.id}-${amountNum}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.3, ease: EASE_OUT }}
+            className="mt-6 flex flex-col gap-5 rounded-[26px] bg-rc-pistachio p-4 text-rc-ink sm:flex-row sm:items-center sm:p-5"
+          >
+            <CardFace name={result.best.card.name} bank={result.best.card.bank} network={result.best.card.network} width={150} className="shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] text-rc-ink/60">Use</p>
+              <p className="font-serif text-[24px] font-semibold leading-tight">{displayCardName(result.best.card.name)}</p>
+              <p className="mt-1 text-[14px] text-rc-ink/70">
+                {result.best.rewardRate}% on {result.category}
+                {result.secondBest && result.delta > 0 ? ` · ${rupees(result.delta)} more than ${displayCardName(result.secondBest.card.name)}` : ''}
+              </p>
+            </div>
+            <p className="font-serif text-[34px] font-semibold leading-none tabular-nums text-rc-forest">
+              {result.best.confidence !== 'EXACT' ? '~' : ''}+{rupees(result.best.cappedRewardValue)}
+            </p>
+          </motion.div>
+        )}
+        {result && !result.best && (
+          <motion.p key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-6 text-[14px] text-rc-mist">
+            None of your cards has a published reward for this. Try the shop's name, like “Swiggy” or “Amazon”.
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
+  ) : (
+    <ButtonLink to="/app/wallet" variant="cream" size="lg">Add your cards</ButtonLink>
+  );
+
   return (
-    <div className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col gap-10 px-4 pb-28 pt-2 md:px-8 lg:px-12">
-      {/* ── ask: which card for this payment ───────────────────────────────── */}
-      <section className="relative overflow-hidden rounded-[32px] bg-rc-night px-5 py-8 text-rc-cream sm:px-8 md:rounded-[40px] md:px-10 md:py-11">
-        <div aria-hidden className="pointer-events-none absolute -left-24 -top-32 h-[420px] w-[520px] rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.12),transparent)]" />
-        <div className="relative">
-          <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.2em] text-rc-mist">
-            <span aria-hidden className="h-2 w-2 rounded-full bg-rc-pistachio" />
-            {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-          </p>
-          <h1 className="mt-4 font-display text-[clamp(2.1rem,4.6vw,3.6rem)] font-semibold leading-[1.02] tracking-[-0.03em]">
-            {greeting}{firstName ? <>, <span className="italic text-rc-pistachio">{firstName}.</span></> : '.'}
-          </h1>
-
-          {hasCards ? (
-            <>
-              <p className="mt-3 text-[16px] text-rc-mist">About to pay? We'll tell you which card to use.</p>
-              <form onSubmit={(e) => e.preventDefault()} className="mt-6 grid gap-2.5 sm:grid-cols-[1fr_170px]">
-                <label className="block">
-                  <span className="sr-only">Where are you paying?</span>
-                  <input
-                    value={merchant}
-                    onChange={(e) => setMerchant(e.target.value)}
-                    placeholder="Where? e.g. Swiggy"
-                    className="h-14 w-full rounded-full bg-rc-cream px-6 text-[16px] text-rc-ink outline-none placeholder:text-rc-ink/40 focus:ring-2 focus:ring-rc-pistachio"
-                  />
-                </label>
-                <label className="relative block">
-                  <span className="sr-only">Amount in rupees</span>
-                  <span aria-hidden className="absolute left-6 top-1/2 -translate-y-1/2 text-[16px] text-rc-ink/50">₹</span>
-                  <input
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    inputMode="numeric"
-                    placeholder="Amount"
-                    className="h-14 w-full rounded-full bg-rc-cream pl-10 pr-6 text-[16px] tabular-nums text-rc-ink outline-none placeholder:text-rc-ink/40 focus:ring-2 focus:ring-rc-pistachio"
-                  />
-                </label>
-              </form>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {QUICK.map((q) => (
-                  <button
-                    key={q.label}
-                    type="button"
-                    onClick={() => { setMerchant(q.merchant); setAmount(String(q.amount)); }}
-                    className={cn('rounded-full border px-3.5 py-1.5 text-[13px] transition-colors', merchant === q.merchant ? 'border-rc-pistachio bg-rc-pistachio text-rc-ink' : 'border-white/15 text-rc-mist hover:border-white/40 hover:text-rc-cream')}
-                  >
-                    {q.label}
-                  </button>
-                ))}
-              </div>
-
-              <AnimatePresence mode="wait" initial={false}>
-                {result?.best && (
-                  <motion.div
-                    key={`${result.best.card.id}-${amountNum}`}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3, ease: EASE_OUT }}
-                    className="mt-6 flex flex-col gap-5 rounded-[26px] bg-rc-pistachio p-4 text-rc-ink sm:flex-row sm:items-center sm:p-5"
-                  >
-                    <CardFace name={result.best.card.name} bank={result.best.card.bank} network={result.best.card.network} width={150} className="shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[13px] text-rc-ink/60">Use</p>
-                      <p className="font-display text-[24px] font-semibold leading-tight">{displayCardName(result.best.card.name)}</p>
-                      <p className="mt-1 text-[14px] text-rc-ink/70">
-                        {result.best.rewardRate}% on {result.category}
-                        {result.secondBest && result.delta > 0 ? ` · ${rupees(result.delta)} more than ${displayCardName(result.secondBest.card.name)}` : ''}
-                      </p>
-                    </div>
-                    <p className="font-display text-[34px] font-semibold leading-none tabular-nums text-rc-forest">
-                      {result.best.confidence !== 'EXACT' ? '~' : ''}+{rupees(result.best.cappedRewardValue)}
-                    </p>
-                  </motion.div>
-                )}
-                {result && !result.best && (
-                  <motion.p key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-6 text-[14px] text-rc-mist">
-                    None of your cards has a published reward for this. Try the shop's name, like “Swiggy” or “Amazon”.
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </>
-          ) : (
-            <>
-              <p className="mt-3 max-w-[44ch] text-[16px] text-rc-mist">Add the cards you own and RenoCred tells you which one to use every time you pay.</p>
-              <Link to="/app/wallet" className="group mt-6 inline-flex h-12 items-center gap-3 rounded-full bg-rc-cream pl-6 pr-1.5 text-[14px] font-medium text-rc-ink hover:bg-white">
-                Add your cards <ArrowChip variant="cream" size="md" />
-              </Link>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* ── needs attention ────────────────────────────────────────────────── */}
+    <PageContainer
+      eyebrow={new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+      title={<>{greeting}{firstName ? <>, <span className="italic">{firstName}.</span></> : '.'}</>}
+      subtitle={hasCards ? "About to pay? We'll tell you which of your cards earns the most." : 'Add the cards you own and RenoCred tells you which one to use every time you pay.'}
+      heroActions={whichCard}
+    >
+      {/* needs attention */}
       <section>
-        <h2 className="font-display text-[26px] font-semibold tracking-[-0.02em] text-rc-ink">Needs you</h2>
+        <h2 className="font-serif text-[clamp(1.8rem,3vw,2.4rem)] font-semibold tracking-[-0.02em]">Needs you</h2>
         {attention.length === 0 ? (
           <p className="mt-3 rounded-[22px] border border-dashed border-rc-ink/15 px-5 py-5 text-[15px] text-rc-muted">Nothing today. Bills due and renewals this week will show up here.</p>
         ) : (
@@ -201,7 +187,7 @@ export default function HomePage() {
                     <span className="truncate text-[15px] text-rc-ink">{a.title}</span>
                   </span>
                   <span className="flex shrink-0 items-center gap-3">
-                    {a.amount && <span className="font-display text-[19px] font-semibold tabular-nums text-rc-ink">{a.amount}</span>}
+                    {a.amount && <span className="font-serif text-[19px] font-semibold tabular-nums text-rc-ink">{a.amount}</span>}
                     <span aria-hidden className="text-rc-muted">→</span>
                   </span>
                 </Link>
@@ -211,19 +197,19 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ── your cards ─────────────────────────────────────────────────────── */}
+      {/* your cards */}
       <section>
         <div className="flex items-end justify-between gap-4">
-          <h2 className="font-display text-[26px] font-semibold tracking-[-0.02em] text-rc-ink">Your cards</h2>
+          <h2 className="font-serif text-[clamp(1.8rem,3vw,2.4rem)] font-semibold tracking-[-0.02em]">Your cards</h2>
           <Link to="/app/wallet" className="text-[14px] font-medium text-rc-forest hover:underline">{hasCards ? 'Manage' : 'Add a card'}</Link>
         </div>
         {hasCards ? (
-          <ul className="-mx-4 mt-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
+          <ul className="-mx-5 mt-4 flex snap-x gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
             {userCards.map((c) => {
               const job = bestAt(c.id);
               return (
-                <li key={c.id} className="w-[220px] shrink-0 snap-start md:w-auto">
-                  <div className="rounded-[24px] border border-rc-ink/10 bg-rc-paper p-3">
+                <li key={c.id} className="w-[240px] shrink-0 snap-start sm:w-auto">
+                  <div className="rounded-[26px] border border-rc-ink/10 bg-rc-paper p-3">
                     <CardFace name={c.label || 'Credit card'} bank={c.bank || ''} network={c.network} width={300} lifted={false} className="!h-auto !w-full aspect-[1.586]" />
                     <p className="mt-3 truncate px-1 text-[15px] font-semibold text-rc-ink">{displayCardName(c.label || '')}</p>
                     <p className="px-1 pb-1 text-[13px] text-rc-muted">{job ? `Best at ${job}` : 'No published rates'}</p>
@@ -238,6 +224,6 @@ export default function HomePage() {
           </Link>
         )}
       </section>
-    </div>
+    </PageContainer>
   );
 }

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { Container, ButtonLink } from '../site/primitives';
 import { LogoLink } from '../site/Brand';
+import { useSignedInHint } from '../site/SiteLink';
 import { CARD_NEEDS, COMPANY, LEGAL, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
 
 function Column({ title, links }: { title: string; links: { label: string; to: string }[] }) {
@@ -21,6 +22,7 @@ function Column({ title, links }: { title: string; links: { label: string; to: s
 
 export function PublicFooter() {
   const year = new Date().getFullYear();
+  const signedIn = useSignedInHint();
   return (
     // cream behind the rounded top, since nearly every page ends on cream
     <div className="bg-rc-cream">
@@ -32,7 +34,7 @@ export function PublicFooter() {
             <p className="mt-6 max-w-[30ch] text-[15px] leading-relaxed text-rc-mist">
               Credit card intelligence for India. Know which card to use, what you earn and what's about to renew.
             </p>
-            <ButtonLink to={SIGN_UP} variant="cream" className="mt-8">Get started, it's free</ButtonLink>
+            <ButtonLink to={signedIn ? '/app' : SIGN_UP} variant="cream" className="mt-8">{signedIn ? 'My RenoCred' : "Get started, it's free"}</ButtonLink>
           </div>
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 lg:col-span-8">
             <Column title="Cards" links={[{ label: 'All cards', to: '/cards' }, ...CARD_NEEDS.slice(0, 6)]} />

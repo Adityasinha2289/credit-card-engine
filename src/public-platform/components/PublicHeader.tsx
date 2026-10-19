@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTra
 import { ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ArrowChip, EASE_OUT, useMediaQuery } from '../site/primitives';
-import { LogoLink } from '../site/Brand';
+import { BrandMark } from '../site/Brand';
 import { useSignedInHint } from '../site/SiteLink';
 import { prefetchAuth, prefetchAuthProps } from '../site/prefetchAuth';
 import { CARD_NEEDS, MY_RENOCRED, SIGN_IN, SIGN_UP, SOCIAL, TOOLS } from '../site/nav';
@@ -12,7 +12,7 @@ import { analytics } from '../../lib/analytics';
 import { useAskTaqdeer } from '../../components/layout/askReni';
 import { ReniMark } from '../../features/taqdeer/components/ReniMark';
 
-/** The four places most visits go: inline in the bar on wide screens, tiles in the menu. */
+/** The four places most visits go, as tiles at the top of the menu. */
 const LINKS = [
   { label: 'Cards', to: '/cards', note: 'Every Indian card, side by side' },
   { label: 'Tools', to: TOOLS[0].to, match: '/calculators', note: 'Which card, rewards, utilisation' },
@@ -77,7 +77,7 @@ function MenuPanel({ signedIn, pathname, onClose }: { signedIn: boolean; pathnam
       transition={{ duration: 0.45, ease: EASE_OUT }}
       className="overflow-hidden"
     >
-      <div className="max-h-[calc(100dvh-5.5rem)] overflow-y-auto overscroll-contain border-t border-white/10 p-2.5 lg:p-3">
+      <div className="max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain p-2.5 lg:p-3">
         <div className="grid gap-2.5 lg:grid-cols-12 lg:gap-3">
           <nav aria-label="Main" className="lg:col-span-7">
             <ul className="grid grid-cols-2 gap-2 lg:gap-2.5">
@@ -169,15 +169,16 @@ function MenuPanel({ signedIn, pathname, onClose }: { signedIn: boolean; pathnam
 }
 
 /**
- * The site header: one floating bar on every page. The links sit beside the logo, a
- * line runs around the bar's border as you read down the page, and the menu opens
- * out of the bar. Every page opens on a dark band, so it is always light-on-dark.
+ * The site header: two floating pieces. On the left the brand, whose name folds into
+ * the mark as you scroll while a line runs round it to show how far you've read; on
+ * the right what you can do, and the menu, which opens beneath both. Every page opens
+ * on a dark band, so it is always light-on-dark.
  */
 export function PublicHeader() {
   const { pathname, search } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [hovered, setHovered] = useState<string | null>(null);
+  const [peek, setPeek] = useState(false);
   // signed-in visitors browse the site freely and always have a one-click way back into the app
   const signedIn = useSignedInHint();
   // returning members will almost certainly open My RenoCred: fetch it while they read
@@ -208,8 +209,18 @@ export function PublicHeader() {
   // on a signed-in page, phones reach Reni from the bar (the tab bar below has the sections)
   const ask = useAskTaqdeer();
   const inApp = pathname.startsWith('/app');
+  // the name folds into the mark once you scroll; pointing at the mark unfolds it again
+  const folded = scrolled && !peek && !open;
+  const island = cn(
+    'relative flex h-[50px] items-center rounded-full border backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 lg:h-[54px]',
+    open
+      ? 'border-white/[0.14] bg-rc-ink'
+      : scrolled
+        ? 'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
+        : 'border-white/10 bg-white/[0.04]',
+  );
   const cta = cn(
-    'group inline-flex h-9 items-center gap-2.5 rounded-full px-4 text-[13px] font-semibold transition-colors duration-300 sm:h-10 sm:pl-5 sm:pr-1 sm:text-[14px] sm:font-medium',
+    'group inline-flex h-10 items-center gap-2.5 rounded-full px-4 text-[13px] font-semibold transition-colors duration-300 sm:pl-5 sm:pr-1 sm:text-[14px] sm:font-medium lg:h-[42px]',
     'bg-rc-cream text-rc-ink hover:bg-white',
   );
 
@@ -229,80 +240,79 @@ export function PublicHeader() {
           />
         )}
       </AnimatePresence>
-      {/* One floating bar on every page and at every width; it narrows a little as you scroll. */}
+      {/* Two floating pieces: the brand on the left, what you can do on the right. */}
       <header className="sticky top-0 z-50 h-16 w-full px-3 sm:px-5 lg:h-[76px]">
-        <div
-          className={cn(
-            'relative mx-auto mt-2 rounded-[26px] border backdrop-blur-xl transition-[max-width,background-color,border-color,box-shadow] duration-700 ease-[cubic-bezier(.22,1,.36,1)] lg:mt-2.5 lg:rounded-[28px]',
-            open
-              ? 'max-w-[1180px] border-white/[0.14] bg-rc-ink shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)]'
-              : scrolled
-                ? 'max-w-[1040px] border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
-                : 'max-w-[1180px] border-white/10 bg-white/[0.04]',
-          )}
-        >
-          <ScrollTrace radius={lg ? 28 : 26} hidden={open} />
-          <div className="relative flex h-[50px] items-center gap-3 pl-2.5 pr-1.5 sm:h-[52px] lg:h-[56px] lg:pl-3.5">
-            <LogoLink dark compact onClick={() => setOpen(false)} />
-
-            <nav aria-label="Primary" aria-hidden={open || undefined} className={cn('ml-5 hidden transition-opacity duration-300 lg:block', open && 'pointer-events-none opacity-0')} onMouseLeave={() => setHovered(null)}>
-              <ul className="flex items-center">
-                {LINKS.map((l) => {
-                  const current = isCurrent(pathname, l);
-                  return (
-                    <li key={l.to} className="relative">
-                      {hovered === l.to && (
-                        <motion.span layoutId="nav-hover" aria-hidden className="absolute inset-0 rounded-full bg-white/[0.08]" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />
-                      )}
-                      <Link
-                        to={l.to}
-                        onMouseEnter={() => setHovered(l.to)}
-                        onFocus={() => setHovered(l.to)}
-                        aria-current={current ? 'page' : undefined}
-                        className={cn('relative block rounded-full px-4 py-2 text-[14px] transition-colors hover:text-rc-cream', current ? 'text-rc-cream' : 'text-rc-mist')}
-                      >
-                        {l.label}
-                        {current && <span aria-hidden className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-rc-pistachio" />}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-
-            <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-              {!signedIn && (
-                <Link {...prefetchAuthProps} to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
-                  Log in
-                </Link>
+        <div className="relative mx-auto flex max-w-[1180px] items-start justify-between gap-3 pt-2 lg:pt-2.5">
+          <Link
+            to="/"
+            aria-label="RenoCred home"
+            onClick={() => setOpen(false)}
+            onMouseEnter={() => setPeek(true)}
+            onMouseLeave={() => setPeek(false)}
+            onFocus={() => setPeek(true)}
+            onBlur={() => setPeek(false)}
+            className={cn(island, 'shrink-0 p-[6px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4')}
+          >
+            <ScrollTrace radius={lg ? 27 : 25} hidden={open} />
+            <span className="relative flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-rc-pistachio lg:h-10 lg:w-10">
+              <BrandMark size={lg ? 23 : 21} />
+            </span>
+            <span
+              aria-hidden
+              className={cn(
+                'relative overflow-hidden whitespace-nowrap text-[17px] font-semibold tracking-[-0.02em] text-rc-cream transition-[max-width,opacity,padding] duration-500 ease-[cubic-bezier(.22,1,.36,1)] lg:text-[18px]',
+                folded ? 'max-w-0 px-0 opacity-0' : 'max-w-[140px] pl-2.5 pr-3.5 opacity-100',
               )}
-              {inApp && ask && (
-                <button
-                  type="button"
-                  onClick={() => { setOpen(false); ask(); }}
-                  className="inline-flex h-9 items-center gap-2 rounded-full bg-white/[0.07] pl-0.5 pr-3.5 text-[13px] font-medium text-rc-cream ring-1 ring-white/10 transition-colors active:bg-white/[0.12] md:hidden"
-                >
-                  <ReniMark size={32} tone="pistachio" /> Ask Reni
-                </button>
-              )}
-              <Link {...prefetchAuthProps} to={signedIn ? '/app' : SIGN_UP} onClick={() => setOpen(false)} className={cn(cta, inApp && ask && 'hidden md:inline-flex')}>
-                {signedIn ? 'Dashboard' : <><span className="sm:hidden">Start free</span><span className="hidden sm:inline">Get started</span></>}
-                <ArrowChip variant="cream" size="sm" className="hidden sm:flex" />
+            >
+              Reno<span className="text-rc-pistachio">Cred</span>
+            </span>
+          </Link>
+
+          <div className={cn(island, 'gap-1 p-[5px] sm:gap-1.5')}>
+            {!signedIn && (
+              <Link {...prefetchAuthProps} to={SIGN_IN} className="hidden rounded-full px-4 py-2 text-[14px] text-rc-mist transition-colors hover:bg-white/[0.06] hover:text-rc-cream sm:inline-flex">
+                Log in
               </Link>
+            )}
+            {inApp && ask && (
               <button
                 type="button"
-                aria-label={open ? 'Close menu' : 'Open menu'}
-                aria-expanded={open}
-                aria-controls="site-menu"
-                onClick={() => setOpen((o) => !o)}
-                className="group flex h-10 w-10 items-center justify-center rounded-full text-rc-cream transition-colors hover:bg-white/[0.08]"
+                onClick={() => { setOpen(false); ask(); }}
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-white/[0.07] pl-1 pr-3.5 text-[13px] font-medium text-rc-cream transition-colors active:bg-white/[0.12] md:hidden"
               >
-                <MenuIcon open={open} />
+                <ReniMark size={32} tone="pistachio" /> Ask Reni
               </button>
-            </div>
+            )}
+            <Link {...prefetchAuthProps} to={signedIn ? '/app' : SIGN_UP} onClick={() => setOpen(false)} className={cn(cta, inApp && ask && 'hidden md:inline-flex')}>
+              {signedIn ? 'Dashboard' : <><span className="sm:hidden">Start free</span><span className="hidden sm:inline">Get started</span></>}
+              <ArrowChip variant="cream" size="sm" className="hidden sm:flex" />
+            </Link>
+            <button
+              type="button"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-expanded={open}
+              aria-controls="site-menu"
+              onClick={() => setOpen((o) => !o)}
+              className="group flex h-10 items-center justify-center gap-2.5 rounded-full px-3 text-[14px] text-rc-cream transition-colors hover:bg-white/[0.08] lg:h-[42px] lg:px-4"
+            >
+              <span className="hidden lg:inline">{open ? 'Close' : 'Menu'}</span>
+              <MenuIcon open={open} />
+            </button>
           </div>
+
           <AnimatePresence initial={false}>
-            {open && <MenuPanel signedIn={signedIn} pathname={pathname} onClose={() => setOpen(false)} />}
+            {open && (
+              <motion.div
+                key="menu"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3, ease: EASE_OUT }}
+                className="absolute inset-x-0 top-full mt-2 overflow-hidden rounded-[26px] border border-white/[0.14] bg-rc-ink shadow-[0_40px_90px_-30px_rgba(0,0,0,0.9)]"
+              >
+                <MenuPanel signedIn={signedIn} pathname={pathname} onClose={() => setOpen(false)} />
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </header>

@@ -1,267 +1,19 @@
-/** The "Recommended" and "Compare" views of Picks for you. */
-import { useMemo, useState } from 'react';
+/** The Compare view of Picks for you. */
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import {
-  ArrowUpRight, Car, Check, Film, Fuel, HeartPulse, Music, Plane, PlaneTakeoff, Plus,
-  Scale, Search, ShoppingBag, ShoppingCart, Tag, Utensils, X, Zap, type LucideIcon,
-} from 'lucide-react';
+import { Plus, Search, X } from 'lucide-react';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { cn } from '../../lib/utils';
-import { CATEGORIES_LIST, type UserProfile, type RecommendedCard } from '../../features/finix/lib/recommendEngine';
-import { recommendCardsFor } from '../../features/financial-engine/rewardsApi';
-import { normalizeGoal } from '../../config/goals';
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../../features/finix/data/cardDataset';
 import { CardFace, bankLabel, displayCardName } from '../../public-platform/site/CardFace';
-import { slugifyCardName } from '../../public-platform/site/swipeMath';
-import { EmptyState, Panel, Pill, SectionHead } from '../../components/shared/appUi';
-import { EASE_OUT } from '../../public-platform/site/primitives';
-
-const CATEGORY_ICONS: Record<string, LucideIcon> = {
-  dining: Utensils, shopping: ShoppingBag, travel: Plane, groceries: ShoppingCart, fuel: Fuel,
-  entertainment: Film, utilities: Zap, health: HeartPulse, transport: Car, subscriptions: Music, other: Tag,
-};
-
-/** Short chip labels; the engine's list has longer ones. */
-const CHIP_LABEL: Record<string, string> = {
-  dining: 'Food & dining', shopping: 'Online shopping', travel: 'Travel', groceries: 'Groceries', fuel: 'Fuel',
-  entertainment: 'Movies', utilities: 'Bills', health: 'Health', transport: 'Cabs', subscriptions: 'Subscriptions',
-};
-
-const FEES = [
-  { id: 'any', label: 'Any fee', max: undefined },
-  { id: 'free', label: 'Lifetime free', max: 0 },
-  { id: '1k', label: 'Up to ₹1,000', max: 1000 },
-  { id: '5k', label: 'Up to ₹5,000', max: 5000 },
-] as const;
-
-const BANK_APPLY_URLS: Record<string, string> = {
-  HDFC: 'https://www.hdfcbank.com/personal/pay/cards/credit-cards',
-  SBI: 'https://www.sbicard.com/en/apply-now.page',
-  ICICI: 'https://www.icicibank.com/card/credit-cards',
-  Axis: 'https://www.axisbank.com/retail/cards/credit-card',
-  Kotak: 'https://www.kotak.com/en/personal-banking/cards/credit-cards.html',
-  AMEX: 'https://www.americanexpress.com/in/credit-cards/',
-  RBL: 'https://www.rblbank.com/credit-cards',
-  IndusInd: 'https://www.indusind.com/in/en/personal/cards/credit-card.html',
-  YES: 'https://www.yesbank.in/personal-banking/yes-individual/cards/credit-cards',
-  BOB: 'https://www.bankofbaroda.in/personal-banking/digital-products/cards/credit-cards',
-  HSBC: 'https://www.hsbc.co.in/credit-cards/',
-  SC: 'https://www.sc.com/in/credit-cards/',
-  AU: 'https://www.aubank.in/personal-banking/credit-card',
-  Federal: 'https://www.federalbank.co.in/credit-card',
-  IDFC: 'https://www.idfcfirstbank.com/credit-card',
-  OneCard: 'https://www.getonecard.app/',
-};
+import { Panel, Pill } from '../../components/shared/appUi';
 
 const rupees = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 const feeText = (fee: number | null) => (fee === null ? 'Fee not published' : fee === 0 ? 'Lifetime free' : `${rupees(fee)} a year`);
-const lakh = (n: number) => (n >= 100000 ? `₹${(n / 100000).toFixed(n % 100000 === 0 ? 0 : 1)}L` : rupees(n));
-
-/** What the unified engine adds to a recommendation, when it ran. */
-type Pick = RecommendedCard & { netAnnualValue?: number; reasons?: string[]; spendAssumed?: boolean };
 
 function getRate(card: FinixCard, cat: SpendCategory): number {
   return card.rewards?.find((x) => x.category === cat)?.rate ?? card.baseRewardRate ?? 0;
-}
-
-function bestRate(card: FinixCard): number {
-  return Math.max(card.baseRewardRate ?? 0, ...(card.rewards ?? []).map((r) => r.rate));
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  RECOMMENDED
-// ─────────────────────────────────────────────────────────────────────────────
-
-export function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: (ids?: string[]) => void }) {
-  const profile = useDashboardStore((s) => s.profile);
-  const userCards = useDashboardStore((s) => s.userCards);
-  const transactions = useDashboardStore((s) => s.transactions);
-
-  const [categories, setCategories] = useState<SpendCategory[]>(() => {
-    if (profile?.spendCategories?.length) return (profile.spendCategories as SpendCategory[]).slice(0, 4);
-    const goal = normalizeGoal(profile?.primaryGoal);
-    if (goal === 'cashback') return ['dining', 'shopping'];
-    if (goal === 'travel') return ['travel'];
-    return ['shopping', 'dining'];
-  });
-  const [wantsLounge, setWantsLounge] = useState(() => normalizeGoal(profile?.primaryGoal) === 'travel');
-  const [fee, setFee] = useState<(typeof FEES)[number]['id']>('any');
-
-  const toggle = (cat: SpendCategory) =>
-    setCategories((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat].slice(-4)));
-
-  // recomputed on every change: no "submit" step
-  const picks = useMemo<Pick[]>(() => {
-    const p: UserProfile = {
-      annualIncome: profile?.salary || 0,
-      cibilScore: profile?.creditScore || 0,
-      topCategories: categories,
-      maxAnnualFee: FEES.find((f) => f.id === fee)?.max,
-      wantsLounge,
-    };
-    return recommendCardsFor(p, 5, { transactions, walletCardIds: userCards.map((c) => c.id) }) as Pick[];
-  }, [profile?.salary, profile?.creditScore, categories, wantsLounge, fee, transactions, userCards]);
-
-  const [top, ...rest] = picks;
-
-  return (
-    <div className="grid gap-8 lg:grid-cols-[360px_1fr] lg:gap-10">
-      {/* what to rank on */}
-      <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-        <Link to="/app/account" className="flex items-center justify-between gap-3 rounded-[20px] border border-rc-ink/[0.08] bg-rc-paper px-4 py-3 text-[13px] text-rc-muted hover:bg-white">
-          <span className="min-w-0 truncate">
-            Income <span className="font-semibold text-rc-ink">{profile?.salary ? `${lakh(profile.salary)}/yr` : 'not added'}</span>
-            {' · '}CIBIL <span className="font-semibold text-rc-ink">{profile?.creditScore || 'not added'}</span>
-            {' · '}<span className="font-semibold text-rc-ink">{userCards.length}</span> {userCards.length === 1 ? 'card' : 'cards'}
-          </span>
-          <span className="shrink-0 font-medium text-rc-forest">Edit</span>
-        </Link>
-
-        <div>
-          <p className="text-[15px] font-semibold text-rc-ink">What do you spend most on?</p>
-          <p className="text-[13px] text-rc-muted">Pick up to four.</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {CATEGORIES_LIST.map(({ value }) => {
-              const on = categories.includes(value);
-              const Icon = CATEGORY_ICONS[value] ?? Tag;
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  aria-pressed={on}
-                  onClick={() => toggle(value)}
-                  className={cn('inline-flex h-10 items-center gap-2 rounded-full border pl-3 pr-4 text-[14px] transition-colors', on ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/15 bg-rc-paper text-rc-ink hover:border-rc-ink/35')}
-                >
-                  {on ? <Check size={15} className="text-rc-pistachio" /> : <Icon size={15} className="text-rc-forest" />}
-                  {CHIP_LABEL[value] ?? value}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <p className="text-[15px] font-semibold text-rc-ink">Annual fee</p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            {FEES.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                aria-pressed={fee === f.id}
-                onClick={() => setFee(f.id)}
-                className={cn('h-10 rounded-full border text-[14px] transition-colors', fee === f.id ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/15 bg-rc-paper text-rc-ink hover:border-rc-ink/35')}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <button
-          type="button"
-          role="switch"
-          aria-checked={wantsLounge}
-          onClick={() => setWantsLounge((v) => !v)}
-          className="flex w-full items-center gap-3 rounded-[20px] border border-rc-ink/[0.08] bg-rc-paper px-4 py-3 text-left"
-        >
-          <PlaneTakeoff size={18} className="shrink-0 text-rc-forest" />
-          <span className="flex-1 text-[14px] font-medium text-rc-ink">Must have airport lounge access</span>
-          <span className={cn('relative h-7 w-12 shrink-0 rounded-full transition-colors', wantsLounge ? 'bg-rc-forest' : 'bg-rc-ink/15')}>
-            <span className={cn('absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-[left] duration-300', wantsLounge ? 'left-6' : 'left-1')} />
-          </span>
-        </button>
-      </aside>
-
-      {/* the picks */}
-      <section aria-live="polite">
-        {!top ? (
-          <EmptyState icon={Search} title="No card fits all of that" note="Try a higher fee limit, turn off lounge access, or add your income and CIBIL in Account so we can check approval." />
-        ) : (
-          <>
-            <AnimatePresence mode="wait">
-              <motion.article
-                key={top.id}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: EASE_OUT }}
-                className="relative overflow-hidden rounded-[30px] bg-rc-ink p-5 text-rc-cream sm:p-7"
-              >
-                <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.16),transparent)]" />
-                <p className="relative inline-flex items-center gap-2 rounded-full bg-rc-pistachio px-3 py-1 text-[12px] font-semibold text-rc-ink">Top pick for you</p>
-                <div className="relative mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
-                  <motion.div initial={{ rotate: -8, y: 10 }} animate={{ rotate: -4, y: 0 }} transition={{ duration: 0.6, ease: EASE_OUT }} className="self-center sm:self-auto">
-                    <CardFace name={top.name} bank={top.bank} network={top.network} width={220} />
-                  </motion.div>
-                  <div className="min-w-0">
-                    <p className="text-[13px] text-rc-mist">{bankLabel(top.bank)}</p>
-                    <h3 className="font-serif text-[28px] font-semibold leading-[1.05] tracking-[-0.02em]">{displayCardName(top.name)}</h3>
-                    {(top.netAnnualValue ?? 0) > 0 && (
-                      <p className="mt-3 font-serif text-[34px] font-semibold leading-none text-rc-pistachio tabular-nums">
-                        +{rupees(top.netAnnualValue!)}<span className="ml-1.5 font-sans text-[14px] font-normal text-rc-mist">a year, after fees</span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <dl className="relative mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-[18px] bg-white/10">
-                  <div className="bg-rc-ink/95 px-4 py-3"><dt className="text-[12px] text-rc-mist">Annual fee</dt><dd className="mt-0.5 text-[15px] font-medium">{feeText(top.annualFee)}</dd></div>
-                  <div className="bg-rc-ink/95 px-4 py-3"><dt className="text-[12px] text-rc-mist">Best rate</dt><dd className="mt-0.5 text-[15px] font-medium">{bestRate(top)}% back</dd></div>
-                </dl>
-
-                {(top.reasons?.length ? top.reasons : top.highlights)?.slice(0, 3).map((r) => (
-                  <p key={r} className="relative mt-3 flex gap-2.5 text-[14px] leading-relaxed text-rc-mist first-of-type:mt-5">
-                    <Check size={16} className="mt-0.5 shrink-0 text-rc-pistachio" /> <span>{r}</span>
-                  </p>
-                ))}
-                {top.eligibilityReason && <p className="relative mt-4 rounded-[14px] bg-white/[0.06] px-3.5 py-2.5 text-[13px] text-rc-mist">{top.eligibilityReason}</p>}
-
-                <div className="relative mt-6 flex flex-wrap gap-2">
-                  <Link to={`/cards/${slugifyCardName(top.name)}`} className="inline-flex h-11 items-center gap-2 rounded-full bg-rc-cream px-5 text-[14px] font-medium text-rc-ink hover:bg-white">See the card</Link>
-                  <button type="button" onClick={() => onSwitchToCompare([top.id, ...userCards.map((c) => c.id)].slice(0, 2))} className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 px-5 text-[14px] font-medium hover:bg-white/10">
-                    <Scale size={15} /> Compare
-                  </button>
-                  {BANK_APPLY_URLS[top.bank] && (
-                    <a href={BANK_APPLY_URLS[top.bank]} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center gap-1.5 rounded-full px-3 text-[14px] font-medium text-rc-pistachio hover:underline">
-                      Apply at {bankLabel(top.bank)} <ArrowUpRight size={15} />
-                    </a>
-                  )}
-                </div>
-              </motion.article>
-            </AnimatePresence>
-
-            {rest.length > 0 && (
-              <div className="mt-8">
-                <SectionHead title="Also worth a look" />
-                <Panel as="ul" className="divide-y divide-rc-ink/[0.07]">
-                  {rest.map((c) => (
-                    <li key={c.id}>
-                      <Link to={`/cards/${slugifyCardName(c.name)}`} className="flex items-center gap-3.5 px-3.5 py-3 transition-colors hover:bg-white sm:px-4">
-                        <CardFace name={c.name} bank={c.bank} network={c.network} width={76} lifted={false} />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[15px] font-medium text-rc-ink">{displayCardName(c.name)}</span>
-                          <span className="block truncate text-[13px] text-rc-muted">{bankLabel(c.bank)} · {feeText(c.annualFee)}</span>
-                        </span>
-                        {(c.netAnnualValue ?? 0) > 0 && (
-                          <span className="shrink-0 text-right font-serif text-[17px] font-semibold tabular-nums text-rc-forest">+{rupees(c.netAnnualValue!)}<span className="block font-sans text-[11px] font-normal text-rc-muted">a year</span></span>
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </Panel>
-              </div>
-            )}
-            {top.spendAssumed && (
-              <p className="mt-4 text-[13px] leading-relaxed text-rc-muted">
-                Yearly amounts assume about ₹25,000 a month of card spend. Add your spending in Money for figures built on your own.
-              </p>
-            )}
-          </>
-        )}
-      </section>
-    </div>
-  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -293,7 +45,7 @@ function CardPickerSheet({ onSelect, onClose, excludeIds }: { onSelect: (card: F
     .filter((c) => !excludeIds.includes(c.id))
     .filter((c) => !q || `${c.bank}${c.name}`.toLowerCase().replace(/[^a-z0-9]/g, '').includes(q));
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-rc-night/70 backdrop-blur-sm" />
       <motion.div
@@ -334,7 +86,8 @@ function CardPickerSheet({ onSelect, onClose, excludeIds }: { onSelect: (card: F
           {list.length === 0 && <li className="px-3 py-10 text-center text-[15px] text-rc-muted">No card matches “{query}”.</li>}
         </ul>
       </motion.div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

@@ -4,6 +4,7 @@
  * their page, so a search never dead-ends. A bottom sheet on phones.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, Plus, Search, X } from 'lucide-react';
@@ -82,7 +83,8 @@ export default function AddCardModal({ onClose }: { onClose: () => void }) {
     onClose();
   };
 
-  return (
+  // at the top of the page, so nothing (the phone tab bar) can sit over the sheet
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-rc-night/70 backdrop-blur-sm" />
       <motion.div
@@ -176,6 +178,7 @@ export default function AddCardModal({ onClose }: { onClose: () => void }) {
           )}
         </div>
       </motion.div>
-    </div>
+    </div>,
+    document.body,
   );
 }

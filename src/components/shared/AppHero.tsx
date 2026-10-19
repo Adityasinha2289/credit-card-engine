@@ -93,3 +93,33 @@ export function AppHero({ eyebrow, title, lede, stats, actions, aside }: {
     </section>
   );
 }
+
+/**
+ * The top of a My RenoCred page: a compact title over the page's own visual
+ * (the card holder, the card stack, the receipt...), on the dark band.
+ */
+export function AppBand({ eyebrow, title, children, center }: { eyebrow?: ReactNode; title?: ReactNode; children?: ReactNode; center?: boolean }) {
+  const ask = useAskTaqdeer();
+  return (
+    <section className="relative overflow-hidden text-rc-cream">
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[30%] h-[720px] w-[1000px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.10),transparent)]" />
+      <Container className="relative pb-[4.5rem] pt-4 md:pb-24 md:pt-6">
+        <MyNav />
+        <div className={cn('flex min-h-9 items-center justify-between gap-3', center && 'md:justify-center')}>
+          {eyebrow && <p className="min-w-0 truncate text-[13px] font-medium text-rc-mist">{eyebrow}</p>}
+          {ask && (
+            <button type="button" onClick={ask} className="ml-auto inline-flex h-9 shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] pl-1 pr-3.5 text-[13px] font-medium text-rc-cream active:bg-white/10 md:hidden">
+              <img src="/taqdeer-logo.png" alt="" className="h-7 w-7 rounded-full object-cover" /> Ask Taqdeer
+            </button>
+          )}
+        </div>
+        {title && (
+          <h1 className={cn('mt-1 font-serif text-[30px] font-semibold leading-[1.08] tracking-[-0.03em] lining-nums sm:text-[38px] lg:text-[46px] [&_.italic]:text-rc-pistachio', center && 'md:text-center')}>
+            {title}
+          </h1>
+        )}
+        {children && <div className="mt-6 md:mt-8">{children}</div>}
+      </Container>
+    </section>
+  );
+}

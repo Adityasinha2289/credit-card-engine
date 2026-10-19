@@ -1,23 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '@clerk/clerk-react';
 import { useShallow } from 'zustand/shallow';
 import { toast } from 'sonner';
-import { Bell, Pause, Play, Pencil, Plus, Repeat, X, ExternalLink, Sparkles, Mail, Smartphone } from 'lucide-react';
-import { Amount, EmptyState, HeadAction, IconTile, Pill, Row, RowList, SectionHead } from '../../../components/shared/appUi';
+import { Pause, Play, Pencil, Plus, Repeat, X, ExternalLink, Sparkles } from 'lucide-react';
+import { Amount, EmptyState, HeadAction, IconTile, Pill, RowList, SectionHead } from '../../../components/shared/appUi';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
 import type { Subscription, BillingCycle } from '../../../features/dashboard/types/dashboard.types';
 import { PageContainer } from '../../../components/shared/PageContainer';
-import { useIsDemo } from '../../../features/demo/DemoAppProvider';
 import { formatRupees, toPaise } from '../../../features/money/lib/moneyMath';
 import { istDate, addCycles, monthlyCost, yearlyCost, CYCLE_LABEL, daysBetween } from '../../../features/subscriptions/billingCycle';
 import { effectiveNextCharge } from '../../../features/subscriptions/reminderPlanner';
 import { detectRecurring, type RecurringSuggestion } from '../../../features/subscriptions/recurringDetector';
 import { SUBSCRIPTION_PRESETS, findPreset, getCancelUrl } from '../../../features/subscriptions/presets';
-import {
-  loadPrefs, savePrefs, pushSupport, enablePush, disablePush, currentPushSubscription, sendTestPush,
-  DEFAULT_PREFS, type ReminderPrefs, type PushSupport,
-} from '../../../features/subscriptions/notifications';
 
 const LEAD_OPTIONS = [7, 3, 1, 0];
 const DISMISSED_KEY = 'renocred:dismissed-recurring';
@@ -53,26 +46,18 @@ function whenLabel(days: number): string {
 }
 
 export default function SubscriptionsPage({ embedded = false }: { embedded?: boolean }) {
-  const { subscriptions, userCards, transactions, profile, supabaseClient } = useDashboardStore(useShallow((s) => ({
+  const { subscriptions, userCards, transactions } = useDashboardStore(useShallow((s) => ({
     subscriptions: s.subscriptions,
     userCards: s.userCards,
     transactions: s.transactions,
-    profile: s.profile,
-    supabaseClient: s.supabaseClient,
   })));
   const addSubscription = useDashboardStore((s) => s.addSubscription);
   const updateSubscription = useDashboardStore((s) => s.updateSubscription);
   const cancelSubscription = useDashboardStore((s) => s.cancelSubscription);
-  const isDemo = useIsDemo();
-  const { getToken } = useAuth();
 
   const today = istDate();
   const [form, setForm] = useState<FormState | null>(null);
   const [dismissed, setDismissed] = useState<string[]>(readDismissed);
-  const [prefs, setPrefs] = useState<ReminderPrefs>(DEFAULT_PREFS);
-  const [push, setPush] = useState<PushSupport | null>(null);
-  const [pushOn, setPushOn] = useState(false);
-  const [busy, setBusy] = useState(false);
 
   // ── data ──────────────────────────────────────────────────────────────────
   const active = useMemo(() => subscriptions.filter((s) => s.status !== 'cancelled'), [subscriptions]);
@@ -104,13 +89,6 @@ export default function SubscriptionsPage({ embedded = false }: { embedded?: boo
       }
     }
   }, [rows, today, updateSubscription]);
-
-  useEffect(() => {
-    if (!profile?.id || isDemo) return;
-    void loadPrefs(supabaseClient as any, profile.id).then(setPrefs);
-    void pushSupport().then(setPush);
-    void currentPushSubscription().then((s) => setPushOn(!!s));
-  }, [profile?.id, supabaseClient, isDemo]);
 
   // ── actions ───────────────────────────────────────────────────────────────
   const openAdd = (preset?: (typeof SUBSCRIPTION_PRESETS)[number]) => {
@@ -187,46 +165,6 @@ export default function SubscriptionsPage({ embedded = false }: { embedded?: boo
     toast.success(url ? `Opened ${s.name}'s cancellation page and stopped tracking it.` : `Stopped tracking ${s.name}.`);
   };
 
-  const togglePref = async (key: keyof Pick<ReminderPrefs, 'emailEnabled'>) => {
-    if (!profile) return;
-    const next = { ...prefs, [key]: !prefs[key] };
-    setPrefs(next);
-    if (!(await savePrefs(supabaseClient as any, profile.id, { [key]: next[key] }))) {
-      toast.error("Couldn't save reminder settings yet — the reminders migration may not be applied.");
-    }
-  };
-
-  const togglePush = async () => {
-    setBusy(true);
-    try {
-      if (pushOn) {
-        await disablePush(() => getToken());
-        setPushOn(false);
-        setPrefs((p) => ({ ...p, pushEnabled: false }));
-        toast.success('Push reminders turned off on this device.');
-      } else {
-        const r = await enablePush(() => getToken());
-        if (r.ok) {
-          setPushOn(true);
-          setPrefs((p) => ({ ...p, pushEnabled: true }));
-          toast.success('Push reminders are on for this device.');
-        } else {
-          const msg: Record<string, string> = {
-            denied: 'Notifications are blocked for this site. Allow them in your browser settings, then try again.',
-            'ios-needs-install': 'On iPhone, add RenoCred to your Home Screen first (Share → Add to Home Screen), then turn on push.',
-            'not-configured': 'Push reminders are not set up on the server yet.',
-            'no-browser-support': "This browser doesn't support push notifications.",
-          };
-          toast.error(msg[r.error] ?? `Couldn't turn on push: ${r.error}`);
-          setPush(await pushSupport());
-        }
-      }
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  // ── render ────────────────────────────────────────────────────────────────
   const field = 'mt-1.5 h-12 w-full rounded-full border border-rc-ink/15 bg-white px-5 text-[16px] font-normal text-rc-ink outline-none focus:border-rc-forest/50';
   const fieldLabel = 'block text-[13px] font-medium text-rc-muted';
   const toggleCls = (on: boolean) => `relative h-7 w-12 shrink-0 rounded-full transition-colors ${on ? 'bg-rc-forest' : 'bg-rc-ink/15'}`;
@@ -234,22 +172,8 @@ export default function SubscriptionsPage({ embedded = false }: { embedded?: boo
 
   return (
     <PageContainer bare={embedded} eyebrow="Money" title={<>Every renewal, <span className="italic">before it hits.</span></>} subtitle="Track what you pay for and we'll remind you before each charge, and before free trials turn paid." className="pb-safe">
-      <div className="grid gap-9 lg:grid-cols-[1.3fr_1fr] lg:gap-10">
+      <div>
         <div className="space-y-9">
-          {/* what it all costs */}
-          <section aria-label="Totals" className="grid grid-cols-3 gap-2.5 sm:gap-4">
-            {[
-              { value: formatRupees(perMonth), label: 'a month' },
-              { value: formatRupees(perYear), label: 'a year' },
-              { value: running.length, label: running.length === 1 ? 'active' : 'active' },
-            ].map((t) => (
-              <div key={t.label + String(t.value)} className="rounded-[22px] border border-rc-ink/[0.08] bg-rc-paper px-3.5 py-4 sm:px-5">
-                <p className="truncate font-serif text-[22px] font-semibold leading-none tabular-nums lining-nums text-rc-ink sm:text-[30px]">{t.value}</p>
-                <p className="mt-2 text-[12px] text-rc-muted sm:text-[13px]">{t.label}</p>
-              </div>
-            ))}
-          </section>
-
           {/* found in your transactions */}
           {suggestions.length > 0 && (
             <section>
@@ -279,7 +203,14 @@ export default function SubscriptionsPage({ embedded = false }: { embedded?: boo
 
           {/* the list */}
           <section>
-            <SectionHead title="Your subscriptions" action={!form && <HeadAction onClick={() => openAdd()}><Plus size={14} /> Add</HeadAction>} />
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-[14px] text-rc-muted">
+                {running.length > 0
+                  ? <><span className="font-serif text-[20px] font-semibold text-rc-ink">{formatRupees(perMonth)}</span> a month, {formatRupees(perYear)} a year</>
+                  : 'We remind you before each charge, and before free trials turn paid.'}
+              </p>
+              {!form && <HeadAction onClick={() => openAdd()}><Plus size={14} /> Add</HeadAction>}
+            </div>
 
             {form && (
               <form onSubmit={submit} className="mb-4 rounded-[26px] border border-rc-ink/[0.08] bg-rc-paper p-4 sm:p-5">
@@ -394,46 +325,6 @@ export default function SubscriptionsPage({ embedded = false }: { embedded?: boo
           </section>
         </div>
 
-        {/* how we remind you */}
-        {!isDemo && (
-          <section className="lg:pt-[118px]">
-            <SectionHead title="How we remind you" />
-            <RowList>
-              <Row icon={Bell} title="In RenoCred" note="Always on: Overview and Money show what renews this week" />
-              <button type="button" role="switch" aria-checked={prefs.emailEnabled} onClick={() => void togglePref('emailEnabled')} className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left sm:px-5">
-                <IconTile icon={Mail} />
-                <span className="min-w-0 flex-1"><span className="block text-[15px] font-medium text-rc-ink">Email</span><span className="block truncate text-[13px] text-rc-muted">A morning digest to {profile?.email || 'your email'}</span></span>
-                <span className={toggleCls(prefs.emailEnabled)}><span className={knob(prefs.emailEnabled)} /></span>
-              </button>
-              <div className="flex items-center gap-3.5 px-4 py-3.5 sm:px-5">
-                <IconTile icon={Smartphone} />
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[15px] font-medium text-rc-ink">Push on this device</span>
-                  <span className="block text-[13px] text-rc-muted">
-                    {push && !push.supported
-                      ? { denied: 'Blocked in browser settings', 'ios-needs-install': 'Add to Home Screen first (iPhone)', 'not-configured': 'Not available yet', 'no-browser-support': 'Not supported in this browser' }[push.reason]
-                      : pushOn ? 'On · quiet 10pm–8am' : 'Off'}
-                  </span>
-                  {pushOn && (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        if (await sendTestPush(() => getToken())) toast.success('Test notification sent');
-                        else toast.error("Couldn't send a test notification. Try turning push off and on again.");
-                      }}
-                      className="mt-1 text-[13px] font-medium text-rc-forest underline underline-offset-2"
-                    >
-                      Send a test
-                    </button>
-                  )}
-                </span>
-                <button type="button" role="switch" aria-checked={pushOn} aria-label="Push notifications" disabled={busy || (!!push && !push.supported && push.reason !== 'denied')} onClick={() => void togglePush()} className="disabled:opacity-40">
-                  <span className={`${toggleCls(pushOn)} block`}><span className={knob(pushOn)} /></span>
-                </button>
-              </div>
-            </RowList>
-          </section>
-        )}
       </div>
     </PageContainer>
   );

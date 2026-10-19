@@ -1,278 +1,267 @@
 /**
- * Overview: the front page of My RenoCred, and the one place to ask "which card?".
- * It answers that from the user's own cards, shows only what needs attention,
- * the wallet at a glance and shortcuts to the rest.
+ * Overview: which of your cards to pay with, and what's due this week.
+ * The answer is the landing page's card holder, holding your own cards: pick a
+ * spend (or type the shop and amount) and the best card rises out of it.
  */
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useShallow } from 'zustand/shallow';
 import { useUser } from '@clerk/clerk-react';
-import { CalendarClock, CreditCard, Library, Plane, Plus, Repeat, Scale, Search } from 'lucide-react';
+import { toast } from 'sonner';
+import { ArrowUpRight, Check, Plus, X } from 'lucide-react';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { evaluatePayment } from '../../features/financial-engine/rewardsApi';
 import { upcomingCharges } from '../../features/subscriptions/reminderPlanner';
 import { istDate } from '../../features/subscriptions/billingCycle';
+import { getCancelUrl } from '../../features/subscriptions/presets';
 import { CardDueEngine } from '../../features/money/engines/SafeToSpendEngine';
 import { formatRupees } from '../../features/money/lib/moneyMath';
-import { CardFace, displayCardName } from '../../public-platform/site/CardFace';
-import { EASE_OUT } from '../../public-platform/site/primitives';
+import { displayCardName } from '../../public-platform/site/CardFace';
+import { EASE_OUT, Reveal } from '../../public-platform/site/primitives';
 import { PageContainer } from '../../components/shared/PageContainer';
-import { Amount, EmptyState, HeadAction, IconTile, Row, RowList, SectionHead, type Tone } from '../../components/shared/appUi';
-import { SPEND_CATEGORIES, CATALOGUE_STATS, cardsByIds } from '../../public-platform/site/swipeMath';
-import { walletCoverage } from './walletCoverage';
+import { SPEND_CATEGORIES, cardsByIds, rankCards, type FinixCard, type SpendCategory } from '../../public-platform/site/swipeMath';
+import AddCardModal from '../../features/dashboard/components/AddCardModal';
+import { WalletHolder } from './overview/WalletHolder';
 import { cn } from '../../lib/utils';
 
-const QUICK = [
-  { label: 'Swiggy', merchant: 'Swiggy', amount: 600 },
-  { label: 'Amazon', merchant: 'Amazon', amount: 2500 },
-  { label: 'Fuel', merchant: 'Indian Oil', amount: 3000 },
-  { label: 'Flights', merchant: 'MakeMyTrip', amount: 9000 },
-  { label: 'Groceries', merchant: 'BigBasket', amount: 2000 },
-  { label: 'Movies', merchant: 'BookMyShow', amount: 800 },
-];
-
 const rupees = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
+const MAX_IN_HOLDER = 5;
+
+interface Answer { card: FinixCard; reward: number; rate: number; label: string; ahead: number | null; estimate: boolean }
 
 export default function HomePage() {
+  const reduce = useReducedMotion();
   const { user } = useUser();
-  const { profile, userCards, subscriptions, creditAccounts, transactions } = useDashboardStore(useShallow((s) => ({
+  const { profile, userCards, subscriptions, creditAccounts, transactions, payBill } = useDashboardStore(useShallow((s) => ({
     profile: s.profile,
     userCards: s.userCards,
     subscriptions: s.subscriptions,
     creditAccounts: s.creditAccounts,
     transactions: s.transactions,
+    payBill: s.payBill,
   })));
 
   const firstName = (profile?.name || user?.firstName || '').split(' ')[0];
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
+  const [category, setCategory] = useState<SpendCategory>('dining');
+  const [amount, setAmount] = useState(2000);
   const [merchant, setMerchant] = useState('');
-  const [amount, setAmount] = useState('');
-  const amountNum = Number(amount.replace(/[^\d.]/g, ''));
+  const [adding, setAdding] = useState(false);
+
   const activeIds = useMemo(() => userCards.filter((c) => c.status === 'active').map((c) => c.id), [userCards]);
-  const result = useMemo(() => {
-    if (!merchant.trim() || !(amountNum > 0) || activeIds.length === 0) return null;
-    return evaluatePayment(merchant.trim(), amountNum, activeIds, { previousTransactions: transactions });
-  }, [merchant, amountNum, activeIds, transactions]);
+  const wallet = useMemo(() => cardsByIds(activeIds), [activeIds]);
 
-  // only what needs the user: bills due soon, renewals this week, missing limits
-  const attention = useMemo(() => {
-    const names: Record<string, string> = {};
-    userCards.forEach((c) => { names[c.id] = c.label || c.bank || 'Card'; });
-    const dues = CardDueEngine.evaluate(creditAccounts, names)
-      .filter((d) => d.state === 'OVERDUE' || d.state === 'DUE_TODAY' || d.state === 'DUE_SOON')
-      .map((d) => ({
-        id: `due-${d.cardId}`,
-        icon: CalendarClock,
-        tone: 'danger' as Tone,
-        title: d.state === 'OVERDUE' ? `${d.name} bill is overdue` : `${d.name} bill due ${d.daysRemaining === 0 ? 'today' : `in ${d.daysRemaining} days`}`,
-        note: 'Pay in full to avoid interest',
-        amount: formatRupees(d.totalDue),
-        to: '/app/money',
-      }));
-    const renewals = upcomingCharges(subscriptions, istDate(), 7).map((u) => ({
-      id: `sub-${u.subscription.id}`,
-      icon: Repeat,
-      tone: 'warn' as Tone,
-      title: `${u.subscription.name} ${u.kind === 'trial_ending' ? 'trial turns paid' : 'renews'} ${u.daysLeft === 0 ? 'today' : u.daysLeft === 1 ? 'tomorrow' : `in ${u.daysLeft} days`}`,
-      note: u.kind === 'trial_ending' ? 'Cancel before then if you don’t want it' : 'Still using it?',
-      amount: formatRupees(u.subscription.amount),
-      to: '/app/money?tab=subscriptions',
-    }));
-    const noLimit = userCards.filter((c) => !(c.creditLimit > 0)).length;
-    const setup = noLimit > 0 ? [{
-      id: 'limits',
-      icon: CreditCard,
-      tone: 'quiet' as Tone,
-      title: `Add the credit limit for ${noLimit} ${noLimit === 1 ? 'card' : 'cards'}`,
-      note: 'So we can tell you how much of it you’re using',
-      amount: '',
-      to: '/app/wallet',
-    }] : [];
-    return [...dues, ...renewals, ...setup].slice(0, 4);
-  }, [userCards, creditAccounts, subscriptions]);
+  // the shop decides when one is typed; otherwise the chosen kind of spend
+  const answer = useMemo<Answer | null>(() => {
+    if (wallet.length === 0 || !(amount > 0)) return null;
+    if (merchant.trim().length >= 2) {
+      const r = evaluatePayment(merchant.trim(), amount, activeIds, { previousTransactions: transactions });
+      if (!r?.best) return null;
+      const card = wallet.find((c) => c.id === r.best!.card.id) ?? (r.best.card as unknown as FinixCard);
+      return { card, reward: r.best.cappedRewardValue, rate: r.best.rewardRate, label: r.category, ahead: r.secondBest && r.delta > 0 ? r.delta : null, estimate: r.best.confidence !== 'EXACT' };
+    }
+    const [best, next] = rankCards(wallet, category, amount);
+    if (!best) return null;
+    const label = SPEND_CATEGORIES.find((c) => c.id === category)?.label.toLowerCase() ?? category;
+    return { card: best.card, reward: best.reward, rate: best.rate, label: best.categoryMatch ? label : 'everything', ahead: next && best.reward > next.reward ? best.reward - next.reward : null, estimate: false };
+  }, [wallet, amount, merchant, activeIds, transactions, category]);
 
-  const catalogue = useMemo(() => new Map(cardsByIds(userCards.map((c) => c.id)).map((c) => [c.id, c])), [userCards]);
-  const bestAt = (id: string) => {
-    const top = [...(catalogue.get(id)?.rewards ?? [])].sort((a, b) => b.rate - a.rate)[0];
-    return top ? `${(SPEND_CATEGORIES.find((s) => s.id === top.category)?.label ?? top.category).toLowerCase()}, ${top.rate}%` : null;
+  // up to five in the holder, always including the one that wins
+  const inHolder = useMemo(() => {
+    if (wallet.length <= MAX_IN_HOLDER) return wallet;
+    const rest = wallet.filter((c) => c.id !== answer?.card.id).slice(0, MAX_IN_HOLDER - 1);
+    return answer ? [...rest.slice(0, 2), answer.card, ...rest.slice(2)] : wallet.slice(0, MAX_IN_HOLDER);
+  }, [wallet, answer]);
+
+  // pull a card: show the spend it's best at
+  const pull = (card: FinixCard) => {
+    const top = [...(card.rewards ?? [])].sort((a, b) => b.rate - a.rate)[0];
+    setMerchant('');
+    if (top) setCategory(top.category);
   };
-  const coverage = useMemo(() => walletCoverage(userCards.map((c) => c.id)), [userCards]);
-  const weekRenewals = useMemo(() => upcomingCharges(subscriptions, istDate(), 7).reduce((s, u) => s + u.subscription.amount, 0), [subscriptions]);
 
-  const hasCards = userCards.length > 0;
+  // this week: card bills and renewals, in date order
+  const week = useMemo(() => {
+    const today = istDate();
+    const names: Record<string, string> = {};
+    userCards.forEach((c) => { names[c.id] = displayCardName(c.label || c.bank || 'Card'); });
+    const bills = CardDueEngine.evaluate(creditAccounts, names)
+      .filter((d) => d.dueDate && (d.state === 'OVERDUE' || d.state === 'DUE_TODAY' || d.state === 'DUE_SOON'))
+      .map((d) => ({ key: `bill-${d.cardId}`, kind: 'bill' as const, date: d.dueDate!, days: d.daysRemaining ?? 0, title: `${d.name} bill`, amount: d.totalDue, cardId: d.cardId, cancelUrl: null as string | null, overdue: d.state === 'OVERDUE' }));
+    const renewals = upcomingCharges(subscriptions, today, 7).map((u) => ({
+      key: `sub-${u.subscription.id}`, kind: u.kind === 'trial_ending' ? 'trial' as const : 'renewal' as const, date: u.dueOn, days: u.daysLeft,
+      title: u.subscription.name, amount: u.subscription.amount, cardId: u.subscription.cardId, cancelUrl: u.subscription.cancelUrl ?? getCancelUrl(u.subscription.name) ?? null, overdue: false,
+    }));
+    return [...bills, ...renewals].sort((a, b) => a.days - b.days);
+  }, [userCards, creditAccounts, subscriptions]);
+  const weekTotal = week.reduce((s, w) => s + w.amount, 0);
 
-  const whichCard = hasCards ? (
-    <div className="max-w-[640px]">
-      <div className="overflow-hidden rounded-[26px] bg-rc-cream text-rc-ink shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)]">
-        <form onSubmit={(e) => e.preventDefault()} className="grid grid-cols-[1fr_auto] divide-x divide-rc-ink/10">
-          <label className="flex min-w-0 items-center gap-3 pl-5">
-            <Search aria-hidden size={18} className="shrink-0 text-rc-ink/40" />
-            <span className="sr-only">Where are you paying?</span>
-            <input
-              value={merchant}
-              onChange={(e) => setMerchant(e.target.value)}
-              placeholder="Where are you paying?"
-              enterKeyHint="next"
-              className="h-[60px] w-full min-w-0 bg-transparent text-[16px] outline-none placeholder:text-rc-ink/40"
-            />
-          </label>
-          <label className="flex w-[118px] items-center gap-1 px-4 sm:w-[150px]">
-            <span className="sr-only">Amount in rupees</span>
-            <span aria-hidden className="text-[16px] text-rc-ink/45">₹</span>
-            <input
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              inputMode="numeric"
-              enterKeyHint="done"
-              placeholder="Amount"
-              className="h-[60px] w-full min-w-0 bg-transparent text-[16px] tabular-nums outline-none placeholder:text-rc-ink/40"
-            />
-          </label>
-        </form>
+  const markPaid = async (cardId: string, amt: number, name: string) => {
+    try { await payBill({ cardId, amount: amt }); toast.success(`${name} marked as paid`); } catch { toast.error('Couldn’t update that. Try again.'); }
+  };
 
-        <AnimatePresence initial={false} mode="wait">
-          {result?.best ? (
+  const band = (
+    <div className="flex flex-col items-center text-center">
+      {/* the answer, written above the holder */}
+      <div className="min-h-[104px]" aria-live="polite">
+        <AnimatePresence mode="wait" initial={false}>
+          {answer ? (
             <motion.div
-              key={`${result.best.card.id}-${amountNum}`}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.35, ease: EASE_OUT }}
-              className="overflow-hidden"
+              key={`${answer.card.id}-${answer.label}-${Math.round(answer.reward)}`}
+              initial={reduce ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.35, ease: EASE_OUT, delay: 0.15 }}
             >
-              <div className="flex items-center gap-4 border-t border-rc-ink/10 bg-rc-pistachio px-4 py-4 sm:px-5">
-                <motion.div initial={{ y: 16, rotate: -6 }} animate={{ y: 0, rotate: -3 }} transition={{ duration: 0.5, ease: EASE_OUT }}>
-                  <CardFace name={result.best.card.name} bank={result.best.card.bank} network={result.best.card.network} width={92} lifted={false} />
-                </motion.div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-medium text-rc-forest">Pay with</p>
-                  <p className="truncate font-serif text-[19px] font-semibold leading-tight">{displayCardName(result.best.card.name)}</p>
-                  <p className="mt-0.5 truncate text-[13px] text-rc-ink/65">
-                    {result.best.rewardRate}% on {result.category}
-                    {result.secondBest && result.delta > 0 ? ` · ${rupees(result.delta)} more than your next best` : ''}
-                  </p>
-                </div>
-                <p className="shrink-0 font-serif text-[26px] font-semibold leading-none tabular-nums text-rc-forest">
-                  {result.best.confidence !== 'EXACT' ? '~' : ''}+{rupees(result.best.cappedRewardValue)}
-                </p>
-              </div>
+              <p className="font-serif text-[46px] font-semibold leading-none tabular-nums text-rc-pistachio md:text-[56px]">
+                {answer.estimate ? '~' : ''}+{rupees(answer.reward)}
+              </p>
+              <p className="mt-2 text-[14px] text-rc-cream">{answer.rate}% back on {answer.label} with {displayCardName(answer.card.name)}</p>
+              <p className="mt-0.5 text-[13px] text-rc-mist">{answer.ahead ? `${rupees(answer.ahead)} more than your next best card` : wallet.length > 1 ? 'Your other cards earn the same or less' : 'Add more cards to compare'}</p>
             </motion.div>
-          ) : result ? (
-            <motion.p key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="border-t border-rc-ink/10 px-5 py-4 text-[14px] text-rc-muted">
-              None of your cards has a published reward for this. Try the shop’s name, like “Swiggy” or “Amazon”.
+          ) : wallet.length > 0 ? (
+            <motion.p key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-6 text-[15px] text-rc-mist">
+              None of your cards publishes a reward for that shop. Try its name, like “Swiggy”.
             </motion.p>
-          ) : null}
+          ) : (
+            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-2">
+              <p className="font-serif text-[26px] font-semibold leading-tight">Your holder is empty.</p>
+              <p className="mt-1 text-[14px] text-rc-mist">Add the cards you own and we’ll pull out the right one for every spend.</p>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 
-      <div className="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden">
-        {QUICK.map((q) => (
-          <button
-            key={q.label}
-            type="button"
-            onClick={() => { setMerchant(q.merchant); setAmount(String(q.amount)); }}
-            className={cn('h-9 shrink-0 rounded-full border px-4 text-[13px] transition-colors', merchant === q.merchant ? 'border-rc-pistachio bg-rc-pistachio font-medium text-rc-ink' : 'border-white/15 text-rc-mist hover:border-white/40 hover:text-rc-cream')}
-          >
-            {q.label}
+      <div className="mt-4 w-full">
+        <WalletHolder cards={inHolder} pulledId={answer?.card.id ?? null} onPull={pull}>
+          <button type="button" onClick={() => setAdding(true)} className="inline-flex h-12 items-center gap-2 rounded-full bg-rc-cream pl-5 pr-2 text-[15px] font-medium text-rc-ink shadow-[0_20px_40px_-20px_rgba(0,0,0,0.8)]">
+            Add your first card <span className="flex h-9 w-9 items-center justify-center rounded-full bg-rc-ink text-rc-cream"><Plus size={17} /></span>
           </button>
-        ))}
+        </WalletHolder>
       </div>
-    </div>
-  ) : (
-    <Link to="/app/wallet" className="group inline-flex h-14 items-center gap-3 rounded-full bg-rc-cream pl-6 pr-2 text-[15px] font-medium text-rc-ink">
-      Add your cards <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rc-ink text-rc-cream"><Plus size={18} /></span>
-    </Link>
-  );
 
-  const shortcuts = [
-    { to: '/app/discover?tab=compare', icon: Scale, title: 'Compare cards', note: 'Two to four, side by side' },
-    { to: '/app/money?tab=subscriptions', icon: Repeat, title: 'Track a subscription', note: 'Reminded before it renews' },
-    { to: '/app/plan', icon: Plane, title: 'Plan a trip', note: 'Which card at every step' },
-    { to: '/cards', icon: Library, title: `Browse ${CATALOGUE_STATS.listed} cards`, note: 'Every Indian card we’ve read' },
-  ];
+      {wallet.length > 0 && (
+        <>
+          {/* what kind of spend */}
+          <div role="tablist" aria-label="Kind of spend" className={cn('-mx-5 mt-7 flex w-[calc(100%+2.5rem)] gap-1.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:w-full sm:flex-wrap sm:justify-center sm:px-0 [&::-webkit-scrollbar]:hidden', merchant.trim().length >= 2 && 'opacity-40')}>
+            {SPEND_CATEGORIES.map((c) => {
+              const on = !merchant && c.id === category;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={on}
+                  onClick={() => { setCategory(c.id); setMerchant(''); }}
+                  className={cn('relative h-9 shrink-0 rounded-full px-4 text-[13px] font-medium transition-colors duration-300', on ? 'text-rc-ink' : 'border border-white/10 text-rc-mist hover:border-white/30 hover:text-rc-cream')}
+                >
+                  {on && <motion.span layoutId="spend-pill" className="absolute inset-0 rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  <span className="relative">{c.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* or the exact shop and amount */}
+          <form onSubmit={(e) => e.preventDefault()} className="mt-3 flex h-12 w-full max-w-[460px] items-center rounded-full border border-white/12 bg-white/[0.05] pl-5 pr-1.5 text-[15px] focus-within:border-white/30">
+            <span className="text-rc-mist">₹</span>
+            <label className="sr-only" htmlFor="pay-amount">Amount</label>
+            <input
+              id="pay-amount"
+              inputMode="numeric"
+              value={amount ? amount.toLocaleString('en-IN') : ''}
+              onChange={(e) => setAmount(Math.min(1000000, Number(e.target.value.replace(/[^\d]/g, '')) || 0))}
+              style={{ width: `${Math.max(3, (amount ? amount.toLocaleString('en-IN') : '').length) + 0.5}ch` }}
+              className="ml-1 bg-transparent font-medium tabular-nums text-rc-cream outline-none"
+            />
+            <span className="mx-3 h-5 w-px bg-white/15" />
+            <span className="shrink-0 text-rc-mist">at</span>
+            <label className="sr-only" htmlFor="pay-shop">Shop</label>
+            <input
+              id="pay-shop"
+              value={merchant}
+              onChange={(e) => setMerchant(e.target.value)}
+              placeholder="any shop, e.g. Swiggy"
+              enterKeyHint="search"
+              className="ml-2 min-w-0 flex-1 bg-transparent text-rc-cream outline-none placeholder:text-rc-mist/60"
+            />
+            {merchant && (
+              <button type="button" onClick={() => setMerchant('')} aria-label="Clear shop" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-rc-mist hover:bg-white/10 hover:text-rc-cream">
+                <X size={16} />
+              </button>
+            )}
+          </form>
+        </>
+      )}
+    </div>
+  );
 
   return (
     <PageContainer
       eyebrow={new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-      title={<>{greeting}{firstName ? <>, <span className="italic">{firstName}.</span></> : '.'}</>}
-      subtitle={hasCards ? 'About to pay? Type the shop and the amount; we’ll pick the card that earns the most.' : 'Add the cards you own and RenoCred tells you which one to use every time you pay.'}
-      heroActions={whichCard}
+      title={<>{greeting}{firstName ? <>, <span className="italic">{firstName}</span></> : ''}. Paying for something?</>}
+      band={band}
+      center
     >
-      {/* the wallet in three numbers */}
-      {hasCards && (
-        <section aria-label="At a glance" className="grid grid-cols-3 gap-2.5 sm:gap-4">
-          {[
-            { to: '/app/wallet', value: userCards.length, label: userCards.length === 1 ? 'card' : 'cards' },
-            { to: '/app/money?tab=subscriptions', value: weekRenewals > 0 ? formatRupees(weekRenewals) : '₹0', label: 'renewing this week' },
-            { to: '/app/wallet', value: coverage ? `${coverage.overall}%` : '–', label: 'of the best rates' },
-          ].map((s) => (
-            <Link key={s.label} to={s.to} className="rounded-[22px] border border-rc-ink/[0.08] bg-rc-paper px-3.5 py-4 transition-colors hover:bg-white sm:px-5 sm:py-5">
-              <p className="truncate font-serif text-[24px] font-semibold leading-none tabular-nums lining-nums text-rc-ink sm:text-[32px]">{s.value}</p>
-              <p className="mt-2 text-[12px] leading-snug text-rc-muted sm:text-[13px]">{s.label}</p>
-            </Link>
-          ))}
-        </section>
-      )}
+      <section className="mx-auto w-full max-w-[720px]">
+        <Reveal>
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="font-serif text-[30px] font-semibold leading-none tracking-[-0.02em] text-rc-ink sm:text-[36px]">This week</h2>
+            {weekTotal > 0 && <p className="text-[14px] text-rc-muted"><span className="font-serif text-[20px] font-semibold text-rc-ink">{formatRupees(weekTotal)}</span> going out</p>}
+          </div>
+        </Reveal>
 
-      <div className="grid gap-9 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
-        {/* needs attention */}
-        <section>
-          <SectionHead title="Needs you" />
-          {attention.length === 0 ? (
-            <RowList>
-              <Row icon={CalendarClock} tone="good" title="You’re all caught up" note="Bills due and renewals this week show up here." />
-            </RowList>
-          ) : (
-            <RowList>
-              {attention.map((a) => (
-                <Row key={a.id} icon={a.icon} tone={a.tone} title={a.title} note={a.note} to={a.to} trailing={a.amount ? <Amount>{a.amount}</Amount> : undefined} />
-              ))}
-            </RowList>
-          )}
-        </section>
-
-        {/* shortcuts */}
-        <section>
-          <SectionHead title="Shortcuts" />
-          <ul className="grid grid-cols-2 gap-2.5 sm:gap-3">
-            {shortcuts.map((s) => (
-              <li key={s.to}>
-                <Link to={s.to} className="flex h-full flex-col rounded-[22px] border border-rc-ink/[0.08] bg-rc-paper p-4 transition-colors hover:bg-white">
-                  <IconTile icon={s.icon} tone="ink" className="h-10 w-10" />
-                  <span className="mt-4 text-[15px] font-semibold leading-snug text-rc-ink">{s.title}</span>
-                  <span className="mt-0.5 text-[13px] leading-snug text-rc-muted">{s.note}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      {/* your cards */}
-      <section>
-        <SectionHead title="Your cards" action={<HeadAction to="/app/wallet">{hasCards ? 'Manage' : 'Add a card'}</HeadAction>} />
-        {hasCards ? (
-          <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
-            {userCards.map((c) => {
-              const job = bestAt(c.id);
+        {week.length === 0 ? (
+          <Reveal delay={0.05}>
+            <div className="mt-5 flex items-center gap-4 rounded-[24px] bg-rc-pistachio/60 px-5 py-5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rc-forest text-rc-cream"><Check size={18} /></span>
+              <p className="text-[15px] leading-snug text-rc-ink">Nothing due in the next seven days. Card bills and subscriptions you track will show up here before they’re due.</p>
+            </div>
+          </Reveal>
+        ) : (
+          <ol className="relative mt-6">
+            <span aria-hidden className="absolute bottom-6 left-[27px] top-6 w-px bg-rc-ink/10" />
+            {week.map((w, i) => {
+              const d = new Date(`${w.date}T00:00:00+05:30`);
               return (
-                <li key={c.id} className="w-[78%] max-w-[300px] shrink-0 snap-start sm:w-auto sm:max-w-none">
-                  <Link to="/app/wallet" className="block rounded-[24px] border border-rc-ink/[0.08] bg-rc-paper p-2.5 transition-colors hover:bg-white">
-                    <CardFace name={c.label || 'Credit card'} bank={c.bank || ''} network={c.network} width={300} lifted={false} className="!h-auto !w-full aspect-[1.586]" />
-                    <p className="mt-3 truncate px-1.5 text-[15px] font-semibold text-rc-ink">{displayCardName(c.label || '')}</p>
-                    <p className="px-1.5 pb-1.5 text-[13px] text-rc-muted">{job ? `Best at ${job}` : 'No published rates'}</p>
-                  </Link>
-                </li>
+                <motion.li
+                  key={w.key}
+                  initial={reduce ? false : { opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.6 }}
+                  transition={{ duration: 0.45, ease: EASE_OUT, delay: i * 0.06 }}
+                  className="relative flex gap-4 pb-3"
+                >
+                  <div className={cn('relative z-10 flex h-[56px] w-[56px] shrink-0 flex-col items-center justify-center rounded-[18px] border', w.days <= 1 ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/10 bg-rc-paper text-rc-ink')}>
+                    <span className={cn('text-[10px] font-semibold uppercase tracking-[0.12em]', w.days <= 1 ? 'text-rc-pistachio' : 'text-rc-muted')}>{d.toLocaleDateString('en-IN', { weekday: 'short', timeZone: 'Asia/Kolkata' })}</span>
+                    <span className="font-serif text-[22px] font-semibold leading-none tabular-nums">{d.toLocaleDateString('en-IN', { day: 'numeric', timeZone: 'Asia/Kolkata' })}</span>
+                  </div>
+                  <div className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-[20px] border border-rc-ink/[0.08] bg-rc-paper px-4 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-[15px] font-medium text-rc-ink">{w.title}</p>
+                      <p className={cn('text-[13px]', w.overdue ? 'font-medium text-[#C2410C]' : 'text-rc-muted')}>
+                        {w.overdue ? 'Overdue' : w.kind === 'bill' ? (w.days === 0 ? 'Due today' : `Due in ${w.days} ${w.days === 1 ? 'day' : 'days'}`) : w.kind === 'trial' ? (w.days === 0 ? 'Trial ends today' : `Trial turns paid in ${w.days}d`) : (w.days === 0 ? 'Renews today' : `Renews in ${w.days} ${w.days === 1 ? 'day' : 'days'}`)}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className="font-serif text-[18px] font-semibold tabular-nums text-rc-ink">{formatRupees(w.amount)}</span>
+                      {w.kind === 'bill' ? (
+                        <button type="button" onClick={() => void markPaid(w.cardId, w.amount, w.title)} className="h-8 rounded-full bg-rc-ink px-3 text-[12px] font-medium text-rc-cream hover:bg-rc-moss">Paid</button>
+                      ) : w.cancelUrl ? (
+                        <a href={w.cancelUrl} target="_blank" rel="noopener noreferrer" aria-label={`Cancel ${w.title}`} className="flex h-8 items-center gap-1 rounded-full bg-rc-ink/[0.06] px-3 text-[12px] font-medium text-rc-ink hover:bg-rc-ink/[0.1]">Cancel <ArrowUpRight size={12} /></a>
+                      ) : null}
+                    </div>
+                  </div>
+                </motion.li>
               );
             })}
-          </ul>
-        ) : (
-          <EmptyState icon={CreditCard} title="Add your first card" note="Pick it from the catalogue. No card number needed." action={<HeadAction to="/app/wallet"><Plus size={14} /> Add a card</HeadAction>} />
+          </ol>
         )}
       </section>
+
+      <AnimatePresence>{adding && <AddCardModal onClose={() => setAdding(false)} />}</AnimatePresence>
     </PageContainer>
   );
 }

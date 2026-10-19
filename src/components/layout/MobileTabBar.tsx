@@ -34,13 +34,13 @@ export function MobileTabBar() {
               <Link
                 to={l.to}
                 aria-current={on ? 'page' : undefined}
-                className={cn('flex h-full flex-col items-center justify-center gap-1 text-[10.5px] font-medium transition-colors', on ? 'text-rc-cream' : 'text-rc-mist/70 active:text-rc-cream')}
+                className={cn('flex h-full flex-col items-center justify-center gap-1 text-[10px] font-medium tracking-[-0.01em] transition-colors', on ? 'text-rc-cream' : 'text-rc-mist/70 active:text-rc-cream')}
               >
                 <span className="relative flex h-7 w-12 items-center justify-center">
                   {on && <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
                   <Icon size={18} strokeWidth={on ? 2.2 : 1.8} className={cn('relative', on && 'text-rc-ink')} />
                 </span>
-                <span className="max-w-full truncate px-0.5">{SHORT[l.label] ?? l.label}</span>
+                <span className="max-w-full truncate">{SHORT[l.label] ?? l.label}</span>
               </Link>
             </li>
           );

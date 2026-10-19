@@ -1,177 +1,260 @@
 /**
- * Wallet: the cards you hold, what each is best at, and how close the wallet
- * comes to the best rates on the market for each kind of spend.
+ * Wallet: the cards you hold. Pick one from the stack and everything about it is
+ * right below: its limit and how much of it you're using, the bill date, what it
+ * earns where, the fine print, and removing it.
  */
-import { useMemo, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Plus, WalletCards } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useUser } from '@clerk/clerk-react';
+import { toast } from 'sonner';
+import { Plus } from 'lucide-react';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { useDashboardMutations } from '../../hooks/queries/useDashboardMutations';
-import type { CardData } from '../../features/cards/types/card.types';
 import { PageContainer } from '../../components/shared/PageContainer';
-import { EmptyState, HeadAction, Panel, Pill, SectionHead } from '../../components/shared/appUi';
 import AddCardModal from '../../features/dashboard/components/AddCardModal';
-import { CardDetailsModal } from '../../features/dashboard/components/CardDetailsModal';
-import { ArrowChip } from '../../public-platform/site/primitives';
-import { CardFan } from '../../public-platform/site/CardFan';
-import { CardFace, displayCardName } from '../../public-platform/site/CardFace';
-import { SPEND_CATEGORIES, cardsByIds, slugifyCardName } from '../../public-platform/site/swipeMath';
-import { walletCoverage } from './walletCoverage';
+import { bankLabel, displayCardName } from '../../public-platform/site/CardFace';
+import { EASE_OUT } from '../../public-platform/site/primitives';
+import { SPEND_CATEGORIES, cardsByIds } from '../../public-platform/site/swipeMath';
+import { formatRupees } from '../../features/money/lib/moneyMath';
+import { CardStack } from './wallet/CardStack';
 import { cn } from '../../lib/utils';
 
+const label = (id: string) => SPEND_CATEGORIES.find((c) => c.id === id)?.label ?? id;
+
 export default function WalletPage() {
+  const reduce = useReducedMotion();
   const { user } = useUser();
   const { deleteUserCard } = useDashboardMutations(user?.id);
   const userCards = useDashboardStore((s) => s.userCards);
+  const creditAccounts = useDashboardStore((s) => s.creditAccounts);
+  const setCardLimit = useDashboardStore((s) => s.setCardLimit);
+  const setCardDueDate = useDashboardStore((s) => s.setCardDueDate);
+
   const [adding, setAdding] = useState(false);
-  const [selected, setSelected] = useState<CardData | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(userCards[0]?.id ?? null);
+  const count = useRef(userCards.length);
 
-  // What a card is best at: its highest published category rate.
-  const bestJob = (cardId: string) => {
-    const [catalogCard] = cardsByIds([cardId]);
-    const top = [...(catalogCard?.rewards ?? [])].sort((x, y) => y.rate - x.rate)[0];
-    if (!top) return null;
-    return { label: (SPEND_CATEGORIES.find((c) => c.id === top.category)?.label ?? top.category).toLowerCase(), rate: top.rate };
-  };
+  // a new card comes to the front; a removed one hands over to the next
+  useEffect(() => {
+    if (userCards.length > count.current) setSelectedId(userCards[userCards.length - 1].id);
+    else if (!userCards.some((c) => c.id === selectedId)) setSelectedId(userCards[0]?.id ?? null);
+    count.current = userCards.length;
+  }, [userCards, selectedId]);
 
-  // How well the wallet covers each kind of spend, from published reward rates.
-  const coverage = useMemo(() => walletCoverage(userCards.map((c) => c.id)), [userCards]);
-  const total = userCards.length;
-  const active = userCards.filter((c) => c.status === 'active').length;
-  const topSpends = coverage?.rows.filter((r) => r.coverage === 100).length ?? 0;
+  const card = userCards.find((c) => c.id === selectedId) ?? null;
+  const facts = useMemo(() => (card ? cardsByIds([card.id])[0] ?? null : null), [card]);
+  const account = creditAccounts.find((a) => a.cardId === card?.id);
+  const best = facts ? [...facts.rewards].sort((a, b) => b.rate - a.rate)[0] : undefined;
+
+  const band = (
+    <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 md:grid-cols-[auto_minmax(0,1fr)] md:gap-14">
+      <div>
+        {userCards.length > 0 ? (
+          <CardStack cards={userCards} selectedId={selectedId} onSelect={setSelectedId} />
+        ) : (
+          <button type="button" onClick={() => setAdding(true)} className="mx-auto flex aspect-[1.586] w-[300px] flex-col items-center justify-center gap-3 rounded-[18px] border border-dashed border-white/20 text-rc-mist transition-colors hover:border-white/40 hover:text-rc-cream md:w-[340px]">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-rc-pistachio text-rc-ink"><Plus size={20} /></span>
+            <span className="text-[15px] font-medium">Add your first card</span>
+          </button>
+        )}
+      </div>
+
+      <div className="text-center md:text-left">
+        <AnimatePresence mode="wait" initial={false}>
+          {card ? (
+            <motion.div key={card.id} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: EASE_OUT }}>
+              <p className="text-[13px] text-rc-mist">{bankLabel(card.bank || '')}</p>
+              <p className="mt-1 font-serif text-[30px] font-semibold leading-[1.05] tracking-[-0.02em] md:text-[40px]">{displayCardName(card.label || 'Card')}</p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2 md:justify-start">
+                {best && <span className="rounded-full bg-rc-pistachio px-3 py-1.5 text-[13px] font-semibold text-rc-ink">Best at {label(best.category).toLowerCase()}, {best.rate}%</span>}
+                <span className="rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-rc-mist">{card.creditLimit > 0 ? `${formatRupees(card.creditLimit)} limit` : 'Limit not added'}</span>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div key="none" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <p className="font-serif text-[28px] font-semibold leading-tight">Nothing here yet.</p>
+              <p className="mt-2 text-[15px] text-rc-mist">Pick your cards from the catalogue. No card number needed.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {userCards.length > 0 && (
+          <button type="button" onClick={() => setAdding(true)} className="mt-6 inline-flex h-11 items-center gap-2 rounded-full border border-white/15 pl-4 pr-5 text-[14px] font-medium text-rc-cream transition-colors hover:bg-white/10">
+            <Plus size={16} /> Add a card
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <PageContainer
-      eyebrow="Wallet"
-      title={total > 0 ? <>Every card, <span className="italic">one job each.</span></> : <>Your wallet, <span className="italic">waiting.</span></>}
-      subtitle={total > 0
-        ? 'What each of your cards is best at, so the right one comes out at the till.'
-        : 'Add the cards you own and RenoCred works out which one to use for each kind of spend.'}
-      heroStats={total > 0 ? [
-        { value: active, label: active === 1 ? 'active card' : 'active cards' },
-        ...(coverage ? [{ value: `${coverage.overall}%`, label: 'of the best rates' }] : []),
-        ...(coverage ? [{ value: topSpends, label: topSpends === 1 ? 'spend you top' : 'spends you top' }] : []),
-      ] : undefined}
-      heroActions={(
-        <button type="button" onClick={() => setAdding(true)} className="group inline-flex h-12 items-center gap-3 rounded-full bg-rc-cream pl-6 pr-1.5 text-[14px] font-medium text-rc-ink transition-colors hover:bg-white">
-          Add a card <ArrowChip variant="cream" size="md" />
-        </button>
-      )}
-      heroAside={total > 0 ? (
-        <CardFan width={180} cards={userCards.slice(0, 5).map((c) => ({ id: c.id, name: c.label || 'Credit card', bank: c.bank || '', network: c.network }))} />
-      ) : undefined}
+      eyebrow={userCards.length > 0 ? `${userCards.length} ${userCards.length === 1 ? 'card' : 'cards'} in your wallet` : 'Wallet'}
+      title={userCards.length > 0 ? <>Your <span className="italic">wallet.</span></> : <>Your wallet is <span className="italic">empty.</span></>}
+      band={band}
     >
-      {/* the cards: a swipeable row on phones, a grid on wider screens */}
-      <section>
-        <SectionHead title="Your cards" note={total > 0 ? 'Tap a card to add its limit or remove it.' : undefined} action={total > 0 && <HeadAction onClick={() => setAdding(true)}><Plus size={14} /> Add</HeadAction>} />
-        {total === 0 ? (
-          <EmptyState icon={WalletCards} title="Add your first card" note="Pick it from the catalogue. No card number needed." action={<Pill onClick={() => setAdding(true)}><Plus size={16} /> Add a card</Pill>} />
-        ) : (
-          <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
-            {userCards.map((card) => {
-              const job = bestJob(card.id);
-              return (
-                <li key={card.id} className="w-[84%] max-w-[340px] shrink-0 snap-start sm:w-auto sm:max-w-none">
-                  <button
-                    type="button"
-                    onClick={() => setSelected(card)}
-                    className={cn(
-                      'group block w-full rounded-[26px] border border-rc-ink/[0.08] bg-rc-paper p-2.5 text-left transition-[transform,box-shadow,background-color] duration-500 hover:-translate-y-1 hover:bg-white hover:shadow-[0_30px_60px_-36px_rgba(15,42,29,0.45)]',
-                      card.status !== 'active' && 'opacity-60 grayscale',
-                    )}
-                  >
-                    <CardFace name={card.label || 'Credit card'} bank={card.bank || ''} network={card.network} width={340} lifted={false} className="!h-auto !w-full aspect-[1.586]" />
-                    <div className="px-2 pb-1.5 pt-3.5">
-                      <p className="truncate text-[16px] font-semibold leading-tight text-rc-ink">{displayCardName(card.label || '')}</p>
-                      <div className="mt-2 flex items-center justify-between gap-2 text-[13px]">
-                        {job ? (
-                          <span className="truncate rounded-full bg-rc-pistachio px-2.5 py-1 font-medium text-rc-forest">Best at {job.label}, {job.rate}%</span>
-                        ) : (
-                          <span className="truncate rounded-full bg-rc-ink/[0.06] px-2.5 py-1 text-rc-muted">No published rates</span>
-                        )}
-                        <span className={cn('shrink-0', card.creditLimit > 0 ? 'text-rc-muted' : 'font-medium text-rc-forest')}>
-                          {card.creditLimit > 0 ? `₹${(card.creditLimit / 100).toLocaleString('en-IN')}` : '+ Limit'}
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      <AnimatePresence mode="wait" initial={false}>
+        {card && (
+          <motion.div
+            key={card.id}
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.35, ease: EASE_OUT }}
+            className="grid gap-5 lg:grid-cols-2 lg:gap-6"
+          >
+            <LimitAndBill
+              key={`lb-${card.id}`}
+              limitPaise={card.creditLimit}
+              balancePaise={account?.currentBalance ?? 0}
+              dueDate={account?.paymentDueDate ?? ''}
+              onSaveLimit={(p) => setCardLimit(card.id, p)}
+              onSaveDue={(d) => setCardDueDate(card.id, d)}
+            />
 
-      {coverage && (
-        <div className="grid gap-9 lg:grid-cols-[1.25fr_1fr] lg:gap-10">
-          {/* each spend: your best card and rate, against the best on the market */}
-          <section>
-            <SectionHead title="Which card, for what" note="Your best card for each spend, and how its rate compares with the best on the market." />
-            <Panel as="ul" className="divide-y divide-rc-ink/[0.07]">
-              {coverage.rows.map((row) => (
-                <li key={row.category} className="px-4 py-3.5 sm:px-5">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <p className="text-[15px] font-medium text-rc-ink">{row.label}</p>
-                    <p className="shrink-0 text-[13px] tabular-nums text-rc-muted">
-                      <span className="font-serif text-[18px] font-semibold text-rc-ink">{row.yourRate}%</span> of {row.marketRate}%
-                    </p>
-                  </div>
-                  <p className="mt-0.5 truncate text-[13px] text-rc-muted">{row.yourCard ? displayCardName(row.yourCard.name) : 'None of your cards earns extra here'}</p>
-                  <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-rc-ink/[0.08]">
-                    <div className={cn('h-full rounded-full transition-[width] duration-1000 ease-out', row.coverage === 100 ? 'bg-rc-forest' : 'bg-rc-sage')} style={{ width: `${Math.max(row.coverage, 3)}%` }} />
-                  </div>
-                </li>
-              ))}
-            </Panel>
-          </section>
-
-          {/* the biggest gap, and the card that would close it */}
-          <section className="lg:pt-[76px]">
-            {coverage.gap ? (
-              <div className="relative overflow-hidden rounded-[28px] bg-rc-ink p-6 text-rc-cream sm:p-7">
-                <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.16),transparent)]" />
-                <p className="relative text-[13px] font-medium text-rc-pistachio">Most to gain: {coverage.gap.label.toLowerCase()}</p>
-                <div className="relative mt-5 flex items-center gap-4">
-                  <CardFace name={coverage.gap.marketCard!.name} bank={coverage.gap.marketCard!.bank} network={coverage.gap.marketCard!.network} width={110} className="-rotate-3" />
-                  <div className="min-w-0">
-                    <p className="font-serif text-[21px] font-semibold leading-tight">{displayCardName(coverage.gap.marketCard!.name)}</p>
-                    <p className="mt-1 text-[14px] text-rc-mist">{coverage.gap.marketCard!.bank}</p>
-                  </div>
-                </div>
-                <p className="relative mt-5 text-[15px] leading-relaxed text-rc-mist">
-                  <span className="font-semibold text-rc-cream">{coverage.gap.marketRate}%</span> on {coverage.gap.label.toLowerCase()}, against <span className="font-semibold text-rc-cream">{coverage.gap.yourRate}%</span> from your best card today.
-                </p>
-                <Link to={`/cards/${slugifyCardName(coverage.gap.marketCard!.name)}`} className="relative mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-rc-cream px-5 text-[14px] font-medium text-rc-ink hover:bg-white">
-                  See the card <ArrowRight size={15} />
-                </Link>
-              </div>
+            {facts ? (
+              <section className="rounded-[26px] border border-rc-ink/[0.08] bg-rc-paper p-5 sm:p-6">
+                <h2 className="font-serif text-[24px] font-semibold tracking-[-0.01em] text-rc-ink">What it earns</h2>
+                <EarnBars rates={[...facts.rewards.map((r) => ({ k: label(r.category), v: r.rate })), ...(facts.baseRewardRate != null ? [{ k: 'Everything else', v: facts.baseRewardRate }] : [])]} />
+                <dl className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 border-t border-dashed border-rc-ink/15 pt-5 text-[14px]">
+                  <Fact k="Annual fee" v={facts.annualFee === 0 ? 'Lifetime free' : facts.annualFee == null ? 'Not published' : formatRupees(facts.annualFee * 100)} />
+                  <Fact k="Fee waived after" v={facts.annualFee === 0 ? 'No fee to waive' : facts.feeWaiverSpend ? `${formatRupees(facts.feeWaiverSpend * 100)} a year` : 'No waiver'} />
+                  <Fact k="Lounge visits" v={facts.loungeAccess ? `${facts.loungeAccess} a year` : 'None'} />
+                  <Fact k="Network" v={facts.network} />
+                </dl>
+              </section>
             ) : (
-              <div className="rounded-[28px] bg-rc-pistachio p-6 sm:p-7">
-                <p className="font-serif text-[22px] font-semibold text-rc-ink">Your wallet is close to the best on the market.</p>
-                <p className="mt-2 text-[15px] text-rc-ink/70">No single card would add a point or more on any kind of spend.</p>
-              </div>
+              <section className="rounded-[26px] border border-dashed border-rc-ink/15 p-6 text-[15px] text-rc-muted">We don’t hold this card’s reward rates yet.</section>
             )}
-            <Link to="/app/discover" className="mt-3 flex items-center justify-between rounded-[22px] border border-rc-ink/[0.08] bg-rc-paper px-5 py-4 text-[15px] font-medium text-rc-ink hover:bg-white">
-              See all picks for you <ArrowRight size={16} className="text-rc-forest" />
-            </Link>
-          </section>
-        </div>
-      )}
 
-      <AnimatePresence>
-        {adding && <AddCardModal onClose={() => setAdding(false)} />}
-      </AnimatePresence>
-      <AnimatePresence>
-        {selected && (
-          <CardDetailsModal
-            card={selected}
-            onClose={() => setSelected(null)}
-            onRemove={async () => { await deleteUserCard.mutateAsync(selected.id); }}
-          />
+            <RemoveCard name={displayCardName(card.label || 'this card')} onRemove={async () => { await deleteUserCard.mutateAsync(card.id); }} />
+          </motion.div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>{adding && <AddCardModal onClose={() => setAdding(false)} />}</AnimatePresence>
     </PageContainer>
+  );
+}
+
+function Fact({ k, v }: { k: string; v: string }) {
+  return (
+    <div>
+      <dt className="text-[12px] text-rc-muted">{k}</dt>
+      <dd className="mt-0.5 font-medium text-rc-ink">{v}</dd>
+    </div>
+  );
+}
+
+/** Rates as bars, longest first, growing in when they come into view. */
+function EarnBars({ rates }: { rates: { k: string; v: number }[] }) {
+  const reduce = useReducedMotion();
+  const sorted = [...rates].sort((a, b) => b.v - a.v);
+  const max = Math.max(1, ...sorted.map((r) => r.v));
+  return (
+    <ul className="mt-4 space-y-3">
+      {sorted.map((r, i) => (
+        <li key={r.k} className="grid grid-cols-[7.5rem_1fr_3rem] items-center gap-3 text-[14px]">
+          <span className="truncate text-rc-ink">{r.k}</span>
+          <span className="h-2 overflow-hidden rounded-full bg-rc-ink/[0.07]">
+            <motion.span
+              className={cn('block h-full rounded-full', i === 0 ? 'bg-rc-forest' : 'bg-rc-sage/70')}
+              initial={reduce ? false : { width: 0 }}
+              whileInView={{ width: `${(r.v / max) * 100}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.1 + i * 0.05 }}
+            />
+          </span>
+          <span className="text-right text-[15px] font-semibold tabular-nums text-rc-ink">{r.v}%</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function LimitAndBill({ limitPaise, balancePaise, dueDate, onSaveLimit, onSaveDue }: {
+  limitPaise: number; balancePaise: number; dueDate: string;
+  onSaveLimit: (paise: number) => Promise<void>; onSaveDue: (date: string | null) => Promise<void>;
+}) {
+  const reduce = useReducedMotion();
+  const [limit, setLimit] = useState(limitPaise > 0 ? String(Math.round(limitPaise / 100)) : '');
+  const [saving, setSaving] = useState(false);
+  const rupees = Number(limit || 0);
+  const changed = rupees > 0 && rupees * 100 !== limitPaise;
+  const used = limitPaise > 0 ? Math.min(1, balancePaise / limitPaise) : 0;
+
+  const save = async () => {
+    setSaving(true);
+    try { await onSaveLimit(rupees * 100); toast.success('Limit saved'); } catch { toast.error('Couldn’t save the limit'); } finally { setSaving(false); }
+  };
+
+  return (
+    <section className="rounded-[26px] bg-rc-ink p-5 text-rc-cream sm:p-6">
+      <h2 className="font-serif text-[24px] font-semibold tracking-[-0.01em]">Limit and bill</h2>
+
+      {/* how much of the limit is in use */}
+      <div className="mt-5">
+        {limitPaise > 0 ? (
+          <>
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="font-serif text-[34px] font-semibold leading-none tabular-nums text-rc-pistachio">{Math.round(used * 100)}%</p>
+              <p className="text-[13px] text-rc-mist">{formatRupees(balancePaise)} of {formatRupees(limitPaise)} used</p>
+            </div>
+            <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/10">
+              <motion.div className={cn('h-full rounded-full', used > 0.3 ? 'bg-[#E9B872]' : 'bg-rc-pistachio')} initial={reduce ? false : { width: 0 }} animate={{ width: `${Math.max(1.5, used * 100)}%` }} transition={{ duration: 0.9, ease: EASE_OUT }} />
+            </div>
+            <p className="mt-2 text-[13px] text-rc-mist">{used > 0.3 ? 'Above 30% can weigh on your credit score. Paying early brings it down.' : 'Under 30%, which keeps your credit score healthy.'}</p>
+          </>
+        ) : (
+          <p className="text-[14px] leading-relaxed text-rc-mist">Add the limit (it’s on your statement or in your bank’s app) to see how much of it you’re using.</p>
+        )}
+      </div>
+
+      <form onSubmit={(e) => { e.preventDefault(); if (changed) void save(); }} className="mt-5">
+        <label htmlFor="limit" className="text-[13px] text-rc-mist">Credit limit</label>
+        <div className="mt-1.5 flex gap-2">
+          <div className="flex h-12 flex-1 items-center rounded-full bg-white/[0.07] px-4 focus-within:bg-white/[0.1]">
+            <span className="text-rc-mist">₹</span>
+            <input id="limit" inputMode="numeric" value={limit ? Number(limit).toLocaleString('en-IN') : ''} onChange={(e) => setLimit(e.target.value.replace(/[^\d]/g, '').slice(0, 9))} placeholder="e.g. 2,00,000" className="ml-1.5 w-full bg-transparent text-[16px] tabular-nums outline-none placeholder:text-rc-mist/50" />
+          </div>
+          <AnimatePresence>
+            {changed && (
+              <motion.button initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: 'auto' }} exit={{ opacity: 0, width: 0 }} type="submit" disabled={saving} className="h-12 overflow-hidden whitespace-nowrap rounded-full bg-rc-pistachio px-5 text-[14px] font-semibold text-rc-ink">
+                {saving ? 'Saving' : 'Save'}
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
+      </form>
+
+      <label className="mt-4 block">
+        <span className="text-[13px] text-rc-mist">Next bill due on</span>
+        <input
+          type="date"
+          value={dueDate ? dueDate.slice(0, 10) : ''}
+          onChange={(e) => { void onSaveDue(e.target.value || null).then(() => toast.success(e.target.value ? 'We’ll remind you before it’s due' : 'Due date cleared')); }}
+          className="mt-1.5 h-12 w-full rounded-full bg-white/[0.07] px-4 text-[16px] text-rc-cream outline-none [color-scheme:dark] focus:bg-white/[0.1]"
+        />
+      </label>
+    </section>
+  );
+}
+
+function RemoveCard({ name, onRemove }: { name: string; onRemove: () => Promise<void> }) {
+  const [confirm, setConfirm] = useState(false);
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 lg:col-span-2">
+      <p className="text-[13px] text-rc-muted">Cancelled it, or never had it? Removing it here doesn’t touch your bank account.</p>
+      {confirm ? (
+        <span className="flex gap-2">
+          <button type="button" onClick={() => setConfirm(false)} className="h-10 rounded-full px-4 text-[14px] text-rc-muted hover:text-rc-ink">Keep</button>
+          <button type="button" disabled={busy} onClick={async () => { setBusy(true); try { await onRemove(); toast.success(`${name} removed`); } catch { toast.error('Couldn’t remove it'); setBusy(false); } }} className="h-10 rounded-full bg-[#C2410C] px-4 text-[14px] font-medium text-white">
+            {busy ? 'Removing' : `Remove ${name}`}
+          </button>
+        </span>
+      ) : (
+        <button type="button" onClick={() => setConfirm(true)} className="h-10 rounded-full border border-rc-ink/15 px-4 text-[14px] text-rc-ink hover:border-[#C2410C]/50 hover:text-[#C2410C]">Remove card</button>
+      )}
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import './lib/env' // 🚨 VALIDATE ENV VARS FIRST 🚨
-import { StrictMode, lazy, Suspense, useEffect } from 'react'
+import { StrictMode, useLayoutEffect, lazy, Suspense, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -8,7 +8,8 @@ import { HomePage } from './public-platform/pages/HomePage';
 import { NotFoundPage } from './public-platform/pages/NotFoundPage';
 
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { BrandLoader } from './components/BrandLoader'
+import { LoaderHold } from './components/BrandLoader'
+import { holdLoaderNow, releaseLoader } from './lib/bootLoader'
 import { useLocation } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { ScrollToTop } from './components/ScrollToTop'
@@ -67,11 +68,23 @@ function DeferredAnalytics() {
   return null;
 }
 
-/** Signed-in pages get the branded loader; public pages a plain dark fill (they load in a blink). */
+/** Signed-in pages hold the loading screen; public pages a plain dark fill (they load in a blink). */
 function RouteFallback() {
   const { pathname } = useLocation();
-  if (pathname.startsWith('/app')) return <BrandLoader label={pathname.includes('sign-') ? 'Opening sign-in' : 'Getting your cards ready'} />;
+  if (pathname.startsWith('/app')) return <LoaderHold />;
   return <div className="min-h-[100dvh] bg-rc-night" />;
+}
+
+// A direct visit to a signed-in page: show the loading screen from the first frame,
+// and hand it over to whatever is loading once React has rendered.
+const bootHeld = window.location.pathname.startsWith('/app');
+if (bootHeld) holdLoaderNow();
+
+function BootRelease() {
+  useLayoutEffect(() => {
+    if (bootHeld) releaseLoader();
+  }, []);
+  return null;
 }
 
 const appContent = (
@@ -115,6 +128,7 @@ const appContent = (
         <Route path="*" element={<PublicLayout><NotFoundPage /></PublicLayout>} />
       </Routes>
     </Suspense>
+    <BootRelease />
     <Toaster theme="dark" position="top-center" />
   </BrowserRouter>
 );

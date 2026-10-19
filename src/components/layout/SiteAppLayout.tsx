@@ -5,26 +5,43 @@
  * one tap away, and Taqdeer opens from the page header instead of a floating
  * button that would sit over the content.
  */
-import { Suspense, createContext, useContext, useState, type ReactNode } from 'react';
+import { Suspense, createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { PublicHeader } from '../../public-platform/components/PublicHeader';
 import { PublicFooter } from '../../public-platform/components/PublicFooter';
 import { GlobalTaqdeerButton } from '../../features/taqdeer/components/GlobalTaqdeerButton';
 import { TaqdeerDrawer } from '../../features/taqdeer/components/TaqdeerDrawer';
 import { MobileTabBar } from './MobileTabBar';
+import { LoaderHold } from '../BrandLoader';
 
 const AskContext = createContext<(() => void) | null>(null);
 
 /** Opens Taqdeer, when inside the signed-in layout. */
 export const useAskTaqdeer = () => useContext(AskContext);
 
+/** The six sections, fetched while the first one is read so switching is instant. */
+const SECTIONS = [
+  () => import('../../pages/app/HomePage'),
+  () => import('../../pages/app/WalletPage'),
+  () => import('../../pages/app/money/MoneyManagerPage'),
+  () => import('../../pages/app/DiscoverPage'),
+  () => import('../../pages/marketplace/MarketplaceHome'),
+  () => import('../../pages/app/AccountPage'),
+];
+
 export function SiteAppLayout({ children }: { children: ReactNode }) {
   const [askOpen, setAskOpen] = useState(false);
+  useEffect(() => {
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    const warm = () => SECTIONS.forEach((load) => void load().catch(() => undefined));
+    const t = setTimeout(() => (w.requestIdleCallback ? w.requestIdleCallback(warm) : warm()), 1200);
+    return () => clearTimeout(t);
+  }, []);
   return (
     <AskContext.Provider value={() => setAskOpen(true)}>
       <div className="flex min-h-[100dvh] flex-col bg-rc-night pb-[calc(64px+env(safe-area-inset-bottom))] font-sans text-rc-cream selection:bg-rc-pistachio selection:text-rc-ink md:pb-0">
         <PublicHeader />
         <main className="flex flex-1 flex-col">
-          <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
+          <Suspense fallback={<LoaderHold />}>{children}</Suspense>
         </main>
         <PublicFooter />
         <div className="hidden md:block">
@@ -34,17 +51,5 @@ export function SiteAppLayout({ children }: { children: ReactNode }) {
         <TaqdeerDrawer isOpen={askOpen} onClose={() => setAskOpen(false)} />
       </div>
     </AskContext.Provider>
-  );
-}
-
-export function PageSkeleton() {
-  return (
-    <div className="flex flex-1 flex-col">
-      <div className="mx-auto w-full max-w-[1280px] px-5 pb-20 pt-10 sm:px-8 lg:px-12">
-        <div className="h-3 w-24 animate-pulse rounded-full bg-white/10" />
-        <div className="mt-6 h-12 w-2/3 max-w-xl animate-pulse rounded-2xl bg-white/10" />
-      </div>
-      <div className="flex-1 rounded-t-[32px] bg-rc-cream lg:rounded-t-[56px]" />
-    </div>
   );
 }

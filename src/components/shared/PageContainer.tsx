@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
-import { AppHero, MyNav, type HeroStat } from './AppHero';
+import { AppBand, AppHero, MyNav, type HeroStat } from './AppHero';
 import { Container } from '../../public-platform/site/primitives';
 
 export interface PageContainerProps {
@@ -18,6 +18,10 @@ export interface PageContainerProps {
   hideHeader?: boolean;
   /** render just the content, inside another page (a tab of Money, say) */
   bare?: boolean;
+  /** the page's own visual on the dark band; with it, the title is compact */
+  band?: ReactNode;
+  /** centre the compact title over the band (wide screens) */
+  center?: boolean;
 }
 
 /**
@@ -35,13 +39,17 @@ export function PageContainer({
   className,
   hideHeader = false,
   bare = false,
+  band,
+  center,
 }: PageContainerProps) {
   if (bare) return <div className={cn('flex w-full flex-col gap-8', className)}>{children}</div>;
-  const hero = !hideHeader && title;
+  const hero = !hideHeader && (title || band);
   return (
     <div className="flex w-full flex-1 flex-col">
-      {hero ? (
-        <AppHero eyebrow={eyebrow} title={title} lede={subtitle} stats={heroStats} actions={heroActions} aside={heroAside} />
+      {band !== undefined ? (
+        <AppBand eyebrow={eyebrow} title={title} center={center}>{band}</AppBand>
+      ) : hero ? (
+        <AppHero eyebrow={eyebrow} title={title!} lede={subtitle} stats={heroStats} actions={heroActions} aside={heroAside} />
       ) : (
         <Container className="pt-6"><MyNav /></Container>
       )}

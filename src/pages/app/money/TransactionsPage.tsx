@@ -13,7 +13,7 @@ import { CATEGORY_STYLES } from '../../../features/cards/components/CategoryIcon
 import type { Transaction, TransactionCategory } from '../../../features/dashboard/types/dashboard.types';
 import { evaluatePayment } from '../../../features/financial-engine/rewardsApi';
 import { displayCardName } from '../../../public-platform/site/CardFace';
-import { Amount, EmptyState, HeadAction, Pill, RowList, SectionHead } from '../../../components/shared/appUi';
+import { Amount, EmptyState, HeadAction, Pill, RowList } from '../../../components/shared/appUi';
 import { cn } from '../../../lib/utils';
 
 type Filter = 'ALL' | 'SPENT' | 'IN' | 'CARD_PAYMENTS';
@@ -83,7 +83,12 @@ export default function TransactionsPage({ embedded = false }: { embedded?: bool
   return (
     <PageContainer bare={embedded} eyebrow="Money" title={<>Where it <span className="italic">went.</span></>} subtitle="Your recent spending, by card and category." className="pb-safe">
       <div className="max-w-[760px] space-y-5">
-        <SectionHead title="Activity" action={!log && <HeadAction onClick={openLog}><Plus size={14} /> Log a spend</HeadAction>} className="mb-0" />
+        {transactions.length > 0 && (
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[14px] text-rc-muted">Newest first. Logged spends feed what’s safe to spend and your picks.</p>
+            {!log && <HeadAction onClick={openLog}><Plus size={14} /> Log a spend</HeadAction>}
+          </div>
+        )}
 
         <AnimatePresence initial={false}>
           {log && (

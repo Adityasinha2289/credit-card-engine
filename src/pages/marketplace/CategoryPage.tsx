@@ -88,7 +88,7 @@ export default function CategoryPage() {
               {[0, 1, 2, 3].map((i) => <div key={i} className="h-[120px] animate-pulse rounded-[22px] bg-rc-ink/[0.05]" />)}
             </div>
           ) : offers.length === 0 ? (
-            <EmptyState icon={Store} title="No partners here yet" note="We add partners as deals are confirmed. Until then, the card on the right is how to earn most here." />
+            <EmptyState icon={Store} title="No partners here yet" note="We add partners as deals are confirmed. Until then, the card shown here is how to earn most on this kind of spend." />
           ) : (
             <ul className="grid gap-3 sm:grid-cols-2">
               {offers.map((o) => <li key={o.id}><OfferCard offer={o} /></li>)}
@@ -104,7 +104,7 @@ export default function CategoryPage() {
                 <div className="mt-3 flex items-center gap-3">
                   <CardFace name={cardTip.mine.card.name} bank={cardTip.mine.card.bank} network={cardTip.mine.card.network} width={72} lifted={false} />
                   <p className="min-w-0 flex-1 truncate text-[15px] font-semibold text-rc-ink">{displayCardName(cardTip.mine.card.name)}</p>
-                  <p className="font-serif text-[22px] font-semibold text-rc-forest">{cardTip.mine.rate}%</p>
+                  <p className="text-[20px] font-semibold tabular-nums text-rc-forest">{cardTip.mine.rate}%</p>
                 </div>
               </Panel>
             )}
@@ -114,7 +114,7 @@ export default function CategoryPage() {
                 <div className="mt-3 flex items-center gap-3">
                   <CardFace name={cardTip.market.card.name} bank={cardTip.market.card.bank} network={cardTip.market.card.network} width={72} lifted={false} />
                   <p className="min-w-0 flex-1 truncate text-[15px] font-semibold">{displayCardName(cardTip.market.card.name)}</p>
-                  <p className="font-serif text-[22px] font-semibold text-rc-pistachio">{cardTip.market.rate}%</p>
+                  <p className="text-[20px] font-semibold tabular-nums text-rc-pistachio">{cardTip.market.rate}%</p>
                 </div>
               </Link>
             )}

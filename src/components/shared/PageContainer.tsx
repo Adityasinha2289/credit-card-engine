@@ -45,8 +45,8 @@ export function PageContainer({
       ) : (
         <Container className="pt-6"><MyNav /></Container>
       )}
-      <div className={cn('relative z-10 flex-1 rounded-t-[40px] bg-rc-cream pb-28 text-rc-ink lg:rounded-t-[56px]', hero ? '-mt-12 lg:-mt-14' : '')}>
-        <Container className={cn('flex flex-col gap-10 pt-10 lg:pt-14', className)}>
+      <div className={cn('relative z-10 flex-1 rounded-t-[32px] bg-rc-cream pb-20 text-rc-ink sm:rounded-t-[40px] md:pb-28 lg:rounded-t-[56px]', hero ? '-mt-10 md:-mt-12 lg:-mt-14' : '')}>
+        <Container className={cn('flex flex-col gap-9 pt-7 md:gap-10 md:pt-10 lg:pt-14', className)}>
           {children}
         </Container>
       </div>

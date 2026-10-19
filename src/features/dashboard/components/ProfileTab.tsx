@@ -1,31 +1,59 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Sparkles } from 'lucide-react';
+/**
+ * Your profile: the details RenoCred ranks cards on. Grouped into short panels,
+ * nothing pre-filled that the user didn't tell us, and a save bar that appears
+ * only when something changed.
+ */
+import { useMemo, useState, type ReactNode } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check } from 'lucide-react';
+import { toast } from 'sonner';
 import { cn } from '../../../lib/utils';
 import { useDashboardStore } from '../store/dashboardStore';
-import type { UserSegment, PrimaryGoal, Occupation } from '../types/dashboard.types';
+import type { Occupation, PrimaryGoal } from '../types/dashboard.types';
 import { PageContainer } from '../../../components/shared/PageContainer';
-import { ShareableScorecard } from './ShareableScorecard';
+import { Panel, Pill } from '../../../components/shared/appUi';
 import { PRIMARY_GOALS, normalizeGoal } from '../../../config/goals';
+import { CATEGORIES_LIST } from '../../finix/lib/recommendEngine';
 
-const AVATAR_SEEDS = ['Atharva', 'Aria', 'Kabir', 'Zoe', 'Rohan', 'Elena'];
+const OCCUPATIONS: Occupation[] = ['Salaried', 'Self-employed', 'Business Owner', 'Student', 'Other'];
 
-const OCCUPATION_LIST: Occupation[] = [
-  'Student',
-  'Salaried',
-  'Self-employed',
-  'Business Owner',
-  'Other',
-];
+const digits = (s: string) => s.replace(/[^\d]/g, '');
+const lakhs = (n: number) => (n >= 100000 ? `₹${(n / 100000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} lakh a year` : '');
 
-function formatINR(val: number) {
-  if (val >= 10000000) {
-    return `₹${(val / 10000000).toFixed(1)} Cr`;
-  }
-  if (val >= 100000) {
-    return `₹${(val / 100000).toFixed(1)} Lakh`;
-  }
-  return `₹${val.toLocaleString('en-IN')}`;
+function Field({ label, hint, children }: { label: string; hint?: ReactNode; children: ReactNode }) {
+  return (
+    <label className="block px-4 py-3.5 sm:px-5">
+      <span className="block text-[13px] font-medium text-rc-muted">{label}</span>
+      {children}
+      {hint && <span className="mt-1 block text-[12px] text-rc-muted">{hint}</span>}
+    </label>
+  );
+}
+
+const inputCls = 'mt-1 h-10 w-full bg-transparent text-[16px] text-rc-ink outline-none placeholder:text-rc-ink/35';
+
+function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={cn('inline-flex h-10 items-center gap-1.5 rounded-full border px-4 text-[14px] transition-colors', on ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/15 bg-white text-rc-ink hover:border-rc-ink/35')}
+    >
+      {on && <Check size={14} className="text-rc-pistachio" />}
+      {children}
+    </button>
+  );
+}
+
+function Group({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
+  return (
+    <section>
+      <h3 className="text-[15px] font-semibold text-rc-ink">{title}</h3>
+      {note && <p className="mt-0.5 text-[13px] text-rc-muted">{note}</p>}
+      <div className="mt-3">{children}</div>
+    </section>
+  );
 }
 
 /** `embedded`: the form without its own page frame, inside Account. */
@@ -33,486 +61,150 @@ export function ProfileTab({ embedded = false }: { embedded?: boolean } = {}) {
   const profile = useDashboardStore((s) => s.profile);
   const updateProfile = useDashboardStore((s) => s.updateProfile);
 
-  const [name, setName] = useState(profile?.name || '');
-  const [email, setEmail] = useState(profile?.email || '');
-  const [phone, setPhone] = useState(profile?.phone || '');
-  const [avatarSeed, setAvatarSeed] = useState(() => {
-    if (!profile?.avatar) return AVATAR_SEEDS[0];
-    const match = profile.avatar.match(/seed=([^&]+)/);
-    return match ? match[1] : AVATAR_SEEDS[0];
-  });
+  const initial = useMemo(() => ({
+    name: profile?.name ?? '',
+    phone: profile?.phone ?? '',
+    city: profile?.city ?? '',
+    occupation: profile?.occupation,
+    salary: profile?.salary ? String(profile.salary) : '',
+    creditScore: profile?.creditScore ? String(profile.creditScore) : '',
+    primaryGoal: (normalizeGoal(profile?.primaryGoal) as PrimaryGoal | undefined) ?? 'maximize_rewards',
+    spendCategories: profile?.spendCategories ?? [],
+  }), [profile]);
 
-  const [salary, setSalary] = useState(profile?.salary || 1500000);
-  const [salaryInput, setSalaryInput] = useState(() => (profile?.salary || 1500000).toString());
+  const [form, setForm] = useState(initial);
+  const [saving, setSaving] = useState(false);
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
+  const dirty = JSON.stringify(form) !== JSON.stringify(initial);
 
-  const [creditScore, setCreditScore] = useState(profile?.creditScore || 750);
-  const [creditInput, setCreditInput] = useState(() => (profile?.creditScore || 750).toString());
+  const score = Number(form.creditScore);
+  const scoreError = form.creditScore !== '' && (score < 300 || score > 900) ? 'CIBIL scores run from 300 to 900.' : '';
+  const phoneError = form.phone !== '' && form.phone.length !== 10 ? 'Ten digits, without +91.' : '';
 
-  const [userSegment, setUserSegment] = useState<UserSegment>(profile?.userSegment || 'adult');
-  const [primaryGoal, setPrimaryGoal] = useState<PrimaryGoal>(
-    (normalizeGoal(profile?.primaryGoal) as PrimaryGoal) || 'maximize_rewards'
+  const save = async () => {
+    if (!profile) return;
+    if (!form.name.trim()) return void toast.error('Add your name first.');
+    if (scoreError || phoneError) return void toast.error(scoreError || phoneError);
+    setSaving(true);
+    try {
+      await updateProfile({
+        ...profile,
+        name: form.name.trim(),
+        phone: form.phone,
+        city: form.city.trim() || undefined,
+        occupation: form.occupation,
+        salary: Number(form.salary) || 0,
+        creditScore: Number(form.creditScore) || 0,
+        primaryGoal: form.primaryGoal,
+        spendCategories: form.spendCategories,
+        onboardingCompleted: true,
+      });
+      toast.success('Saved. Your picks now use these details.');
+    } catch {
+      toast.error('Couldn’t save just now. Try again in a moment.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleCategory = (c: string) =>
+    set('spendCategories', form.spendCategories.includes(c) ? form.spendCategories.filter((x) => x !== c) : [...form.spendCategories, c].slice(-4));
+
+  const body = (
+    <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
+      <div className="space-y-8">
+        <Group title="About you">
+          <Panel className="divide-y divide-rc-ink/[0.07]">
+            <Field label="Name">
+              <input value={form.name} onChange={(e) => set('name', e.target.value)} autoComplete="name" className={inputCls} placeholder="Your name" />
+            </Field>
+            <Field label="Phone" hint={phoneError || 'Optional. Only for reminders you turn on.'}>
+              <input value={form.phone} onChange={(e) => set('phone', digits(e.target.value).slice(0, 10))} inputMode="tel" autoComplete="tel-national" className={inputCls} placeholder="10-digit mobile number" />
+            </Field>
+            <Field label="City">
+              <input value={form.city} onChange={(e) => set('city', e.target.value)} autoComplete="address-level2" className={inputCls} placeholder="e.g. Bengaluru" />
+            </Field>
+          </Panel>
+        </Group>
+
+        <Group title="Work" note="Some cards are only for salaried or self-employed applicants.">
+          <div className="flex flex-wrap gap-2">
+            {OCCUPATIONS.map((o) => <Chip key={o} on={form.occupation === o} onClick={() => set('occupation', form.occupation === o ? undefined : o)}>{o}</Chip>)}
+          </div>
+        </Group>
+
+        <Group title="For approval checks" note="Used only to filter out cards you’re unlikely to get. We never pull your credit report.">
+          <Panel className="divide-y divide-rc-ink/[0.07]">
+            <Field label="Annual income" hint={lakhs(Number(form.salary)) || 'Before tax, in rupees.'}>
+              <span className="mt-1 flex items-center gap-1">
+                <span aria-hidden className="text-[16px] text-rc-ink/45">₹</span>
+                <input value={form.salary ? Number(form.salary).toLocaleString('en-IN') : ''} onChange={(e) => set('salary', digits(e.target.value).slice(0, 10))} inputMode="numeric" className={cn(inputCls, 'mt-0')} placeholder="e.g. 12,00,000" />
+              </span>
+            </Field>
+            <Field label="CIBIL score" hint={scoreError || 'Leave empty if you don’t know it.'}>
+              <input value={form.creditScore} onChange={(e) => set('creditScore', digits(e.target.value).slice(0, 3))} inputMode="numeric" className={inputCls} placeholder="300 to 900" />
+            </Field>
+          </Panel>
+        </Group>
+      </div>
+
+      <div className="space-y-8">
+        <Group title="What you want from your cards">
+          <div className="grid gap-2">
+            {PRIMARY_GOALS.map((g) => {
+              const on = form.primaryGoal === g.id;
+              const Icon = g.icon;
+              return (
+                <button
+                  key={g.id}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => set('primaryGoal', g.id as PrimaryGoal)}
+                  className={cn('flex items-center gap-3.5 rounded-[20px] border px-4 py-3 text-left transition-colors', on ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/[0.08] bg-rc-paper text-rc-ink hover:bg-white')}
+                >
+                  <span className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px]', on ? 'bg-rc-pistachio text-rc-ink' : 'bg-rc-ink/[0.06] text-rc-forest')}><Icon size={18} /></span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[15px] font-medium">{g.title}</span>
+                    <span className={cn('block text-[13px]', on ? 'text-rc-mist' : 'text-rc-muted')}>{g.description}</span>
+                  </span>
+                  {on && <Check size={18} className="shrink-0 text-rc-pistachio" />}
+                </button>
+              );
+            })}
+          </div>
+        </Group>
+
+        <Group title="What you spend most on" note="Up to four. Picks for you starts from these.">
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES_LIST.map(({ value, label }) => <Chip key={value} on={form.spendCategories.includes(value)} onClick={() => toggleCategory(value)}>{label}</Chip>)}
+          </div>
+        </Group>
+      </div>
+
+      {/* save bar: only when something changed; above the phone tab bar */}
+      <AnimatePresence>
+        {dirty && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+            className="fixed inset-x-3 bottom-[calc(76px+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-md items-center justify-between gap-3 rounded-full bg-rc-ink py-2 pl-5 pr-2 text-rc-cream shadow-[0_20px_50px_-15px_rgba(0,0,0,0.6)] md:bottom-8"
+          >
+            <span className="text-[14px]">Unsaved changes</span>
+            <span className="flex gap-1.5">
+              <button type="button" onClick={() => setForm(initial)} className="h-10 rounded-full px-4 text-[14px] text-rc-mist hover:text-rc-cream">Undo</button>
+              <Pill variant="pistachio" onClick={save} disabled={saving} className="h-10">{saving ? 'Saving…' : 'Save'}</Pill>
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
-  const [occupation, setOccupation] = useState<Occupation | undefined>(profile?.occupation);
-  const [isOccupationDropdownOpen, setIsOccupationDropdownOpen] = useState(false);
-  const [city, setCity] = useState(profile?.city || '');
-  const [spendCategories] = useState<string[]>(profile?.spendCategories || []);
-
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState<string | null>(null);
-
-  const avatarUrl = `https://api.dicebear.com/9.x/notionists/svg?seed=${avatarSeed}&backgroundColor=f8f9fa`;
-
-  const handleSalarySliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value, 10);
-    setSalary(val);
-    setSalaryInput(val.toString());
-  };
-
-  const handleSalaryInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valStr = e.target.value.replace(/[^0-9]/g, '');
-    setSalaryInput(valStr);
-    const val = parseInt(valStr, 10);
-    if (!isNaN(val)) {
-      setSalary(Math.min(100000000, Math.max(0, val)));
-    }
-  };
-
-  const handleCreditSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseInt(e.target.value, 10);
-    setCreditScore(val);
-    setCreditInput(val.toString());
-  };
-
-  const handleCreditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valStr = e.target.value.replace(/[^0-9]/g, '');
-    setCreditInput(valStr);
-    const val = parseInt(valStr, 10);
-    if (!isNaN(val)) {
-      setCreditScore(Math.min(900, Math.max(300, val)));
-    }
-  };
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return setError('Please enter your name.');
-    if (!email.trim() || !email.includes('@')) return setError('Please enter a valid email.');
-    if (phone.length < 10) return setError('Please enter a valid 10-digit phone number.');
-
-    updateProfile({
-      id: profile?.id || '',
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      avatar: avatarUrl,
-      salary,
-      creditScore,
-      userSegment,
-      primaryGoal,
-      spendCategories,
-      occupation,
-      city: city.trim() || undefined,
-      onboardingCompleted: true,
-    });
-    
-    if (primaryGoal !== profile?.primaryGoal) {
-       setSuccess(`Your recommendations are now optimized for ${primaryGoal.toLowerCase()}.`);
-    } else {
-       setSuccess('Profile updated successfully!');
-    }
-    
-    setError('');
-
-    setTimeout(() => {
-      setSuccess(null);
-    }, 4000);
-  };
 
   return (
-    <PageContainer
-      bare={embedded}
-      eyebrow="Profile"
-      title="Your financial identity."
-      subtitle="Keep your profile and financial context up to date so RenoCred can make better decisions for you."
-      className="text-gray-900 font-body selection:bg-[#2A9D5C]/30 selection:text-gray-900"
-    >
-      <div className="relative">
-        <div className="max-w-[760px]">
-          <form onSubmit={handleSave} className="space-y-12">
-            
-            {/* IDENTITY SECTION */}
-            <section className="space-y-8">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[13px] font-medium text-rc-muted">Identity</span>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-8 items-start">
-                <div className="flex-shrink-0 flex flex-col gap-4">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300 bg-gray-50 shadow-xl">
-                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex gap-2 overflow-x-auto max-w-[12rem] p-1.5 pb-2.5 -ml-1.5 hide-scrollbar">
-                    {AVATAR_SEEDS.map(seed => (
-                      <button
-                        key={seed}
-                        type="button"
-                        onClick={() => setAvatarSeed(seed)}
-                        className={cn(
-                          'w-8 h-8 aspect-square rounded-full flex-shrink-0 transition-all overflow-hidden',
-                          avatarSeed === seed
-                            ? 'ring-2 ring-offset-2 ring-offset-[#050806] ring-[#2A9D5C]'
-                            : 'border border-gray-300 hover:border-gray-300 opacity-70 hover:opacity-100'
-                        )}
-                      >
-                        <img src={`https://api.dicebear.com/9.x/notionists/svg?seed=${seed}&backgroundColor=f8f9fa`} alt={seed} className="w-full h-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex-1 space-y-8 w-full">
-                  <div className="space-y-2">
-                    <label className="text-[13px] font-medium text-rc-muted font-medium">Full Name</label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-transparent border-b border-gray-300 focus:border-[#2A9D5C] pb-2 text-gray-900 text-lg outline-none transition-colors"
-                      placeholder="Your Name"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-                    <div className="space-y-2 sm:col-span-2">
-                      <label className="text-[13px] font-medium text-rc-muted font-medium">Email Address</label>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-transparent border-b border-gray-300 focus:border-[#2A9D5C] pb-2 text-gray-900 text-sm outline-none transition-colors"
-                        placeholder="email@example.com"
-                      />
-                    </div>
-                    <div className="space-y-2 sm:col-span-1">
-                      <label className="text-[13px] font-medium text-rc-muted font-medium">Phone Number</label>
-                      <input
-                        type="tel"
-                        maxLength={10}
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
-                        className="w-full bg-transparent border-b border-gray-300 focus:border-[#2A9D5C] pb-2 text-gray-900 outline-none transition-colors"
-                        placeholder="+91 XXXXX XXXXX"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <hr className="border-gray-300" />
-
-            {/* FINANCIAL PROFILE SECTION */}
-            <section className="space-y-8">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[13px] font-medium text-rc-muted">Financial Profile</span>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 {/* Income */}
-                 <div className="bg-white border border-gray-300 p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-gray-50 hover:border-[#2A9D5C]/20 transition-all">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-600 mb-1">Annual income</h4>
-                      <div className="flex items-baseline gap-2">
-                         <span className="text-2xl font-display text-gray-900">{formatINR(salary)}</span>
-                         <span className="text-sm text-gray-400">/ year</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                       <div className="flex justify-between items-center relative">
-                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
-                         <input
-                           type="text"
-                           value={salaryInput}
-                           onChange={handleSalaryInputChange}
-                           className="w-full bg-white border border-gray-300 rounded-[12px] py-2 pl-7 pr-3 text-gray-900 text-sm outline-none focus:border-[#2A9D5C]/50 transition-colors"
-                         />
-                       </div>
-                       <input
-                          type="range"
-                          min={100000}
-                          max={10000000}
-                          step={50000}
-                          value={salary}
-                          onChange={handleSalarySliderChange}
-                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-gray-100 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#2A9D5C] transition-all"
-                          style={{ 
-                            backgroundImage: 'linear-gradient(#2A9D5C, #2A9D5C)', 
-                            backgroundSize: `${((salary - 100000) * 100) / (10000000 - 100000)}% 100%`, 
-                            backgroundRepeat: 'no-repeat' 
-                          }}
-                        />
-                    </div>
-                 </div>
-
-                 {/* CIBIL */}
-                 <div className="bg-white border border-gray-300 p-6 rounded-[24px] flex flex-col justify-between gap-6 hover:bg-gray-50 hover:border-[#2A9D5C]/20 transition-all">
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-600 mb-1">CIBIL score</h4>
-                      <div className="flex items-center gap-3">
-                         <span className="text-2xl font-display text-gray-900">{creditScore}</span>
-                         <span className="text-sm font-medium text-[#2A9D5C]">
-                           {creditScore >= 750 ? '· Excellent' : creditScore >= 700 ? '· Good' : creditScore >= 650 ? '· Fair' : '· Poor'}
-                         </span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                       <input
-                         type="text"
-                         maxLength={3}
-                         value={creditInput}
-                         onChange={handleCreditInputChange}
-                         className="w-full bg-white border border-gray-300 rounded-[12px] py-2 px-3 text-gray-900 text-sm outline-none focus:border-[#2A9D5C]/50 transition-colors"
-                       />
-                       <input
-                          type="range"
-                          min={300}
-                          max={900}
-                          step={1}
-                          value={creditScore}
-                          onChange={handleCreditSliderChange}
-                          className="w-full h-1 appearance-none rounded-full outline-none cursor-pointer bg-gray-100 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#2A9D5C] transition-all"
-                          style={{ 
-                            backgroundImage: 'linear-gradient(#2A9D5C, #2A9D5C)', 
-                            backgroundSize: `${((creditScore - 300) * 100) / (900 - 300)}% 100%`, 
-                            backgroundRepeat: 'no-repeat' 
-                          }}
-                        />
-                    </div>
-                 </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                <div className="space-y-3">
-                  <label className="text-[13px] font-medium text-rc-muted font-medium">Financial Stage</label>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setUserSegment('youth')}
-                      className={cn(
-                        "flex-1 p-4 rounded-[20px] border text-left transition-all",
-                        userSegment === 'youth'
-                          ? "bg-[#2A9D5C]/5 border-[#2A9D5C]/30"
-                          : "bg-white border-gray-300 hover:bg-gray-50"
-                      )}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className={cn("font-medium", userSegment === 'youth' ? "text-[#2A9D5C]" : "text-gray-900")}>Youth</div>
-                          <div className="text-xs text-gray-600 mt-1">18–22</div>
-                        </div>
-                        {userSegment === 'youth' && <CheckCircle2 size={16} className="text-[#2A9D5C]" />}
-                      </div>
-                    </button>
-                    
-                    <button
-                      type="button"
-                      onClick={() => setUserSegment('adult')}
-                      className={cn(
-                        "flex-1 p-4 rounded-[20px] border text-left transition-all",
-                        userSegment === 'adult'
-                          ? "bg-[#2A9D5C]/5 border-[#2A9D5C]/30"
-                          : "bg-white border-gray-300 hover:bg-gray-50"
-                      )}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className={cn("font-medium", userSegment === 'adult' ? "text-[#2A9D5C]" : "text-gray-900")}>Adult</div>
-                          <div className="text-xs text-gray-600 mt-1">22+</div>
-                        </div>
-                        {userSegment === 'adult' && <CheckCircle2 size={16} className="text-[#2A9D5C]" />}
-                      </div>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <label className="text-[13px] font-medium text-rc-muted font-medium">Occupation</label>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setIsOccupationDropdownOpen(!isOccupationDropdownOpen)}
-                        className={cn(
-                          "w-full bg-white border rounded-[16px] py-3.5 px-4 text-sm text-left transition-colors flex items-center justify-between",
-                          isOccupationDropdownOpen ? "border-[#2A9D5C]/50" : "border-gray-300",
-                          occupation ? "text-gray-900" : "text-gray-600"
-                        )}
-                      >
-                        <span>{occupation || "Select Occupation (Optional)"}</span>
-                        <div className={cn("opacity-50 transition-transform", isOccupationDropdownOpen && "rotate-180")}>
-                          ▼
-                        </div>
-                      </button>
-                      
-                      <AnimatePresence>
-                        {isOccupationDropdownOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.15 }}
-                            className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-[16px] overflow-hidden shadow-2xl z-50 py-2"
-                          >
-                            <button
-                              type="button"
-                              onClick={() => { setOccupation(undefined); setIsOccupationDropdownOpen(false); }}
-                              className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-100 transition-colors"
-                            >
-                              Select Occupation (Optional)
-                            </button>
-                            {OCCUPATION_LIST.map((occ) => (
-                              <button
-                                key={occ}
-                                type="button"
-                                onClick={() => { setOccupation(occ); setIsOccupationDropdownOpen(false); }}
-                                className={cn(
-                                  "w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between",
-                                  occupation === occ ? "text-[#2A9D5C] bg-[#2A9D5C]/5" : "text-gray-900 hover:bg-gray-100"
-                                )}
-                              >
-                                <span>{occ}</span>
-                                {occupation === occ && <CheckCircle2 size={14} />}
-                              </button>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <label className="text-[13px] font-medium text-rc-muted font-medium">City</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Mumbai, Bengaluru"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      className="w-full bg-white border border-gray-300 rounded-[16px] py-3.5 px-4 text-gray-900 text-sm outline-none focus:border-[#2A9D5C]/50 transition-colors"
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <hr className="border-gray-300" />
-
-            {/* FINANCIAL GOALS SECTION */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[13px] font-medium text-rc-muted">Financial Goals</span>
-              </div>
-              
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-gray-900">What are you optimizing for?</h3>
-                <p className="text-sm text-gray-600">This helps RenoCred prioritize recommendations around what matters most to you.</p>
-              </div>
-              
-              <div className="flex flex-wrap gap-3">
-                {PRIMARY_GOALS.map((goal) => (
-                  <button
-                    key={goal.id}
-                    type="button"
-                    onClick={() => setPrimaryGoal(goal.id as PrimaryGoal)}
-                    className={cn(
-                      "py-2.5 px-5 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
-                      primaryGoal === goal.id
-                        ? "bg-[#2A9D5C]/10 border-[#2A9D5C]/30 text-[#2A9D5C]"
-                        : "bg-white border-gray-300 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    )}
-                  >
-                    {primaryGoal === goal.id && <CheckCircle2 size={14} className="text-[#2A9D5C]" />}
-                    {goal.title}
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <hr className="border-gray-300" />
-
-            {/* TOP SPEND PRIORITIES */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[13px] font-medium text-rc-muted">Top Spend Priorities</span>
-              </div>
-              
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-gray-900">Your declared focus areas</h3>
-                <p className="text-sm text-gray-600">These priorities help shape your card and marketplace recommendations.</p>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                {spendCategories.length > 0 ? spendCategories.map((category) => (
-                  <div key={category} className="py-2.5 px-5 rounded-full bg-[#121414] border border-[#2A9D5C]/20 text-gray-900 text-sm font-medium capitalize">
-                    {category}
-                  </div>
-                )) : (
-                  <p className="text-sm text-gray-300 italic">No priorities selected during onboarding.</p>
-                )}
-              </div>
-            </section>
-
-            <hr className="border-gray-300" />
-
-            {/* SHARE SECTION */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[13px] font-medium text-rc-muted">Share</span>
-              </div>
-              <ShareableScorecard />
-            </section>
-
-            <hr className="border-gray-300" />
-
-            {/* SAVE ACTION */}
-            <section className="pt-4 pb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex-1">
-                <AnimatePresence>
-                  {success && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="text-sm font-medium text-[#2A9D5C] flex items-center gap-2"
-                    >
-                      <CheckCircle2 size={16} /> {success}
-                    </motion.div>
-                  )}
-                  {error && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="text-sm font-medium text-red-400"
-                    >
-                      {error}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-              
-              <button
-                type="submit"
-                className="w-full sm:w-auto bg-[#2A9D5C] text-white font-semibold py-3.5 px-8 rounded-full transition-all shadow-[0_4px_20px_rgba(42,157,92,0.25)] hover:shadow-[0_4px_25px_rgba(42,157,92,0.35)] hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2A9D5C]/50 flex items-center justify-center gap-2 text-sm"
-              >
-                Save Changes →
-              </button>
-            </section>
-          </form>
-        </div>
-        
-        {/* RIGHT PANEL - INTELLIGENCE OVERVIEW */}
-      </div>
+    <PageContainer bare={embedded} eyebrow="Profile" title="Your details." subtitle="What RenoCred ranks cards on.">
+      {body}
     </PageContainer>
   );
 }

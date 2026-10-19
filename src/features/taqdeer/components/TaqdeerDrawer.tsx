@@ -87,9 +87,9 @@ export function TaqdeerDrawer({ isOpen, onClose }: TaqdeerDrawerProps) {
           exit={{ opacity: 0, scale: 0.98, y: 12 }}
           transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
           className={cn(
-            "fixed bottom-[144px] lg:bottom-[88px] right-4 lg:right-6 z-[100] flex flex-col origin-bottom-right",
-            "w-[calc(100vw-32px)] lg:w-[420px]",
-            "h-[600px] max-h-[calc(100dvh-160px)] lg:max-h-[calc(100dvh-120px)]",
+            "fixed inset-x-2 bottom-[calc(72px+env(safe-area-inset-bottom))] z-[100] flex flex-col origin-bottom md:inset-x-auto md:bottom-[88px] md:right-6 md:origin-bottom-right",
+            "md:w-[420px]",
+            "h-[600px] max-h-[calc(100dvh-150px)] md:max-h-[calc(100dvh-120px)]",
             "bg-white border border-gray-200 rounded-[2rem] shadow-2xl overflow-hidden"
           )}
         >

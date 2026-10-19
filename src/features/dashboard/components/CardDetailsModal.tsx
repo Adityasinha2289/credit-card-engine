@@ -56,7 +56,7 @@ export function CardDetailsModal({ card, onClose, onRemove }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-rc-night/70 backdrop-blur-sm" />
       <motion.div
         role="dialog"
@@ -66,7 +66,7 @@ export function CardDetailsModal({ card, onClose, onRemove }: Props) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 60 }}
         transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-        className="relative max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-[32px] bg-rc-cream p-6 pb-8 text-rc-ink sm:rounded-[32px]"
+        className="relative max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-[32px] bg-rc-cream p-6 pb-[calc(2rem+env(safe-area-inset-bottom))] text-rc-ink sm:rounded-[32px]"
       >
         <div className="flex items-start justify-between gap-4">
           <div>

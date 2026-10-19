@@ -10,7 +10,8 @@ import { PageContainer } from '../../../components/shared/PageContainer';
 import { AppTabs, useTab } from '../../../components/shared/AppTabs';
 import SubscriptionsPage from './SubscriptionsPage';
 import TransactionsPage from './TransactionsPage';
-import { Plus } from 'lucide-react';
+import { CalendarClock, PiggyBank, Plus, Repeat, Trash2 } from 'lucide-react';
+import { Amount, EmptyState, HeadAction, Panel, Pill, Row, RowList, SectionHead } from '../../../components/shared/appUi';
 import { cn } from '../../../lib/utils';
 
 const UPCOMING_WINDOW_DAYS = 7;
@@ -43,6 +44,7 @@ export default function MoneyManagerPage() {
 
   const [incomeInput, setIncomeInput] = useState('');
   const [goalForm, setGoalForm] = useState<{ name: string; target: string; monthly: string } | null>(null);
+  const [tab, setTab] = useTab(['overview', 'subscriptions', 'activity'] as const, 'overview');
 
   // Profile salary is ANNUAL RUPEES; everything else here is paise.
   const monthlyIncome = profile?.salary ? toPaise(profile.salary / 12) : null;
@@ -103,7 +105,6 @@ export default function MoneyManagerPage() {
     setGoalForm(null);
   };
 
-  const [tab, setTab] = useTab(['overview', 'subscriptions', 'activity'] as const, 'overview');
   const hasAttention = dueAlerts.length > 0 || needsDueDate.length > 0 || upcomingRenewals.length > 0;
   const activeSubs = subscriptions.filter((s) => s.status === 'active').length;
   const spentShare = safe.hasIncome && safe.totalIncome > 0 ? Math.min(1, safe.netSpent / safe.totalIncome) : 0;
@@ -123,7 +124,14 @@ export default function MoneyManagerPage() {
         { value: formatRupees(safe.totalIncome), label: 'income' },
         ...(safe.upcomingSubscriptions > 0 ? [{ value: formatRupees(safe.upcomingSubscriptions), label: 'renewals due' }] : []),
       ] : undefined}
-      heroActions={!safe.hasIncome ? (
+      heroActions={safe.hasIncome ? (
+        <div className="max-w-md lg:hidden" aria-hidden>
+          <div className="h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="h-full rounded-full bg-rc-pistachio" style={{ width: `${Math.max(2, Math.round(spentShare * 100))}%` }} />
+          </div>
+          <p className="mt-2 text-[13px] text-rc-mist">{Math.round(spentShare * 100)}% of this month’s income spent</p>
+        </div>
+      ) : (
         <form onSubmit={saveIncome} className="flex w-full max-w-md gap-2">
           <label className="relative flex-1">
             <span className="sr-only">Monthly take-home pay in rupees</span>
@@ -138,7 +146,7 @@ export default function MoneyManagerPage() {
           </label>
           <button type="submit" disabled={!incomeInput} className="h-12 rounded-full bg-rc-pistachio px-6 text-[14px] font-semibold text-rc-ink transition-opacity disabled:opacity-50">Save</button>
         </form>
-      ) : undefined}
+      )}
       heroAside={safe.hasIncome ? <SpendRing share={spentShare} /> : undefined}
       className="pb-safe"
     >
@@ -155,132 +163,108 @@ export default function MoneyManagerPage() {
       {tab === 'subscriptions' && <SubscriptionsPage embedded />}
       {tab === 'activity' && <TransactionsPage embedded />}
       {tab === 'overview' && (
-      <div className="grid max-w-[820px] gap-10">
-        <div className="space-y-10">
-          {/* What needs attention */}
-          {hasAttention && (
-            <section>
-              <SectionTitle title="Needs attention" action={<button type="button" onClick={() => setTab('subscriptions')} className="text-[13px] font-medium text-rc-forest hover:underline">All subscriptions</button>} />
-              <ul className="space-y-2.5">
-                {dueAlerts.map((due) => (
-                  <AttentionRow
-                    key={due.cardId}
-                    tone="danger"
-                    title={due.state === 'OVERDUE'
-                      ? `${due.name} bill is overdue`
-                      : `${due.name} bill is due ${due.daysRemaining === 0 ? 'today' : `in ${due.daysRemaining} ${due.daysRemaining === 1 ? 'day' : 'days'}`}`}
-                    note="Paying the full amount avoids interest; the minimum only keeps the account active."
-                    amount={formatRupees(due.totalDue)}
+      <div className="grid gap-9 lg:grid-cols-2 lg:gap-10">
+        {/* what needs attention */}
+        <section>
+          <SectionHead title="Needs attention" action={<HeadAction onClick={() => setTab('subscriptions')}>Subscriptions</HeadAction>} />
+          {!hasAttention ? (
+            <RowList>
+              <Row icon={CalendarClock} tone="good" title="Nothing due this week" note="Card bills and renewals in the next 7 days show up here." />
+            </RowList>
+          ) : (
+            <RowList>
+              {dueAlerts.map((due) => (
+                <Row
+                  key={due.cardId}
+                  icon={CalendarClock}
+                  tone="danger"
+                  title={due.state === 'OVERDUE' ? `${due.name} bill is overdue` : `${due.name} bill due ${due.daysRemaining === 0 ? 'today' : `in ${due.daysRemaining} ${due.daysRemaining === 1 ? 'day' : 'days'}`}`}
+                  note="Pay in full to avoid interest; the minimum only keeps the account active."
+                  trailing={<Amount>{formatRupees(due.totalDue)}</Amount>}
+                />
+              ))}
+              {needsDueDate.map((card) => (
+                <div key={card.cardId} className="px-4 py-3.5 sm:px-5">
+                  <p className="text-[15px] font-medium text-rc-ink">{card.name}: {formatRupees(card.outstanding)} outstanding</p>
+                  <p className="mt-0.5 text-[13px] text-rc-muted">Add the payment due date and we’ll remind you before it’s late.</p>
+                  <input
+                    type="date"
+                    aria-label={`Payment due date for ${card.name}`}
+                    onChange={(e) => e.target.value && void setCardDueDate(card.cardId, e.target.value)}
+                    className="mt-3 h-11 w-full rounded-full border border-rc-ink/15 bg-white px-4 text-[15px] text-rc-ink sm:w-auto"
                   />
-                ))}
-                {needsDueDate.map((card) => (
-                  <li key={card.cardId} className="flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-rc-ink/10 bg-rc-paper px-5 py-4">
-                    <div className="flex items-start gap-3">
-                      <span aria-hidden className="mt-2 h-2 w-2 shrink-0 rounded-full bg-rc-sage" />
-                      <div>
-                        <p className="font-medium text-rc-ink">{card.name}: {formatRupees(card.outstanding)} outstanding</p>
-                        <p className="mt-0.5 text-[14px] text-rc-muted">Add the payment due date and we'll remind you before it's late.</p>
-                      </div>
-                    </div>
-                    <input
-                      type="date"
-                      aria-label={`Payment due date for ${card.name}`}
-                      onChange={(e) => e.target.value && void setCardDueDate(card.cardId, e.target.value)}
-                      className="h-10 rounded-full border border-rc-ink/15 bg-white px-4 text-[14px] text-rc-ink"
-                    />
-                  </li>
-                ))}
-                {upcomingRenewals.map(({ sub, days, trial }) => (
-                  <AttentionRow
-                    key={sub.id}
-                    tone="warn"
-                    title={`${trial ? `${sub.name} trial turns paid` : `${sub.name} renews`} ${days === 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days} days`}`}
-                    note={sub.hasPriceHike && sub.previousAmount ? `Price went up from ${formatRupees(sub.previousAmount)}.` : undefined}
-                    amount={formatRupees(sub.amount)}
-                  />
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {/* Savings goals */}
-          <section>
-            <SectionTitle
-              title="Savings goals"
-              action={!goalForm && (
-                <button onClick={() => setGoalForm({ name: '', target: '', monthly: '' })} className="inline-flex items-center gap-1.5 rounded-full bg-rc-ink px-4 py-2 text-[13px] font-medium text-rc-cream hover:bg-rc-moss">
-                  <Plus className="h-3.5 w-3.5" /> Add goal
-                </button>
-              )}
-            />
-            {goalForm && (
-              <form onSubmit={saveGoal} className="mb-3 grid grid-cols-1 gap-2 rounded-[24px] border border-rc-ink/10 bg-rc-paper p-4 sm:grid-cols-4">
-                <input className="h-11 rounded-full border border-rc-ink/15 bg-white px-4 text-[14px] sm:col-span-2" placeholder="Goal (e.g. Goa trip)" value={goalForm.name} onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })} aria-label="Goal name" />
-                <input className="h-11 rounded-full border border-rc-ink/15 bg-white px-4 text-[14px]" inputMode="numeric" placeholder="Target ₹" value={goalForm.target} onChange={(e) => setGoalForm({ ...goalForm, target: e.target.value })} aria-label="Target amount in rupees" />
-                <input className="h-11 rounded-full border border-rc-ink/15 bg-white px-4 text-[14px]" inputMode="numeric" placeholder="Per month ₹" value={goalForm.monthly} onChange={(e) => setGoalForm({ ...goalForm, monthly: e.target.value })} aria-label="Monthly contribution in rupees" />
-                <div className="flex justify-end gap-2 sm:col-span-4">
-                  <button type="button" onClick={() => setGoalForm(null)} className="rounded-full px-4 py-2 text-[14px] text-rc-muted hover:text-rc-ink">Cancel</button>
-                  <button type="submit" className="rounded-full bg-rc-ink px-5 py-2 text-[14px] font-medium text-rc-cream hover:bg-rc-moss">Save goal</button>
                 </div>
-              </form>
-            )}
-            {goals.length === 0 && !goalForm ? (
-              <p className="rounded-[24px] border border-dashed border-rc-ink/15 px-5 py-6 text-[15px] text-rc-muted">
-                No goals yet. Money you set aside for a goal is kept out of safe-to-spend.
-              </p>
-            ) : (
-              <ul className="space-y-2.5">
-                {goals.map((g) => {
-                  const pct = g.targetAmount > 0 ? Math.min(100, Math.round((g.currentAmount / g.targetAmount) * 100)) : 0;
-                  const monthsLeft = g.monthlyContribution > 0 ? Math.ceil(Math.max(0, g.targetAmount - g.currentAmount) / g.monthlyContribution) : null;
-                  return (
-                    <li key={g.id} className="rounded-[24px] border border-rc-ink/10 bg-rc-paper px-5 py-4">
-                      <div className="flex items-baseline justify-between gap-4">
-                        <p className="font-display text-[22px] font-semibold leading-tight text-rc-ink">{g.goal}</p>
-                        <button onClick={() => void deleteGoal(g.id)} className="text-[12px] text-rc-muted hover:text-rc-ink" aria-label={`Remove goal ${g.goal}`}>Remove</button>
-                      </div>
-                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-rc-ink/10">
-                        <div className="h-full rounded-full bg-rc-forest" style={{ width: `${Math.max(pct, 2)}%` }} />
-                      </div>
-                      <p className="mt-2 flex flex-wrap justify-between gap-x-4 text-[13px] text-rc-muted">
-                        <span>{formatRupees(g.currentAmount)} of {formatRupees(g.targetAmount)}</span>
-                        <span>{formatRupees(g.monthlyContribution)} a month{monthsLeft != null ? ` · about ${monthsLeft} ${monthsLeft === 1 ? 'month' : 'months'} to go` : ''}</span>
-                      </p>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
-        </div>
+              ))}
+              {upcomingRenewals.map(({ sub, days, trial }) => (
+                <Row
+                  key={sub.id}
+                  icon={Repeat}
+                  tone="warn"
+                  title={`${trial ? `${sub.name} trial turns paid` : `${sub.name} renews`} ${days === 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days} days`}`}
+                  note={sub.hasPriceHike && sub.previousAmount ? `Price went up from ${formatRupees(sub.previousAmount)}.` : 'Still using it?'}
+                  trailing={<Amount>{formatRupees(sub.amount)}</Amount>}
+                  onClick={() => setTab('subscriptions')}
+                />
+              ))}
+            </RowList>
+          )}
+        </section>
 
+        {/* savings goals */}
+        <section>
+          <SectionHead
+            title="Savings goals"
+            action={!goalForm && <HeadAction onClick={() => setGoalForm({ name: '', target: '', monthly: '' })}><Plus size={14} /> Add</HeadAction>}
+          />
+          {goalForm && (
+            <form onSubmit={saveGoal} className="mb-3 rounded-[26px] border border-rc-ink/[0.08] bg-rc-paper p-4 sm:p-5">
+              <div className="grid gap-2.5 sm:grid-cols-2">
+                <input className="h-12 rounded-full border border-rc-ink/15 bg-white px-5 text-[16px] sm:col-span-2" placeholder="What for? e.g. Goa trip" value={goalForm.name} onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })} aria-label="Goal name" />
+                <input className="h-12 rounded-full border border-rc-ink/15 bg-white px-5 text-[16px]" inputMode="numeric" placeholder="Target ₹" value={goalForm.target} onChange={(e) => setGoalForm({ ...goalForm, target: e.target.value })} aria-label="Target amount in rupees" />
+                <input className="h-12 rounded-full border border-rc-ink/15 bg-white px-5 text-[16px]" inputMode="numeric" placeholder="Per month ₹" value={goalForm.monthly} onChange={(e) => setGoalForm({ ...goalForm, monthly: e.target.value })} aria-label="Monthly contribution in rupees" />
+              </div>
+              <div className="mt-3 flex justify-end gap-2">
+                <Pill variant="ghost" onClick={() => setGoalForm(null)}>Cancel</Pill>
+                <Pill type="submit">Save goal</Pill>
+              </div>
+            </form>
+          )}
+          {goals.length === 0 && !goalForm ? (
+            <EmptyState icon={PiggyBank} title="No goals yet" note="Money you set aside for a goal is kept out of safe-to-spend." action={<Pill onClick={() => setGoalForm({ name: '', target: '', monthly: '' })}><Plus size={16} /> Add a goal</Pill>} />
+          ) : (
+            <ul className="space-y-2.5">
+              {goals.map((g) => {
+                const pct = g.targetAmount > 0 ? Math.min(100, Math.round((g.currentAmount / g.targetAmount) * 100)) : 0;
+                const monthsLeft = g.monthlyContribution > 0 ? Math.ceil(Math.max(0, g.targetAmount - g.currentAmount) / g.monthlyContribution) : null;
+                return (
+                  <Panel as="li" key={g.id} className="p-4 sm:p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-serif text-[21px] font-semibold leading-tight text-rc-ink">{g.goal}</p>
+                        <p className="mt-1 text-[13px] text-rc-muted">
+                          {formatRupees(g.monthlyContribution)} a month{monthsLeft != null ? ` · about ${monthsLeft} ${monthsLeft === 1 ? 'month' : 'months'} to go` : ''}
+                        </p>
+                      </div>
+                      <button type="button" onClick={() => void deleteGoal(g.id)} aria-label={`Remove goal ${g.goal}`} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-rc-muted hover:bg-rc-ink/[0.06] hover:text-rc-ink">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-rc-ink/[0.08]">
+                      <div className="h-full rounded-full bg-rc-forest" style={{ width: `${Math.max(pct, 2)}%` }} />
+                    </div>
+                    <p className="mt-2 flex justify-between text-[13px] tabular-nums text-rc-muted">
+                      <span><span className="font-semibold text-rc-ink">{formatRupees(g.currentAmount)}</span> saved</span>
+                      <span>of {formatRupees(g.targetAmount)}</span>
+                    </p>
+                  </Panel>
+                );
+              })}
+            </ul>
+          )}
+        </section>
       </div>
       )}
     </PageContainer>
-  );
-}
-
-function SectionTitle({ title, action }: { title: string; action?: React.ReactNode }) {
-  return (
-    <div className="mb-4 flex items-center justify-between gap-4">
-      <h2 className="font-display text-[26px] font-semibold tracking-[-0.02em] text-rc-ink">{title}</h2>
-      {action}
-    </div>
-  );
-}
-
-function AttentionRow({ tone, title, note, amount }: { tone: 'danger' | 'warn'; title: string; note?: string; amount: string }) {
-  return (
-    <li className="flex items-center justify-between gap-4 rounded-[24px] border border-rc-ink/10 bg-rc-paper px-5 py-4">
-      <div className="flex items-start gap-3">
-        <span aria-hidden className={cn('mt-2 h-2 w-2 shrink-0 rounded-full', tone === 'danger' ? 'bg-[#C2410C]' : 'bg-[#B7791F]')} />
-        <div>
-          <p className="font-medium text-rc-ink">{title}</p>
-          {note && <p className="mt-0.5 text-[14px] text-rc-muted">{note}</p>}
-        </div>
-      </div>
-      <p className="shrink-0 font-display text-[20px] font-semibold tabular-nums text-rc-ink">{amount}</p>
-    </li>
   );
 }
 

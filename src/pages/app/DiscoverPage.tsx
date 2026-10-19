@@ -3,6 +3,7 @@
  * side-by-side comparison. The full directory and the calculators are website
  * pages (Cards, Tools in the header), open to everyone.
  */
+import { useState } from 'react';
 import { PageContainer } from '../../components/shared/PageContainer';
 import { AppTabs, useTab } from '../../components/shared/AppTabs';
 import { RecommendTab, CompareTab } from './discoverViews';
@@ -11,12 +12,14 @@ const TABS = ['for-you', 'compare'] as const;
 
 export default function DiscoverPage() {
   const [tab, setTab] = useTab(TABS, 'for-you');
+  // cards handed over from a pick; the key remounts Compare with them
+  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   return (
     <PageContainer
       eyebrow="Picks for you"
       title={<>The card that would <span className="italic">pay you back.</span></>}
-      subtitle="Ranked on what you spend and the cards you already hold, after the annual fee, and filtered to what you're likely to be approved for."
+      subtitle="Ranked on what you spend and the cards you already hold, after the annual fee."
     >
       <AppTabs
         layoutId="picks-tabs"
@@ -27,8 +30,8 @@ export default function DiscoverPage() {
           { id: 'compare', label: 'Compare' },
         ]}
       />
-      {tab === 'for-you' && <RecommendTab onSwitchToCompare={() => setTab('compare')} />}
-      {tab === 'compare' && <CompareTab />}
+      {tab === 'for-you' && <RecommendTab onSwitchToCompare={(ids) => { setCompareIds(ids ?? []); setTab('compare'); }} />}
+      {tab === 'compare' && <CompareTab key={compareIds.join()} initialIds={compareIds} />}
     </PageContainer>
   );
 }

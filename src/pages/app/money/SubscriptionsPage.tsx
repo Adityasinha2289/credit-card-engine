@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import { useShallow } from 'zustand/shallow';
 import { toast } from 'sonner';
-import { Bell, BellOff, Pause, Play, Pencil, X, ExternalLink, Sparkles, Mail, Smartphone } from 'lucide-react';
+import { Bell, Pause, Play, Pencil, Plus, Repeat, X, ExternalLink, Sparkles, Mail, Smartphone } from 'lucide-react';
+import { Amount, EmptyState, HeadAction, IconTile, Pill, Row, RowList, SectionHead } from '../../../components/shared/appUi';
 import { useDashboardStore } from '../../../features/dashboard/store/dashboardStore';
 import type { Subscription, BillingCycle } from '../../../features/dashboard/types/dashboard.types';
 import { PageContainer } from '../../../components/shared/PageContainer';
@@ -226,211 +227,211 @@ export default function SubscriptionsPage({ embedded = false }: { embedded?: boo
   };
 
   // ── render ────────────────────────────────────────────────────────────────
+  const field = 'mt-1.5 h-12 w-full rounded-full border border-rc-ink/15 bg-white px-5 text-[16px] font-normal text-rc-ink outline-none focus:border-rc-forest/50';
+  const fieldLabel = 'block text-[13px] font-medium text-rc-muted';
+  const toggleCls = (on: boolean) => `relative h-7 w-12 shrink-0 rounded-full transition-colors ${on ? 'bg-rc-forest' : 'bg-rc-ink/15'}`;
+  const knob = (on: boolean) => `absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-[left] duration-300 ${on ? 'left-6' : 'left-1'}`;
+
   return (
-    <PageContainer bare={embedded} eyebrow="Money" title={<>Every renewal, <span className="italic">before it hits.</span></>} subtitle="Track what you pay for and we'll remind you before each charge, and before free trials turn paid." className="pb-safe max-w-3xl mx-auto">
-      <div className="space-y-8">
-
-        {/* Summary */}
-        <section className="rounded-[26px] border border-rc-ink/10 bg-rc-paper p-6 grid grid-cols-3 gap-4">
-          <div>
-            <p className="text-[13px] font-medium text-rc-muted mb-1">Per month</p>
-            <p className="text-2xl font-medium text-gray-900">{formatRupees(perMonth)}</p>
-          </div>
-          <div>
-            <p className="text-[13px] font-medium text-rc-muted mb-1">Per year</p>
-            <p className="text-2xl font-medium text-gray-900">{formatRupees(perYear)}</p>
-          </div>
-          <div>
-            <p className="text-[13px] font-medium text-rc-muted mb-1">Active</p>
-            <p className="text-2xl font-medium text-gray-900">{running.length}</p>
-          </div>
-        </section>
-
-        {/* Detected */}
-        {suggestions.length > 0 && (
-          <section>
-            <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] normal-case text-rc-ink mb-3 flex items-center gap-2">
-              <Sparkles size={14} className="text-emerald-600" /> Looks like a subscription
-            </h3>
-            <div className="space-y-2">
-              {suggestions.slice(0, 5).map((x) => (
-                <div key={x.merchantKey} className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="font-medium text-emerald-950">{x.name} · {formatRupees(x.amount)}/{CYCLE_LABEL[x.billingCycle]}</p>
-                    <p className="text-xs text-emerald-800 mt-0.5">
-                      Charged {x.occurrences} times, last on {x.lastChargedOn}. Next expected {x.nextBillingDate}.
-                      {x.hasPriceHike && x.previousAmount ? ` Price went up from ${formatRupees(x.previousAmount)}.` : ''}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => dismissSuggestion(x.merchantKey)} className="px-3 py-1.5 text-sm text-emerald-900">Not a subscription</button>
-                    <button onClick={() => addFromSuggestion(x)} className="px-4 py-1.5 rounded-xl bg-emerald-700 text-white text-sm">Track it</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+    <PageContainer bare={embedded} eyebrow="Money" title={<>Every renewal, <span className="italic">before it hits.</span></>} subtitle="Track what you pay for and we'll remind you before each charge, and before free trials turn paid." className="pb-safe">
+      <div className="grid gap-9 lg:grid-cols-[1.3fr_1fr] lg:gap-10">
+        <div className="space-y-9">
+          {/* what it all costs */}
+          <section aria-label="Totals" className="grid grid-cols-3 gap-2.5 sm:gap-4">
+            {[
+              { value: formatRupees(perMonth), label: 'a month' },
+              { value: formatRupees(perYear), label: 'a year' },
+              { value: running.length, label: running.length === 1 ? 'active' : 'active' },
+            ].map((t) => (
+              <div key={t.label + String(t.value)} className="rounded-[22px] border border-rc-ink/[0.08] bg-rc-paper px-3.5 py-4 sm:px-5">
+                <p className="truncate font-serif text-[22px] font-semibold leading-none tabular-nums lining-nums text-rc-ink sm:text-[30px]">{t.value}</p>
+                <p className="mt-2 text-[12px] text-rc-muted sm:text-[13px]">{t.label}</p>
+              </div>
+            ))}
           </section>
-        )}
 
-        {/* List */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] normal-case text-rc-ink">Your subscriptions</h3>
-            {!form && <button onClick={() => openAdd()} className="text-xs font-bold text-emerald-700">+ Add</button>}
-          </div>
-
-          {form && (
-            <form onSubmit={submit} className="bg-white p-5 rounded-2xl border border-gray-200 space-y-3 mb-4">
-              {!form.id && (
-                <div className="flex flex-wrap gap-1.5">
-                  {SUBSCRIPTION_PRESETS.slice(0, 8).map((p) => (
-                    <button type="button" key={p.key} onClick={() => openAdd(p)}
-                      className={`text-xs px-2.5 py-1 rounded-full border ${form.name === p.name ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-600'}`}>
-                      {p.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <label className="text-xs font-bold text-gray-500">Name
-                  <input className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Netflix" />
-                </label>
-                <label className="text-xs font-bold text-gray-500">Amount (₹) per charge
-                  <input className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900" inputMode="decimal" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="649" />
-                </label>
-                <label className="text-xs font-bold text-gray-500">Billed every
-                  <select className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900 bg-white" value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value as BillingCycle })}>
-                    {(['weekly', 'monthly', 'quarterly', 'yearly'] as const).map((c) => <option key={c} value={c}>{CYCLE_LABEL[c]}</option>)}
-                  </select>
-                </label>
-                <label className="text-xs font-bold text-gray-500">Paid with
-                  <select className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal text-gray-900 bg-white" value={form.cardId} onChange={(e) => setForm({ ...form, cardId: e.target.value })}>
-                    <option value="">UPI / bank account</option>
-                    {userCards.map((c) => <option key={c.id} value={c.id}>{c.label || c.bank}</option>)}
-                  </select>
-                </label>
-                <label className="flex items-center gap-2 text-sm text-gray-700 sm:col-span-2">
-                  <input type="checkbox" checked={form.isFreeTrial} onChange={(e) => setForm({ ...form, isFreeTrial: e.target.checked })} />
-                  This is a free trial
-                </label>
-                {form.isFreeTrial ? (
-                  <label className="text-xs font-bold text-gray-500">Trial ends on
-                    <input type="date" min={today} className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal" value={form.trialEndsOn} onChange={(e) => setForm({ ...form, trialEndsOn: e.target.value })} />
-                  </label>
-                ) : (
-                  <label className="text-xs font-bold text-gray-500">Next charge on
-                    <input type="date" className="mt-1 w-full px-3 py-2 rounded-2xl border border-gray-200 text-sm font-normal" value={form.nextBillingDate} onChange={(e) => setForm({ ...form, nextBillingDate: e.target.value })} />
-                  </label>
-                )}
-                <div className="text-xs font-bold text-gray-500">Remind me
-                  <div className="mt-1 flex gap-1.5">
-                    {LEAD_OPTIONS.map((d) => {
-                      const on = form.reminderDays.includes(d);
-                      return (
-                        <button type="button" key={d} aria-pressed={on}
-                          onClick={() => setForm({ ...form, reminderDays: on ? form.reminderDays.filter((x) => x !== d) : [...form.reminderDays, d] })}
-                          className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border ${on ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-600'}`}>
-                          {d === 0 ? 'Same day' : `${d}d before`}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 pt-1">
-                <button type="button" onClick={() => setForm(null)} className="px-3 py-1.5 text-sm text-gray-500">Cancel</button>
-                <button type="submit" className="px-4 py-1.5 rounded-xl bg-gray-900 text-white text-sm">{form.id ? 'Save' : 'Add subscription'}</button>
-              </div>
-            </form>
-          )}
-
-          {rows.length === 0 && !form ? (
-            <div className="bg-white p-6 rounded-2xl border border-dashed border-gray-200 text-center">
-              <p className="text-gray-900 font-medium">No subscriptions tracked yet</p>
-              <p className="text-sm text-gray-500 mt-1">Add the ones you pay for and we'll remind you before each renewal — and before free trials turn into charges.</p>
-              <button onClick={() => openAdd()} className="mt-4 px-4 py-2 rounded-xl bg-gray-900 text-white text-sm">Add a subscription</button>
-            </div>
-          ) : (
-            <div className="bg-white rounded-3xl border border-gray-100 divide-y divide-gray-50">
-              {rows.map(({ s, due, days }) => {
-                const paused = s.status === 'paused';
-                const card = userCards.find((c) => c.id === s.cardId);
-                const cancelUrl = s.cancelUrl ?? getCancelUrl(s.name);
-                return (
-                  <div key={s.id} className={`p-4 flex flex-wrap items-center justify-between gap-3 ${paused ? 'opacity-60' : ''}`}>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-gray-900">{s.name}</p>
-                        {s.isFreeTrial && <span className="text-[10px] font-bold uppercase bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">Free trial</span>}
-                        {s.hasPriceHike && <span className="text-[10px] font-bold uppercase bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full">Price up</span>}
-                        {paused && <span className="text-[10px] font-bold uppercase bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">Paused</span>}
-                      </div>
-                      <p className="text-xs text-gray-500 mt-0.5">
-                        {formatRupees(s.amount)}/{CYCLE_LABEL[s.billingCycle]}
-                        {s.billingCycle !== 'yearly' && ` · ${formatRupees(yearlyCost(s.amount, s.billingCycle))}/yr`}
-                        {' · '}{card ? (card.label || card.bank) : 'UPI / bank'}
-                      </p>
-                      {!paused && due && days !== null && (
-                        <p className={`text-xs mt-1 ${days <= 3 ? 'text-amber-700 font-medium' : 'text-gray-500'}`}>
-                          {s.isFreeTrial ? 'Trial ends' : 'Renews'} {whenLabel(days).toLowerCase()} ({due})
-                          {(s.reminderDays?.length ?? 0) === 0 && ' · no reminders'}
+          {/* found in your transactions */}
+          {suggestions.length > 0 && (
+            <section>
+              <SectionHead title="Looks like a subscription" note="Charged the same amount on a regular cycle." />
+              <RowList>
+                {suggestions.slice(0, 5).map((x) => (
+                  <div key={x.merchantKey} className="px-4 py-3.5 sm:px-5">
+                    <div className="flex items-start gap-3.5">
+                      <IconTile icon={Sparkles} tone="good" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[15px] font-medium text-rc-ink">{x.name} · {formatRupees(x.amount)}/{CYCLE_LABEL[x.billingCycle]}</p>
+                        <p className="mt-0.5 text-[13px] leading-snug text-rc-muted">
+                          Charged {x.occurrences} times, last on {x.lastChargedOn}. Next expected {x.nextBillingDate}.
+                          {x.hasPriceHike && x.previousAmount ? ` Price went up from ${formatRupees(x.previousAmount)}.` : ''}
                         </p>
-                      )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <button title="Edit" aria-label={`Edit ${s.name}`} onClick={() => openEdit(s)} className="p-2 rounded-lg text-gray-500 hover:bg-gray-100"><Pencil size={15} /></button>
-                      <button title={paused ? 'Resume' : 'Pause reminders'} aria-label={paused ? `Resume ${s.name}` : `Pause ${s.name}`}
-                        onClick={() => void updateSubscription(s.id, { status: paused ? 'active' : 'paused' })}
-                        className="p-2 rounded-lg text-gray-500 hover:bg-gray-100">{paused ? <Play size={15} /> : <Pause size={15} />}</button>
-                      <button title={cancelUrl ? 'Cancel on website' : 'Stop tracking'} aria-label={`Cancel ${s.name}`} onClick={() => cancel(s)}
-                        className="p-2 rounded-lg text-red-500 hover:bg-red-50">{cancelUrl ? <ExternalLink size={15} /> : <X size={15} />}</button>
+                    <div className="mt-3 flex justify-end gap-2">
+                      <Pill variant="ghost" className="h-10" onClick={() => dismissSuggestion(x.merchantKey)}>Not one</Pill>
+                      <Pill className="h-10" onClick={() => addFromSuggestion(x)}>Track it</Pill>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </RowList>
+            </section>
           )}
-        </section>
 
-        {/* Reminder channels */}
-        {!isDemo && (
+          {/* the list */}
           <section>
-            <h3 className="font-display text-[22px] font-semibold tracking-[-0.01em] normal-case text-rc-ink mb-3">How we remind you</h3>
-            <div className="bg-white rounded-3xl border border-gray-100 divide-y divide-gray-50">
-              <div className="p-4 flex items-center gap-3">
-                <Bell size={16} className="text-gray-500" />
-                <span><span className="block text-sm font-medium text-gray-900">In the app</span><span className="block text-xs text-gray-500">Always on: the bell icon and Money Manager show what's renewing this week</span></span>
-              </div>
-              <label className="p-4 flex items-center justify-between gap-3 cursor-pointer">
-                <span className="flex items-center gap-3"><Mail size={16} className="text-gray-500" /><span><span className="block text-sm font-medium text-gray-900">Email</span><span className="block text-xs text-gray-500">One morning digest to {profile?.email || 'your email'}</span></span></span>
-                <input type="checkbox" checked={prefs.emailEnabled} onChange={() => void togglePref('emailEnabled')} />
-              </label>
-              <div className="p-4 flex items-center justify-between gap-3">
-                <span className="flex items-center gap-3"><Smartphone size={16} className="text-gray-500" /><span><span className="block text-sm font-medium text-gray-900">Push on this device</span>
-                  <span className="block text-xs text-gray-500">
+            <SectionHead title="Your subscriptions" action={!form && <HeadAction onClick={() => openAdd()}><Plus size={14} /> Add</HeadAction>} />
+
+            {form && (
+              <form onSubmit={submit} className="mb-4 rounded-[26px] border border-rc-ink/[0.08] bg-rc-paper p-4 sm:p-5">
+                {!form.id && (
+                  <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:-mx-5 sm:px-5 [&::-webkit-scrollbar]:hidden">
+                    {SUBSCRIPTION_PRESETS.slice(0, 10).map((p) => (
+                      <button type="button" key={p.key} onClick={() => openAdd(p)}
+                        className={`h-9 shrink-0 rounded-full border px-3.5 text-[13px] ${form.name === p.name ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/15 bg-white text-rc-ink'}`}>
+                        {p.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+                  <label className={fieldLabel}>Name
+                    <input className={field} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Netflix" />
+                  </label>
+                  <label className={fieldLabel}>Amount per charge
+                    <input className={field} inputMode="decimal" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="₹649" />
+                  </label>
+                  <label className={fieldLabel}>Billed every
+                    <select className={field} value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value as BillingCycle })}>
+                      {(['weekly', 'monthly', 'quarterly', 'yearly'] as const).map((c) => <option key={c} value={c}>{CYCLE_LABEL[c]}</option>)}
+                    </select>
+                  </label>
+                  <label className={fieldLabel}>Paid with
+                    <select className={field} value={form.cardId} onChange={(e) => setForm({ ...form, cardId: e.target.value })}>
+                      <option value="">UPI / bank account</option>
+                      {userCards.map((c) => <option key={c.id} value={c.id}>{c.label || c.bank}</option>)}
+                    </select>
+                  </label>
+                  <button type="button" role="switch" aria-checked={form.isFreeTrial} onClick={() => setForm({ ...form, isFreeTrial: !form.isFreeTrial })} className="flex items-center justify-between gap-3 rounded-full border border-rc-ink/15 bg-white py-2 pl-5 pr-2 text-left text-[15px] text-rc-ink sm:col-span-2">
+                    This is a free trial
+                    <span className={toggleCls(form.isFreeTrial)}><span className={knob(form.isFreeTrial)} /></span>
+                  </button>
+                  {form.isFreeTrial ? (
+                    <label className={fieldLabel}>Trial ends on
+                      <input type="date" min={today} className={field} value={form.trialEndsOn} onChange={(e) => setForm({ ...form, trialEndsOn: e.target.value })} />
+                    </label>
+                  ) : (
+                    <label className={fieldLabel}>Next charge on
+                      <input type="date" className={field} value={form.nextBillingDate} onChange={(e) => setForm({ ...form, nextBillingDate: e.target.value })} />
+                    </label>
+                  )}
+                  <div className={fieldLabel}>Remind me
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {LEAD_OPTIONS.map((d) => {
+                        const on = form.reminderDays.includes(d);
+                        return (
+                          <button type="button" key={d} aria-pressed={on}
+                            onClick={() => setForm({ ...form, reminderDays: on ? form.reminderDays.filter((x) => x !== d) : [...form.reminderDays, d] })}
+                            className={`h-10 rounded-full border px-3.5 text-[13px] font-medium ${on ? 'border-rc-ink bg-rc-ink text-rc-cream' : 'border-rc-ink/15 bg-white text-rc-ink'}`}>
+                            {d === 0 ? 'Same day' : `${d} days before`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 flex justify-end gap-2">
+                  <Pill variant="ghost" onClick={() => setForm(null)}>Cancel</Pill>
+                  <Pill type="submit">{form.id ? 'Save' : 'Add subscription'}</Pill>
+                </div>
+              </form>
+            )}
+
+            {rows.length === 0 && !form ? (
+              <EmptyState icon={Repeat} title="Nothing tracked yet" note="Add what you pay for and we’ll remind you before each renewal, and before free trials turn into charges." action={<Pill onClick={() => openAdd()}><Plus size={16} /> Add a subscription</Pill>} />
+            ) : (
+              <RowList>
+                {rows.map(({ s, due, days }) => {
+                  const paused = s.status === 'paused';
+                  const card = userCards.find((c) => c.id === s.cardId);
+                  const cancelUrl = s.cancelUrl ?? getCancelUrl(s.name);
+                  return (
+                    <div key={s.id} className={`px-4 py-3.5 sm:px-5 ${paused ? 'opacity-60' : ''}`}>
+                      <div className="flex items-start gap-3.5">
+                        <span aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-rc-ink font-serif text-[18px] font-semibold text-rc-pistachio">{s.name.charAt(0).toUpperCase()}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <p className="text-[15px] font-medium text-rc-ink">{s.name}</p>
+                            {s.isFreeTrial && <span className="rounded-full bg-[#B7791F]/12 px-2 py-0.5 text-[11px] font-semibold text-[#9A6412]">Free trial</span>}
+                            {s.hasPriceHike && <span className="rounded-full bg-[#C2410C]/10 px-2 py-0.5 text-[11px] font-semibold text-[#C2410C]">Price up</span>}
+                            {paused && <span className="rounded-full bg-rc-ink/[0.06] px-2 py-0.5 text-[11px] font-semibold text-rc-muted">Paused</span>}
+                          </div>
+                          <p className="mt-0.5 truncate text-[13px] text-rc-muted">
+                            {card ? (card.label || card.bank) : 'UPI / bank'}
+                            {s.billingCycle !== 'yearly' && ` · ${formatRupees(yearlyCost(s.amount, s.billingCycle))} a year`}
+                          </p>
+                          {!paused && due && days !== null && (
+                            <p className={`mt-0.5 text-[13px] ${days <= 3 ? 'font-medium text-[#9A6412]' : 'text-rc-muted'}`}>
+                              {s.isFreeTrial ? 'Trial ends' : 'Renews'} {whenLabel(days).toLowerCase()}
+                              {(s.reminderDays?.length ?? 0) === 0 && ' · no reminders'}
+                            </p>
+                          )}
+                        </div>
+                        <p className="shrink-0 text-right"><Amount>{formatRupees(s.amount)}</Amount><span className="block text-[12px] text-rc-muted">/{CYCLE_LABEL[s.billingCycle]}</span></p>
+                      </div>
+                      <div className="mt-2 flex justify-end gap-1">
+                        <button title="Edit" aria-label={`Edit ${s.name}`} onClick={() => openEdit(s)} className="flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] text-rc-ink hover:bg-rc-ink/[0.06]"><Pencil size={14} /> Edit</button>
+                        <button aria-label={paused ? `Resume ${s.name}` : `Pause ${s.name}`}
+                          onClick={() => void updateSubscription(s.id, { status: paused ? 'active' : 'paused' })}
+                          className="flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] text-rc-ink hover:bg-rc-ink/[0.06]">{paused ? <><Play size={14} /> Resume</> : <><Pause size={14} /> Pause</>}</button>
+                        <button aria-label={`Cancel ${s.name}`} onClick={() => cancel(s)}
+                          className="flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] text-[#C2410C] hover:bg-[#C2410C]/10">{cancelUrl ? <><ExternalLink size={14} /> Cancel</> : <><X size={14} /> Stop</>}</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </RowList>
+            )}
+          </section>
+        </div>
+
+        {/* how we remind you */}
+        {!isDemo && (
+          <section className="lg:pt-[118px]">
+            <SectionHead title="How we remind you" />
+            <RowList>
+              <Row icon={Bell} title="In RenoCred" note="Always on: Overview and Money show what renews this week" />
+              <button type="button" role="switch" aria-checked={prefs.emailEnabled} onClick={() => void togglePref('emailEnabled')} className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left sm:px-5">
+                <IconTile icon={Mail} />
+                <span className="min-w-0 flex-1"><span className="block text-[15px] font-medium text-rc-ink">Email</span><span className="block truncate text-[13px] text-rc-muted">A morning digest to {profile?.email || 'your email'}</span></span>
+                <span className={toggleCls(prefs.emailEnabled)}><span className={knob(prefs.emailEnabled)} /></span>
+              </button>
+              <div className="flex items-center gap-3.5 px-4 py-3.5 sm:px-5">
+                <IconTile icon={Smartphone} />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[15px] font-medium text-rc-ink">Push on this device</span>
+                  <span className="block text-[13px] text-rc-muted">
                     {push && !push.supported
                       ? { denied: 'Blocked in browser settings', 'ios-needs-install': 'Add to Home Screen first (iPhone)', 'not-configured': 'Not available yet', 'no-browser-support': 'Not supported in this browser' }[push.reason]
                       : pushOn ? 'On · quiet 10pm–8am' : 'Off'}
-                  </span></span></span>
-                <div className="flex items-center gap-2">
+                  </span>
                   {pushOn && (
                     <button
+                      type="button"
                       onClick={async () => {
                         if (await sendTestPush(() => getToken())) toast.success('Test notification sent');
                         else toast.error("Couldn't send a test notification. Try turning push off and on again.");
                       }}
-                      className="text-xs text-gray-500 hover:text-gray-900"
+                      className="mt-1 text-[13px] font-medium text-rc-forest underline underline-offset-2"
                     >
-                      Test
+                      Send a test
                     </button>
                   )}
-                  <button disabled={busy || (!!push && !push.supported && push.reason !== 'denied')} onClick={() => void togglePush()}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm disabled:opacity-40 ${pushOn ? 'border border-gray-200 text-gray-700' : 'bg-gray-900 text-white'}`}>
-                    {pushOn ? <><BellOff size={14} /> Turn off</> : <><Bell size={14} /> Turn on</>}
-                  </button>
-                </div>
+                </span>
+                <button type="button" role="switch" aria-checked={pushOn} aria-label="Push notifications" disabled={busy || (!!push && !push.supported && push.reason !== 'denied')} onClick={() => void togglePush()} className="disabled:opacity-40">
+                  <span className={`${toggleCls(pushOn)} block`}><span className={knob(pushOn)} /></span>
+                </button>
               </div>
-            </div>
+            </RowList>
           </section>
         )}
       </div>

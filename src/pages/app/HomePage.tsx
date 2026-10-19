@@ -132,7 +132,7 @@ export default function HomePage() {
       path: '/app/wallet',
       icon: Sparkles
     };
-  } else if (profile?.primaryGoal === 'Build Credit Score') {
+  } else if (normalizeGoal(profile?.primaryGoal) === 'build_credit') {
     primaryAction = {
       title: 'Credit Health Check',
       description: 'Keep your credit utilization below 30% this cycle to improve your score.',
@@ -140,7 +140,7 @@ export default function HomePage() {
       path: '/app/credit/simulator',
       icon: TrendingUp
     };
-  } else if (profile?.primaryGoal === 'Travel Rewards') {
+  } else if (normalizeGoal(profile?.primaryGoal) === 'travel') {
     primaryAction = {
       title: 'Upcoming Travel?',
       description: 'Check out the best cards to maximize miles on your next flight.',
@@ -148,7 +148,7 @@ export default function HomePage() {
       path: '/app/credit/recommend',
       icon: Plane
     };
-  } else if (profile?.primaryGoal === 'Maximise Cashback') {
+  } else if (normalizeGoal(profile?.primaryGoal) === 'cashback') {
     primaryAction = {
       title: 'Cashback Optimization',
       description: `Your highest spending category is ${profile?.spendCategories?.[0] || 'Dining'}. Ensure you're using the right card.`,

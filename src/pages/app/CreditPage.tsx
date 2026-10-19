@@ -16,7 +16,7 @@ import {
   type RecommendedCard,
 } from '../../features/finix/lib/recommendEngine';
 import { recommendCardsFor } from '../../features/financial-engine/rewardsApi';
-import { normalizeGoal } from '../../config/goals';
+import { normalizeGoal, goalTitle } from '../../config/goals';
 import { CARD_DATASET, type FinixCard, type SpendCategory } from '../../features/finix/data/cardDataset';
 import { getCardTheme } from '../../features/finix/config/cardThemeRegistry';
 import { CreditCard as PhysicalCard } from '../../features/cards/components/CreditCard';
@@ -153,7 +153,7 @@ function RecommendTab({ onSwitchToCompare }: { onSwitchToCompare: () => void }) 
             {profile?.primaryGoal && (
               <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px]">
                 <span className="text-[10px] text-gray-600 uppercase tracking-wider mb-0.5">Primary Goal</span>
-                <span className="text-sm text-gray-900 font-medium">{profile.primaryGoal}</span>
+                <span className="text-sm text-gray-900 font-medium">{goalTitle(profile.primaryGoal)}</span>
               </div>
             )}
             <div className="flex flex-col px-5 py-3 bg-gray-50 flex-1 min-w-[120px] rounded-bl-[15px] md:rounded-bl-none rounded-br-[15px]">
@@ -868,23 +868,14 @@ export default function CreditPage() {
 
   return (
     <PageContainer
-      hideHeader={true}
-      className="pt-2 md:pt-0 lg:pt-0"
+      eyebrow="Credit"
+      title={<>Find the card that <span className="italic">pays you back.</span></>}
+      subtitle="Ranked on what you spend, after the annual fee, and filtered to what you're likely to be approved for."
     >
-      <div className="w-full flex flex-col gap-3 relative">
-        {/* COMPACT HEADER */}
-        <div className="flex flex-col mb-1 w-full max-w-[800px]">
-          <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
-            Credit Intelligence
-          </span>
-          <h1 className="text-2xl md:text-3xl font-display font-semibold text-gray-900 tracking-tight leading-tight">
-            Find the right credit. Make every card count.
-          </h1>
-        </div>
-
-        {/* SEGMENTED TABS */}
-        <div className="mb-1">
-          <div className="flex p-1 bg-white border border-gray-200 rounded-xl w-fit relative z-20">
+      <div className="relative flex w-full flex-col gap-5">
+        {/* tabs */}
+        <div>
+          <div className="relative z-20 flex w-fit flex-wrap gap-1 rounded-full border border-rc-ink/10 bg-rc-paper p-1">
             {TABS.map(({ id, label, Icon }) => {
               const isActive = activeTab === id;
               return (
@@ -892,20 +883,19 @@ export default function CreditPage() {
                   key={id}
                   onClick={() => handleTabChange(id)}
                   className={cn(
-                    'relative flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300',
-                    isActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-600'
+                    'relative flex items-center gap-2 rounded-full px-5 py-2 text-[14px] font-medium transition-colors duration-300',
+                    isActive ? 'text-rc-pistachio' : 'text-rc-muted hover:text-rc-ink'
                   )}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="credit-tab-bg-v4"
-                      className="absolute inset-0 bg-gray-100 border border-gray-300 rounded-lg shadow-sm"
+                      className="absolute inset-0 rounded-full bg-rc-ink"
                       transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                     />
                   )}
                   <span className="relative z-10 flex items-center gap-2">
-                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-[#2A9D5C]" />}
-                    {!isActive && <Icon size={14} className="opacity-70" />}
+                    <Icon size={14} className={isActive ? '' : 'opacity-70'} />
                     {label}
                   </span>
                 </button>

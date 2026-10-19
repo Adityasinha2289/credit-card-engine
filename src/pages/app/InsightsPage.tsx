@@ -1,3 +1,4 @@
+import { normalizeGoal } from '../../config/goals';
 import React, { Suspense, lazy } from 'react';
 import { useDashboardStore } from '../../features/dashboard/store/dashboardStore';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,13 +30,13 @@ export default function InsightsPage() {
   // Re-order tabs based on user goal
   const sortedTabs = React.useMemo(() => {
     const tabs = [...INSIGHTS_TABS];
-    if (profile?.primaryGoal === 'Build Credit Score') {
+    if (normalizeGoal(profile?.primaryGoal) === 'build_credit') {
       const cibilIdx = tabs.findIndex(t => t.id === 'cibil');
       if (cibilIdx > -1) {
         const [cibil] = tabs.splice(cibilIdx, 1);
         tabs.unshift(cibil);
       }
-    } else if (profile?.primaryGoal === 'Save More Money') {
+    } else if (normalizeGoal(profile?.primaryGoal) === 'save_money') {
       const budgetIdx = tabs.findIndex(t => t.id === 'budget');
       if (budgetIdx > -1) {
         const [budget] = tabs.splice(budgetIdx, 1);

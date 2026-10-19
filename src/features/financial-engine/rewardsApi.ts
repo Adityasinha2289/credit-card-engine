@@ -25,8 +25,12 @@ export function recommendCardsFor(
   limit = 5,
   extra: { transactions?: Transaction[]; walletCardIds?: string[] } = {},
 ): RecommendedCard[] {
-  if (!unifiedEngineEnabled()) return legacyRecommend(profile, limit);
-  return recommendNewCards({
+  // Never recommend a card the user already holds, whichever engine runs
+  // (the legacy one doesn't know about the wallet at all).
+  const held = new Set(extra.walletCardIds ?? []);
+  const notHeld = (cards: RecommendedCard[]) => cards.filter((c) => !held.has(c.id)).slice(0, limit);
+  if (!unifiedEngineEnabled()) return notHeld(legacyRecommend(profile, limit + held.size));
+  return notHeld(recommendNewCards({
     annualIncome: profile.annualIncome,
     cibilScore: profile.cibilScore,
     topCategories: profile.topCategories,
@@ -35,8 +39,8 @@ export function recommendCardsFor(
     wantsLounge: profile.wantsLounge,
     transactions: extra.transactions,
     walletCardIds: extra.walletCardIds,
-    limit,
-  });
+    limit: limit + held.size,
+  }));
 }
 
 export function evaluatePayment(

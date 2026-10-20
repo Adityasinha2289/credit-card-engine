@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { SignIn, SignUp, GoogleOneTap, useUser } from '@clerk/clerk-react';
 import { useDashboardStore } from '../store/dashboardStore';
 import type { AppProfile, UserSegment, PrimaryGoal } from '../types/dashboard.types';
 import type { OnboardingState } from '../../onboarding/OnboardingFlow';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { RETURN_PARAM, authPathFor, safeReturnPath } from '../lib/returnPath';
-import { AuthAside } from './AuthAside';
+import { CardFace } from '../../../public-platform/site/CardFace';
 import { LoaderHold } from '../../../components/BrandLoader';
 
 const OnboardingFlow = lazy(() => import('../../onboarding/OnboardingFlow').then(m => ({ default: m.OnboardingFlow })));
@@ -121,7 +121,50 @@ export function LoginScreen({ defaultMode = 'signup' }: { defaultMode?: 'signin'
   return (
     <div className="grid min-h-[100dvh] w-full bg-rc-cream font-sans text-rc-ink lg:grid-cols-2">
       {/* LEFT: brand panel (desktop) */}
-      <AuthAside />
+      <aside className="relative hidden overflow-hidden bg-rc-ink text-rc-cream lg:flex lg:flex-col lg:justify-between lg:p-14 xl:p-16">
+        <Link to="/" className="flex items-center gap-2.5">
+          <img src="/logo.jpg" alt="" width={32} height={32} className="h-8 w-8 rounded-[9px] object-cover ring-1 ring-white/10" />
+          <span className="text-[17px] font-semibold tracking-[-0.01em]">RenoCred</span>
+        </Link>
+
+        <div>
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-[13ch] font-serif text-[clamp(2.75rem,4.4vw,4.25rem)] font-medium leading-[0.98] tracking-[-0.025em]"
+          >
+            Every card you own, <span className="italic text-rc-pistachio">working together.</span>
+          </motion.h1>
+
+          <div className="relative mt-16 h-[230px] w-[420px] max-w-full">
+            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 0.55, rotate: 8 }} transition={{ duration: 1, delay: 0.2 }} className="absolute left-16 top-0">
+              <CardFace name="Cashback SBI Card" bank="SBI" width={260} />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.35 }} className="absolute left-0 top-8">
+              <CardFace name="Swiggy HDFC" bank="HDFC" width={280} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="absolute bottom-0 right-0 w-[230px] rounded-2xl bg-rc-paper p-4 text-rc-ink shadow-[0_24px_48px_-20px_rgba(0,0,0,0.6)]"
+            >
+              <p className="flex justify-between text-[12px] text-rc-muted"><span>Dinner for two</span><span className="tabular-nums">₹2,400</span></p>
+              <p className="mt-2 flex items-end justify-between">
+                <span className="font-serif text-[18px] leading-tight">Swiggy HDFC</span>
+                <span className="font-serif text-[20px] leading-none text-rc-emerald tabular-nums">+₹240</span>
+              </p>
+            </motion.div>
+          </div>
+        </div>
+
+        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-rc-mist">
+          {['Free to use', 'Never touches your credit score', 'No full card numbers'].map((t) => (
+            <li key={t} className="inline-flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-rc-pistachio" />{t}</li>
+          ))}
+        </ul>
+      </aside>
 
       {/* RIGHT: auth */}
       <main className="flex min-h-[100dvh] flex-col px-5 py-6 sm:px-10 lg:px-14 lg:py-10">

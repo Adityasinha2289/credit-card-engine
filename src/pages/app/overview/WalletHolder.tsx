@@ -41,7 +41,7 @@ export function WalletHolder({ cards, pulledId, onPull, children }: {
             type="button"
             aria-label={`Use ${card.name}`}
             onClick={() => onPull?.(card)}
-            className="absolute left-1/2 cursor-pointer rounded-[12px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rc-pistachio"
+            className="absolute left-1/2 cursor-pointer rounded-[12px] will-change-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rc-pistachio"
             style={{ top: holderTop - peekH, marginLeft: -W / 2, zIndex: pulled ? 20 : 10 - Math.abs(Math.round(off)) }}
             initial={reduce ? false : { y: 40, opacity: 0 }}
             animate={pulled

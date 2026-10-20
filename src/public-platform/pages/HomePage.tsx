@@ -16,7 +16,7 @@ import { Closer, FaqToggle, FloatingStart, TrustStatement } from '../components/
  */
 export function HomePage() {
   return (
-    <div className="flex w-full flex-col bg-rc-night text-rc-cream">
+    <div className="rc-landing flex w-full flex-col bg-rc-night text-rc-cream">
       <SEO
         title="RenoCred | The right credit card for every spend"
         description="RenoCred has read the terms of 500+ Indian credit cards. Add the cards you own and it tells you which to swipe, tracks what you spend and reminds you before subscriptions renew."

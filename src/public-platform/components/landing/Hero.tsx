@@ -3,8 +3,8 @@
  * it. For each spend, RenoCred pulls the card that earns the most up and out,
  * and the reward is written beside it. Click any card to pull it yourself.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion, type Variants } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView, useReducedMotion, type Variants } from 'framer-motion';
 import { cn } from '../../../lib/utils';
 import { ButtonLink, Container, EASE_OUT, formatINR, useMediaQuery } from '../../site/primitives';
 import { CardFace, displayCardName } from '../../site/CardFace';
@@ -18,10 +18,11 @@ const ROTATE_MS = 2600;
 /** Resting fan inside the holder, at the 280px design width. */
 const FAN = [{ x: -112, r: -7 }, { x: -56, r: -3.5 }, { x: 0, r: 0 }, { x: 56, r: 3.5 }, { x: 112, r: 7 }];
 
+// flat roll (transform + opacity only): a 3D flip put every letter on its own layer
 const letter: Variants = {
-  hidden: { y: '115%', opacity: 0, rotateX: -75 },
-  shown: (i: number) => ({ y: '0%', opacity: 1, rotateX: 0, transition: { duration: 0.85, ease: EASE_OUT, delay: 0.1 + i * 0.03 } }),
-  gone: (i: number) => ({ y: '-115%', opacity: 0, rotateX: 60, transition: { duration: 0.5, ease: [0.6, 0, 0.8, 0.3], delay: i * 0.012 } }),
+  hidden: { y: '110%', opacity: 0 },
+  shown: (i: number) => ({ y: '0%', opacity: 1, transition: { duration: 0.7, ease: EASE_OUT, delay: 0.08 + i * 0.025 } }),
+  gone: (i: number) => ({ y: '-110%', opacity: 0, transition: { duration: 0.42, ease: [0.6, 0, 0.8, 0.3], delay: i * 0.01 } }),
 };
 
 export function Hero() {
@@ -30,6 +31,9 @@ export function Hero() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [peek, setPeek] = useState<number | null>(null);
+  // the wallet only rotates while you can see it, so it costs nothing further down the page
+  const sectionRef = useRef<HTMLElement>(null);
+  const onScreen = useInView(sectionRef, { amount: 0.15 });
   const wallet = useMemo(() => cardsByIds(SAMPLE_WALLET_IDS), []);
   const winners = useMemo(() => HERO_MOMENTS.map((m) => rankCards(wallet, m.category, m.amount)[0]), [wallet]);
   const moment = HERO_MOMENTS[index];
@@ -46,10 +50,10 @@ export function Hero() {
   const holderTop = cardH + 30 * k; // room for the pulled card above the holder
 
   useEffect(() => {
-    if (paused || reduce) return;
+    if (paused || reduce || !onScreen) return;
     const t = setInterval(() => setIndex((i) => (i + 1) % HERO_MOMENTS.length), ROTATE_MS);
     return () => clearInterval(t);
-  }, [paused, reduce]);
+  }, [paused, reduce, onScreen]);
 
   const pull = (slot: number) => {
     const m = winners.findIndex((w) => w.card.id === wallet[slot].id);
@@ -78,7 +82,7 @@ export function Hero() {
   );
 
   return (
-    <section className="relative overflow-hidden bg-rc-night text-rc-cream">
+    <section ref={sectionRef} className="relative overflow-hidden bg-rc-night text-rc-cream">
       {/* a pool of light over the wallet */}
       <div aria-hidden className="pointer-events-none absolute bottom-[-25%] left-1/2 h-[760px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(227,238,212,0.13),transparent)]" />
 
@@ -93,7 +97,6 @@ export function Hero() {
               <motion.span
                 key={index}
                 className="absolute inset-x-0 top-[0.1em] flex justify-center whitespace-nowrap"
-                style={{ perspective: 700 }}
                 initial="hidden"
                 animate="shown"
                 exit="gone"
@@ -135,7 +138,7 @@ export function Hero() {
                   onClick={() => pull(slot)}
                   onMouseEnter={() => setPeek(slot)}
                   onMouseLeave={() => setPeek(null)}
-                  className="absolute left-1/2 cursor-pointer"
+                  className="absolute left-1/2 cursor-pointer will-change-transform"
                   style={{ top: holderTop - peekH, marginLeft: -W / 2, zIndex: pulled ? 20 : 10 - Math.abs(slot - 2) }}
                   animate={pulled
                     ? { x: 0, y: -(cardH - peekH) - 20 * k, rotate: -2, scale: 1.04 }
@@ -180,7 +183,7 @@ export function Hero() {
                     on ? cn('bg-rc-pistachio/15 text-rc-cream', paused || reduce ? 'border-rc-pistachio' : 'border-white/10') : 'border-white/10 text-rc-mist hover:border-white/30 hover:text-rc-cream',
                   )}
                 >
-                  {on && !paused && !reduce && <BorderProgress key={index} duration={ROTATE_MS / 1000} radius={18} color="#E3EED4" width={2.5} />}
+                  {on && !paused && !reduce && onScreen && <BorderProgress key={index} duration={ROTATE_MS / 1000} radius={18} color="#E3EED4" width={2.5} />}
                   {m.short}
                 </button>
               );

@@ -36,26 +36,30 @@ function facts(c: FinixCard): { k: string; v: string }[] {
 }
 
 /** The moving wall. Memoised: it never re-renders after mount, the motion is all CSS. */
-const Wall = memo(function Wall({ columns, cardW }: { columns: number; cardW: number }) {
+/** Enough cards for a column to cover its 220vh before it loops (the whole catalogue was ~1,000 card faces); same speed as before. */
+const PER_COLUMN = 18;
+
+const Wall = memo(function Wall({ columns, cardW, running }: { columns: number; cardW: number; running: boolean }) {
   const cols = useMemo(() => {
     const out: FinixCard[][] = Array.from({ length: columns }, () => []);
-    CATALOG.forEach((c, i) => out[i % columns].push(c));
+    CATALOG.slice(0, columns * PER_COLUMN).forEach((c, i) => out[i % columns].push(c));
     return out;
   }, [columns]);
   return (
     <div
       aria-hidden
       className="pointer-events-none absolute left-1/2 top-1/2 flex gap-5"
-      style={{ transform: 'translate(-50%, -50%) rotateX(52deg) rotateZ(-32deg)', transformStyle: 'preserve-3d' }}
+      // a flat tilt: a true 3D wall (rotateX + preserve-3d) made every column an expensive 3D layer
+      style={{ transform: 'translate(-50%, -50%) rotate(-24deg) scale(1.15)' }}
     >
       {cols.map((col, i) => (
         <div key={i} className="h-[220vh] overflow-hidden">
           <div
             className={cn('flex flex-col gap-5 will-change-transform', i % 2 ? 'animate-rc-fall' : 'animate-rc-rise')}
-            style={{ animationDuration: `${70 + (i % 3) * 14}s` }}
+            style={{ animationDuration: `${13 + (i % 3) * 3}s`, animationPlayState: running ? 'running' : 'paused' }}
           >
             {[...col, ...col].map((c, j) => (
-              <CardFace key={`${c.id}-${j}`} name={c.name} bank={c.bank} network={c.network} width={cardW} lifted={false} className="shadow-[0_18px_34px_-16px_rgba(0,0,0,0.7)]" />
+              <CardFace key={`${c.id}-${j}`} name={c.name} bank={c.bank} network={c.network} width={cardW} lifted={false} />
             ))}
           </div>
         </div>
@@ -134,7 +138,8 @@ function Terminal({ live }: { live: boolean }) {
           <AnimatePresence mode="wait" initial={false}>
             {phase === 'insert' || phase === 'eject' ? (
               <motion.div key="insert" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="flex h-[200px] flex-col items-center justify-center text-center">
-                <motion.span animate={reduce ? undefined : { y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="text-rc-forest"><ArrowDown className="h-5 w-5" /></motion.span>
+                {/* bobs only while the machine runs: an endless animation off screen kept the page's frame loop busy */}
+                <motion.span animate={reduce || !live ? undefined : { y: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="text-rc-forest"><ArrowDown className="h-5 w-5" /></motion.span>
                 <p className="mt-2 font-serif text-[22px] leading-tight">{phase === 'eject' ? 'Remove card' : 'Insert card'}</p>
               </motion.div>
             ) : phase === 'reading' ? (
@@ -202,8 +207,8 @@ export function CardWall() {
   return (
     <section ref={ref} className="relative z-10 -mt-10 overflow-hidden rounded-t-[40px] bg-rc-ink text-rc-cream lg:-mt-14 lg:rounded-t-[56px]">
       {/* the wall, faded out where the words sit */}
-      <div className="absolute inset-0" style={{ perspective: 2000 }}>
-        <div className="absolute inset-0 opacity-90"><Wall columns={desktop ? 9 : 5} cardW={desktop ? 210 : 150} /></div>
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 opacity-90"><Wall columns={desktop ? 9 : 5} cardW={desktop ? 210 : 150} running={live && !reduce} /></div>
         <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-rc-ink via-rc-ink/70 to-rc-ink lg:bg-gradient-to-r lg:from-rc-ink lg:via-rc-ink/85 lg:to-rc-ink/0" />
         <div aria-hidden className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-rc-ink to-transparent" />
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-rc-ink to-transparent" />
@@ -230,7 +235,7 @@ export function CardWall() {
                 initial={reduce ? false : { opacity: 0, y: 14 }}
                 animate={seen ? { opacity: 1, y: 0 } : undefined}
                 transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.5 + n * 0.08 }}
-                className="rounded-[20px] border border-white/10 bg-rc-ink/60 px-4 py-3.5 backdrop-blur"
+                className="rounded-[20px] border border-white/10 bg-rc-ink/85 px-4 py-3.5"
               >
                 <dt className="sr-only">{s.label}</dt>
                 <dd className="font-serif text-[28px] font-semibold leading-none lining-nums tabular-nums text-rc-cream"><CountUp to={s.value} start={seen} delay={0.6 + n * 0.08} /></dd>

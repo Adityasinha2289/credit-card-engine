@@ -29,7 +29,7 @@ export function PhoneReveal() {
 
   if (reduce || !wide) {
     return (
-      <section ref={ref} className="overflow-hidden bg-rc-night pt-32">
+      <section data-cv="off" ref={ref} className="overflow-hidden bg-rc-night pt-32">
         <Container>{headline}</Container>
         <div className="mt-16 flex justify-center pb-0">
           <div className="-mb-40"><Phone width={wide ? 300 : 260}><WalletScreen /></Phone></div>

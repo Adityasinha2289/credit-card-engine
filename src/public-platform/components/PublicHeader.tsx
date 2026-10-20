@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, Search, X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ArrowChip, EASE_OUT, useMediaQuery } from '../site/primitives';
@@ -45,9 +45,8 @@ function MenuIcon({ open }: { open: boolean }) {
  * same line that counts down the spend tabs, so the site reads as one thing.
  */
 function ScrollTrace({ radius, hidden }: { radius: number; hidden: boolean }) {
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 38, restDelta: 0.001 });
-  const opacity = useTransform(progress, [0, 0.015], [0, 1]);
+  const { scrollYProgress: progress } = useScroll();
+  const opacity = useTransform(progress, (p) => Math.min(1, p / 0.015));
   return (
     <svg aria-hidden className={cn('pointer-events-none absolute inset-0 h-full w-full overflow-visible transition-opacity duration-300', hidden && 'opacity-0')}>
       <motion.rect
@@ -285,12 +284,12 @@ export function PublicHeader() {
   // the name folds into the mark once you scroll; pointing at the mark unfolds it again
   const folded = scrolled && !peek && !open;
   const island = cn(
-    'relative flex h-[50px] items-center rounded-full border backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 lg:h-[54px]',
+    'relative flex h-[50px] items-center rounded-full border transition-[background-color,border-color,box-shadow] duration-500 lg:h-[54px]',
     open
       ? 'border-white/[0.14] bg-rc-ink'
       : scrolled
-        ? 'border-white/10 bg-rc-ink/85 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
-        : 'border-white/10 bg-white/[0.04]',
+        ? 'border-white/10 bg-rc-ink/95 shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]'
+        : 'border-white/10 bg-[#13261b]/80',
   );
   const cta = cn(
     'group inline-flex h-10 items-center gap-2.5 rounded-full px-4 text-[13px] font-semibold transition-colors duration-300 sm:pl-5 sm:pr-1 sm:text-[14px] sm:font-medium lg:h-[42px]',
@@ -309,7 +308,7 @@ export function PublicHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-rc-night/70 backdrop-blur-[3px]"
+            className="fixed inset-0 z-40 bg-rc-night/80"
           />
         )}
       </AnimatePresence>

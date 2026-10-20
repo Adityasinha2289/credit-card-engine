@@ -279,3 +279,21 @@
     color: #0F2A1D;
   }
 }
+
+/* Landing manifesto (Statement.tsx): --p is the section's scroll progress, --from each word's start. */
+.rc-word { opacity: calc(0.2 + 0.8 * clamp(0, (var(--p, 0) - var(--from)) / 0.08, 1)); }
+.rc-word-ink { transform: rotate(-0.6deg) scaleX(clamp(0, (var(--p, 0) - var(--from) - 0.04) / 0.06, 1)); }
+
+/* Sections off screen are skipped entirely (no style, layout or paint), so every animation on
+   the page doesn't make the browser re-layer the whole long page each frame. The size is a
+   first guess; "auto" remembers the real one once a section has been shown. Sections of
+   unknown height above an in-page link target opt out (data-cv="off"), or the jump would
+   land off by the difference. */
+.rc-landing > section:not(:first-child):not([data-cv='off']),
+.rc-cv {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1000px;
+}
+
+/* BorderProgress: a line that runs once round a pill's border */
+@keyframes rc-trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }

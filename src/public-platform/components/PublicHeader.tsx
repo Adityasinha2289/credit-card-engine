@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ArrowChip, EASE_OUT, useMediaQuery } from '../site/primitives';
 import { BrandMark } from '../site/Brand';
@@ -64,10 +64,64 @@ function ScrollTrace({ radius, hidden }: { radius: number; hidden: boolean }) {
   );
 }
 
-/** The menu opens out of the bar, rather than covering the page. */
+/** The four destinations, each printed as a card in the brand's colours. */
+const FACES = [
+  { bg: 'bg-[linear-gradient(135deg,#4A6B45_0%,#375534_45%,#1C3A27_100%)]', ink: 'text-rc-cream', sub: 'text-rc-cream/70', chip: 'bg-[linear-gradient(135deg,#F3E7B8,#C9A75A)]', tone: 'pistachio' as const },
+  { bg: 'bg-[linear-gradient(135deg,#F1F6E8_0%,#E3EED4_55%,#CFE0BA_100%)]', ink: 'text-rc-ink', sub: 'text-rc-ink/60', chip: 'bg-[linear-gradient(135deg,#F3E7B8,#C9A75A)]', tone: 'ink' as const },
+  { bg: 'bg-[linear-gradient(135deg,#FFFFFF_0%,#F6F4EC_60%,#E9E5D6_100%)]', ink: 'text-rc-ink', sub: 'text-rc-ink/60', chip: 'bg-[linear-gradient(135deg,#E6E6E6,#A9A9A9)]', tone: 'green' as const },
+  { bg: 'bg-[linear-gradient(135deg,#1A2E22_0%,#0F1F17_55%,#070F0B_100%)]', ink: 'text-rc-pistachio', sub: 'text-rc-mist', chip: 'bg-[linear-gradient(135deg,#F3E7B8,#C9A75A)]', tone: 'pistachio' as const },
+];
+/** a slight, uneven fan on wide screens; straightens when you point at a card */
+const TILT = [-3, 1.5, -1.5, 3];
+
+function MenuCard({ link, index, on, onClose }: { link: (typeof LINKS)[number]; index: number; on: boolean; onClose: () => void }) {
+  const f = FACES[index];
+  return (
+    <Link
+      to={link.to}
+      onClick={onClose}
+      aria-current={on ? 'page' : undefined}
+      style={{ '--tilt': `${TILT[index]}deg` } as CSSProperties}
+      className={cn(
+        'group relative flex aspect-[1.586] w-full flex-col justify-between overflow-hidden rounded-[18px] p-4 shadow-[0_-10px_30px_-12px_rgba(0,0,0,0.6),0_20px_40px_-24px_rgba(0,0,0,0.8)] ring-1 ring-black/10 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] sm:p-5',
+        'sm:[transform:rotate(var(--tilt))] sm:hover:[transform:rotate(0deg)_translateY(-8px)] sm:focus-visible:[transform:rotate(0deg)_translateY(-8px)]',
+        f.bg,
+        f.ink,
+      )}
+    >
+      {/* a soft sheen, like light across a card */}
+      <span aria-hidden className="pointer-events-none absolute -inset-x-1/4 -top-1/2 h-full rotate-12 bg-[linear-gradient(180deg,rgba(255,255,255,0.18),transparent)] opacity-60" />
+      <span className="relative flex items-start justify-between gap-2">
+        <span className="font-serif text-[22px] font-semibold leading-none tracking-[-0.02em] sm:text-[24px]">{link.label}</span>
+        <span className="flex items-center gap-1.5">
+          {on && <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ring-1 ring-current', f.sub)}>Here</span>}
+          <BrandMark size={18} tone={f.tone} />
+        </span>
+      </span>
+      <span aria-hidden className={cn('relative h-[22px] w-[30px] rounded-[5px] opacity-90 shadow-inner sm:h-[26px] sm:w-[34px]', f.chip)} />
+      <span className="relative flex items-end justify-between gap-3">
+        <span className={cn('text-[12.5px] leading-snug', f.sub)}>{link.note}</span>
+        <span className={cn('shrink-0 whitespace-nowrap font-mono text-[11px] tracking-[0.2em] transition-transform duration-300 group-hover:translate-x-0.5', f.sub)}>
+          {String(index + 1).padStart(2, '0')} <ArrowRight aria-hidden className="ml-0.5 inline h-3.5 w-3.5 -translate-y-px" />
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+/**
+ * The menu opens out of the header as a wallet: the four places to go are
+ * cards, dealt in a fan on wide screens and stacked like a wallet on phones,
+ * each peeking out so one tap opens it.
+ */
 function MenuPanel({ signedIn, pathname, onClose }: { signedIn: boolean; pathname: string; onClose: () => void }) {
   const reduce = useReducedMotion();
   const label = 'mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-rc-mist/70';
+  const deal = (i: number) => ({
+    initial: reduce ? false : { opacity: 0, y: -28, rotate: -6 },
+    animate: { opacity: 1, y: 0, rotate: 0 },
+    transition: { duration: 0.55, ease: EASE_OUT, delay: 0.06 + i * 0.07 },
+  });
   return (
     <motion.div
       id="site-menu"
@@ -77,66 +131,48 @@ function MenuPanel({ signedIn, pathname, onClose }: { signedIn: boolean; pathnam
       transition={{ duration: 0.45, ease: EASE_OUT }}
       className="overflow-hidden"
     >
-      <div className="max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain p-2.5 lg:p-3">
-        <div className="grid gap-2.5 lg:grid-cols-12 lg:gap-3">
-          <nav aria-label="Main" className="lg:col-span-7">
-            <ul className="grid grid-cols-2 gap-2 lg:gap-2.5">
-              {LINKS.map((l) => {
-                const on = isCurrent(pathname, l);
-                return (
-                  <li key={l.to}>
-                    <Link
-                      to={l.to}
-                      onClick={onClose}
-                      aria-current={on ? 'page' : undefined}
-                      className={cn(
-                        'group flex h-full min-h-[96px] flex-col justify-between rounded-[20px] border p-4 transition-colors lg:min-h-[132px] lg:p-5',
-                        on ? 'border-rc-pistachio/50 bg-rc-pistachio/[0.08]' : 'border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]',
-                      )}
-                    >
-                      <span className="flex items-start justify-between gap-2">
-                        <span className="font-serif text-[21px] font-semibold leading-[1.05] tracking-[-0.02em] lg:text-[28px]">{l.label}</span>
-                        <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-rc-mist transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-rc-pistachio" />
-                      </span>
-                      <span className="mt-3 text-[12.5px] leading-snug text-rc-mist lg:text-[13.5px]">{l.note}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+      <div className="max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain px-3 pb-3 pt-4 sm:px-5 sm:pb-4 sm:pt-6 lg:px-7">
+        <nav aria-label="Main">
+          {/* phones: a wallet, each card showing its top edge; wider: a fan of four */}
+          <ul className="flex flex-col sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6">
+            {LINKS.map((l, i) => (
+              <motion.li key={l.to} {...deal(i)} className={cn('relative', i > 0 && '[margin-top:calc(4.25rem_-_(100vw_-_3.125rem)_/_1.586)] sm:[margin-top:0]')} style={{ zIndex: i }}>
+                <MenuCard link={l} index={i} on={isCurrent(pathname, l)} onClose={onClose} />
+              </motion.li>
+            ))}
+          </ul>
+        </nav>
 
-          <div className="space-y-6 px-2 pb-1 pt-3 lg:col-span-5 lg:px-3 lg:pt-2">
-            {signedIn && (
-              <div>
-                <p className={label}>Your dashboard</p>
-                <ul className="flex flex-wrap gap-1.5">
-                  {MY_RENOCRED.map((l) => (
-                    <li key={l.to}><Link to={l.to} onClick={onClose} className="inline-flex rounded-full bg-rc-pistachio/15 px-3 py-1.5 text-[13px] font-medium text-rc-cream transition-colors hover:bg-rc-pistachio hover:text-rc-ink">{l.label}</Link></li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <div>
-              <p className={label}>Best cards for</p>
+        <div className="mt-7 grid gap-7 px-1 sm:mt-9 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-5">
+            <p className={label}>Best cards for</p>
+            <ul className="flex flex-wrap gap-1.5">
+              {CARD_NEEDS.map((n) => (
+                <li key={n.to}><Link to={n.to} onClick={onClose} className="inline-flex rounded-full border border-white/[0.12] px-3 py-1.5 text-[13px] text-rc-mist transition-colors hover:border-white/40 hover:text-rc-cream">{n.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+          <div className="lg:col-span-3">
+            <p className={label}>{signedIn ? 'Your dashboard' : 'Free tools'}</p>
+            {signedIn ? (
               <ul className="flex flex-wrap gap-1.5">
-                {CARD_NEEDS.map((n) => (
-                  <li key={n.to}><Link to={n.to} onClick={onClose} className="inline-flex rounded-full border border-white/[0.12] px-3 py-1.5 text-[13px] text-rc-mist transition-colors hover:border-white/40 hover:text-rc-cream">{n.label}</Link></li>
+                {MY_RENOCRED.map((l) => (
+                  <li key={l.to}><Link to={l.to} onClick={onClose} className="inline-flex rounded-full bg-rc-pistachio/15 px-3 py-1.5 text-[13px] font-medium text-rc-cream transition-colors hover:bg-rc-pistachio hover:text-rc-ink">{l.label}</Link></li>
                 ))}
               </ul>
-            </div>
-            <div>
-              <p className={label}>Free tools</p>
+            ) : (
               <ul className="space-y-2">
                 {TOOLS.map((t) => (
                   <li key={t.to}><Link to={t.to} onClick={onClose} className="text-[14px] text-rc-mist transition-colors hover:text-rc-cream">{t.label}</Link></li>
                 ))}
               </ul>
-            </div>
+            )}
+          </div>
+          <div className="sm:col-span-2 lg:col-span-4">
             <Link
               to={SIGN_UP}
               onClick={() => { analytics.track('Partner Offer Clicked', { partner: 'greenox', placement: 'menu' }); onClose(); }}
-              className="flex items-center gap-3.5 rounded-[18px] border border-white/10 p-2.5 transition-colors hover:border-white/30"
+              className="flex items-center gap-3.5 rounded-[18px] border border-dashed border-white/20 p-2.5 transition-colors hover:border-white/40"
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white"><img src="/greenox_logo.png" alt="GreeNox" className="h-8 w-8 object-contain" /></span>
               <span className="min-w-0">
@@ -147,7 +183,7 @@ function MenuPanel({ signedIn, pathname, onClose }: { signedIn: boolean; pathnam
           </div>
         </div>
 
-        <div className="mt-2.5 flex flex-col gap-3 border-t border-white/10 px-2 pb-1 pt-3.5 sm:flex-row sm:items-center sm:justify-between lg:px-3">
+        <div className="mt-7 flex flex-col gap-3 border-t border-white/10 px-1 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
             {MORE.map((l) => <Link key={l.to} to={l.to} onClick={onClose} className="text-rc-mist hover:text-rc-cream">{l.label}</Link>)}
             {SOCIAL.map((s) => (

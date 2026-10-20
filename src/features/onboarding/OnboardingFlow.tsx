@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { OnboardingLayout } from './components/primitives/OnboardingLayout';
-import { QuickStartStep } from './components/steps/QuickStartStep';
-import { CurrentCardsStep } from './components/steps/CurrentCardsStep';
+import { NextButton, OnboardingLayout } from './components/primitives/OnboardingLayout';
+import { Ledger } from './components/Ledger';
+import { GoalStep } from './components/steps/GoalStep';
+import { SpendStep } from './components/steps/SpendStep';
+import { WalletStep } from './components/steps/WalletStep';
+import { ReadyStep } from './components/steps/ReadyStep';
 
 export interface OnboardingState {
   age?: string;
@@ -12,39 +15,74 @@ export interface OnboardingState {
   banks?: string[];
 }
 
+const QUESTIONS = 3;
+
 /**
- * Two screens, then straight to the dashboard:
- *   1. Goal (+ optional spend categories)
- *   2. Cards you already have (skippable)
+ * Three quick questions, then the payoff:
+ *   1. Goal: one tap, moves on by itself
+ *   2. Where the money goes: each spend shows the card that pays most for it
+ *   3. Cards you already have (skippable): compared against the best as you add them
+ *   4. Your first move: the card to use for each spend, then into the app
  *
- * Age, income and CIBIL are no longer gates. They are asked in-app ("Sharpen
- * your recommendations") when a feature actually needs them. The old 8.5 s
- * "personalising" screen is gone — the dashboard itself is the payoff.
+ * A panel beside the questions fills in with what RenoCred has learned, so
+ * every answer gets something back. Age, income and credit score are still
+ * asked later in the app, only when a feature needs them.
  */
-export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingState) => void }) {
+export function OnboardingFlow({ onComplete }: { onComplete: (state: OnboardingState) => void | Promise<void> }) {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [state, setState] = useState<OnboardingState>({});
+  const [goal, setGoal] = useState<string>();
+  const [spend, setSpend] = useState<string[]>([]);
+  const [cards, setCards] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
 
+  const go = (to: number) => { setDirection(to > step ? 1 : -1); setStep(to); window.scrollTo({ top: 0 }); };
+  const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
+  const open = async () => {
+    setBusy(true);
+    try { await onComplete({ goal, priorities: spend, banks: cards }); } catch { setBusy(false); }
+  };
+
+  const ledger = <Ledger goal={goal} spend={spend} cards={cards} />;
+
+  if (step === 0) {
+    return (
+      <OnboardingLayout step={0} total={QUESTIONS} direction={direction} aside={ledger}>
+        <GoalStep value={goal} onPick={(g) => { setGoal(g); go(1); }} />
+      </OnboardingLayout>
+    );
+  }
+  if (step === 1) {
+    return (
+      <OnboardingLayout
+        step={1}
+        total={QUESTIONS}
+        direction={direction}
+        onBack={() => go(0)}
+        aside={ledger}
+        footer={<NextButton onClick={() => go(2)}>{spend.length ? 'Continue' : 'Skip this'}</NextButton>}
+      >
+        <SpendStep goal={goal} value={spend} onToggle={(id) => setSpend((s) => toggle(s, id))} />
+      </OnboardingLayout>
+    );
+  }
+  if (step === 2) {
+    return (
+      <OnboardingLayout
+        step={2}
+        total={QUESTIONS}
+        direction={direction}
+        onBack={() => go(1)}
+        aside={ledger}
+        footer={<NextButton onClick={() => go(3)}>{cards.length ? `Continue with ${cards.length} ${cards.length === 1 ? 'card' : 'cards'}` : 'Skip for now'}</NextButton>}
+      >
+        <WalletStep spendCount={spend.length} value={cards} onToggle={(id) => setCards((c) => toggle(c, id))} />
+      </OnboardingLayout>
+    );
+  }
   return (
-    <OnboardingLayout stepKey={`step-${step}`} currentStep={step + 1} totalSteps={2} direction={direction}>
-      {step === 0 ? (
-        <QuickStartStep
-          initialGoal={state.goal}
-          initialSpend={state.priorities}
-          onContinue={(goal, priorities) => {
-            setState((s) => ({ ...s, goal, priorities }));
-            setDirection(1);
-            setStep(1);
-          }}
-        />
-      ) : (
-        <CurrentCardsStep
-          initialValues={state.banks}
-          onBack={() => { setDirection(-1); setStep(0); }}
-          onContinue={(banks) => onComplete({ ...state, banks })}
-        />
-      )}
+    <OnboardingLayout step={3} total={QUESTIONS} direction={direction} onBack={busy ? undefined : () => go(2)}>
+      <ReadyStep spend={spend} cards={cards} busy={busy} onOpen={open} />
     </OnboardingLayout>
   );
 }

@@ -3,8 +3,8 @@
  * The answer is the landing page's card holder, holding your own cards: pick a
  * spend (or type the shop and amount) and the best card rises out of it.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
 import { useShallow } from 'zustand/shallow';
 import { useUser } from '@clerk/clerk-react';
 import { toast } from 'sonner';
@@ -89,11 +89,14 @@ export default function HomePage() {
     return { card: best.card, reward: best.reward, rate: best.rate, label: best.categoryMatch ? label : `${label} (base rate)`, ahead: next && best.reward > next.reward ? best.reward - next.reward : null, estimate: false };
   }, [wallet, amount, merchant, activeIds, transactions, category, pinned]);
 
+  // rotates only while the holder is on screen
+  const holderRef = useRef<HTMLDivElement>(null);
+  const onScreen = useInView(holderRef, { amount: 0.2 });
   useEffect(() => {
-    if (!auto || hovering || reduce || merchant || pinned || wallet.length < 2) return;
+    if (!auto || hovering || reduce || merchant || pinned || wallet.length < 2 || !onScreen) return;
     const t = setInterval(() => setCategory((c) => ROTATION[(ROTATION.indexOf(c) + 1) % ROTATION.length]), ROTATE_MS);
     return () => clearInterval(t);
-  }, [auto, hovering, reduce, merchant, pinned, wallet.length]);
+  }, [auto, hovering, reduce, merchant, pinned, wallet.length, onScreen]);
 
   // up to five in the holder, always including the one that wins
   const inHolder = useMemo(() => {
@@ -177,7 +180,7 @@ export default function HomePage() {
         </AnimatePresence>
       </div>
 
-      <div className="mt-4 w-full" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
+      <div ref={holderRef} className="mt-4 w-full" onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
         <WalletHolder cards={inHolder} pulledId={answer?.card.id ?? null} onPull={pull}>
           <button type="button" onClick={() => setAdding(true)} className="inline-flex h-12 items-center gap-2 rounded-full bg-rc-cream pl-5 pr-2 text-[15px] font-medium text-rc-ink shadow-[0_20px_40px_-20px_rgba(0,0,0,0.8)]">
             Add your first card <span className="flex h-9 w-9 items-center justify-center rounded-full bg-rc-ink text-rc-cream"><Plus size={17} /></span>
@@ -202,7 +205,7 @@ export default function HomePage() {
                 >
                   {on && <motion.span layoutId="spend-pill" className="absolute inset-0 rounded-full bg-rc-pistachio" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
                   {/* how long until the holder moves on: a line closing around the tab */}
-                  {on && auto && !hovering && !pinned && !reduce && wallet.length > 1 && <BorderProgress key={category} duration={ROTATE_MS / 1000} radius={18} color="#375534" width={2} className="z-10" />}
+                  {on && auto && !hovering && !pinned && !reduce && onScreen && wallet.length > 1 && <BorderProgress key={category} duration={ROTATE_MS / 1000} radius={18} color="#375534" width={2} className="z-10" />}
                   <span className="relative">{c.label}</span>
                 </button>
               );

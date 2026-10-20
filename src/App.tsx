@@ -19,6 +19,8 @@ import { AdminLayout } from './components/layout/AdminLayout';
 
 // Demo import
 const DemoOnboarding = lazy(() => import('./features/onboarding/demo/DemoOnboarding').then(m => ({ default: m.DemoOnboarding })));
+// development only: /app?preview=onboarding shows the real onboarding without a fresh account
+const OnboardingPreview = lazy(() => import('./features/onboarding/OnboardingFlow').then(m => ({ default: () => <m.OnboardingFlow onComplete={(state) => new Promise<void>((done) => { console.info('[onboarding preview] done', state); setTimeout(done, 1200); })} /> })));
 import { DemoAppProvider } from './features/demo/DemoAppProvider';
 
 const HomePage = lazy(() => import('./pages/app/HomePage'));
@@ -166,6 +168,10 @@ export default function App() {
   // which bounced deep links (/app/wallet) to sign-up and then to /app
   const usesDemoData = import.meta.env.VITE_USE_DEMO_DATA === 'true';
   
+  if (import.meta.env.DEV && window.location.search.includes('preview=onboarding')) {
+    return <Suspense fallback={<LoaderHold />}><OnboardingPreview /></Suspense>;
+  }
+
   if (!isHydrated || (!isLoaded && !usesDemoData && !isProfileDemo) || isHydratingFromSupabase) {
     // Exception for demo mode which requires no hydration or loading
     if (!window.location.search.includes('demo=onboarding') && !isProfileDemo) {

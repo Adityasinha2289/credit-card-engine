@@ -300,7 +300,9 @@ export function FaqToggle() {
 export function FloatingStart() {
   const signedIn = useSignedInHint();
   const [show, setShow] = useState(false);
+  const wide = useMediaQuery('(min-width: 1024px)');
   useEffect(() => {
+    if (!wide) return;
     const onScroll = () => {
       const nearEnd = window.innerHeight + window.scrollY > document.documentElement.scrollHeight - 1600;
       setShow(window.scrollY > window.innerHeight * 0.8 && !nearEnd);
@@ -308,10 +310,10 @@ export function FloatingStart() {
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [wide]);
   return (
     <AnimatePresence>
-      {show && (
+      {show && wide && (
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -319,7 +321,7 @@ export function FloatingStart() {
           transition={{ duration: 0.4, ease: EASE_OUT }}
           className="fixed bottom-6 right-6 z-40 hidden lg:block"
         >
-          <Link to={signedIn ? '/app' : SIGN_UP} className="group flex items-center gap-3 rounded-full border border-white/15 bg-rc-ink/90 py-2 pl-2 pr-5 text-rc-cream shadow-[0_20px_40px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md transition-colors hover:border-white/40">
+          <Link to={signedIn ? '/app' : SIGN_UP} className="group flex items-center gap-3 rounded-full border border-white/15 bg-rc-ink py-2 pl-2 pr-5 text-rc-cream shadow-[0_20px_40px_-20px_rgba(0,0,0,0.7)] transition-colors hover:border-white/40">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rc-pistachio"><BrandMark size={20} /></span>
             <span>
               <span className="block text-[14px] font-medium leading-tight">{signedIn ? 'Open the app' : 'Start free'}</span>

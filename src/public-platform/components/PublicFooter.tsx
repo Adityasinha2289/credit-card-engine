@@ -38,7 +38,7 @@ export function PublicFooter() {
   const signedIn = useSignedInHint();
   return (
     // cream behind the rounded top, since nearly every page ends on cream
-    <div className="bg-rc-cream">
+    <div className="rc-cv bg-rc-cream">
     <footer className="overflow-hidden rounded-t-[40px] bg-rc-night text-rc-cream lg:rounded-t-[56px]">
       <Container className="pt-14 sm:pt-20 lg:pt-28">
         <div className="grid gap-10 sm:gap-14 lg:grid-cols-12">

@@ -126,12 +126,13 @@ export function CardsDirectoryPage({ embedded = false }: { embedded?: boolean } 
   useEffect(() => { setShown(PAGE); }, [need, issuer, sort, query]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    // every word typed has to appear, in any order ("mill hdfc" finds the HDFC Millennia)
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
     const match = NEEDS.find((n) => n.id === need)!.match;
     return all
       .filter((c) => match(c)
         && (issuer === 'all' || bankLabel(c.issuer) === issuer)
-        && (!q || `${c.cardName} ${bankLabel(c.issuer)} ${c.topBenefit}`.toLowerCase().includes(q)))
+        && (!words.length || ((hay) => words.every((w) => hay.includes(w)))(`${c.cardName} ${bankLabel(c.issuer)} ${c.issuer} ${c.topBenefit}`.toLowerCase())))
       .sort(SORTS[sort].fn);
   }, [all, need, issuer, sort, query]);
 

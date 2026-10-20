@@ -58,7 +58,7 @@ function ChatVisual() {
         className="flex w-fit gap-1 rounded-full bg-white px-4 py-3"
       >
         {[0, 1, 2].map((d) => (
-          <motion.span key={d} className="h-1.5 w-1.5 rounded-full bg-rc-ink/50" animate={{ y: [0, -3, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: d * 0.12 }} />
+          <motion.span key={d} className="h-1.5 w-1.5 rounded-full bg-rc-ink/50" animate={{ y: [0, -3, 0] }} transition={{ repeat: 1, duration: 0.6, delay: 0.7 + d * 0.12 }} />
         ))}
       </motion.span>
       <motion.p {...pop(1.8)} className="-mt-12 max-w-[86%] rounded-[20px] rounded-bl-md bg-white px-4 py-3 text-[15px] leading-snug text-rc-ink">
@@ -204,7 +204,7 @@ export function FeatureDeck() {
   const go = (i: number) => { setActive((i + PANELS.length) % PANELS.length); setTaken(true); };
 
   return (
-    <section className="bg-rc-night py-20 text-rc-cream sm:py-28 lg:py-40">
+    <section data-cv="off" className="bg-rc-night py-20 text-rc-cream sm:py-28 lg:py-40">
       <Container>
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
